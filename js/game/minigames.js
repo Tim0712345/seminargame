@@ -6,6 +6,11 @@
    2) "verhandlung" – Dialog-Minispiel: in mehreren Runden Argumente
                      wählen; gute Argumente bringen Überzeugung
                      (Luxemburg: Gehaltsverhandlung)
+   Finale im Sitzungssaal (Phase 4):
+   3) "praesentation" – die fünf Beweisstücke nacheinander vorstellen
+   4) "duell"         – drei Abgeordnete fragen, Kim antwortet mit einer
+                        Notiz aus dem Notizbuch (kein Game Over)
+   5) "massnahmen"    – drei von sechs Maßnahmen mit Vor- und Nachteilen
    Alle Texte und Werte stehen in DATA.minispiele (data/dialogues.js),
    Zahlen kommen aus facts.js.
    Start aus einem Dialog: aktion "minispiel:branchen".
@@ -43,7 +48,11 @@ GAME.minispiel = (function () {
     M.aktiv = id;
     beiEnde = fertig;
     el.classList.remove("versteckt");
+    el.classList.toggle("unten", def.art === "praesentation");
     if (def.art === "zuordnen") zuordnenStart(def);
+    else if (def.art === "praesentation") praesentationStart(def);
+    else if (def.art === "duell") duellStart(def);
+    else if (def.art === "massnahmen") massnahmenStart(def);
     else verhandlungStart(def);
   };
 
@@ -54,14 +63,15 @@ GAME.minispiel = (function () {
     M.aktiv = null;
     zustand = null;
     el.classList.add("versteckt");
+    el.classList.remove("unten");
     el.innerHTML = "";
     var cb = beiEnde; beiEnde = null;
     if (cb) cb(ergebnis);
   }
 
-  function rahmen(def) {
+  function rahmen(def, klasse) {
     el.innerHTML = "";
-    var karte = neu("div", "karte minispiel-karte ploppen");
+    var karte = neu("div", "karte minispiel-karte ploppen" + (klasse ? " " + klasse : ""));
     karte.appendChild(neu("h2", "", def.titel));
     el.appendChild(karte);
     return karte;
@@ -233,11 +243,337 @@ GAME.minispiel = (function () {
     verhandlungMalen();
   }
 
+
+  // ====================================================================
+  //  3) Präsentation der Beweisstücke (Finale)
+  // ====================================================================
+  function praesentationStart(def) {
+    zustand = { def: def, i: 0 };
+    praesentationMalen();
+  }
+
+  function praesentationMalen() {
+    var z = zustand, def = z.def, k = def.karten[z.i], land = DATA.countries[k.land] || {};
+    var karte = rahmen(def, "praesentation-karte land-" + k.land);
+    karte.removeChild(karte.firstChild);                       // Titel ersetzen
+    var kopf = neu("div", "praesentation-kopf");
+    var icon = neu("div", "beweis-slot gefunden land-" + k.land);
+    icon.innerHTML = GAME.beweisHud.icon(k.land);
+    kopf.appendChild(icon);
+    var tx = neu("div");
+    tx.appendChild(neu("p", "praesentation-zaehler", def.zaehler.replace("{n}", z.i + 1).replace("{von}", def.karten.length)));
+    tx.appendChild(neu("h2", "", land.beweis ? land.beweis.name : k.land));
+    tx.appendChild(neu("p", "praesentation-ort", (land.viertel || "") + " · " + (land.ursache || "")));
+    kopf.appendChild(tx);
+    karte.appendChild(kopf);
+    var p = neu("p", "minispiel-anleitung");
+    p.appendChild(textKnoten(k.text));
+    karte.appendChild(p);
+    var fuss = neu("div", "minispiel-fuss");
+    var b = neu("button", "knopf gewaehlt", z.i < def.karten.length - 1 ? def.weiter : def.fertig);
+    b.type = "button";
+    b.addEventListener("click", praesentationWeiter);
+    fuss.appendChild(b);
+    fuss.appendChild(neu("span", "minispiel-tipp", def.tasten));
+    karte.appendChild(fuss);
+    // Kim hält das Beweisstück hoch
+    var sz = GAME.Spielszene;
+    if (sz.spieler) { sz.spieler.figur.jubeln(); sz.spieler.figur.emotion = "froehlich"; sz.beweisZeigen(k.land, 1.8); }
+  }
+
+  function praesentationWeiter() {
+    var z = zustand;
+    z.i++;
+    if (z.i >= z.def.karten.length) { GAME.Spielszene.beweisZeigen(null); beenden({}); return; }
+    praesentationMalen();
+  }
+
+  // ====================================================================
+  //  4) Argumentationsduell (Finale)
+  // ====================================================================
+  function duellStart(def) {
+    GAME.flags.setzen(["duell_punkte_hoch", "duell_punkte_mittel"], false);   // falls das Duell wiederholt wird
+    var portrait = neu("canvas");
+    portrait.width = portrait.height = 256;
+    zustand = { def: def, frage: 0, versuch: 0, punkte: 0, max: def.fragen.length * def.punkteRichtig[0],
+                phase: "frage", reiter: 0, wahl: 0, antwort: null, portrait: portrait, bild: 0 };
+    reiterMitNotiz(1);
+    duellMalen();
+  }
+
+  function notizenIm(reiterIndex) {
+    var rid = DATA.texte.notizbuch.reiter[reiterIndex].id;
+    return GAME.zustand.notizen.filter(function (n) { return DATA.notes[n] && DATA.notes[n].reiter === rid; });
+  }
+  // Ab dem aktuellen Reiter den nächsten mit Notizen suchen
+  function reiterMitNotiz(richtung) {
+    var z = zustand, n = DATA.texte.notizbuch.reiter.length;
+    for (var i = 0; i < n; i++) {
+      if (notizenIm(z.reiter).length) break;
+      z.reiter = (z.reiter + richtung + n) % n;
+    }
+    z.wahl = 0;
+  }
+
+  function mpFigur() {
+    var f = zustand.def.fragen[zustand.frage];
+    return f && GAME.Spielszene.figurVon ? GAME.Spielszene.figurVon(f.wer) : null;
+  }
+
+  function punkteZeichnen(z) {
+    var leiste = neu("div", "duell-punkte");
+    leiste.appendChild(neu("span", "meter-name", z.def.punkteName));
+    for (var i = 0; i < z.max; i++) leiste.appendChild(neu("span", "punkt" + (i < z.punkte ? " voll" : "")));
+    return leiste;
+  }
+
+  function duellMalen() {
+    var z = zustand, def = z.def, T = DATA.texte.notizbuch;
+    var karte = rahmen(def, "duell-karte");
+    karte.appendChild(punkteZeichnen(z));
+
+    if (z.phase === "ende") {
+      var erg = neu("div", "verhandlung-ergebnis");
+      erg.textContent = def.ergebnis.replace("{p}", z.punkte).replace("{max}", z.max);
+      karte.appendChild(erg);
+      var fe = neu("div", "minispiel-fuss");
+      var be = neu("button", "knopf gewaehlt", def.weiter);
+      be.type = "button";
+      be.addEventListener("click", duellWeiter);
+      fe.appendChild(be);
+      karte.appendChild(fe);
+      return;
+    }
+
+    var fr = def.fragen[z.frage];
+    var mp = DATA.characters[fr.wer] || {};
+    var fig = mpFigur();
+    if (fig) fig.emotion = z.phase === "frage" ? "skeptisch" : (z.antwort.art === "richtig" ? "froehlich" : "nachdenklich");
+
+    // Abgeordnete*r mit Portrait und Frage
+    var kopf = neu("div", "duell-kopf");
+    var rahmenP = neu("div", "dialog-portrait");
+    rahmenP.appendChild(z.portrait);
+    kopf.appendChild(rahmenP);
+    var rede = neu("div", "duell-rede");
+    var name = neu("div", "dialog-name", mp.name || fr.wer);
+    rede.appendChild(name);
+    rede.appendChild(neu("span", "duell-haltung", fr.haltung));
+    var fp = neu("p", "duell-frage");
+    fp.appendChild(textKnoten(z.phase === "frage" ? fr.frage : z.antwort.text));
+    if (z.phase !== "frage") fp.className += " antwort-" + z.antwort.art;
+    rede.appendChild(fp);
+    kopf.appendChild(rede);
+    karte.appendChild(kopf);
+
+    if (z.phase === "antwort") {
+      if (z.antwort.punkte) karte.appendChild(neu("p", "duell-plus", "+" + z.antwort.punkte + " " + def.punkteName));
+      var fa = neu("div", "minispiel-fuss");
+      var ba = neu("button", "knopf gewaehlt", def.weiter);
+      ba.type = "button";
+      ba.addEventListener("click", duellWeiter);
+      fa.appendChild(ba);
+      fa.appendChild(neu("span", "minispiel-tipp", "E oder Enter: weiter"));
+      karte.appendChild(fa);
+      return;
+    }
+
+    // Notizbuch: Reiter, Liste, Vorschau
+    karte.appendChild(neu("p", "minispiel-anleitung", def.anleitung));
+    var leiste = neu("div", "buch-reiter");
+    T.reiter.forEach(function (r, i) {
+      var anz = notizenIm(i).length;
+      var b = neu("button", "reiter reiter-" + r.id + (i === z.reiter ? " gewaehlt" : "") + (anz ? "" : " leer"), r.titel + (anz ? " (" + anz + ")" : ""));
+      b.type = "button";
+      b.addEventListener("click", function () { z.reiter = i; z.wahl = 0; duellMalen(); });
+      leiste.appendChild(b);
+    });
+    karte.appendChild(leiste);
+
+    var bereich = neu("div", "duell-notizen");
+    var liste = neu("div", "duell-liste");
+    var ids = notizenIm(z.reiter);
+    if (!ids.length) liste.appendChild(neu("p", "buch-leer", def.keineNotiz));
+    ids.forEach(function (id, i) {
+      var b = neu("button", "dialog-option" + (i === z.wahl ? " gewaehlt" : ""), DATA.notes[id].titel);
+      b.type = "button";
+      b.addEventListener("click", function () { if (z.wahl === i) duellVorlegen(); else { z.wahl = i; duellMalen(); } });
+      liste.appendChild(b);
+    });
+    bereich.appendChild(liste);
+    var vorschau = neu("div", "duell-vorschau notiz");
+    var nid = ids[z.wahl];
+    if (nid) {
+      vorschau.appendChild(neu("h3", "", DATA.notes[nid].titel));
+      var tp = neu("p");
+      tp.appendChild(textKnoten(DATA.notes[nid].text));
+      vorschau.appendChild(tp);
+      if (DATA.notes[nid].quelle) vorschau.appendChild(neu("p", "quelle", T.quelle + " " + DATA.notes[nid].quelle));
+    }
+    bereich.appendChild(vorschau);
+    karte.appendChild(bereich);
+
+    var fuss = neu("div", "minispiel-fuss");
+    var bv = neu("button", "knopf" + (nid ? " gewaehlt" : ""), def.vorlegen);
+    bv.type = "button";
+    bv.disabled = !nid;
+    bv.addEventListener("click", duellVorlegen);
+    fuss.appendChild(bv);
+    fuss.appendChild(neu("span", "minispiel-tipp", def.tasten));
+    karte.appendChild(fuss);
+    var gew = liste.querySelector(".gewaehlt");
+    if (gew && gew.scrollIntoView) gew.scrollIntoView({ block: "nearest" });
+  }
+
+  function duellVorlegen() {
+    var z = zustand, def = z.def, fr = def.fragen[z.frage];
+    var id = notizenIm(z.reiter)[z.wahl];
+    if (!id) return;
+    var ok = fr.passend.indexOf(id) >= 0;
+    z.versuch++;
+    if (ok) {
+      var p = def.punkteRichtig[z.versuch - 1] || 0;
+      z.punkte += p;
+      z.antwort = { art: "richtig", text: fr.richtig, punkte: p };
+      var fig = mpFigur();
+      if (fig) fig.huepfen();
+    } else if (z.versuch >= def.versuche) {
+      z.antwort = { art: "aufgeben", text: fr.aufgeben };
+    } else {
+      z.antwort = { art: "falsch", text: fr.falsch + " " + fr.tipp };
+    }
+    z.phase = "antwort";
+    duellMalen();
+  }
+
+  function duellWeiter() {
+    var z = zustand, def = z.def;
+    if (z.phase === "ende") {
+      var f = GAME.zustand.finale || {};
+      GAME.zustand.finale = { punkte: z.punkte, max: z.max, massnahmen: f.massnahmen || [] };
+      if (z.punkte >= def.grenzeHoch) GAME.flags.setzen("duell_punkte_hoch");
+      else if (z.punkte >= def.grenzeMittel) GAME.flags.setzen("duell_punkte_mittel");
+      var fig = mpFigur();
+      if (fig) fig.emotion = "neutral";
+      beenden({ punkte: z.punkte, max: z.max });
+      return;
+    }
+    if (z.antwort.art === "falsch") { z.phase = "frage"; duellMalen(); return; }
+    var alt = mpFigur();
+    if (alt) alt.emotion = "neutral";
+    z.frage++; z.versuch = 0; z.antwort = null;
+    z.phase = z.frage >= def.fragen.length ? "ende" : "frage";
+    duellMalen();
+  }
+
+  // ====================================================================
+  //  5) Maßnahmen wählen (Finale)
+  // ====================================================================
+  function massnahmenStart(def) {
+    zustand = { def: def, fokus: 0, gewaehlt: [], meldung: "" };
+    massnahmenMalen();
+  }
+
+  function massnahmenMalen() {
+    var z = zustand, def = z.def;
+    var karte = rahmen(def, "massnahmen-karte");
+    var anl = neu("p", "minispiel-anleitung" + (z.meldung ? " wackeln" : ""), z.meldung || def.anleitung);
+    karte.appendChild(anl);
+    var raster = neu("div", "massnahmen");
+    def.optionen.forEach(function (o, i) {
+      var an = z.gewaehlt.indexOf(o.id) >= 0;
+      var k = neu("div", "massnahme farbe-" + o.farbe + (an ? " an" : "") + (i === z.fokus ? " fokus" : ""));
+      k.setAttribute("role", "checkbox");
+      k.setAttribute("aria-checked", an ? "true" : "false");
+      var kopf = neu("div", "massnahme-kopf");
+      var box = neu("span", "haken");
+      box.innerHTML = an
+        ? '<svg viewBox="0 0 20 20"><rect x="2" y="2" width="16" height="16" rx="3"/><path d="M5 10 L9 14 L16 4" class="h"/></svg>'
+        : '<svg viewBox="0 0 20 20"><rect x="2" y="2" width="16" height="16" rx="3"/></svg>';
+      kopf.appendChild(box);
+      kopf.appendChild(neu("h3", "", o.titel));
+      k.appendChild(kopf);
+      k.appendChild(neu("p", "massnahme-kurz", o.kurz));
+      var pc = neu("div", "massnahme-pc");
+      [["pro", o.pro, def.pro], ["contra", o.contra, def.contra]].forEach(function (x) {
+        var sp = neu("div", "massnahme-" + x[0]);
+        sp.appendChild(neu("b", "", x[2]));
+        var ul = neu("ul");
+        x[1].forEach(function (t) { ul.appendChild(neu("li", "", t)); });
+        sp.appendChild(ul);
+        pc.appendChild(sp);
+      });
+      k.appendChild(pc);
+      k.addEventListener("click", function () { z.fokus = i; umschalten(); });
+      raster.appendChild(k);
+    });
+    karte.appendChild(raster);
+    var fuss = neu("div", "minispiel-fuss");
+    var bereit = z.gewaehlt.length === def.anzahl;
+    var b = neu("button", "knopf" + (bereit ? " gewaehlt" : ""), def.vorlegen);
+    b.type = "button";
+    b.disabled = !bereit;
+    b.addEventListener("click", vorlegen);
+    fuss.appendChild(b);
+    fuss.appendChild(neu("span", "massnahmen-zaehler", def.zaehler.replace("{n}", z.gewaehlt.length).replace("{von}", def.anzahl)));
+    fuss.appendChild(neu("span", "minispiel-tipp", def.tasten));
+    karte.appendChild(fuss);
+    var f = raster.children[z.fokus];
+    if (f && f.scrollIntoView) f.scrollIntoView({ block: "nearest" });
+    z.meldung = "";
+  }
+
+  function umschalten() {
+    var z = zustand, o = z.def.optionen[z.fokus], k = z.gewaehlt.indexOf(o.id);
+    if (k >= 0) z.gewaehlt.splice(k, 1);
+    else if (z.gewaehlt.length < z.def.anzahl) z.gewaehlt.push(o.id);
+    else z.meldung = z.def.schonVoll || z.def.zuWenig;
+    massnahmenMalen();
+  }
+
+  function vorlegen() {
+    var z = zustand;
+    if (z.gewaehlt.length !== z.def.anzahl) { z.meldung = z.def.zuWenig; massnahmenMalen(); return; }
+    z.gewaehlt.forEach(function (id) { GAME.flags.setzen("massnahme_" + id); });
+    var f = GAME.zustand.finale || { punkte: 0, max: 0 };
+    GAME.zustand.finale = { punkte: f.punkte || 0, max: f.max || 0, massnahmen: z.gewaehlt.slice() };
+    beenden({ massnahmen: z.gewaehlt.slice() });
+  }
+
+  // 3D-Portrait der fragenden Person (nach dem Zeichnen der Szene aufrufen)
+  M.portraitZeichnen = function (umgebung, t) {
+    var z = zustand;
+    if (!z || z.def.art !== "duell" || z.phase === "ende") return;
+    z.bild++;
+    if (z.bild % 2) return;
+    var f = mpFigur();
+    if (f) ENG.renderer.portrait(f, z.portrait, umgebung, t, 0.3);
+  };
+
   // ====================================================================
   M.update = function () {
     if (!M.aktiv || !zustand) return;
     var I = ENG.input, z = zustand;
-    if (z.def.art === "zuordnen") {
+    if (z.def.art === "praesentation") {
+      if (I.gedrueckt("ok")) praesentationWeiter();
+    } else if (z.def.art === "duell") {
+      if (z.phase === "frage") {
+        var nr = DATA.texte.notizbuch.reiter.length, anz = notizenIm(z.reiter).length;
+        if (I.gedrueckt("links")) { z.reiter = (z.reiter + nr - 1) % nr; reiterMitNotiz(-1); duellMalen(); }
+        if (I.gedrueckt("rechts")) { z.reiter = (z.reiter + 1) % nr; reiterMitNotiz(1); duellMalen(); }
+        if (anz && I.gedrueckt("hoch")) { z.wahl = (z.wahl + anz - 1) % anz; duellMalen(); }
+        if (anz && I.gedrueckt("runter")) { z.wahl = (z.wahl + 1) % anz; duellMalen(); }
+        if (I.gedrueckt("ok")) duellVorlegen();
+      } else if (I.gedrueckt("ok")) duellWeiter();
+    } else if (z.def.art === "massnahmen") {
+      var n = z.def.optionen.length, sp = 3;
+      if (I.gedrueckt("links")) { z.fokus = (z.fokus + n - 1) % n; massnahmenMalen(); }
+      if (I.gedrueckt("rechts")) { z.fokus = (z.fokus + 1) % n; massnahmenMalen(); }
+      if (I.gedrueckt("hoch")) { z.fokus = (z.fokus + n - sp) % n; massnahmenMalen(); }
+      if (I.gedrueckt("runter")) { z.fokus = (z.fokus + sp) % n; massnahmenMalen(); }
+      if (I.neu.Enter || I.neu.NumpadEnter) { if (z.gewaehlt.length === z.def.anzahl) vorlegen(); else umschalten(); }
+      else if (I.gedrueckt("aktion")) umschalten();
+    } else if (z.def.art === "zuordnen") {
       var n = z.def.eintraege.length;
       if (!z.geprueft) {
         if (I.gedrueckt("hoch")) { z.zeile = (z.zeile + n - 1) % n; zuordnenMalen(); }

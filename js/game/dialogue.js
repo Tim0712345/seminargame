@@ -14,6 +14,10 @@
      setFlag / addNote / aktion  werden beim Anzeigen des Knotens ausgeführt
    Aktionen (mehrere mit ";"): beweis:de · emote:gluehbirne · emoteKim:herz
                                jubeln · einblenden:Text · minispiel:branchen
+                               reise:karte,startpunkt · epilog · reflexion
+                               (minispiel, reise, epilog und reflexion starten
+                               erst, wenn der Dialog zu Ende ist)
+   Auch Antwortoptionen dürfen Platzhalter wie {fakt:id} enthalten.
    ===================================================================== */
 var GAME = window.GAME = window.GAME || {};
 
@@ -26,6 +30,7 @@ GAME.dialog = (function () {
   var optionen = [], wahl = 0, sprecher = null, sprecherIstKim = false;
   var bildZaehler = 0;
   var wartendesMinispiel = null;   // startet, sobald der Dialog endet
+  var nachEnde = [];               // weitere Aktionen nach dem Dialog (Reise, Epilog …)
 
   function neu(tag, klasse) { var e = document.createElement(tag); if (klasse) e.className = klasse; return e; }
 
@@ -198,6 +203,12 @@ GAME.dialog = (function () {
         case "jubeln": if (kontext.kim) kontext.kim.jubeln(); break;
         case "einblenden": GAME.ui.einblenden(wert, 2.6); break;
         case "minispiel": wartendesMinispiel = { id: wert, npc: kontext.npc }; break;
+        case "reise":
+          var teile = wert.split(",");
+          nachEnde.push(function () { GAME.Spielszene.wechseln(teile[0].trim(), (teile[1] || "").trim()); });
+          break;
+        case "epilog": nachEnde.push(function () { GAME.szenen.epilogStarten(); }); break;
+        case "reflexion": nachEnde.push(function () { GAME.ui.reflexionZeigen(false); }); break;
         default: console.warn("Unbekannte Dialog-Aktion: " + a);
       }
     });
@@ -208,7 +219,7 @@ GAME.dialog = (function () {
     optionen.forEach(function (o, i) {
       var b = neu("button", "dialog-option" + (i === wahl ? " gewaehlt" : "") + (o.next && besucht(o.next) ? " gesehen" : ""));
       b.type = "button";
-      b.textContent = o.label;
+      b.textContent = D.textFertig(o.label);
       b.addEventListener("mouseenter", function () { wahl = i; optionenMalen(); });
       b.addEventListener("click", function () { wahl = i; waehlen(); });
       el.optionen.appendChild(b);
@@ -252,6 +263,9 @@ GAME.dialog = (function () {
         if (danach) GAME.Spielszene.dialogStarten(danach, mp.npc);
       });
     }
+    var liste = nachEnde;
+    nachEnde = [];
+    liste.forEach(function (fn) { fn(); });
   };
 
   D.update = function (dt) {
@@ -297,6 +311,10 @@ GAME.dialog = (function () {
         if (n.next) ziele.push(n.next);
         (n.options || []).forEach(function (o) {
           ziele.push(o.next || "ende"); sammleFlags(o.setFlag, gesetzt); bedFlags(o.requiresFlag);
+          String(o.label || "").replace(/\{(fakt|wert|jahr):([a-z0-9_]+)\}/gi, function (m, a, f) {
+            if (!DATA.facts[f]) fehler.push(id + "/" + k + ": Fakt fehlt in Option: " + f);
+            return m;
+          });
           if (o.addNote && !DATA.notes[o.addNote]) fehler.push(id + "/" + k + ": Notiz fehlt: " + o.addNote);
         });
         sammleFlags(n.setFlag, gesetzt);

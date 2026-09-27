@@ -1,9 +1,10 @@
 /* =====================================================================
    Die Lücke – Szenen (Ablauf des Spiels)
    ---------------------------------------------------------------------
+   Ablauf: Titelszene → Spielszene (Viertel, Brüssel, Finale im Saal)
+           → Epilogszene („10 Jahre später“) → Reflexion (HTML-Seite)
    Spielszene: Kim läuft über eine Karte, spricht mit NPCs, betritt
-   Häuser und wechselt die Karten (mit Abblende).
-   Später (Phase 4): Titel → Spiel → Finale → Epilog → Reflexion.
+   Häuser und wechselt die Karten (mit Abblende). Speichert automatisch.
    ===================================================================== */
 var GAME = window.GAME = window.GAME || {};
 
@@ -17,6 +18,22 @@ GAME.szenen = (function () {
   };
   S.update = function (dt, t) { if (S.aktiv) S.aktiv.update(dt, t); };
   S.zeichnen = function (t) { if (S.aktiv) S.aktiv.zeichnen(t); };
+
+  // Szenenwechsel mit Abblende (Papier deckt kurz alles ab)
+  var laeuft = false;
+  S.ueberblenden = function (szene, arg) {
+    if (laeuft) return;
+    laeuft = true;
+    GAME.ui.abblenden(true);
+    setTimeout(function () {
+      S.wechseln(szene, arg);
+      GAME.ui.abblenden(false);
+      laeuft = false;
+    }, 420);
+  };
+
+  S.epilogStarten = function () { S.ueberblenden(GAME.Epilogszene); };
+  S.titelStarten = function () { S.ueberblenden(GAME.Titelszene); };
   return S;
 })();
 
@@ -34,14 +51,21 @@ GAME.Spielszene = (function () {
   Z.betreten = function (opt) {
     Z.spieler = new GAME.Spieler("kim");
     Z.kamera = new ENG.Kamera();
-    Z.karteLaden(opt.karte || "europaplatz", opt.spawn || "start");
+    wechsel = null;
+    Z.gezeigterBeweis = null;
+    GAME.ui.hudZeigen(true);
+    Z.karteLaden(opt.karte || "europaplatz", opt.spawn || "start", opt.pos);
+  };
+  Z.verlassen = function () {
+    if (GAME.dialog.aktiv) GAME.dialog.beenden();
+    GAME.ui.blasenBeginn(); GAME.ui.blasenEnde();
   };
 
   // ---------------- Karte laden ----------------
-  Z.karteLaden = function (id, spawnName) {
+  Z.karteLaden = function (id, spawnName, pos) {
     Z.welt = new GAME.Welt(id);
     var map = Z.welt.map;
-    var sp = Z.welt.spawn(spawnName);
+    var sp = pos || Z.welt.spawn(spawnName);
     Z.spieler.setzen(sp.x, sp.z, sp.rot, Z.welt);
 
     // NPCs dieser Karte
@@ -62,7 +86,7 @@ GAME.Spielszene = (function () {
     });
 
     // Kamera
-    Z.kamera.abstandSoll = map.innen ? 12 : 14.5;
+    Z.kamera.abstandSoll = (map.kamera && map.kamera.abstand) || (map.innen ? 12 : 14.5);
     Z.kamera.grenzen = Z.welt.kameraGrenzen;
     Z.kamera.setzen(Z.spieler.figur.x, Z.spieler.figur.y, Z.spieler.figur.z);
 
@@ -80,6 +104,24 @@ GAME.Spielszene = (function () {
     sperrZeit = 0.8;
     introTimer = 0.9;
     Z.kimEmote = null;
+    Z.speichern();
+  };
+
+  // ---------------- Speichern ----------------
+  var speicherPause = 0;
+  Z.ort = function () {
+    var f = Z.spieler.figur;
+    return { karte: Z.welt.id, x: f.x, z: f.z, rot: f.rot };
+  };
+  Z.speichern = function () {
+    if (!Z.welt || Z.welt.id === "testinsel") return;
+    GAME.speicher.speichern(Z.ort());
+    speicherPause = 1.5;
+  };
+
+  // Beweisstück hochhalten (auch für die Präsentation im Sitzungssaal)
+  Z.beweisZeigen = function (land, zeit) {
+    Z.gezeigterBeweis = land ? { land: land, zeit: zeit || 1.8 } : null;
   };
 
   // Kartenwechsel mit Abblende
@@ -122,7 +164,7 @@ GAME.Spielszene = (function () {
       npc: npc, kim: kim,
       figurVon: Z.figurVon,
       kimEmote: function (s) { Z.kimEmote = { symbol: s, zeit: 2.2 }; },
-      beweisZeigen: function (land) { Z.gezeigterBeweis = { land: land, zeit: 1.8 }; },
+      beweisZeigen: function (land) { Z.beweisZeigen(land, 1.8); },
       beiEnde: function () {
         if (npc) npc.loslassen();
         (beteiligte || []).forEach(function (n) { n.loslassen(); });
@@ -149,7 +191,8 @@ GAME.Spielszene = (function () {
 
   function kandidaten() {
     var l = [];
-    Z.welt.interaktionen.forEach(function (i) { if (!i.aus && i.art) l.push(i); });
+    // "objekt" = nur für NPC-Routinen markiert (Bänke, Tische) – nicht ansprechbar
+    Z.welt.interaktionen.forEach(function (i) { if (!i.aus && i.art && i.art !== "objekt") l.push(i); });
     sichtbareNpcs().forEach(function (n) {
       if (n.def.dialog) l.push({ art: "npc", npc: n, x: n.figur.x, z: n.figur.z, radius: n.figur.sitzt ? 0.45 : 0.15 });
     });
@@ -178,7 +221,13 @@ GAME.Spielszene = (function () {
         kim.rot = Math.atan2(ziel.x - kim.x, ziel.z - kim.z);
         Z.dialogStarten(ziel.dialog, null);
         break;
-      case "tuer": Z.wechseln(ziel.ziel, ziel.spawn); break;
+      case "tuer":
+        if (GAME.flags.pruefen(ziel.wenn)) Z.wechseln(ziel.ziel, ziel.spawn);
+        else if (ziel.gesperrt) {
+          kim.rot = Math.atan2(ziel.x - kim.x, ziel.z - kim.z);
+          Z.dialogStarten(ziel.gesperrt, null);
+        }
+        break;
       case "aufzug": aufzugMenue(ziel); break;
       case "fund":
         Z.fund.aktiv = false;
@@ -252,7 +301,7 @@ GAME.Spielszene = (function () {
     sperrZeit -= dt;
     if (!blockiert && sperrZeit <= 0) {
       Z.welt.interaktionen.forEach(function (i) {
-        if (i.art !== "tuer" || wechsel) return;
+        if (i.art !== "tuer" || wechsel || !GAME.flags.pruefen(i.wenn)) return;
         var dx = i.x - kim.x, dz = i.z - kim.z, d = Math.sqrt(dx * dx + dz * dz);
         if (d < 0.45 && (dx * sp.vx + dz * sp.vz) > 0.8 * d) Z.wechseln(i.ziel, i.spawn);
       });
@@ -281,6 +330,10 @@ GAME.Spielszene = (function () {
     }
     if (Z.kimEmote) { Z.kimEmote.zeit -= dt; if (Z.kimEmote.zeit <= 0) Z.kimEmote = null; }
     if (Z.gezeigterBeweis) { Z.gezeigterBeweis.zeit -= dt; if (Z.gezeigterBeweis.zeit <= 0) Z.gezeigterBeweis = null; }
+
+    // Automatisch speichern, sobald sich etwas geändert hat und gerade Ruhe ist
+    speicherPause -= dt;
+    if (GAME.speicher.geaendert && speicherPause <= 0 && !GAME.dialog.aktiv && !wechsel && !GAME.minispiel.laeuft()) Z.speichern();
 
     // HUD-Hinweis zur aktuellen Aufgabe
     GAME.ui.hinweis(GAME.flags.hat("intro_fertig") ? GAME.quests.hinweis(Z.welt.map.land || null) : "");
@@ -341,6 +394,7 @@ GAME.Spielszene = (function () {
     if (GAME.debug && GAME.debug.an) GAME.debug.zeichnen(Z);
     R.ende();
     GAME.dialog.portraitZeichnen(w.stimmung, t);
+    GAME.minispiel.portraitZeichnen(w.stimmung, t);
 
     // ---- Blasen über Köpfen und Objekten ----
     var U = GAME.ui;
@@ -357,7 +411,7 @@ GAME.Spielszene = (function () {
       switch (z.art) {
         case "npc": hoehe = kopfHoehe(z.npc.figur) + 0.05; text = z.npc.name; break;
         case "figur": hoehe = kopfHoehe(z.figur) + 0.05; text = z.figur.def.name; break;
-        case "tuer": hoehe = (z.y || 0) + (z.hoehe || 1.6); text = DATA.texte.hineingehen; break;
+        case "tuer": hoehe = (z.y || 0) + (z.hoehe || 1.6); text = GAME.flags.pruefen(z.wenn) ? DATA.texte.hineingehen : DATA.texte.verschlossen; break;
         case "dialog": hoehe = (z.y || 0) + (z.hoehe || 1.4); text = z.text || DATA.texte.ansehen; break;
         case "fund": hoehe = Z.fund.y + 0.45; text = DATA.texte.test.fundUntersuchen; break;
         case "aufzug": hoehe = (z.y || 0) + (z.hoehe || 2.3); text = DATA.texte.aufzug; break;
@@ -370,4 +424,173 @@ GAME.Spielszene = (function () {
   };
 
   return Z;
+})();
+
+/* ---------------- Gemeinsame Hilfen für Titel und Epilog ---------------- */
+GAME.dioramaHilfen = (function () {
+  "use strict";
+  var H = {};
+  // Brunnen & Co.: Stellen, an denen Wasser spritzt
+  H.spritzerSuchen = function (welt) {
+    var l = [];
+    for (var oid in welt.objekte) {
+      var o = welt.objekte[oid];
+      if (o.prefab.spritzer) l.push({ x: o.x, y: o.y + o.prefab.spritzer, z: o.z, t: 0 });
+    }
+    return l;
+  };
+  H.spritzen = function (liste, dt) {
+    liste.forEach(function (s) {
+      s.t -= dt;
+      if (s.t > 0) return;
+      s.t = 0.06;
+      var w = Math.random() * Math.PI * 2, v = 0.5 + Math.random() * 0.5;
+      ENG.partikel.neu({ x: s.x, y: s.y, z: s.z, vx: Math.cos(w) * v, vy: 1.6 + Math.random() * 0.6, vz: Math.sin(w) * v,
+        leben: 0.9, groesse: 0.07, farbe: [0.62, 0.8, 0.9], alpha: 0.85, schwerkraft: 5 });
+    });
+  };
+  // Welt mit Figuren zeichnen
+  H.zeichnen = function (welt, kamera, figuren, t) {
+    var R = ENG.renderer;
+    kamera.aktualisieren(R.breite / R.hoehe);
+    R.beginn(kamera, welt.stimmung, t);
+    welt.zeichnen(kamera);
+    var hf = function (x, z) { return welt.hoeheBei(x, z); };
+    figuren.forEach(function (f) { f.zeichnen(); });
+    welt.schattenZeichnen(kamera);
+    figuren.forEach(function (f) { f.schatten(hf); });
+    ENG.partikel.zeichnen();
+    R.ende();
+  };
+  H.KEIN_SPIELER = { x: -999, z: -999 };
+  return H;
+})();
+
+/* ---------------- Titelbildschirm: der Europaplatz als drehendes Diorama ---------------- */
+GAME.Titelszene = (function () {
+  "use strict";
+  var MM = ENG.math, H = GAME.dioramaHilfen;
+  var T = {};
+
+  T.betreten = function () {
+    GAME.ui.hudZeigen(false);
+    T.welt = new GAME.Welt("europaplatz");
+    T.npcs = [];
+    for (var nid in DATA.npcs) {
+      var d = DATA.npcs[nid];
+      if (d.karte === "europaplatz") T.npcs.push(new GAME.NPC(nid, d, T.welt));
+    }
+    T.kamera = new ENG.Kamera();
+    T.kamera.neigung = 36 * MM.DEG;
+    T.kamera.abstandSoll = 23;
+    T.kamera.setzen(18, 0, 15);
+    T.spritzer = H.spritzerSuchen(T.welt);
+    T.zeit = 0;
+    ENG.partikel.leeren();
+    GAME.ui.titelZeigen();
+  };
+
+  T.verlassen = function () { GAME.ui.menueSchliessen(true); };
+
+  T.update = function (dt) {
+    T.zeit += dt;
+    T.kamera.drehung = T.zeit * 0.05;
+    T.npcs.forEach(function (n) { if (n.sichtbar()) n.update(dt, T.welt, H.KEIN_SPIELER); });
+    H.spritzen(T.spritzer, dt);
+    ENG.partikel.update(dt);
+  };
+
+  T.zeichnen = function (t) {
+    var figuren = T.npcs.filter(function (n) { return n.sichtbar(); }).map(function (n) { return n.figur; });
+    H.zeichnen(T.welt, T.kamera, figuren, t);
+  };
+
+  return T;
+})();
+
+/* ---------------- Epilog: „Anna und Jonas in 10 Jahren“ ---------------- */
+GAME.Epilogszene = (function () {
+  "use strict";
+  var MM = ENG.math, H = GAME.dioramaHilfen;
+  var E = {};
+
+  // Textseiten aus den Bausteinen in DATA.epilog zusammensetzen
+  function seitenBauen() {
+    var ep = DATA.epilog, fin = GAME.zustand.finale || { punkte: 0, massnahmen: [] };
+    var seiten = [];
+    var stimmung = ep.stimmungen.filter(function (s) { return GAME.flags.pruefen(s.wenn); })[0];
+    seiten.push({ titel: ep.titel, text: stimmung ? stimmung.text : "" });
+    (fin.massnahmen || []).forEach(function (id) {
+      if (ep.massnahmen[id]) seiten.push({ text: ep.massnahmen[id] });
+    });
+    for (var i = 0; i < ep.punkte.length; i++) {
+      if ((fin.punkte || 0) >= ep.punkte[i].ab) { seiten.push({ text: ep.punkte[i].text }); break; }
+    }
+    ep.schluss.forEach(function (z) { seiten.push({ name: z.name, wer: z.wer, text: z.text }); });
+    return seiten;
+  }
+
+  E.betreten = function () {
+    var ep = DATA.epilog;
+    GAME.ui.hudZeigen(false);
+    E.welt = new GAME.Welt(ep.karte);
+    E.welt.stimmung = GAME.Welt.umgebung(DATA.stimmungen[ep.stimmung] || DATA.stimmungen.hub);
+    E.npcs = [];
+    for (var id in ep.figuren) E.npcs.push(new GAME.NPC(id, ep.figuren[id], E.welt));
+    E.kamera = new ENG.Kamera();
+    E.kamera.neigung = (ep.kamera.neigung || 40) * MM.DEG;
+    E.kamera.abstandSoll = ep.kamera.abstand || 11;
+    E.kamera.setzen(ep.kamera.ziel[0], 0, ep.kamera.ziel[1]);
+    E.spritzer = H.spritzerSuchen(E.welt);
+    E.zeit = 0;
+    E.seiten = seitenBauen();
+    E.seite = 0;
+    E.fertig = false;
+    ENG.partikel.leeren();
+    GAME.ui.epilogSeite(E.seiten[0], false);
+    // Spielstand: Finale erledigt – „Weiterspielen“ führt danach auf den Europaplatz
+    var w = new GAME.Welt("europaplatz"), sp = w.spawn("von_bxl");
+    GAME.speicher.speichern({ karte: "europaplatz", x: sp.x, z: sp.z, rot: sp.rot });
+  };
+
+  E.verlassen = function () { GAME.ui.epilogSeite(null); };
+
+  function sichtbare() { return E.npcs.filter(function (n) { return n.sichtbar(); }); }
+
+  E.weiter = function () {
+    if (E.fertig) return;
+    E.seite++;
+    if (E.seite >= E.seiten.length) {
+      E.fertig = true;
+      GAME.ui.epilogSeite(null);
+      GAME.ui.reflexionZeigen(true);
+      return;
+    }
+    var s = E.seiten[E.seite];
+    GAME.ui.epilogSeite(s, E.seite === E.seiten.length - 1);
+    // Im Schlussgespräch spricht die passende Figur
+    sichtbare().forEach(function (n) {
+      var spricht = !!s.wer && n.def.figur.indexOf(s.wer) === 0;
+      n.figur.spricht = spricht;
+      n.figur.emotion = spricht ? "froehlich" : "neutral";
+      if (spricht) n.figur.huepfen();
+    });
+  };
+
+  E.update = function (dt) {
+    var I = ENG.input;
+    E.zeit += dt;
+    E.kamera.drehung = Math.sin(E.zeit * 0.12) * (DATA.epilog.kamera.schwenk || 0);
+    sichtbare().forEach(function (n) { n.update(dt, E.welt, H.KEIN_SPIELER); });
+    H.spritzen(E.spritzer, dt);
+    ENG.partikel.update(dt);
+    if (!E.fertig && !GAME.ui.blockiert() && E.zeit > 0.6 && I.gedrueckt("ok")) E.weiter();
+    I.verbrauchen("ok"); I.verbrauchen("aktion");
+  };
+
+  E.zeichnen = function (t) {
+    H.zeichnen(E.welt, E.kamera, sichtbare().map(function (n) { return n.figur; }), t);
+  };
+
+  return E;
 })();

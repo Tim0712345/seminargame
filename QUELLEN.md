@@ -13,6 +13,9 @@ korrigieren, `verifiziert: true` setzen und hier „ja“ eintragen.
 | `gpg_ee` | 17,7 % (2023) | Eurostat `sdg_05_20` | nein |
 | `gpg_lu` | −0,7 % (2023) | Eurostat `sdg_05_20` | nein |
 | `gpg_de_bereinigt` | 6 % (2023) | Destatis, Pressemitteilung zum Gender Pay Gap | nein |
+| `de_gpg_unbereinigt_destatis` | 18 % (2023) | Destatis, Pressemitteilung zum Gender Pay Gap (unbereinigt, gleiches Jahr wie bereinigt) | nein |
+| `de_gpg_erklaert_anteil` | 64 % (2023) | Destatis, Pressemitteilung zum Gender Pay Gap (erklärter Anteil der Lücke) | nein |
+| `gpg_be` | 0,7 % (2023) | Eurostat `sdg_05_20` (Belgien, Infoschild in Brüssel) | nein |
 | `de_teilzeit_frauen` | 50 % (2023) | Destatis (Mikrozensus) bzw. Eurostat `lfsa_eppgan` – Teilzeitquote Frauen | nein |
 | `de_teilzeit_maenner` | 13 % (2023) | Destatis (Mikrozensus) bzw. Eurostat `lfsa_eppgan` – Teilzeitquote Männer | nein |
 | `de_teilzeit_grund_betreuung` | 28 % (2023) | Eurostat `lfsa_epgar` – Hauptgrund Teilzeit: Betreuung von Kindern/Angehörigen (Frauen, DE) | nein |
@@ -59,5 +62,13 @@ korrigieren, `verifiziert: true` setzen und hier „ja“ eintragen.
 - **Hinweis zu Spielinhalten:** Angaben wie „Lea arbeitet 20 Stunden“ oder „Frau Okafor
   arbeitet 30 Stunden“ sind erfundene Geschichten der Figuren, keine Statistiken. Das gilt
   auch für die „8 Prozent“ in der Verhandlungsübung und die Beförderungsliste in Luxemburg.
+
+- **Archiv in Brüssel:** Die drei Werte `de_gpg_unbereinigt_destatis`, `de_gpg_erklaert_anteil`
+  und `gpg_de_bereinigt` müssen aus **derselben** Destatis-Veröffentlichung (gleiches Jahr)
+  stammen. Das Spiel erklärt, dass Eurostat (`gpg_de`) etwas anders rechnet – beide Werte
+  bitte prüfen.
+- **Reflexionsseite:** Sie listet automatisch alle Quellen aus `facts.js` auf und markiert
+  ungeprüfte als „noch nicht geprüft“. Sobald alle Werte `verifiziert: true` haben,
+  verschwindet der Hinweis.
 
 *(Diese Liste wird in jeder Phase ergänzt, sobald neue Zahlen dazukommen.)*

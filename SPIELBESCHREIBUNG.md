@@ -22,7 +22,13 @@
   - Estland: Branchen & Berufswahl
   - Luxemburg: Gehaltsverhandlung & Beförderung (niedriger Durchschnittswert)
 - Brüssel: Archiv („Unerklärter Rest“) und Sitzungssaal (Finale)
-- Systeme: Notizbuch mit Quellen, Beweisstücke, Aufgaben, Minispiele
+  - Archiv: bereinigte und unbereinigte Lücke unterscheiden (drei Aktenfächer, Frage der Archivarin)
+  - Sitzungssaal: Beweise präsentieren, drei Abgeordnete (wirtschaftsliberal, gewerkschaftsnah,
+    EU-skeptisch) mit Fakten aus dem Notizbuch überzeugen, drei von sechs Maßnahmen wählen
+- Epilog „Zehn Jahre später …“: Anna und Jonas, abhängig von den gewählten Maßnahmen
+  (Grundstimmung + ein Baustein je Maßnahme), kein „richtiges“ Ende
+- Reflexion: drei offene Fragen, Quellenliste, Credits mit KI-Hinweis
+- Systeme: Notizbuch mit Quellen, Beweisstücke, Aufgaben, Minispiele, automatisches Speichern
 
 ## 4. Europabezug
 - Vergleich von vier EU-Ländern mit unterschiedlichen Ausgangslagen

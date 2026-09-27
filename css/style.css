@@ -522,3 +522,148 @@ body.debug .notiz .fakt.ungeprueft, body.debug .minispiel-karte .fakt.ungeprueft
   border: 2.5px solid var(--tusche); border-radius: var(--krakel);
   background: radial-gradient(ellipse at 50% 55%, var(--ocker-hell), transparent 85%);
 }
+
+/* =====================================================================
+   Phase 4: Titel, Finale, Epilog, Reflexion
+   ===================================================================== */
+#menue-schicht.hell { background: transparent; }
+.knopf:disabled { opacity: 0.45; cursor: default; }
+
+/* ---------- Titelbildschirm ---------- */
+.titel-menue {
+  min-width: 0;
+  width: min(520px, calc(100vw - 32px));
+  background: rgba(247, 240, 225, 0.9);
+  padding-top: 14px;
+}
+.titel-logo { display: block; width: 100%; height: auto; margin: 0 0 10px; }
+.titel-menue .menue-liste { max-width: 300px; margin: 0 auto; }
+
+/* ---------- Breite Menüs (Credits, Reflexion) ---------- */
+.menue-breit { max-width: min(780px, calc(100vw - 32px)); width: 780px; text-align: left; }
+.menue-breit h2 { margin-bottom: 8px; }
+.menue-breit .menue-liste { flex-direction: row; flex-wrap: wrap; justify-content: center; margin-top: 16px; }
+.credits { margin: 4px 0 6px; }
+.credits-zeile {
+  display: flex; justify-content: space-between; gap: 14px;
+  padding: 6px 0; border-bottom: 1.5px dashed rgba(46, 41, 52, 0.3);
+}
+.credits-was { color: var(--tusche-hell); }
+.credits-wer { font-weight: bold; text-align: right; }
+.credits-ki { font-size: 0.85em; line-height: 1.45; margin: 12px 0 6px; }
+.reflexion h3 { font-family: var(--hand); font-size: 1.15em; margin: 18px 0 6px; }
+.reflexion-einleitung { font-style: italic; color: var(--tusche-hell); margin: 0 0 8px; }
+.reflexion-fragen { margin: 0; padding-left: 1.4em; }
+.reflexion-fragen li {
+  margin: 0 0 10px; padding: 6px 10px; line-height: 1.45;
+  background: radial-gradient(ellipse at 20% 50%, var(--blau-hell), transparent 80%);
+  border-radius: var(--krakel2);
+}
+.reflexion-liste { margin: 0; padding-left: 1.3em; line-height: 1.5; }
+.reflexion-quellen { margin: 4px 0 0; padding-left: 1.3em; font-size: 0.8em; line-height: 1.45; }
+.quelle-offen { color: var(--tusche-hell); font-style: italic; }
+body.debug .quelle-offen { color: #c0392b; }
+
+/* ---------- Finale: Präsentation (Karte unten, Kim bleibt sichtbar) ---------- */
+#minispiel.unten { align-items: flex-end; justify-content: flex-end; background: transparent; padding: 16px 18px 18px; }
+.praesentation-karte { width: min(470px, 100%); }
+@media (max-width: 700px) { #minispiel.unten { justify-content: center; } }
+.praesentation-kopf { display: flex; align-items: center; gap: 16px; margin-bottom: 8px; }
+.praesentation-kopf .beweis-slot { width: 66px; height: 66px; flex: 0 0 auto; }
+.praesentation-kopf .beweis-slot svg { width: 44px; height: 44px; }
+.praesentation-kopf h2 { margin: 0; }
+.praesentation-zaehler { margin: 0; font-size: 0.75em; color: var(--tusche-hell); }
+.praesentation-ort { margin: 2px 0 0; font-style: italic; color: var(--tusche-hell); }
+
+/* ---------- Finale: Duell ---------- */
+.duell-karte { width: min(900px, 100%); }
+.duell-punkte { display: flex; align-items: center; gap: 6px; margin: 0 0 12px; }
+.duell-punkte .meter-name { margin-right: 6px; }
+.punkt {
+  width: 17px; height: 17px;
+  border: 2.2px solid var(--tusche);
+  border-radius: 50% 44% 54% 48% / 48% 54% 44% 50%;
+  background: var(--papier);
+}
+.punkt.voll { background: radial-gradient(circle at 40% 40%, #f0c979, var(--ocker)); }
+.duell-kopf { display: flex; align-items: flex-start; gap: 18px; margin-bottom: 10px; }
+.duell-kopf .dialog-portrait { width: 116px; height: 116px; }
+.duell-rede { flex: 1 1 auto; min-width: 0; padding-top: 10px; }
+.duell-rede .dialog-name { margin: 0 8px 6px 0; }
+.duell-haltung {
+  display: inline-block; font-size: 0.72em; color: var(--tusche-hell);
+  border: 1.5px dashed rgba(46, 41, 52, 0.45); border-radius: var(--krakel2); padding: 1px 9px;
+}
+.duell-frage { font-size: 1.05em; line-height: 1.5; margin: 6px 0 0; padding: 4px 8px; border-radius: var(--krakel2); }
+.duell-frage.antwort-richtig { background: radial-gradient(ellipse at 40% 50%, rgba(169, 198, 161, 0.6), transparent 85%); }
+.duell-frage.antwort-falsch, .duell-frage.antwort-aufgeben { background: radial-gradient(ellipse at 40% 50%, rgba(242, 157, 137, 0.35), transparent 85%); }
+.duell-plus { font-family: var(--hand); font-weight: bold; color: #4f7f58; margin: 0; }
+.reiter.leer { opacity: 0.4; }
+.duell-notizen {
+  display: grid; grid-template-columns: minmax(180px, 1fr) 1.4fr; gap: 12px;
+  height: min(34vh, 300px);
+}
+.duell-liste { overflow-y: auto; display: flex; flex-direction: column; gap: 6px; padding: 2px 6px 2px 0; }
+.duell-vorschau {
+  overflow-y: auto; margin: 0; padding: 10px 14px;
+  border: 2px dashed rgba(46, 41, 52, 0.35); border-radius: var(--krakel);
+  background: repeating-linear-gradient(transparent 0 27px, rgba(120, 160, 190, 0.22) 27px 28px);
+}
+@media (max-width: 640px) {
+  .duell-notizen { grid-template-columns: 1fr; height: auto; }
+  .duell-liste { max-height: 22vh; }
+  .duell-vorschau { max-height: 26vh; }
+  .duell-kopf .dialog-portrait { width: 78px; height: 78px; }
+}
+
+/* ---------- Finale: Maßnahmen ---------- */
+.massnahmen-karte { width: min(1020px, 100%); }
+.massnahmen { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.massnahme {
+  position: relative;
+  font-size: 0.82em; line-height: 1.4;
+  padding: 10px 12px 10px 16px;
+  border: 2px solid rgba(46, 41, 52, 0.4);
+  border-left-width: 7px;
+  border-radius: var(--krakel2);
+  background: var(--papier);
+  cursor: pointer;
+  transition: transform 0.12s;
+}
+.massnahme.fokus { border-color: var(--tusche); box-shadow: 3px 3px 0 var(--tusche); transform: rotate(-0.4deg); }
+.massnahme.an { background: radial-gradient(ellipse at 50% 25%, var(--ocker-hell), rgba(226, 178, 90, 0.12) 75%), var(--papier); }
+.massnahme.farbe-de { border-left-color: #da8c67; }
+.massnahme.farbe-se { border-left-color: #8fbfe0; }
+.massnahme.farbe-ee { border-left-color: #63a0a2; }
+.massnahme.farbe-lu { border-left-color: #f29d89; }
+.massnahme.farbe-bxl { border-left-color: #e4ba5d; }
+.massnahme.farbe-keine { border-left-color: #bbaddb; }
+.massnahme-kopf { display: flex; align-items: center; gap: 6px; }
+.massnahme-kopf h3 { font-family: var(--hand); font-size: 1.12em; margin: 0; line-height: 1.2; }
+.massnahme-kurz { margin: 6px 0; }
+.massnahme-pc { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.massnahme-pc ul { margin: 2px 0 0; padding-left: 1.05em; }
+.massnahme-pro b { color: #4f7f58; }
+.massnahme-contra b { color: #a4452f; }
+.massnahmen-zaehler { font-family: var(--hand); font-weight: bold; }
+@media (max-width: 900px) { .massnahmen { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 560px) { .massnahmen { grid-template-columns: 1fr; } .massnahme-pc { grid-template-columns: 1fr; } }
+
+/* ---------- Epilog: Textkarte unten ---------- */
+#epilog-text {
+  position: absolute; left: 0; right: 0; bottom: 18px;
+  display: flex; justify-content: center; padding: 0 16px;
+  pointer-events: none;
+}
+.epilog-karte { width: min(760px, 100%); }
+.epilog-titel { font-family: var(--hand); font-size: 1.6em; margin: 0 0 6px; }
+.epilog-karte .dialog-name { margin: -34px 0 8px -6px; }
+.epilog-absatz { font-size: 1.08em; line-height: 1.55; margin: 0; }
+.epilog-absatz .fett { font-weight: bold; }
+.epilog-absatz .fakt { font-weight: bold; }
+/* Knopfleiste bleibt beim Scrollen sichtbar */
+.massnahmen-karte .minispiel-fuss, .duell-karte .minispiel-fuss {
+  position: sticky; bottom: -22px; z-index: 1;
+  margin: 10px -8px -8px; padding: 10px 8px 8px;
+  background: linear-gradient(rgba(247, 240, 225, 0), var(--papier) 30%);
+}

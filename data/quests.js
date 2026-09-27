@@ -22,7 +22,9 @@ DATA.quests = {
       { text: "Untersuche das Schweden-Viertel (Weg nach Osten)", fertigWenn: "beweis_se" },
       { text: "Untersuche das Estland-Viertel (Weg nach Südwesten)", fertigWenn: "beweis_ee" },
       { text: "Untersuche das Luxemburg-Viertel (Weg nach Südosten)", fertigWenn: "beweis_lu" },
-      { text: "Öffne das Tor nach Brüssel", fertigWenn: "finale_fertig" }
+      { text: "Erzähl Dr. Laurent am Brunnen von allen vier Beweisstücken", fertigWenn: "hub_laurent_alle|war_in_bxl|finale_fertig" },
+      { text: "Geh durch das Tor im Norden nach Brüssel", fertigWenn: "war_in_bxl|finale_fertig" },
+      { text: "Überzeuge den Ausschuss im Sitzungssaal", fertigWenn: "finale_fertig" }
     ]
   },
 
@@ -71,5 +73,20 @@ DATA.quests = {
       { text: "Frag Herrn Schmit nach den Beförderungen", fertigWenn: "beweis_lu" }
     ],
     belohnung: { beweis: "lu" }
+  },
+
+  bxl: {
+    titel: "Das Finale",
+    viertel: "bxl",
+    sichtbarWenn: "war_in_bxl",
+    schritte: [
+      { text: "Frag im Archiv (Backsteinhaus links) nach dem unerklärten Rest", fertigWenn: "bxl_peeters_auftrag|beweis_bxl" },
+      { text: "Lies im Archiv die Fächer A, B und C", fertigWenn: "bxl_fach_a&bxl_fach_b&bxl_fach_c|beweis_bxl" },
+      { text: "Sag Frau Peeters, welche Zahl der unerklärte Rest ist", fertigWenn: "beweis_bxl" },
+      { text: "Geh in den Sitzungssaal (Gebäude mit der Glaskuppel) und tritt ans Rednerpult", fertigWenn: "finale_praesentiert" },
+      { text: "Beantworte die Fragen der Abgeordneten", fertigWenn: "finale_duell" },
+      { text: "Schlag dem Ausschuss drei Maßnahmen vor", fertigWenn: "finale_fertig" }
+    ],
+    belohnung: { beweis: "bxl" }
   }
 };

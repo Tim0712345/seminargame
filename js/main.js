@@ -22,12 +22,13 @@
       GAME.buch.init();
       GAME.minispiel.init();
       GAME.beweisHud.init();
+      GAME.speicher.init();
       GAME.einstellungen.anwenden();
       GAME.debug.init();
-      // Startkarte (im Debug-Modus per ?karte=… wählbar, z. B. ?debug=1&karte=testinsel)
-      var m = /[?&]karte=([a-z_]+)/.exec(window.location.search);
-      var start = m && DATA.maps[m[1]] ? m[1] : "europaplatz";
-      GAME.szenen.wechseln(GAME.Spielszene, { karte: start, spawn: Object.keys(DATA.maps[start].spawns)[0] });
+      // Normal: Titelbildschirm. Zum Testen direkt auf eine Karte: ?karte=… (z. B. ?debug=1&karte=testinsel)
+      var m = /[?&]karte=([a-z_0-9]+)/.exec(window.location.search);
+      if (m && DATA.maps[m[1]]) GAME.szenen.wechseln(GAME.Spielszene, { karte: m[1], spawn: Object.keys(DATA.maps[m[1]].spawns)[0] });
+      else GAME.szenen.wechseln(GAME.Titelszene);
     } catch (e) {
       console.error(e);
       GAME.ui.fehlerZeigen(e && e.message);
@@ -48,10 +49,7 @@
       ENG.input.bildEnde();
     });
 
-    // Beim ersten Start: Steuerung erklären
-    if (!GAME.merker.lesen("hinweisGesehen")) {
-      GAME.ui.steuerungZeigen(function () { GAME.merker.schreiben("hinweisGesehen", "1"); });
-    }
+    // Der Steuerungshinweis erscheint beim ersten „Neues Spiel“ (siehe ui.js)
   }
 
   if (document.readyState === "complete") start();

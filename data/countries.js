@@ -39,7 +39,7 @@ DATA.countries = {
     name: "Belgien",
     viertel: "Brüssel",
     ursache: "Unerklärter Rest",
-    fakt: "gpg_de_bereinigt",
+    fakt: "gpg_be",
     beweis: { name: "Akte „Unerklärter Rest“", kurz: "Ein Teil der Lücke lässt sich nicht durch Beruf, Branche oder Arbeitszeit erklären." }
   }
 };

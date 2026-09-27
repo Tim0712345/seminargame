@@ -38,6 +38,19 @@ DATA.facts = {
     beschreibung: "Bereinigter Gender Pay Gap, Deutschland („unerklärter Rest“)",
     quelle: "Statistisches Bundesamt (Destatis), Pressemitteilung zum Gender Pay Gap" }, // TODO: verifizieren – Quelle: Destatis
 
+  // ---- Brüssel-Archiv: bereinigt vs. unbereinigt (Phase 4) ----
+  de_gpg_unbereinigt_destatis: { wert: 18, einheit: "%", jahr: 2023, verifiziert: false,
+    beschreibung: "Unbereinigter Gender Pay Gap, Deutschland, nach Berechnung des Statistischen Bundesamts (gerundet)",
+    quelle: "Statistisches Bundesamt (Destatis), Pressemitteilung zum Gender Pay Gap" }, // TODO: verifizieren – Quelle: Destatis (gleiches Jahr wie gpg_de_bereinigt wählen!)
+
+  de_gpg_erklaert_anteil: { wert: 64, einheit: "%", jahr: 2023, verifiziert: false,
+    beschreibung: "Anteil der unbereinigten Lohnlücke, der sich durch messbare Merkmale (Beruf, Branche, Arbeitszeit, Führung …) erklären lässt, Deutschland",
+    quelle: "Statistisches Bundesamt (Destatis), Pressemitteilung zum Gender Pay Gap" }, // TODO: verifizieren – Quelle: Destatis
+
+  gpg_be: { wert: 0.7, einheit: "%", jahr: 2023, verifiziert: false,
+    beschreibung: "Unbereinigter Gender Pay Gap, Belgien (Infoschild in Brüssel)",
+    quelle: "Eurostat, Tabelle sdg_05_20" },        // TODO: verifizieren – Quelle: Eurostat sdg_05_20
+
   // ---- Deutschland: Teilzeit & Kinderbetreuung ----
   de_teilzeit_frauen: { wert: 50, einheit: "%", jahr: 2023, verifiziert: false,
     beschreibung: "Anteil der erwerbstätigen Frauen, die in Teilzeit arbeiten, Deutschland",
@@ -244,5 +257,25 @@ DATA.notes = {
   // ---- EU-Recht ----
   eu_richtlinie: { reiter: "eurecht", titel: "Lohntransparenz",
     text: "Die Entgelttransparenzrichtlinie (EU) 2023/970 soll Gehälter nachvollziehbarer machen: Firmen müssen erklären, wie sie Gehälter festlegen. Frist für die Umsetzung in den Mitgliedstaaten: {fakt:eu_richtlinie_frist}.",
-    quelle: "Richtlinie (EU) 2023/970; Gespräch mit Frau Okafor" }
+    quelle: "Richtlinie (EU) 2023/970; Gespräch mit Frau Okafor" },
+  eu_umsetzung: { reiter: "eurecht", titel: "Wie eine Richtlinie wirkt",
+    text: "Eine EU-Richtlinie gilt nicht sofort für alle Menschen. Jeder Mitgliedstaat muss sie erst in ein eigenes Gesetz umsetzen – und dabei bleibt oft Spielraum.",
+    quelle: "Gespräch mit Samir in Brüssel" },
+
+  // ---- Brüssel: Archiv „Unerklärter Rest“ ----
+  gpg_be: { reiter: "rest", titel: "Belgien",
+    text: "Gender Pay Gap in Belgien: {fakt:gpg_be} ({jahr:gpg_be}). Wie in Luxemburg ein niedriger Durchschnitt – Brüssel ist trotzdem der Ort, an dem über die Lücke in der ganzen EU beraten wird.",
+    quelle: "Eurostat sdg_05_20 (Infoschild in Brüssel)" },
+  rest_unbereinigt: { reiter: "rest", titel: "Unbereinigt: der ganze Unterschied",
+    text: "Die unbereinigte Lücke vergleicht einfach alle Stundenlöhne von Frauen und Männern. Das Statistische Bundesamt kam für Deutschland auf {fakt:de_gpg_unbereinigt_destatis} ({jahr:de_gpg_unbereinigt_destatis}). Eurostat rechnet etwas anders und nennt {fakt:gpg_de}.",
+    quelle: "Destatis; Eurostat sdg_05_20; Archiv in Brüssel, Fach A" },
+  rest_erklaert: { reiter: "rest", titel: "Der erklärte Teil",
+    text: "Etwa {fakt:de_gpg_erklaert_anteil} der Lücke lassen sich mit messbaren Unterschieden erklären: Frauen arbeiten häufiger in Teilzeit, öfter in schlechter bezahlten Berufen und Branchen und seltener in Führungspositionen.",
+    quelle: "Destatis; Archiv in Brüssel, Fach B" },
+  rest_bereinigt: { reiter: "rest", titel: "Der unerklärte Rest",
+    text: "Vergleicht man Frauen und Männer mit gleichem Beruf, gleicher Branche, gleicher Arbeitszeit und ähnlicher Erfahrung, bleibt immer noch eine Lücke von etwa {fakt:gpg_de_bereinigt}. Das ist die bereinigte Lücke – der unerklärte Rest.",
+    quelle: "Destatis; Archiv in Brüssel, Fach C" },
+  rest_bedeutung: { reiter: "rest", titel: "Was steckt im Rest?",
+    text: "„Unerklärt“ heißt nicht automatisch Diskriminierung – die Statistik misst nicht alles, zum Beispiel Pausen im Lebenslauf. Aber ungleiche Behandlung, etwa bei Gehaltsverhandlungen oder Beförderungen, kann ein Teil davon sein.",
+    quelle: "Gespräch mit Frau Peeters (Archiv)" }
 };

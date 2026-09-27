@@ -138,7 +138,21 @@ DATA.stimmungen = {
     himmel_oben: "#b3c8d8", horizont: "#f7e8cf", dunst: "#f4e5cb",
     sonne: "#fff0d8", schatten: "#b6a8c8", tusche: "tusche", kruemmung: 0
   },
+  // Brüssel: helles, leicht bewölktes Licht über Kopfsteinpflaster
+  bxl: {
+    himmel_oben: "#adc0d4", horizont: "#f1eadc", dunst: "#eee6d6",
+    sonne: "#fdf6ea", schatten: "#aeaacd", tusche: "tusche", kruemmung: 0
+  },
+  // Epilog: warmes Abendlicht
+  abend: {
+    himmel_oben: "#c3b3cf", horizont: "#f8dcbc", dunst: "#f4d9bd",
+    sonne: "#ffe6c4", schatten: "#a99bc4", tusche: "tusche", kruemmung: 0
+  },
   // Innenräume
+  innen_archiv: {
+    himmel_oben: "#e8dcc4", horizont: "#e8dcc4", dunst: "#e4d7bf",
+    sonne: "#fbefd9", schatten: "#b9a9c2", tusche: "tusche", kruemmung: 0
+  },
   innen_warm: {
     himmel_oben: "#efe2cc", horizont: "#efe2cc", dunst: "#ebdfc9",
     sonne: "#fff3e0", schatten: "#c2b4c8", tusche: "tusche", kruemmung: 0

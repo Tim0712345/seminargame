@@ -10,8 +10,23 @@ Beitrag zum „Europäischen Wettbewerb“.
 3. Getestete Browser: aktuelle Versionen von Edge, Chrome und Firefox.
 
 Es gibt keine Installation, kein Internet, keinen Server und keine Cookies.
-Nur die Einstellungen (und ab Phase 4 der Spielstand) werden, wenn möglich,
-im Browser gespeichert. Das Spiel läuft auch ohne diese Speicherung.
+Nur die Einstellungen und der Spielstand werden, wenn möglich, im Browser
+gespeichert (localStorage). Das Spiel läuft auch ohne diese Speicherung.
+
+## Ablauf
+
+1. **Titelbildschirm** – der Europaplatz dreht sich als kleines Diorama.
+   „Neues Spiel“, „Weiterspielen“ (nur wenn es einen Spielstand gibt), „Steuerung“, „Credits“.
+2. **Intro** auf dem Europaplatz, dann die vier Viertel (Deutschland, Schweden, Estland, Luxemburg).
+3. Mit allen vier Beweisstücken öffnet sich das **Tor im Norden** nach **Brüssel**:
+   Archiv (5. Beweisstück „Unerklärter Rest“), dann der **Sitzungssaal**.
+4. **Finale** am Rednerpult: Beweisstücke präsentieren → drei Fragen der Abgeordneten
+   (mit Notizen aus dem Notizbuch antworten) → drei von sechs Maßnahmen wählen.
+5. **Epilog** „Zehn Jahre später …“ und **Reflexion** (Fragen, Quellen, Credits).
+   Danach kann man weiter herumlaufen oder zum Titel zurück.
+
+**Speichern:** automatisch in einem Spielstand – bei jedem Kartenwechsel und nach jeder
+Änderung im Fortschritt. „Zum Titelbildschirm“ im Pausemenü speichert ebenfalls.
 
 **Falls nur ein Hinweis statt der 3D-Welt erscheint:** Der Browser kann gerade
 kein WebGL nutzen. Dann in den Browser-Einstellungen die
@@ -37,8 +52,10 @@ Im Pausemenü lässt sich die **Grafik** (Hoch/Niedrig) umschalten.
 Dann erscheinen unten links FPS, Draw-Calls und Position.
 - **G**: Kachel-Raster und Kollisionsformen ein/aus
 - **T**: Teleport zu jeder Karte
-- **F**: Flags setzen (Intro überspringen, Viertel erledigen, alles zurücksetzen)
-- `&karte=de` in der Adresse startet direkt auf einer Karte (z. B. `index.html?debug=1&karte=de`)
+- **F**: Flags setzen (Intro überspringen, Viertel erledigen, Brüssel-Archiv erledigen,
+  Epilog ansehen, Spielstand löschen, alles zurücksetzen)
+- `&karte=de` in der Adresse startet direkt auf einer Karte (ohne Titelbildschirm),
+  z. B. `index.html?debug=1&karte=bxl_saal`
 
 Die Konsole (F12) prüft beim Start automatisch alle Dialoge (fehlende Knoten, nicht
 erreichbare Knoten, fehlende Fakten) und alle Karten (erreichbare Ausgänge, NPCs,
@@ -90,9 +107,18 @@ DATA.dialogues.de_lea = {
 - `aktion: "beweis:de"` gibt ein Beweisstück, `emote: "gluehbirne"` zeigt ein Symbol
 - Wer spricht, wird über `speaker` angezeigt; `"Kim"` ist die Spielfigur
 
-### Minispiele
+### Minispiele und Finale
 - `data/dialogues.js` → `DATA.minispiele`: Texte, Antworten und Punkte der Minispiele.
   Gestartet werden sie aus einem Dialog mit `aktion: "minispiel:branchen"`.
+- Finale im Sitzungssaal, ebenfalls in `DATA.minispiele`:
+  - `praesentation`: Text zu jedem der fünf Beweisstücke
+  - `duell`: die drei Fragen der Abgeordneten. `passend` = Liste der Notizen
+    (aus `DATA.notes` in `facts.js`), die als gute Antwort zählen
+  - `massnahmen`: die sechs Maßnahmen mit Kurztext, „Dafür“ und „Dagegen“
+- `DATA.epilog` (am Ende von `dialogues.js`): Texte und Figuren des Epilogs –
+  eine Grundstimmung, ein Baustein je gewählter Maßnahme, ein Satz je nach Punkten
+- Credits und Reflexionsfragen: `DATA.texte.credits` und `DATA.texte.reflexion`
+  (**Hier bitte deinen Namen eintragen** – dort steht noch `[Dein Name]`.)
 
 ### NPCs
 - `data/npcs.js`: Karte, Startplatz, Dialog und Tagesablauf (gehen, warten, sitzen, gießen, schauen)
@@ -126,6 +152,8 @@ DATA.dialogues.de_lea = {
   sich höchstens um 1 unterscheiden, sonst wird der Hang zu steil zum Laufen.
 - `objekte`: `{ p: "baum_rund", x: 5, y: 13, rot: 90 }` stellt einen Baum auf
   Spalte 5, Zeile 13, um 90° gedreht. Die Namen stehen in `data/prefabs.js`.
+  Mit `wenn: "alle_beweise"` gibt es ein Objekt nur unter dieser Bedingung
+  (so wird das Tor am Europaplatz geöffnet).
 - Alle Zeilen einer Karte müssen gleich lang sein. Im Debug-Modus meldet die
   Konsole Fehler wie falsche Zeilenlängen oder unbekannte Zeichen.
 

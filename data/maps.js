@@ -17,12 +17,15 @@
      spawns     – Startpunkte: { x, y, blick } – blick in Grad,
                   0 = schaut nach Süden (zur Kamera), 180 = nach Norden
      aussen     – Bodenart außerhalb der Karte ("wasser", "gras" …, "leer" = nichts)
+     kamera     – optional für Innenräume: { x, z, abstand } (Blickpunkt und Abstand)
      uebergaenge – Ausgänge: { x, y, b (Breite), h (Höhe), ziel: Karte,
                   spawn: Startpunkt dort, richtung: "n"|"s"|"w"|"o" }
      Objekte können zusätzlich haben:
        id: "name"                   – für NPC-Routinen (z. B. Bank zum Sitzen)
        dialog: "dialog_id"          – E startet diesen Dialog (Schilder, Tafeln)
        tuer: { ziel, spawn }        – Tür, die in eine andere Karte führt
+             (+ wenn: Bedingung, gesperrt: Dialog, falls sie noch zu ist)
+       wenn: "flag"                 – Objekt gibt es nur, wenn die Bedingung erfüllt ist
    ===================================================================== */
 var DATA = window.DATA = window.DATA || {};
 
@@ -41,6 +44,7 @@ DATA.bodenarten = {
   // Innenräume
   holzboden:    { farbe: "holz_hell", textur: "holz", hart: true },
   teppichboden: { farbe: "grau_hell", textur: "gras", hart: true },
+  saalteppich:  { farbe: "himmelblau", textur: "gras", hart: true },
   wand:         { farbe: "putz_creme", wand: 2.2, hart: true },     // wand = Höhe der Wand
   wand_niedrig: { farbe: "putz_creme", wand: 0.35, hart: true }    // vorne niedrig, damit man hineinsieht
 };
@@ -267,7 +271,8 @@ DATA.maps = {
       { p: "laterne", x: 20.84, y: 6.84 },
       { p: "laterne", x: 14.16, y: 6.84 },
       { p: "wegweiser_hub", x: 23.5, y: 17.45, id: "hub_wegweiser", dialog: "hub_wegweiser" },
-      { p: "tor", x: 17.5, y: 1, id: "tor_bruessel", dialog: "tor_bruessel" },
+      { p: "tor", x: 17.5, y: 1, id: "tor_bruessel", dialog: "tor_bruessel", wenn: "!alle_beweise" },
+      { p: "tor_offen", x: 17.5, y: 1, id: "tor_bruessel_offen", dialog: "tor_bruessel", wenn: "alle_beweise" },
       { p: "infoschild", x: 11.5, y: 17.45, rot: 50, id: "hub_schild", dialog: "hub_infoschild" },
       { p: "blumenbeet", x: 8, y: 6, id: "hub_beet_1" },
       { p: "blumenbeet", x: 27, y: 6, id: "hub_beet_2" },
@@ -307,13 +312,15 @@ DATA.maps = {
       von_de: { x: 1.4,  y: 14, blick: 90 },
       von_se: { x: 33.6, y: 14, blick: -90 },
       von_ee: { x: 5.4,  y: 27.2, blick: 140 },
-      von_lu: { x: 30.1, y: 27.2, blick: -140 }
+      von_lu: { x: 30.1, y: 27.2, blick: -140 },
+      von_bxl: { x: 17.5, y: 2.6, blick: 0 }
     },
     uebergaenge: [
       { x: 0, y: 13, b: 1, h: 3, ziel: "de", spawn: "von_hub", richtung: "w" },
       { x: 35, y: 13, b: 1, h: 3, ziel: "se", spawn: "von_hub", richtung: "o" },
       { x: 2, y: 29, b: 4, h: 1, ziel: "ee", spawn: "von_hub", richtung: "s" },
-      { x: 30, y: 29, b: 4, h: 1, ziel: "lu", spawn: "von_hub", richtung: "s" }
+      { x: 30, y: 29, b: 4, h: 1, ziel: "lu", spawn: "von_hub", richtung: "s" },
+      { x: 16, y: 0, b: 4, h: 1, ziel: "bxl", spawn: "von_hub", richtung: "n", wenn: "alle_beweise" }
     ]
   },
 
@@ -1190,5 +1197,212 @@ DATA.maps = {
       aufzug: { x: 9, y: 1.9, blick: 0 }
     },
     uebergaenge: []
+  },
+  /* ---------------- Brüssel: Finale ---------------- */
+  bxl: {
+    name: "Brüssel",
+    land: "bxl",
+    stimmung: "bxl",
+    innen: false,
+    aussen: "gras",
+    legende: { ".": "gras", "=": "weg", "#": "pflaster", "k": "kopfstein" },
+    boden: [
+      "................................",
+      "................................",
+      "................................",
+      "................................",
+      "................................",
+      ".kkkkkkkkkkkkkkkkkkkkkkkkkkkkkk.",
+      ".kkkkkkkkkkkkkkkkkkkkkkkkkkkkkk.",
+      ".kkkkkkkkkkkkkkkkkkkkkkkkkkkkkk.",
+      ".kkkkkkkkkkkkkkkkkkkkkkkkkkkkkk.",
+      ".kkkkkkkkkkkkkkkkkkkkkkkkkkkkkk.",
+      ".kkkkkkkkkkkkkkkkkkkkkkkkkkkkkk.",
+      ".kkkkkkkkkkkkkkkkkkkkkkkkkkkkkk.",
+      ".kkkkkkkkkkkkkkkkkkkkkkkkkkkkkk.",
+      ".kkkkkkkkkkkkkkkkkkkkkkkkkkkkkk.",
+      "...............==...............",
+      "...............==...............",
+      "...............==...............",
+      "...............==...............",
+      "...............==...............",
+      "...............==..............."
+    ],
+    hoehe: [
+      "00000000000000000000000000000000",
+      "00000000000000000000000000000000",
+      "00000000000000000000000000000000",
+      "00000000000000000000000000000000",
+      "00000000000000000000000000000000",
+      "00000000000000000000000000000000",
+      "00000000000000000000000000000000",
+      "00000000000000000000000000000000",
+      "00000000000000000000000000000000",
+      "00000000000000000000000000000000",
+      "00000000000000000000000000000000",
+      "00000000000000000000000000000000",
+      "00000000000000000000000000000000",
+      "00000000000000000000000000000000",
+      "00000000000000000000000000000000",
+      "00000000000000000000000000000000",
+      "00000000000000000000000000000000",
+      "00000000000000000000000000000000",
+      "00000000000000000000000000000000",
+      "00000000000000000000000000000000"
+    ],
+    objekte: [
+      { p: "jugendstil_b", x: 1.75, y: 3.6 },
+      { p: "archiv", x: 6.5, y: 3.3, id: "bxl_archiv_haus", tuer: { ziel: "bxl_archiv", spawn: "eingang" } },
+      { p: "jugendstil_a", x: 11.5, y: 3.6 },
+      { p: "jugendstil_b", x: 15.25, y: 3.6 },
+      { p: "parlament", x: 21.5, y: 2.4, id: "bxl_parlament", tuer: { ziel: "bxl_saal", spawn: "eingang", wenn: "beweis_bxl", gesperrt: "bxl_saal_zu" } },
+      { p: "jugendstil_a", x: 28.25, y: 3.6 },
+      { p: "comicwand", x: 3.5, y: 9, id: "bxl_comic", dialog: "bxl_comicwand" },
+      { p: "infoschild", x: 13, y: 13.3, id: "bxl_schild", dialog: "bxl_infoschild" },
+      { p: "cafe_tisch", x: 12.5, y: 7.4, id: "bxl_cafe_1" },
+      { p: "cafe_tisch", x: 15.6, y: 7.6, id: "bxl_cafe_2" },
+      { p: "bank", x: 9, y: 8.8, id: "bxl_bank_1" },
+      { p: "bank", x: 27.4, y: 9.5, rot: -90, id: "bxl_bank_2" },
+      { p: "bank", x: 20.5, y: 12.6, rot: 180, id: "bxl_bank_3" },
+      { p: "laterne", x: 5.6, y: 6.9 },
+      { p: "laterne", x: 18, y: 6.9 },
+      { p: "laterne", x: 26.6, y: 6.9 },
+      { p: "laterne", x: 10, y: 13.2 },
+      { p: "laterne", x: 22.5, y: 13.2 },
+      { p: "blumenbeet", x: 27, y: 12.8, id: "bxl_beet_1" },
+      { p: "blumenbeet", x: 5, y: 12.9, id: "bxl_beet_2" },
+      { p: "baum_rund", x: 1.4, y: 12 },
+      { p: "baum_rund", x: 30.6, y: 7.4 },
+      { p: "baum_rund", x: 4, y: 16.4 },
+      { p: "baum_rund", x: 9, y: 18 },
+      { p: "baum_rund", x: 24, y: 16.6 },
+      { p: "baum_rund", x: 28.5, y: 18.4 },
+      { p: "birke", x: 20, y: 18.3 },
+      { p: "kiefer", x: 1.5, y: 18 },
+      { p: "birke", x: 30.6, y: 15.2 },
+      { p: "busch", x: 13.5, y: 15.2 },
+      { p: "busch", x: 18.5, y: 15.2 },
+      { p: "busch", x: 12, y: 18.8 }
+    ],
+    spawns: {
+      von_hub:    { x: 15.5, y: 17.8, blick: 180 },
+      von_archiv: { x: 6.5, y: 6.3, blick: 0 },
+      von_saal:   { x: 21.5, y: 6.7, blick: 0 }
+    },
+    uebergaenge: [
+      { x: 15, y: 19, b: 2, h: 1, ziel: "europaplatz", spawn: "von_bxl", richtung: "s" }
+    ]
+  },
+
+  /* ---------------- Brüssel: Archiv ---------------- */
+  bxl_archiv: {
+    name: "Archiv",
+    land: "bxl",
+    stimmung: "innen_archiv",
+    innen: true,
+    kamera: { z: 3.9, abstand: 13 },
+    aussen: "leer",
+    legende: { "h": "holzboden", "W": "wand", "n": "wand_niedrig" },
+    boden: [
+      "WWWWWWWWWWWWWW",
+      "WhhhhhhhhhhhhW",
+      "WhhhhhhhhhhhhW",
+      "WhhhhhhhhhhhhW",
+      "WhhhhhhhhhhhhW",
+      "WhhhhhhhhhhhhW",
+      "WhhhhhhhhhhhhW",
+      "WhhhhhhhhhhhhW",
+      "WhhhhhhhhhhhhW",
+      "nnnnnnhhnnnnnn"
+    ],
+    hoehe: [
+      "00000000000000",
+      "00000000000000",
+      "00000000000000",
+      "00000000000000",
+      "00000000000000",
+      "00000000000000",
+      "00000000000000",
+      "00000000000000",
+      "00000000000000",
+      "00000000000000"
+    ],
+    objekte: [
+      { p: "aktenfach_a", x: 2.5, y: 1, id: "fach_a", dialog: "bxl_fach_a", text: "Fach A" },
+      { p: "archivregal", x: 4.5, y: 1 },
+      { p: "aktenfach_b", x: 6.5, y: 1, id: "fach_b", dialog: "bxl_fach_b", text: "Fach B" },
+      { p: "archivregal", x: 8.5, y: 1 },
+      { p: "aktenfach_c", x: 10.5, y: 1, id: "fach_c", dialog: "bxl_fach_c", text: "Fach C" },
+      { p: "archivregal", x: 1, y: 5, rot: 90 },
+      { p: "archivregal", x: 12, y: 5, rot: -90 },
+      { p: "leiter", x: 8.9, y: 1.6 },
+      { p: "schreibtisch", x: 6.5, y: 5, id: "bxl_tisch" },
+      { p: "aktenstapel", x: 2.6, y: 7.4 },
+      { p: "aktenstapel", x: 11, y: 7 },
+      { p: "pflanze", x: 12, y: 8.2 }
+    ],
+    spawns: {
+      eingang: { x: 6.5, y: 7.6, blick: 180 }
+    },
+    uebergaenge: [
+      { x: 6, y: 9, b: 2, h: 1, ziel: "bxl", spawn: "von_archiv", richtung: "s" }
+    ]
+  },
+
+  /* ---------------- Brüssel: Sitzungssaal ---------------- */
+  bxl_saal: {
+    name: "Sitzungssaal",
+    land: "bxl",
+    stimmung: "innen_kuehl",
+    innen: true,
+    kamera: { z: 5.3, abstand: 15.5 },
+    aussen: "leer",
+    legende: { "s": "saalteppich", "W": "wand", "n": "wand_niedrig" },
+    boden: [
+      "WWWWWWWWWWWWWWWW",
+      "WssssssssssssssW",
+      "WssssssssssssssW",
+      "WssssssssssssssW",
+      "WssssssssssssssW",
+      "WssssssssssssssW",
+      "WssssssssssssssW",
+      "WssssssssssssssW",
+      "WssssssssssssssW",
+      "WssssssssssssssW",
+      "nnnnnnnssnnnnnnn"
+    ],
+    hoehe: [
+      "0000000000000000",
+      "0000000000000000",
+      "0000000000000000",
+      "0000000000000000",
+      "0000000000000000",
+      "0000000000000000",
+      "0000000000000000",
+      "0000000000000000",
+      "0000000000000000",
+      "0000000000000000",
+      "0000000000000000"
+    ],
+    objekte: [
+      { p: "saalbanner", x: 7.5, y: 0.6 },
+      { p: "fenster_innen", x: 3, y: 0.55 },
+      { p: "fenster_innen", x: 12, y: 0.55 },
+      { p: "abgeordnetenpult", x: 3.5, y: 3, rot: 30, id: "saal_pult_vella" },
+      { p: "abgeordnetenpult", x: 7.5, y: 2.3, id: "saal_pult_nowicki" },
+      { p: "abgeordnetenpult", x: 11.5, y: 3, rot: -30, id: "saal_pult_dewit" },
+      { p: "rednerpult", x: 7.5, y: 6.3, rot: 180, id: "saal_pult", dialog: "finale_pult", text: "Ans Rednerpult treten" },
+      { p: "stuhl", x: 1.5, y: 5.5, rot: 90, id: "saal_stuhl_1" },
+      { p: "stuhl", x: 1.5, y: 6.7, rot: 90, id: "saal_stuhl_2" },
+      { p: "pflanze", x: 1, y: 1.5 },
+      { p: "pflanze", x: 14, y: 1.5 },
+      { p: "pflanze", x: 14, y: 8.6 }
+    ],
+    spawns: {
+      eingang: { x: 7.5, y: 9, blick: 180 }
+    },
+    uebergaenge: [
+      { x: 7, y: 10, b: 2, h: 1, ziel: "bxl", spawn: "von_saal", richtung: "s" }
+    ]
   }
 };

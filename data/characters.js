@@ -359,6 +359,142 @@ DATA.characters = {
     stimme: { tonhoehe: 0.85 }
   },
 
+  // ---- Brüssel ----
+  peeters: {
+    name: "Frau Peeters",
+    haut: "haut_2", kopf: "oval", koerper: "kraeftig", alter: "alt",
+    haare: { stil: "kurz", farbe: "haar_weiss" },
+    oberteil: { typ: "strickjacke", farbe: "oliv", innen: "creme" },
+    unterteil: { typ: "rock", farbe: "anthrazit", beine: "grau" },
+    schuhe: "holz_dunkel",
+    extras: [ { typ: "brille" }, { typ: "ohrringe", farbe: "senf" } ],
+    stimme: { tonhoehe: 0.95 }
+  },
+  janssens: {
+    name: "Herr Janssens",
+    haut: "haut_4", kopf: "breit", koerper: "kraeftig", alter: "erwachsen",
+    haare: { stil: "kurz", farbe: "haar_schwarz" },
+    oberteil: { typ: "blazer", farbe: "anthrazit", innen: "weiss" },
+    unterteil: { typ: "hose", farbe: "anthrazit" },
+    schuhe: "schwarz",
+    extras: [ { typ: "bart" } ],
+    stimme: { tonhoehe: 0.85 }
+  },
+  lotte: {
+    name: "Lotte",
+    haut: "haut_1", kopf: "rund", koerper: "mittel", alter: "jung",
+    haare: { stil: "locken", farbe: "haar_rot" },
+    oberteil: { typ: "tshirt", farbe: "senf" },
+    unterteil: { typ: "latzhose", farbe: "jeans_hell" },
+    schuhe: "terrakotta",
+    extras: [ { typ: "muetze", farbe: "lavendel" } ],
+    stimme: { tonhoehe: 1.15 }
+  },
+  samir: {
+    name: "Samir",
+    haut: "haut_4", kopf: "oval", koerper: "schmal", alter: "jung",
+    haare: { stil: "kurz", farbe: "haar_schwarz" },
+    oberteil: { typ: "hemd", farbe: "himmelblau" },
+    unterteil: { typ: "hose", farbe: "anthrazit" },
+    schuhe: "creme",
+    extras: [ { typ: "brille" }, { typ: "umhaengetasche", farbe: "petrol" } ],
+    stimme: { tonhoehe: 1.0 }
+  },
+
+  // ---- Sitzungssaal: drei (erfundene) Abgeordnete ----
+  vella: {
+    name: "Abg. Lucia Vella",
+    haut: "haut_3", kopf: "oval", koerper: "schmal", alter: "erwachsen",
+    haare: { stil: "lang", farbe: "haar_dunkelbraun" },
+    oberteil: { typ: "blazer", farbe: "anthrazit", innen: "weiss" },
+    unterteil: { typ: "hose", farbe: "anthrazit" },
+    schuhe: "schwarz",
+    extras: [ { typ: "ohrringe", farbe: "senf" } ],
+    stimme: { tonhoehe: 1.05 }
+  },
+  nowicki: {
+    name: "Abg. Piotr Nowicki",
+    haut: "haut_1", kopf: "breit", koerper: "kraeftig", alter: "alt",
+    haare: { stil: "kurz", farbe: "haar_grau" },
+    oberteil: { typ: "pullover", farbe: "weinrot" },
+    unterteil: { typ: "hose", farbe: "jeans" },
+    schuhe: "holz_dunkel",
+    extras: [ { typ: "bart" }, { typ: "gehstock" } ],
+    stimme: { tonhoehe: 0.8 }
+  },
+  dewit: {
+    name: "Abg. Anneke de Wit",
+    haut: "haut_2", kopf: "rund", koerper: "mittel", alter: "erwachsen",
+    haare: { stil: "bob", farbe: "haar_blond" },
+    oberteil: { typ: "blazer", farbe: "salbei", innen: "creme" },
+    unterteil: { typ: "rock", farbe: "anthrazit", beine: "haut_2" },
+    schuhe: "anthrazit",
+    extras: [ { typ: "brille" } ],
+    stimme: { tonhoehe: 1.1 }
+  },
+
+  // ---- Epilog: Anna und Jonas zehn Jahre später ----
+  anna_10: {
+    name: "Anna",
+    haut: "haut_2", kopf: "rund", koerper: "mittel", alter: "erwachsen",
+    haare: { stil: "bob", farbe: "haar_dunkelbraun" },
+    oberteil: { typ: "strickjacke", farbe: "koralle", innen: "creme" },
+    unterteil: { typ: "hose", farbe: "jeans" },
+    schuhe: "creme",
+    extras: [ { typ: "brille" } ],
+    stimme: { tonhoehe: 1.05 }
+  },
+  anna_10_blazer: {
+    name: "Anna",
+    haut: "haut_2", kopf: "rund", koerper: "mittel", alter: "erwachsen",
+    haare: { stil: "bob", farbe: "haar_dunkelbraun" },
+    oberteil: { typ: "blazer", farbe: "petrol", innen: "creme" },
+    unterteil: { typ: "hose", farbe: "anthrazit" },
+    schuhe: "creme",
+    extras: [ { typ: "brille" }, { typ: "umhaengetasche", farbe: "senf" } ],
+    stimme: { tonhoehe: 1.05 }
+  },
+  jonas_10: {
+    name: "Jonas",
+    haut: "haut_2", kopf: "breit", koerper: "mittel", alter: "erwachsen",
+    haare: { stil: "kurz", farbe: "haar_dunkelbraun" },
+    oberteil: { typ: "hemd", farbe: "oliv" },
+    unterteil: { typ: "hose", farbe: "jeans" },
+    schuhe: "anthrazit",
+    extras: [ { typ: "bart" } ],
+    stimme: { tonhoehe: 0.95 }
+  },
+  jonas_10_wagen: {
+    name: "Jonas",
+    haut: "haut_2", kopf: "breit", koerper: "mittel", alter: "erwachsen",
+    haare: { stil: "kurz", farbe: "haar_dunkelbraun" },
+    oberteil: { typ: "hemd", farbe: "oliv" },
+    unterteil: { typ: "hose", farbe: "jeans" },
+    schuhe: "anthrazit",
+    extras: [ { typ: "bart" }, { typ: "kinderwagen", farbe: "senf" } ],
+    stimme: { tonhoehe: 0.95 }
+  },
+  lina: {
+    name: "Lina",
+    haut: "haut_2", kopf: "rund", koerper: "schmal", alter: "kind",
+    haare: { stil: "zopf", farbe: "haar_dunkelbraun" },
+    oberteil: { typ: "hoodie", farbe: "koralle" },
+    unterteil: { typ: "hose", farbe: "jeans_hell" },
+    schuhe: "senf",
+    extras: [],
+    stimme: { tonhoehe: 1.35 }
+  },
+  anu_10: {
+    name: "Anu",
+    haut: "haut_6", kopf: "oval", koerper: "schmal", alter: "erwachsen",
+    haare: { stil: "afro", farbe: "haar_schwarz" },
+    oberteil: { typ: "hemd", farbe: "mint" },
+    unterteil: { typ: "hose", farbe: "mint" },
+    schuhe: "weiss",
+    extras: [ { typ: "umhaengetasche", farbe: "koralle" } ],
+    stimme: { tonhoehe: 1.15 }
+  },
+
   // ---- Probefiguren (Test-Insel, zeigen den Baukasten) ----
   emil: {
     name: "Emil",

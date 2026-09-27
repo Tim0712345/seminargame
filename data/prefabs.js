@@ -18,7 +18,8 @@
      wind: 0…1 (wiegt sich im Wind, z. B. Baumkronen)
 
    Pro Prefab:
-     kollision: { kreis: r }  oder  { box: [breite, tiefe] }  oder weglassen
+     kollision: { kreis: r }  oder  { box: [breite, tiefe] }  oder
+                { boxen: [[x, z, breite, tiefe], …] } (mehrere Kästen)  oder weglassen
      schatten:  Radius des runden Schattens (0 = keiner)
      tuer:      [x, z] Lage der Tür (für Karten-Objekte mit tuer: { ziel, spawn })
      sitz, sitzHoehe: Sitzpunkt für NPCs (Bänke, Stühle)
@@ -1034,6 +1035,334 @@ DATA.prefabs = {
     sitzHoehe: 0.45
   },
 
+
+  // ---------------- Brüssel ----------------
+
+  // Das Tor am Europaplatz, geöffnet (erscheint, sobald alle vier Beweisstücke da sind)
+  tor_offen: {
+    teile: [
+      { form: "box", groesse: [0.6, 2.6, 0.6], rund: 0.08, pos: [-1.5, 1.3, 0], farbe: "stein_hell" },
+      { form: "box", groesse: [0.6, 2.6, 0.6], rund: 0.08, pos: [1.5, 1.3, 0], farbe: "stein_hell" },
+      { form: "box", groesse: [0.72, 0.2, 0.72], rund: 0.06, pos: [-1.5, 2.7, 0], farbe: "stein" },
+      { form: "box", groesse: [0.72, 0.2, 0.72], rund: 0.06, pos: [1.5, 2.7, 0], farbe: "stein" },
+      { form: "torus", r: 0.07, R: 1.2, pos: [0, 2.2, 0], rot: [0, 0, 0], farbe: "metall_dunkel" },
+      // linker Flügel (nach Norden aufgeschwungen)
+      { form: "box", groesse: [1.2, 0.08, 0.08], rund: 0.02, pos: [-1.1, 1.05, -0.59], rot: [0, 80, 0], farbe: "metall_dunkel" },
+      { form: "box", groesse: [1.2, 0.08, 0.08], rund: 0.02, pos: [-1.1, 2.0, -0.59], rot: [0, 80, 0], farbe: "metall_dunkel" },
+      { form: "zylinder", r: 0.035, h: 2.1, pos: [-1.148, 1.15, -0.295], farbe: "metall_dunkel" },
+      { form: "zylinder", r: 0.035, h: 2.1, pos: [-1.098, 1.15, -0.59], farbe: "metall_dunkel" },
+      { form: "zylinder", r: 0.035, h: 2.1, pos: [-1.047, 1.15, -0.886], farbe: "metall_dunkel" },
+      // rechter Flügel
+      { form: "box", groesse: [1.2, 0.08, 0.08], rund: 0.02, pos: [1.1, 1.05, -0.59], rot: [0, 100, 0], farbe: "metall_dunkel" },
+      { form: "box", groesse: [1.2, 0.08, 0.08], rund: 0.02, pos: [1.1, 2.0, -0.59], rot: [0, 100, 0], farbe: "metall_dunkel" },
+      { form: "zylinder", r: 0.035, h: 2.1, pos: [1.148, 1.15, -0.295], farbe: "metall_dunkel" },
+      { form: "zylinder", r: 0.035, h: 2.1, pos: [1.098, 1.15, -0.59], farbe: "metall_dunkel" },
+      { form: "zylinder", r: 0.035, h: 2.1, pos: [1.047, 1.15, -0.886], farbe: "metall_dunkel" },
+      // vier gefüllte Mulden im Schlussstein
+      { form: "kugel", r: 0.16, pos: [0, 3.35, 0], farbe: "senf" },
+      { form: "kugel", r: 0.07, pos: [-0.3, 2.2, 0.05], farbe: "terrakotta" },
+      { form: "kugel", r: 0.07, pos: [-0.1, 2.2, 0.05], farbe: "himmelblau" },
+      { form: "kugel", r: 0.07, pos: [0.1, 2.2, 0.05], farbe: "petrol" },
+      { form: "kugel", r: 0.07, pos: [0.3, 2.2, 0.05], farbe: "koralle" }
+    ],
+    kollision: { boxen: [[-1.5, 0, 0.7, 0.7], [1.5, 0, 0.7, 0.7]] },
+    schatten: 0,
+    hoehe: 2.8
+  },
+
+  // Archiv: Backstein mit Rundbogenfenstern (Tür vorne Mitte)
+  archiv: {
+    teile: [
+      { form: "box", groesse: [5, 4, 3.4], rund: 0.05, pos: [0, 2, 0], farbe: "backstein" },
+      { form: "box", groesse: [5.1, 0.5, 3.5], rund: 0.04, pos: [0, 0.25, 0], farbe: "stein" },
+      { form: "box", groesse: [5.2, 0.2, 3.6], rund: 0.04, pos: [0, 4.05, 0], farbe: "stein_hell" },
+      { form: "box", groesse: [4.6, 0.9, 3.0], rund: 0.12, pos: [0, 4.6, 0], farbe: "schiefer" },
+      { form: "box", groesse: [4.9, 0.12, 0.12], rund: 0.03, pos: [0, 2.2, 1.72], farbe: "stein_hell" },
+      // Tür mit Rundbogen
+      { form: "box", groesse: [1.0, 1.6, 0.1], rund: 0.03, pos: [0, 0.8, 1.72], farbe: "tuer", textur: "holz" },
+      { form: "zylinder", r: 0.5, h: 0.1, pos: [0, 1.6, 1.72], rot: [90, 0, 0], farbe: "tuer" },
+      { form: "torus", R: 0.56, r: 0.06, pos: [0, 1.6, 1.74], farbe: "stein_hell" },
+      // Schild über der Tür
+      { form: "box", groesse: [1.3, 0.34, 0.06], rund: 0.03, pos: [0, 2.6, 1.73], farbe: "creme" },
+      { form: "box", groesse: [0.9, 0.06, 0.02], rund: 0.01, pos: [0, 2.6, 1.77], farbe: "tusche" },
+      // Rundbogenfenster
+      { form: "box", groesse: [0.6, 0.9, 0.05], rund: 0.02, pos: [-1.6, 1.2, 1.71], farbe: "fenster" },
+      { form: "zylinder", r: 0.3, h: 0.05, pos: [-1.6, 1.65, 1.71], rot: [90, 0, 0], farbe: "fenster" },
+      { form: "box", groesse: [0.6, 0.9, 0.05], rund: 0.02, pos: [1.6, 1.2, 1.71], farbe: "fenster" },
+      { form: "zylinder", r: 0.3, h: 0.05, pos: [1.6, 1.65, 1.71], rot: [90, 0, 0], farbe: "fenster" },
+      { form: "box", groesse: [0.6, 0.9, 0.05], rund: 0.02, pos: [-1.6, 2.9, 1.71], farbe: "fenster" },
+      { form: "zylinder", r: 0.3, h: 0.05, pos: [-1.6, 3.35, 1.71], rot: [90, 0, 0], farbe: "fenster" },
+      { form: "box", groesse: [0.6, 0.9, 0.05], rund: 0.02, pos: [1.6, 2.9, 1.71], farbe: "fenster" },
+      { form: "zylinder", r: 0.3, h: 0.05, pos: [1.6, 3.35, 1.71], rot: [90, 0, 0], farbe: "fenster" },
+      { form: "box", groesse: [0.6, 0.9, 0.05], rund: 0.02, pos: [0, 3.2, 1.71], farbe: "fenster" },
+      { form: "zylinder", r: 0.3, h: 0.05, pos: [0, 3.65, 1.71], rot: [90, 0, 0], farbe: "fenster" },
+      // Stufe
+      { form: "box", groesse: [1.6, 0.12, 0.5], rund: 0.03, pos: [0, 0.06, 1.95], farbe: "stein_hell" }
+    ],
+    kollision: { box: [5.1, 3.5] },
+    schatten: 0,
+    tuer: [0, 1.7]
+  },
+
+  // Parlamentsgebäude: Glas und heller Stein, Kuppel, Säulen
+  parlament: {
+    teile: [
+      { form: "box", groesse: [7, 4.6, 4], rund: 0.06, pos: [0, 2.3, 0], farbe: "stein_hell" },
+      { form: "box", groesse: [6.2, 3.4, 0.05], rund: 0.02, pos: [0, 2.2, 2.01], farbe: "glas" },
+      { form: "box", groesse: [6.3, 0.1, 0.08], rund: 0.02, pos: [0, 2.0, 2.04], farbe: "anthrazit" },
+      { form: "zylinder", r: 0.18, h: 4.4, pos: [-2.8, 2.2, 2.35], farbe: "stein_hell" },
+      { form: "zylinder", r: 0.18, h: 4.4, pos: [-1.4, 2.2, 2.35], farbe: "stein_hell" },
+      { form: "zylinder", r: 0.18, h: 4.4, pos: [1.4, 2.2, 2.35], farbe: "stein_hell" },
+      { form: "zylinder", r: 0.18, h: 4.4, pos: [2.8, 2.2, 2.35], farbe: "stein_hell" },
+      { form: "box", groesse: [7.4, 0.25, 1.0], rund: 0.05, pos: [0, 4.5, 2.2], farbe: "stein" },
+      { form: "box", groesse: [7.2, 0.2, 4.2], rund: 0.04, pos: [0, 4.7, 0], farbe: "stein" },
+      { form: "kugel", radien: [1.6, 1.1, 1.6], pos: [0, 4.8, -0.2], farbe: "glas" },
+      { form: "torus", R: 1.6, r: 0.06, pos: [0, 4.85, -0.2], rot: [90, 0, 0], farbe: "metall" },
+      { form: "kugel", r: 0.14, pos: [0, 5.95, -0.2], farbe: "senf" },
+      // Glastür
+      { form: "box", groesse: [1.3, 1.9, 0.08], rund: 0.02, pos: [0, 0.95, 2.05], farbe: "glas" },
+      { form: "box", groesse: [0.05, 1.9, 0.04], rund: 0.01, pos: [0, 0.95, 2.1], farbe: "anthrazit" },
+      { form: "box", groesse: [1.45, 0.1, 0.1], rund: 0.02, pos: [0, 1.95, 2.08], farbe: "anthrazit" },
+      // zwei Fahnen-Banner (stilisiert, keine echte Flagge)
+      { form: "box", groesse: [0.7, 1.5, 0.04], rund: 0.02, pos: [-2.1, 3.1, 2.06], farbe: "petrol" },
+      { form: "torus", R: 0.2, r: 0.035, pos: [-2.1, 3.3, 2.09], farbe: "senf" },
+      { form: "box", groesse: [0.7, 1.5, 0.04], rund: 0.02, pos: [2.1, 3.1, 2.06], farbe: "petrol" },
+      { form: "torus", R: 0.2, r: 0.035, pos: [2.1, 3.3, 2.09], farbe: "senf" },
+      // Treppe
+      { form: "box", groesse: [3.2, 0.14, 0.7], rund: 0.03, pos: [0, 0.07, 2.7], farbe: "stein_hell" }
+    ],
+    kollision: { box: [7.2, 4.8] },
+    schatten: 0,
+    tuer: [0, 2.45]
+  },
+
+  // Schmales Jugendstil-Haus mit rundem Giebel (zwei Farbvarianten)
+  jugendstil_a: {
+    teile: [
+      { form: "box", groesse: [3.4, 4.4, 3], rund: 0.05, pos: [0, 2.2, 0], farbe: "putz_salbei" },
+      // runder Giebel: Halbkreis über dem Haus (vorne leicht zurückgesetzt), Zierbogen aus Stücken
+      { form: "zylinder", r: 1.7, h: 2.94, pos: [0, 4.4, -0.03], rot: [90, 0, 0], farbe: "putz_salbei" },
+      { form: "box", groesse: [0.82, 0.12, 0.08], rund: 0.03, pos: [1.696, 4.787, 1.53], rot: [0, 0, 102.9], farbe: "petrol" },
+      { form: "box", groesse: [0.82, 0.12, 0.08], rund: 0.03, pos: [1.360, 5.485, 1.53], rot: [0, 0, 128.6], farbe: "petrol" },
+      { form: "box", groesse: [0.82, 0.12, 0.08], rund: 0.03, pos: [0.755, 5.968, 1.53], rot: [0, 0, 154.3], farbe: "petrol" },
+      { form: "box", groesse: [0.82, 0.12, 0.08], rund: 0.03, pos: [0.000, 6.140, 1.53], rot: [0, 0, 180.0], farbe: "petrol" },
+      { form: "box", groesse: [0.82, 0.12, 0.08], rund: 0.03, pos: [-0.755, 5.968, 1.53], rot: [0, 0, 205.7], farbe: "petrol" },
+      { form: "box", groesse: [0.82, 0.12, 0.08], rund: 0.03, pos: [-1.360, 5.485, 1.53], rot: [0, 0, 231.4], farbe: "petrol" },
+      { form: "box", groesse: [0.82, 0.12, 0.08], rund: 0.03, pos: [-1.696, 4.787, 1.53], rot: [0, 0, 257.1], farbe: "petrol" },
+      { form: "box", groesse: [3.5, 0.45, 3.1], rund: 0.04, pos: [0, 0.22, 0], farbe: "stein" },
+      { form: "zylinder", r: 0.42, h: 0.06, pos: [0, 4.75, 1.56], rot: [90, 0, 0], farbe: "fenster" },
+      { form: "torus", R: 0.45, r: 0.05, pos: [0, 4.75, 1.58], farbe: "petrol" },
+      { form: "box", groesse: [2.0, 1.2, 0.05], rund: 0.02, pos: [-0.35, 1.1, 1.51], farbe: "glas" },
+      { form: "box", groesse: [2.3, 0.1, 0.55], rund: 0.03, pos: [-0.35, 1.9, 1.72], rot: [20, 0, 0], farbe: "petrol" },
+      { form: "box", groesse: [0.6, 1.5, 0.08], rund: 0.03, pos: [1.15, 0.8, 1.52], farbe: "tuer", textur: "holz" },
+      { form: "box", groesse: [0.55, 0.9, 0.05], rund: 0.02, pos: [-0.8, 2.95, 1.51], farbe: "fenster" },
+      { form: "zylinder", r: 0.275, h: 0.05, pos: [-0.8, 3.4, 1.51], rot: [90, 0, 0], farbe: "fenster" },
+      { form: "box", groesse: [0.55, 0.9, 0.05], rund: 0.02, pos: [0.8, 2.95, 1.51], farbe: "fenster" },
+      { form: "zylinder", r: 0.275, h: 0.05, pos: [0.8, 3.4, 1.51], rot: [90, 0, 0], farbe: "fenster" },
+      { form: "box", groesse: [2.4, 0.1, 0.4], rund: 0.03, pos: [0, 2.4, 1.7], farbe: "petrol" },
+      { form: "box", groesse: [2.4, 0.32, 0.04], rund: 0.02, pos: [0, 2.6, 1.88], farbe: "petrol" },
+      { form: "kugel", r: 0.13, pos: [-1.3, 3.95, 1.52], farbe: "koralle" },
+      { form: "kugel", r: 0.13, pos: [1.3, 3.95, 1.52], farbe: "koralle" }
+    ],
+    kollision: { box: [3.5, 3.1] },
+    schatten: 0
+  },
+  jugendstil_b: {
+    teile: [
+      { form: "box", groesse: [3.4, 4.4, 3], rund: 0.05, pos: [0, 2.2, 0], farbe: "putz_creme" },
+      // runder Giebel: Halbkreis über dem Haus (vorne leicht zurückgesetzt), Zierbogen aus Stücken
+      { form: "zylinder", r: 1.7, h: 2.94, pos: [0, 4.4, -0.03], rot: [90, 0, 0], farbe: "putz_creme" },
+      { form: "box", groesse: [0.82, 0.12, 0.08], rund: 0.03, pos: [1.696, 4.787, 1.53], rot: [0, 0, 102.9], farbe: "weinrot" },
+      { form: "box", groesse: [0.82, 0.12, 0.08], rund: 0.03, pos: [1.360, 5.485, 1.53], rot: [0, 0, 128.6], farbe: "weinrot" },
+      { form: "box", groesse: [0.82, 0.12, 0.08], rund: 0.03, pos: [0.755, 5.968, 1.53], rot: [0, 0, 154.3], farbe: "weinrot" },
+      { form: "box", groesse: [0.82, 0.12, 0.08], rund: 0.03, pos: [0.000, 6.140, 1.53], rot: [0, 0, 180.0], farbe: "weinrot" },
+      { form: "box", groesse: [0.82, 0.12, 0.08], rund: 0.03, pos: [-0.755, 5.968, 1.53], rot: [0, 0, 205.7], farbe: "weinrot" },
+      { form: "box", groesse: [0.82, 0.12, 0.08], rund: 0.03, pos: [-1.360, 5.485, 1.53], rot: [0, 0, 231.4], farbe: "weinrot" },
+      { form: "box", groesse: [0.82, 0.12, 0.08], rund: 0.03, pos: [-1.696, 4.787, 1.53], rot: [0, 0, 257.1], farbe: "weinrot" },
+      { form: "box", groesse: [3.5, 0.45, 3.1], rund: 0.04, pos: [0, 0.22, 0], farbe: "stein" },
+      { form: "zylinder", r: 0.42, h: 0.06, pos: [0, 4.75, 1.56], rot: [90, 0, 0], farbe: "fenster" },
+      { form: "torus", R: 0.45, r: 0.05, pos: [0, 4.75, 1.58], farbe: "weinrot" },
+      { form: "box", groesse: [2.0, 1.2, 0.05], rund: 0.02, pos: [0.35, 1.1, 1.51], farbe: "glas" },
+      { form: "box", groesse: [2.3, 0.1, 0.55], rund: 0.03, pos: [0.35, 1.9, 1.72], rot: [20, 0, 0], farbe: "weinrot" },
+      { form: "box", groesse: [0.6, 1.5, 0.08], rund: 0.03, pos: [-1.15, 0.8, 1.52], farbe: "tuer", textur: "holz" },
+      { form: "box", groesse: [0.55, 0.9, 0.05], rund: 0.02, pos: [-0.8, 2.95, 1.51], farbe: "fenster" },
+      { form: "zylinder", r: 0.275, h: 0.05, pos: [-0.8, 3.4, 1.51], rot: [90, 0, 0], farbe: "fenster" },
+      { form: "box", groesse: [0.55, 0.9, 0.05], rund: 0.02, pos: [0.8, 2.95, 1.51], farbe: "fenster" },
+      { form: "zylinder", r: 0.275, h: 0.05, pos: [0.8, 3.4, 1.51], rot: [90, 0, 0], farbe: "fenster" },
+      { form: "box", groesse: [2.4, 0.1, 0.4], rund: 0.03, pos: [0, 2.4, 1.7], farbe: "weinrot" },
+      { form: "box", groesse: [2.4, 0.32, 0.04], rund: 0.02, pos: [0, 2.6, 1.88], farbe: "weinrot" },
+      { form: "kugel", r: 0.13, pos: [-1.3, 3.95, 1.52], farbe: "senf" },
+      { form: "kugel", r: 0.13, pos: [1.3, 3.95, 1.52], farbe: "senf" }
+    ],
+    kollision: { box: [3.5, 3.1] },
+    schatten: 0
+  },
+
+  // Wand mit halb fertigem Comic (Brüssel ist eine Comic-Stadt)
+  comicwand: {
+    teile: [
+      { form: "box", groesse: [3.2, 2.2, 0.3], rund: 0.04, pos: [0, 1.1, 0], farbe: "backstein" },
+      { form: "box", groesse: [3.3, 0.12, 0.36], rund: 0.03, pos: [0, 2.24, 0], farbe: "stein_hell" },
+      { form: "box", groesse: [0.9, 0.85, 0.03], rund: 0.02, pos: [-1.0, 1.6, 0.16], farbe: "himmelblau" },
+      { form: "kugel", radien: [0.2, 0.2, 0.02], pos: [-1.05, 1.62, 0.18], farbe: "senf" },
+      { form: "box", groesse: [0.9, 0.85, 0.03], rund: 0.02, pos: [0, 1.6, 0.16], farbe: "creme" },
+      { form: "kugel", radien: [0.16, 0.16, 0.02], pos: [-0.15, 1.55, 0.18], farbe: "koralle" },
+      { form: "kugel", radien: [0.16, 0.16, 0.02], pos: [0.18, 1.55, 0.18], farbe: "petrol" },
+      { form: "box", groesse: [0.9, 0.85, 0.03], rund: 0.02, pos: [1.0, 1.6, 0.16], farbe: "mint" },
+      { form: "box", groesse: [0.3, 0.3, 0.02], rund: 0.08, pos: [1.1, 1.75, 0.18], farbe: "creme" },
+      { form: "box", groesse: [0.9, 0.85, 0.03], rund: 0.02, pos: [-1.0, 0.62, 0.16], farbe: "senf" },
+      { form: "box", groesse: [0.5, 0.08, 0.02], rund: 0.02, pos: [-1.0, 0.62, 0.18], farbe: "weinrot" },
+      { form: "box", groesse: [0.9, 0.85, 0.03], rund: 0.02, pos: [0, 0.62, 0.16], farbe: "lavendel" },
+      { form: "box", groesse: [0.9, 0.85, 0.03], rund: 0.02, pos: [1.0, 0.62, 0.16], farbe: "creme" },
+      { form: "zylinder", r: 0.1, h: 0.16, pos: [0.9, 0.08, 0.5], farbe: "koralle" },
+      { form: "zylinder", r: 0.09, h: 0.14, pos: [1.15, 0.07, 0.42], farbe: "himmelblau" },
+      { form: "zylinder", r: 0.02, h: 0.3, pos: [0.92, 0.2, 0.5], rot: [0, 0, 20], farbe: "holz" }
+    ],
+    kollision: { box: [3.3, 0.4] },
+    schatten: 0,
+    hoehe: 2.5
+  },
+
+  // Hohes Archivregal mit Aktenordnern
+  // Hohes Archivregal mit Aktenordnern
+  archivregal: {
+    teile: [
+      { form: "box", groesse: [2, 2.2, 0.55], rund: 0.03, pos: [0, 1.1, 0], farbe: "holz_dunkel", textur: "holz" },
+      { form: "box", groesse: [1.9, 0.05, 0.5], rund: 0.01, pos: [0, 0.55, 0.04], farbe: "holz" },
+      { form: "box", groesse: [1.9, 0.05, 0.5], rund: 0.01, pos: [0, 1.1, 0.04], farbe: "holz" },
+      { form: "box", groesse: [1.9, 0.05, 0.5], rund: 0.01, pos: [0, 1.65, 0.04], farbe: "holz" },
+      { form: "box", groesse: [0.55, 0.42, 0.4], rund: 0.02, pos: [-0.6, 0.79, 0.1], farbe: "kork" },
+      { form: "box", groesse: [0.5, 0.4, 0.4], rund: 0.02, pos: [0.05, 0.78, 0.1], farbe: "grau_hell" },
+      { form: "box", groesse: [0.5, 0.42, 0.4], rund: 0.02, pos: [0.62, 0.79, 0.1], farbe: "oliv" },
+      { form: "box", groesse: [0.6, 0.42, 0.4], rund: 0.02, pos: [-0.55, 1.34, 0.1], farbe: "grau_hell" },
+      { form: "box", groesse: [0.45, 0.4, 0.4], rund: 0.02, pos: [0.1, 1.33, 0.1], farbe: "weinrot" },
+      { form: "box", groesse: [0.5, 0.42, 0.4], rund: 0.02, pos: [0.62, 1.34, 0.1], farbe: "kork" },
+      { form: "box", groesse: [0.5, 0.4, 0.4], rund: 0.02, pos: [-0.6, 1.88, 0.1], farbe: "petrol" },
+      { form: "box", groesse: [0.6, 0.42, 0.4], rund: 0.02, pos: [0.05, 1.89, 0.1], farbe: "kork" },
+      { form: "box", groesse: [0.45, 0.4, 0.4], rund: 0.02, pos: [0.65, 1.88, 0.1], farbe: "grau_hell" },
+      { form: "box", groesse: [0.6, 0.4, 0.4], rund: 0.02, pos: [-0.5, 0.27, 0.1], farbe: "kork" },
+      { form: "box", groesse: [0.6, 0.4, 0.4], rund: 0.02, pos: [0.4, 0.27, 0.1], farbe: "grau_hell" }
+    ],
+    kollision: { box: [2, 0.6] },
+    schatten: 0
+  },
+
+  // Aktenfach (zum Untersuchen): Regal mit großem farbigem Schild und herausgezogener Box
+  aktenfach_a: {
+    teile: [
+      { form: "box", groesse: [1.7, 1.8, 0.55], rund: 0.03, pos: [0, 0.9, 0], farbe: "holz_dunkel", textur: "holz" },
+      { form: "box", groesse: [1.6, 0.05, 0.5], rund: 0.01, pos: [0, 0.62, 0.04], farbe: "holz" },
+      { form: "box", groesse: [1.6, 0.05, 0.5], rund: 0.01, pos: [0, 1.22, 0.04], farbe: "holz" },
+      { form: "box", groesse: [1.4, 0.48, 0.4], rund: 0.02, pos: [0, 0.9, 0.1], farbe: "kork" },
+      { form: "box", groesse: [1.4, 0.48, 0.4], rund: 0.02, pos: [0, 0.32, 0.1], farbe: "grau_hell" },
+      { form: "box", groesse: [0.6, 0.4, 0.5], rund: 0.02, pos: [0.2, 1.48, 0.3], farbe: "himmelblau" },
+      { form: "box", groesse: [0.5, 0.36, 0.4], rund: 0.02, pos: [-0.4, 1.46, 0.1], farbe: "kork" },
+      { form: "box", groesse: [1.0, 0.34, 0.05], rund: 0.03, pos: [0, 1.98, 0.22], farbe: "himmelblau" },
+      { form: "box", groesse: [0.3, 0.2, 0.02], rund: 0.03, pos: [0, 1.98, 0.25], farbe: "creme" }
+    ],
+    kollision: { box: [1.7, 0.6] },
+    schatten: 0,
+    hoehe: 2.5
+  },
+  aktenfach_b: {
+    teile: [
+      { form: "box", groesse: [1.7, 1.8, 0.55], rund: 0.03, pos: [0, 0.9, 0], farbe: "holz_dunkel", textur: "holz" },
+      { form: "box", groesse: [1.6, 0.05, 0.5], rund: 0.01, pos: [0, 0.62, 0.04], farbe: "holz" },
+      { form: "box", groesse: [1.6, 0.05, 0.5], rund: 0.01, pos: [0, 1.22, 0.04], farbe: "holz" },
+      { form: "box", groesse: [1.4, 0.48, 0.4], rund: 0.02, pos: [0, 0.9, 0.1], farbe: "kork" },
+      { form: "box", groesse: [1.4, 0.48, 0.4], rund: 0.02, pos: [0, 0.32, 0.1], farbe: "grau_hell" },
+      { form: "box", groesse: [0.6, 0.4, 0.5], rund: 0.02, pos: [0.2, 1.48, 0.3], farbe: "mint" },
+      { form: "box", groesse: [0.5, 0.36, 0.4], rund: 0.02, pos: [-0.4, 1.46, 0.1], farbe: "kork" },
+      { form: "box", groesse: [1.0, 0.34, 0.05], rund: 0.03, pos: [0, 1.98, 0.22], farbe: "mint" },
+      { form: "box", groesse: [0.26, 0.2, 0.02], rund: 0.03, pos: [-0.17, 1.98, 0.25], farbe: "creme" },
+      { form: "box", groesse: [0.26, 0.2, 0.02], rund: 0.03, pos: [0.17, 1.98, 0.25], farbe: "creme" }
+    ],
+    kollision: { box: [1.7, 0.6] },
+    schatten: 0,
+    hoehe: 2.5
+  },
+  aktenfach_c: {
+    teile: [
+      { form: "box", groesse: [1.7, 1.8, 0.55], rund: 0.03, pos: [0, 0.9, 0], farbe: "holz_dunkel", textur: "holz" },
+      { form: "box", groesse: [1.6, 0.05, 0.5], rund: 0.01, pos: [0, 0.62, 0.04], farbe: "holz" },
+      { form: "box", groesse: [1.6, 0.05, 0.5], rund: 0.01, pos: [0, 1.22, 0.04], farbe: "holz" },
+      { form: "box", groesse: [1.4, 0.48, 0.4], rund: 0.02, pos: [0, 0.9, 0.1], farbe: "grau_hell" },
+      { form: "box", groesse: [1.4, 0.48, 0.4], rund: 0.02, pos: [0, 0.32, 0.1], farbe: "grau_hell" },
+      { form: "box", groesse: [0.6, 0.4, 0.5], rund: 0.02, pos: [0.2, 1.48, 0.3], farbe: "senf" },
+      { form: "box", groesse: [0.5, 0.36, 0.4], rund: 0.02, pos: [-0.4, 1.46, 0.1], farbe: "kork" },
+      { form: "box", groesse: [1.0, 0.34, 0.05], rund: 0.03, pos: [0, 1.98, 0.22], farbe: "senf" },
+      { form: "kugel", radien: [0.08, 0.08, 0.02], pos: [0, 1.98, 0.25], farbe: "tusche" }
+    ],
+    kollision: { box: [1.7, 0.6] },
+    schatten: 0,
+    hoehe: 2.5
+  },
+
+  // Aktenstapel auf dem Boden
+  aktenstapel: {
+    teile: [
+      { form: "box", groesse: [0.5, 0.3, 0.38], rund: 0.02, pos: [0, 0.15, 0], farbe: "kork" },
+      { form: "box", groesse: [0.48, 0.28, 0.36], rund: 0.02, pos: [0.03, 0.44, -0.02], rot: [0, 12, 0], farbe: "grau_hell" },
+      { form: "box", groesse: [0.44, 0.26, 0.34], rund: 0.02, pos: [-0.02, 0.71, 0.01], rot: [0, -8, 0], farbe: "kork" }
+    ],
+    kollision: { kreis: 0.3 },
+    schatten: 0.3
+  },
+
+  // Leiter, an ein Regal gelehnt
+  leiter: {
+    teile: [
+      { form: "zylinder", r: 0.03, h: 2.4, pos: [-0.22, 1.2, 0.25], rot: [-12, 0, 0], farbe: "holz" },
+      { form: "zylinder", r: 0.03, h: 2.4, pos: [0.22, 1.2, 0.25], rot: [-12, 0, 0], farbe: "holz" },
+      { form: "box", groesse: [0.44, 0.04, 0.05], rund: 0.01, pos: [0, 0.3, 0.44], farbe: "holz" },
+      { form: "box", groesse: [0.44, 0.04, 0.05], rund: 0.01, pos: [0, 0.7, 0.36], farbe: "holz" },
+      { form: "box", groesse: [0.44, 0.04, 0.05], rund: 0.01, pos: [0, 1.1, 0.27], farbe: "holz" },
+      { form: "box", groesse: [0.44, 0.04, 0.05], rund: 0.01, pos: [0, 1.5, 0.19], farbe: "holz" },
+      { form: "box", groesse: [0.44, 0.04, 0.05], rund: 0.01, pos: [0, 1.9, 0.1], farbe: "holz" }
+    ],
+    kollision: { box: [0.6, 0.5] },
+    schatten: 0
+  },
+
+  // Tisch der Abgeordneten im Sitzungssaal
+  abgeordnetenpult: {
+    teile: [
+      { form: "box", groesse: [2.0, 0.62, 0.6], rund: 0.04, pos: [0, 0.31, 0], farbe: "holz_dunkel", textur: "holz" },
+      { form: "box", groesse: [2.1, 0.06, 0.72], rund: 0.02, pos: [0, 0.65, -0.02], farbe: "holz" },
+      { form: "box", groesse: [2.0, 0.1, 0.02], rund: 0.01, pos: [0, 0.45, 0.31], farbe: "petrol" },
+      { form: "box", groesse: [0.5, 0.14, 0.05], rund: 0.02, pos: [0, 0.75, 0.25], rot: [-20, 0, 0], farbe: "creme" },
+      { form: "zylinder", r: 0.015, h: 0.3, pos: [0.45, 0.82, 0.05], rot: [20, 0, 0], farbe: "anthrazit" },
+      { form: "kugel", r: 0.04, pos: [0.45, 0.97, 0.1], farbe: "anthrazit" },
+      { form: "box", groesse: [0.35, 0.02, 0.25], rund: 0.005, pos: [-0.4, 0.69, -0.05], rot: [0, 10, 0], farbe: "weiss" }
+    ],
+    kollision: { box: [2.0, 0.65] },
+    schatten: 0.4
+  },
+
+  // Rednerpult (Kim stellt sich davor)
+  rednerpult: {
+    teile: [
+      { form: "box", groesse: [0.8, 1.0, 0.5], rund: 0.04, pos: [0, 0.5, 0], farbe: "holz", textur: "holz" },
+      { form: "box", groesse: [0.9, 0.06, 0.6], rund: 0.02, pos: [0, 1.06, 0.02], rot: [-15, 0, 0], farbe: "holz_dunkel" },
+      { form: "torus", R: 0.14, r: 0.025, pos: [0, 0.62, 0.26], farbe: "senf" },
+      { form: "zylinder", r: 0.015, h: 0.35, pos: [0, 1.2, -0.2], rot: [-25, 0, 0], farbe: "anthrazit" },
+      { form: "kugel", r: 0.045, pos: [0, 1.36, -0.13], farbe: "anthrazit" }
+    ],
+    kollision: { box: [0.8, 0.5] },
+    schatten: 0.3,
+    hoehe: 1.7
+  },
+
+  // Wandbehang im Sitzungssaal (stilisiert, keine echte Flagge)
+  saalbanner: {
+    teile: [
+      { form: "box", groesse: [2.4, 1.7, 0.05], rund: 0.03, pos: [0, 1.95, 0], farbe: "petrol" },
+      { form: "box", groesse: [2.6, 0.08, 0.08], rund: 0.02, pos: [0, 2.85, 0], farbe: "holz_dunkel" },
+      { form: "torus", R: 0.5, r: 0.05, pos: [0, 1.95, 0.04], farbe: "senf" },
+      { form: "kugel", radien: [0.12, 0.12, 0.02], pos: [0, 1.95, 0.04], farbe: "senf" }
+    ],
+    schatten: 0
+  },
 
   // ---------------- Nur für die Test-Insel ----------------
   testfund_sockel: {

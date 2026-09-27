@@ -5,11 +5,14 @@
      flags   – { name: true }  (gesetzt durch Dialoge, Funde, Aktionen)
      notizen – IDs aus DATA.notes (fürs Notizbuch, Phase 3)
      beweise – Länderkürzel der gefundenen Beweisstücke ("de", "se" …)
+     gesehen – besuchte Dialogknoten (für ausgegraute Antworten)
+     finale  – { punkte, max, massnahmen: [...] } nach dem Ausschuss
    Bedingungen als Text: "flag", "!flag", "a&b", "a|b" (& vor |).
+   GAME.speicher: automatisches Speichern in einem Slot (localStorage).
    ===================================================================== */
 var GAME = window.GAME = window.GAME || {};
 
-GAME.zustand = { flags: {}, notizen: [], beweise: [] };
+GAME.zustand = { flags: {}, notizen: [], beweise: [], gesehen: {}, finale: null };
 
 GAME.flags = (function () {
   "use strict";
@@ -43,10 +46,16 @@ GAME.flags = (function () {
   F.beobachten = function (fn) { beobachter.push(fn); };
   F.alle = function () { return Object.keys(GAME.zustand.flags); };
   F.zuruecksetzen = function () {
-    GAME.zustand.flags = {};
-    GAME.zustand.notizen = [];
-    GAME.zustand.beweise = [];
+    GAME.zustand = { flags: {}, notizen: [], beweise: [], gesehen: {}, finale: null };
     beobachter.forEach(function (b) { b("*", false); });
+  };
+  // Kompletten Zustand übernehmen (z. B. aus dem Spielstand)
+  F.ersetzen = function (z) {
+    GAME.zustand = {
+      flags: z.flags || {}, notizen: z.notizen || [], beweise: z.beweise || [],
+      gesehen: z.gesehen || {}, finale: z.finale || null
+    };
+    beobachter.forEach(function (b) { b("*", true); });
   };
   return F;
 })();
@@ -108,4 +117,50 @@ GAME.quests = (function () {
   };
 
   return Q;
+})();
+
+/* ---------------- Spielstand (ein Slot, automatisch) ----------------
+   Gespeichert werden der Zustand (Flags, Notizen, Beweise …) und wo Kim
+   gerade steht. Ohne localStorage (z. B. privates Fenster) läuft das
+   Spiel einfach ohne Speicherstand weiter.                              */
+GAME.speicher = (function () {
+  "use strict";
+  var SCHLUESSEL = "dieLuecke.spielstand";
+  var VERSION = 1;
+  var S = { geaendert: false };
+
+  S.speichern = function (ort) {
+    try {
+      var z = GAME.zustand;
+      window.localStorage.setItem(SCHLUESSEL, JSON.stringify({
+        version: VERSION, zeit: Date.now(), ort: ort || null,
+        flags: z.flags, notizen: z.notizen, beweise: z.beweise, gesehen: z.gesehen || {}, finale: z.finale || null
+      }));
+      S.geaendert = false;
+      return true;
+    } catch (e) { return false; }
+  };
+
+  S.laden = function () {
+    try {
+      var roh = window.localStorage.getItem(SCHLUESSEL);
+      if (!roh) return null;
+      var d = JSON.parse(roh);
+      if (!d || d.version !== VERSION || !d.flags) return null;
+      return d;
+    } catch (e) { return null; }
+  };
+
+  S.vorhanden = function () { return !!S.laden(); };
+
+  S.loeschen = function () {
+    try { window.localStorage.removeItem(SCHLUESSEL); } catch (e) { /* egal */ }
+  };
+
+  // Jede Flag-Änderung markiert den Spielstand als „zu speichern“
+  S.init = function () {
+    GAME.flags.beobachten(function () { S.geaendert = true; });
+  };
+
+  return S;
 })();

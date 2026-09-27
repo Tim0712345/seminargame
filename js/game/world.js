@@ -161,13 +161,18 @@ GAME.Welt = (function () {
     (this.map.objekte || []).forEach(function (o) {
       var pf = DATA.prefabs[o.p];
       if (!pf) return;
+      // Objekte mit Bedingung (z. B. offenes Tor) nur bauen, wenn sie erfüllt ist
+      if (o.wenn && !GAME.flags.pruefen(o.wenn)) return;
       var wx = o.x + 0.5, wz = o.y + 0.5, wy = self.hoeheBei(wx, wz);
       GAME.Welt.prefabEinbauen(chunkVon(wx, wz), pf, wx, wy, wz, o.rot || 0);
       var kol = pf.kollision;
+      var rr = (o.rot || 0) * MM.DEG, c = Math.cos(rr), sn = Math.sin(rr);
       if (kol && kol.kreis) self.koll.kreis(wx, wz, kol.kreis, { objekt: o });
       else if (kol && kol.box) self.koll.rechteck(wx, wz, kol.box[0] / 2, kol.box[1] / 2, o.rot || 0, { objekt: o });
+      else if (kol && kol.boxen) kol.boxen.forEach(function (k) {
+        self.koll.rechteck(wx + k[0] * c + k[1] * sn, wz - k[0] * sn + k[1] * c, k[2] / 2, k[3] / 2, o.rot || 0, { objekt: o });
+      });
       if (pf.schatten) self.statSchatten.push({ x: wx, z: wz, r: pf.schatten });
-      var rr = (o.rot || 0) * MM.DEG, c = Math.cos(rr), sn = Math.sin(rr);
       var eintrag = { id: o.id, x: wx, y: wy, z: wz, rot: rr, objekt: o, prefab: pf };
       if (o.id) self.objekte[o.id] = eintrag;
       if (o.tuer && pf.tuer) {
@@ -184,7 +189,7 @@ GAME.Welt = (function () {
       } else if (o.id) {
         self.interaktionen.push({ art: "objekt", id: o.id, x: wx, y: wy, z: wz, objekt: o, prefab: pf });
       }
-      var rad = kol ? (kol.kreis || Math.max(kol.box[0], kol.box[1]) / 2) : 0.4;
+      var rad = kolRadius(pf) || 0.4;
       for (var tz = Math.floor(wz - rad); tz <= Math.floor(wz + rad); tz++)
         for (var tx = Math.floor(wx - rad); tx <= Math.floor(wx + rad); tx++)
           if (tx >= 0 && tz >= 0 && tx < w && tz < h) self.belegt[tx + tz * w] = 1;
@@ -212,14 +217,19 @@ GAME.Welt = (function () {
     });
 
     // Kamera-Grenzen (Innenräume: Kamera bleibt über dem Raum)
-    this.kameraGrenzen = this.map.innen ? [w / 2, h / 2 - 0.4, w / 2, h / 2 - 0.4]
-                                        : [5, 4, w - 5, h - 2];
+    // (optional pro Karte: kamera: { x, z, abstand } für Innenräume)
+    var kx = this.map.kamera && this.map.kamera.x !== undefined ? this.map.kamera.x : w / 2;
+    var kz = this.map.kamera && this.map.kamera.z !== undefined ? this.map.kamera.z : h / 2 - 0.4;
+    this.kameraGrenzen = this.map.innen ? [kx, kz, kx, kz] : [5, 4, w - 5, h - 2];
   };
 
   function kolRadius(pf) {
     var k = pf.kollision;
     if (!k) return 0;
-    return k.kreis || Math.max(k.box[0], k.box[1]) / 2;
+    if (k.kreis) return k.kreis;
+    if (k.box) return Math.max(k.box[0], k.box[1]) / 2;
+    if (k.boxen) return k.boxen.reduce(function (m, b) { return Math.max(m, Math.abs(b[0]) + b[2] / 2, Math.abs(b[1]) + b[3] / 2); }, 0);
+    return 0;
   }
 
   Welt.prototype.waendeBauen = function (chunkVon) {

@@ -55,7 +55,8 @@ DATA.texte = {
     an: "An",
     aus: "Aus",
     steuerung: "Steuerung anzeigen",
-    hinweisNeuladen: "Die Kantenglättung ändert sich erst nach dem Neuladen."
+    titelbildschirm: "Zum Titelbildschirm",
+    hinweisNeuladen: "Das Spiel speichert automatisch. Die Kantenglättung ändert sich erst nach dem Neuladen."
   },
 
   hudTaste: "E",
@@ -88,6 +89,58 @@ DATA.texte = {
     leer: "Noch keine Aufgaben. Sprich mit Dr. Laurent am Brunnen.",
     fuss: "Q oder Esc schließen"
   },
+
+  // ---------------- Titelbildschirm (Phase 4) ----------------
+  titel: {
+    neu: "Neues Spiel",
+    weiter: "Weiterspielen",
+    steuerung: "Steuerung",
+    credits: "Credits",
+    neuFrage: "Neues Spiel beginnen?",
+    neuText: "Dein bisheriger Spielstand wird dabei überschrieben.",
+    neuJa: "Ja, neu beginnen",
+    neuNein: "Abbrechen",
+    fuss: "↑ ↓ wählen · Enter bestätigen"
+  },
+
+  credits: {
+    titel: "Credits",
+    zeilen: [
+      ["Idee, Konzept und Texte", "[Dein Name / eure Namen]"],
+      ["Gestaltung", "[Dein Name / eure Namen]"],
+      ["Programmierung", "[Dein Name] mit Unterstützung durch KI"],
+      ["Beitrag für", "Europäischer Wettbewerb"]
+    ],
+    ki: "Hinweis zum KI-Einsatz: Beim Programmieren und beim Formulieren wurde das KI-Werkzeug Claude (Anthropic) eingesetzt. Was von der KI stammt und was selbst gemacht oder geprüft wurde, steht in der Datei KI-DOKUMENTATION.md.",
+    hinweis: "Alle Figuren, Firmen und Orte im Spiel sind erfunden. Ähnlichkeiten mit echten Personen wären Zufall.",
+    zurueck: "Zurück"
+  },
+
+  // ---------------- Epilog und Reflexion (Phase 4) ----------------
+  reflexion: {
+    titel: "Zum Nachdenken",
+    einleitung: "Die Geschichte ist erfunden – die Fragen sind echt.",
+    fragen: [
+      "Welche Ursache der Lohnlücke hat dich am meisten überrascht – und warum?",
+      "Ab wann ist eine Entscheidung wirklich frei? Denk an Teilzeit, Elternzeit und Berufswahl.",
+      "Welche Maßnahme würdest du in deinem Land zuerst umsetzen – und wer müsste dafür etwas abgeben?"
+    ],
+    entscheidungen: "Deine Vorschläge im Ausschuss",
+    punkte: "Überzeugungspunkte im Duell: {p} von {max}",
+    keineEntscheidung: "Du hast dem Ausschuss noch keine Maßnahmen vorgeschlagen.",
+    quellenTitel: "Quellen",
+    quellenHinweis: "Alle Zahlen im Spiel stammen aus diesen Quellen (Details in QUELLEN.md).",
+    ungeprueft: "noch nicht geprüft",
+    creditsTitel: "Credits",
+    zumTitel: "Zum Titelbildschirm",
+    weiterErkunden: "Weiter erkunden"
+  },
+
+  speichern: {
+    fehlt: "Es gibt noch keinen Spielstand.",
+    geladen: "Spielstand geladen"
+  },
+  verschlossen: "Verschlossen",
 
   test: {
     fundUntersuchen: "Untersuchen",
@@ -158,7 +211,9 @@ DATA.dialogues = {
   // ========================================================================
   hub_laurent: {
     einstieg: [
+      { wenn: "finale_fertig", knoten: "nach_finale" },
       { wenn: "alle_beweise&!hub_laurent_alle", knoten: "alle" },
+      { wenn: "alle_beweise", knoten: "start_bxl" },
       { wenn: "beweis_de&!hub_laurent_de", knoten: "nach_de" },
       { wenn: "beweis_se&!hub_laurent_se", knoten: "nach_se" },
       { wenn: "beweis_ee&!hub_laurent_ee", knoten: "nach_ee" },
@@ -209,8 +264,20 @@ DATA.dialogues = {
         text: "Eine Beförderungsliste aus Luxemburg – und das in einem Land mit fast keiner Lücke im Durchschnitt! Gut, dass du genauer hingeschaut hast.",
         setFlag: "hub_laurent_lu", next: "ende" },
       alle: { speaker: "Dr. Marie Laurent", emotion: "froehlich", emote: "herz",
-        text: "Alle vier Beweisstücke! Kim, das ist großartig. Das Tor im Norden ist bereit – in Brüssel wartet der Ausschuss.",
-        setFlag: ["hub_laurent_alle", "hub_laurent_de", "hub_laurent_se", "hub_laurent_ee", "hub_laurent_lu"], next: "ende" }
+        text: "Alle vier Beweisstücke! Kim, das ist großartig. Das Tor im Norden ist offen – in Brüssel wartet der Ausschuss.",
+        setFlag: ["hub_laurent_alle", "hub_laurent_de", "hub_laurent_se", "hub_laurent_ee", "hub_laurent_lu"], next: "alle2" },
+      alle2: { speaker: "Dr. Marie Laurent", emotion: "nachdenklich",
+        text: "Ein Stück fehlt dir aber noch: der unerklärte Rest. Schau in Brüssel zuerst ins Archiv. Ich komme nach und halte dir einen Platz im Sitzungssaal frei.",
+        next: "ende" },
+      start_bxl: { speaker: "Dr. Marie Laurent", emotion: "froehlich",
+        text: "Das Tor im Norden steht offen. In Brüssel zuerst ins Archiv, dann in den Sitzungssaal. Du schaffst das!",
+        next: "ende" },
+      nach_finale: { speaker: "Dr. Marie Laurent", emotion: "froehlich",
+        text: "Kim! Im Büro reden alle noch von deinem Auftritt im Ausschuss. Ich bin sehr stolz auf dich.",
+        options: [
+          { label: "Noch mal über alles nachdenken", next: "ende", aktion: "reflexion" },
+          { label: "Danke! Ich schau mich noch ein bisschen um.", next: "ende" }
+        ] }
     }
   },
 
@@ -334,8 +401,11 @@ DATA.dialogues = {
         text: "Das Tor nach Brüssel ist verschlossen. Im Schloss sind vier runde Mulden – genau so groß wie vier Beweisstücke.",
         next: "ende" },
       offen: { speaker: "",
-        text: "Alle vier Mulden sind gefüllt. Das Tor summt leise. (Brüssel wird in Phase 4 gebaut.)",
-        next: "ende" }
+        text: "Alle vier Mulden leuchten in den Farben deiner Beweisstücke. Das Tor steht offen – dahinter führt der Weg nach Brüssel.",
+        options: [
+          { label: "Nach Brüssel gehen", next: "ende", aktion: "reise:bxl,von_hub" },
+          { label: "Noch nicht", next: "ende" }
+        ] }
     }
   },
 
@@ -980,8 +1050,360 @@ DATA.dialogues = {
         text: "Nicht schlecht! Du lernst schnell.",
         next: "ende" }
     }
+  },
+
+  // ========================================================================
+  //  BRÜSSEL: Platz, Archiv „Unerklärter Rest“, Sitzungssaal (Finale)
+  // ========================================================================
+  bxl_infoschild: {
+    knoten: {
+      start: { speaker: "Infoschild",
+        text: "**Brüssel, Belgien.** Gender Pay Gap in Belgien: {fakt:gpg_be} ({jahr:gpg_be}). Hier beraten Parlament, Rat und Kommission über Regeln für die ganze EU.",
+        addNote: "gpg_be", next: "ende" }
+    }
+  },
+
+  bxl_comicwand: {
+    knoten: {
+      start: { speaker: "",
+        text: "Ein halb fertiger Comic: Zwei Geschwister vergleichen ihre Gehaltszettel. Im letzten Bild fehlt noch das Ende.",
+        next: "ende" }
+    }
+  },
+
+  bxl_lotte: {
+    knoten: {
+      start: { speaker: "Lotte", emotion: "froehlich",
+        text: "Oh, hallo! Nicht erschrecken, ich male nur. In Brüssel gibt es überall Comic-Wände – diese hier wird meine erste.",
+        options: [
+          { label: "Worum geht es in deinem Comic?", next: "comic" },
+          { label: "Kann man vom Zeichnen leben?", next: "leben" },
+          { label: "Viel Erfolg!", next: "ende" }
+        ] },
+      comic: { speaker: "Lotte", emotion: "nachdenklich",
+        text: "Um zwei Geschwister, die zufällig ihre Gehälter vergleichen. Ich weiß nur noch nicht, wie es ausgeht. Hast du eine Idee?",
+        options: [
+          { label: "Das entscheidet sich gerade im Sitzungssaal.", next: "saal" },
+          { label: "Vielleicht bleibt das Ende offen?", next: "offen" }
+        ] },
+      saal: { speaker: "Lotte", emotion: "ueberrascht", emote: "gluehbirne",
+        text: "Echt? Dann warte ich mit dem letzten Bild, bis du wieder rauskommst!",
+        next: "ende" },
+      offen: { speaker: "Lotte", emotion: "nachdenklich",
+        text: "Ein offenes Ende … Hm. Das wäre wenigstens ehrlich. Ich denk drüber nach.",
+        next: "ende" },
+      leben: { speaker: "Lotte", emotion: "skeptisch",
+        text: "Mal so, mal so. Als Selbstständige verhandle ich jedes Honorar neu. Ich habe gelernt: einen Preis nennen – und dann still sein. Das Schweigen danach ist der schwierigste Teil.",
+        next: "ende" }
+    }
+  },
+
+  bxl_samir: {
+    knoten: {
+      start: { speaker: "Samir", emotion: "froehlich",
+        text: "Hallo! Ich studiere Übersetzen und mache hier ein Praktikum. Heute habe ich drei Sitzungen gedolmetscht, in drei Sprachen. Mein Kopf klingelt.",
+        options: [
+          { label: "Was passiert eigentlich mit einem EU-Gesetz?", next: "gesetz" },
+          { label: "Kennst du die Regeln zur Lohntransparenz?", next: "richtlinie", requiresFlag: "!notiz_eu_richtlinie" },
+          { label: "Dann ruh dich aus!", next: "ende" }
+        ] },
+      gesetz: { speaker: "Samir", emotion: "nachdenklich",
+        text: "Bei einer Richtlinie legt die EU ein Ziel fest. Jedes Land schreibt dann ein eigenes Gesetz dazu – mit etwas Spielraum. Deshalb sieht dieselbe Regel in Tallinn manchmal anders aus als in Lissabon.",
+        addNote: "eu_umsetzung", next: "ende" },
+      richtlinie: { speaker: "Samir", emotion: "froehlich",
+        text: "Klar, die übersetze ich dauernd! Die Entgelttransparenzrichtlinie: Firmen müssen offenlegen, wie sie Gehälter festlegen. Umgesetzt sein muss sie bis {fakt:eu_richtlinie_frist}.",
+        addNote: "eu_richtlinie", next: "ende" }
+    }
+  },
+
+  bxl_janssens: {
+    einstieg: [ { wenn: "finale_fertig", knoten: "danach" }, { wenn: "beweis_bxl", knoten: "bereit" }, { knoten: "start" } ],
+    knoten: {
+      start: { speaker: "Herr Janssens", emotion: "neutral",
+        text: "Guten Tag! Du willst in den Sitzungssaal? Der Ausschuss erwartet dich schon – aber nur mit vollständigen Unterlagen. Auf meiner Liste fehlt noch ein Beweisstück aus dem Archiv.",
+        options: [
+          { label: "Wo ist das Archiv?", next: "archiv" },
+          { label: "Wer sitzt im Ausschuss?", next: "ausschuss" }
+        ] },
+      archiv: { speaker: "Herr Janssens", emotion: "froehlich",
+        text: "Das Backsteinhaus mit den runden Fenstern, links am Platz. Frau Peeters kennt dort jede Akte beim Vornamen.",
+        next: "ende" },
+      ausschuss: { speaker: "Herr Janssens", emotion: "nachdenklich",
+        text: "Drei Abgeordnete aus drei Ländern mit drei Meinungen. Mindestens. Sie stellen Fragen – und gute Antworten stehen meistens in einem Notizbuch.",
+        next: "ende" },
+      bereit: { speaker: "Herr Janssens", emotion: "froehlich",
+        text: "Die Akte aus dem Archiv – dann ist deine Mappe komplett. Bitte sehr, der Saal ist offen. Keine Sorge, die Abgeordneten beißen nicht. Meistens.",
+        next: "ende" },
+      danach: { speaker: "Herr Janssens", emotion: "froehlich",
+        text: "Man hört, die Sitzung war lebhaft. Das ist ein gutes Zeichen.",
+        next: "ende" }
+    }
+  },
+
+  bxl_saal_zu: {
+    knoten: {
+      start: { speaker: "",
+        text: "Die Glastür ist verschlossen. Auf einem Schild steht: „Ausschusssitzung – Zutritt nur mit vollständigen Unterlagen.“ Dir fehlt noch das Beweisstück aus dem Archiv.",
+        next: "ende" }
+    }
+  },
+
+  bxl_peeters: {
+    einstieg: [
+      { wenn: "beweis_bxl", knoten: "danach" },
+      { wenn: "bxl_fach_a&bxl_fach_b&bxl_fach_c", knoten: "quiz" },
+      { wenn: "bxl_peeters_auftrag", knoten: "suche" },
+      { knoten: "start" }
+    ],
+    knoten: {
+      start: { speaker: "Frau Peeters", emotion: "froehlich",
+        text: "Ah, Besuch! Willkommen im Archiv. Hier lagern Lohnstudien aus allen EU-Ländern. Und ziemlich viel Staub.",
+        next: "k2" },
+      k2: { speaker: "Kim", emotion: "neutral",
+        text: "Ich suche den „unerklärten Rest“. Dr. Laurent hat mir davon erzählt.",
+        next: "k3" },
+      k3: { speaker: "Frau Peeters", emotion: "nachdenklich",
+        text: "Der Rest ist das, was übrig bleibt, wenn man alles Erklärbare abzieht. Um ihn zu finden, musst du verstehen, wie gerechnet wird. Die drei Fächer an der Rückwand gehören zusammen: A, B und C.",
+        next: "k4" },
+      k4: { speaker: "Frau Peeters", emotion: "froehlich",
+        text: "Lies alle drei. Dann komm zurück und sag mir, welche Zahl der unerklärte Rest ist. Wenn es stimmt, bekommst du die Akte.",
+        setFlag: "bxl_peeters_auftrag", next: "ende" },
+      suche: { speaker: "Frau Peeters", emotion: "neutral",
+        text: "Fach A, B und C an der Rückwand. Lies alle drei, dann reden wir weiter.",
+        options: [
+          { label: "Was bedeutet „bereinigt“?", next: "bereinigt" },
+          { label: "Bin schon unterwegs!", next: "ende" }
+        ] },
+      bereinigt: { speaker: "Frau Peeters", emotion: "nachdenklich",
+        text: "Stell dir vor, du vergleichst nur Leute mit gleichem Beruf, gleicher Branche, gleichen Stunden und ähnlicher Erfahrung. Alles andere wird herausgerechnet – „bereinigt“ eben. Was dann noch an Lücke übrig ist, kann die Statistik nicht erklären.",
+        next: "ende" },
+      quiz: { speaker: "Frau Peeters", emotion: "froehlich",
+        text: "Du hast alle drei Fächer gelesen? Dann meine Prüfungsfrage: Welche Zahl ist der unerklärte Rest in Deutschland?",
+        options: [
+          { label: "{fakt:de_gpg_unbereinigt_destatis} – der Unterschied aller Stundenlöhne", next: "falsch_a" },
+          { label: "{fakt:de_gpg_erklaert_anteil} – der Teil, den man erklären kann", next: "falsch_b" },
+          { label: "{fakt:gpg_de_bereinigt} – was bei gleichem Beruf, gleicher Branche und gleichen Stunden übrig bleibt", next: "richtig" }
+        ] },
+      falsch_a: { speaker: "Frau Peeters", emotion: "skeptisch",
+        text: "Fast! Das ist die unbereinigte Lücke – also alles zusammen. Der Rest ist nur ein Teil davon. Versuch es noch einmal.",
+        next: "quiz" },
+      falsch_b: { speaker: "Frau Peeters", emotion: "nachdenklich",
+        text: "Das ist der Anteil, den man mit Teilzeit, Branche, Beruf und Führung erklären kann. Wir suchen aber das, was danach noch übrig bleibt.",
+        next: "quiz" },
+      richtig: { speaker: "Frau Peeters", emotion: "froehlich", emote: "herz",
+        text: "Genau! Das ist die bereinigte Lücke – der unerklärte Rest.",
+        next: "richtig2" },
+      richtig2: { speaker: "Frau Peeters", emotion: "nachdenklich",
+        text: "Aber Vorsicht: „Unerklärt“ heißt nicht automatisch Diskriminierung. Die Statistik misst nicht alles. Ungleiche Behandlung kann aber ein Teil davon sein – bei Verhandlungen zum Beispiel, oder bei Beförderungen.",
+        addNote: "rest_bedeutung", next: "richtig3" },
+      richtig3: { speaker: "Frau Peeters", emotion: "froehlich",
+        text: "Hier, die Akte „Unerklärter Rest“. Bring sie in den Sitzungssaal – das ist das Gebäude mit der Glaskuppel.",
+        aktion: "beweis:bxl", next: "ende" },
+      danach: { speaker: "Frau Peeters", emotion: "froehlich",
+        text: "Viel Erfolg im Ausschuss! Und falls dir dort die Worte fehlen: Dein Notizbuch hat sie.",
+        next: "ende" }
+    }
+  },
+
+  bxl_fach_a: {
+    einstieg: [ { wenn: "bxl_fach_a", knoten: "nochmal" }, { knoten: "start" } ],
+    knoten: {
+      start: { speaker: "Fach A – „Unbereinigt“",
+        text: "Ein blauer Ordner. Darin: Tabellen mit den Stundenlöhnen aller Beschäftigten – egal in welchem Beruf und mit wie vielen Stunden.",
+        next: "a2" },
+      a2: { speaker: "Kim", emotion: "nachdenklich",
+        text: "Einfach alle Löhne verglichen. Für Deutschland kommt dabei {fakt:de_gpg_unbereinigt_destatis} heraus. Das ist die ganze Lücke.",
+        addNote: "rest_unbereinigt", setFlag: "bxl_fach_a", next: "ende" },
+      nochmal: { speaker: "Fach A – „Unbereinigt“",
+        text: "Der blaue Ordner: die ganze Lücke, {fakt:de_gpg_unbereinigt_destatis}.",
+        next: "ende" }
+    }
+  },
+
+  bxl_fach_b: {
+    einstieg: [ { wenn: "bxl_fach_b", knoten: "nochmal" }, { knoten: "start" } ],
+    knoten: {
+      start: { speaker: "Fach B – „Erklärt“",
+        text: "Ein grüner Ordner voller Balkendiagramme: Teilzeit, Branche, Beruf, Führungsposition. Jeder Balken erklärt ein Stück der Lücke.",
+        next: "b2" },
+      b2: { speaker: "Kim", emotion: "ueberrascht",
+        text: "Zusammen erklären diese Unterschiede etwa {fakt:de_gpg_erklaert_anteil} der Lücke. Ein großer Teil – aber nicht alles.",
+        addNote: "rest_erklaert", setFlag: "bxl_fach_b", next: "ende" },
+      nochmal: { speaker: "Fach B – „Erklärt“",
+        text: "Der grüne Ordner: Etwa {fakt:de_gpg_erklaert_anteil} der Lücke lassen sich erklären.",
+        next: "ende" }
+    }
+  },
+
+  bxl_fach_c: {
+    einstieg: [ { wenn: "bxl_fach_c", knoten: "nochmal" }, { knoten: "start" } ],
+    knoten: {
+      start: { speaker: "Fach C – „Bereinigt“",
+        text: "Ein gelber Ordner mit einem Fragezeichen auf dem Rücken. Hier werden nur Frauen und Männer mit gleichem Beruf, gleicher Branche, gleichen Stunden und ähnlicher Erfahrung verglichen.",
+        next: "c2" },
+      c2: { speaker: "Kim", emotion: "nachdenklich", emote: "gluehbirne",
+        text: "Und trotzdem bleibt eine Lücke von etwa {fakt:gpg_de_bereinigt}. Das ist der Teil, den keine Tabelle erklärt.",
+        addNote: "rest_bereinigt", setFlag: "bxl_fach_c", next: "ende" },
+      nochmal: { speaker: "Fach C – „Bereinigt“",
+        text: "Der gelbe Ordner: Übrig bleiben etwa {fakt:gpg_de_bereinigt}.",
+        next: "ende" }
+    }
+  },
+
+  // ---------------- Sitzungssaal ----------------
+  saal_laurent: {
+    einstieg: [ { wenn: "finale_fertig", knoten: "danach" }, { knoten: "start" } ],
+    knoten: {
+      start: { speaker: "Dr. Marie Laurent", emotion: "froehlich",
+        text: "Kim! Du hast es geschafft – alle fünf Beweisstücke. Die Abgeordneten sind gespannt.",
+        next: "s2" },
+      s2: { speaker: "Dr. Marie Laurent", emotion: "nachdenklich",
+        text: "Wenn du so weit bist, tritt ans Rednerpult. Erst zeigst du deine Beweise, dann stellen die drei ihre Fragen, und am Ende schlägst du drei Maßnahmen vor.",
+        options: [
+          { label: "Hast du einen Tipp für mich?", next: "tipp" },
+          { label: "Ich bin bereit.", next: "ende" }
+        ] },
+      tipp: { speaker: "Dr. Marie Laurent", emotion: "froehlich",
+        text: "Antworte mit dem, was du gesehen und gehört hast. Dein Notizbuch ist dein bestes Argument. Und: Es gibt nicht die eine richtige Lösung – nur gute Gründe.",
+        next: "ende" },
+      danach: { speaker: "Dr. Marie Laurent", emotion: "froehlich",
+        text: "Das war stark, Kim. Ganz ehrlich.",
+        next: "ende" }
+    }
+  },
+
+  saal_anna: {
+    einstieg: [ { wenn: "finale_fertig", knoten: "danach" }, { knoten: "start" } ],
+    knoten: {
+      start: { speaker: "Anna", emotion: "ueberrascht", emote: "schweiss",
+        text: "Ich bin so aufgeregt, als müsste ich selbst da vorne stehen. Jonas hat schon zweimal gefragt, ob seine Krawatte richtig sitzt. Er trägt keine Krawatte.",
+        next: "ende" },
+      danach: { speaker: "Anna", emotion: "froehlich",
+        text: "Heute hat sich etwas bewegt. Das habe ich richtig gespürt.",
+        next: "ende" }
+    }
+  },
+
+  saal_jonas: {
+    einstieg: [ { wenn: "finale_fertig", knoten: "danach" }, { knoten: "start" } ],
+    knoten: {
+      start: { speaker: "Jonas", emotion: "nachdenklich",
+        text: "Egal, was heute herauskommt: Ich rede ab jetzt offen über mein Gehalt. Zumindest mit Anna. Das ist ein Anfang, oder?",
+        next: "ende" },
+      danach: { speaker: "Jonas", emotion: "froehlich",
+        text: "Ich hab's Anna gleich gesagt: Kim war super. Sie meinte nur: „Wissen wir doch.“",
+        next: "ende" }
+    }
+  },
+
+  saal_vella: {
+    einstieg: [ { wenn: "finale_fertig", knoten: "danach" }, { knoten: "start" } ],
+    knoten: {
+      start: { speaker: "Abg. Lucia Vella", emotion: "skeptisch",
+        text: "Lucia Vella, Ausschuss für Beschäftigung. Ich sage es gleich: Ich halte viel von freien Entscheidungen und wenig von neuen Vorschriften. Überzeugen Sie mich!",
+        next: "ende" },
+      danach: { speaker: "Abg. Lucia Vella", emotion: "nachdenklich",
+        text: "Ihre Argumente waren gut vorbereitet. Einig sind wir uns noch nicht – aber das muss man in einer Demokratie auch nicht immer sein.",
+        next: "ende" }
+    }
+  },
+
+  saal_nowicki: {
+    einstieg: [ { wenn: "finale_fertig", knoten: "danach" }, { knoten: "start" } ],
+    knoten: {
+      start: { speaker: "Abg. Piotr Nowicki", emotion: "neutral",
+        text: "Piotr Nowicki. Ich war lange Betriebsrat in einer Fabrik. Für mich ist klar: gleiche Arbeit, gleicher Lohn. Aber ich will Belege sehen, keine Parolen.",
+        next: "ende" },
+      danach: { speaker: "Abg. Piotr Nowicki", emotion: "froehlich",
+        text: "Gute Arbeit. Belege schlagen Parolen – fast immer.",
+        next: "ende" }
+    }
+  },
+
+  saal_dewit: {
+    einstieg: [ { wenn: "finale_fertig", knoten: "danach" }, { knoten: "start" } ],
+    knoten: {
+      start: { speaker: "Abg. Anneke de Wit", emotion: "skeptisch",
+        text: "Anneke de Wit. Ich frage mich bei jedem Thema: Muss das wirklich in Brüssel geregelt werden? Oder können die Länder das besser selbst?",
+        next: "ende" },
+      danach: { speaker: "Abg. Anneke de Wit", emotion: "nachdenklich",
+        text: "Sie haben mir einiges zum Nachdenken mitgegeben. Das passiert mir nicht oft.",
+        next: "ende" }
+    }
+  },
+
+  // ---------------- Das Finale (startet am Rednerpult) ----------------
+  finale_pult: {
+    einstieg: [ { wenn: "finale_fertig", knoten: "danach" }, { knoten: "start" } ],
+    knoten: {
+      start: { speaker: "",
+        text: "Das Rednerpult. Vor dir: drei Abgeordnete, ein Mikrofon und ziemlich viel Stille.",
+        options: [
+          { label: "Die Sitzung beginnen", next: "s1" },
+          { label: "Noch nicht", next: "ende" }
+        ] },
+      s1: { speaker: "Dr. Marie Laurent", wer: "laurent", emotion: "neutral",
+        text: "Sehr geehrte Abgeordnete, das ist Kim aus unserem Büro. Kim hat in vier Ländern recherchiert – und im Archiv.",
+        next: "s2" },
+      s2: { speaker: "Abg. Piotr Nowicki", wer: "nowicki", emotion: "neutral",
+        text: "Willkommen, Kim. Dann zeigen Sie uns bitte, was Sie gefunden haben.",
+        next: "s3" },
+      s3: { speaker: "Kim", emotion: "froehlich",
+        text: "Gern. Ich habe fünf Beweisstücke mitgebracht.",
+        aktion: "minispiel:praesentation", next: "ende" },
+      danach: { speaker: "",
+        text: "Die Sitzung ist vorbei. Das Mikrofon ist aus – zum Glück, denn Kim summt leise vor sich hin.",
+        next: "ende" }
+    }
+  },
+
+  finale_nach_praesentation: {
+    knoten: {
+      start: { speaker: "Abg. Lucia Vella", wer: "vella", emotion: "nachdenklich",
+        text: "Danke, Kim. Das waren eindrucksvolle Beweise. Trotzdem haben wir Fragen.",
+        next: "k2" },
+      k2: { speaker: "Abg. Piotr Nowicki", wer: "nowicki", emotion: "neutral",
+        text: "Jede und jeder von uns stellt Ihnen eine Frage. Antworten Sie bitte mit einem Fakt aus Ihrem Notizbuch.",
+        aktion: "minispiel:duell", next: "ende" }
+    }
+  },
+
+  finale_nach_duell: {
+    einstieg: [ { wenn: "duell_punkte_hoch", knoten: "hoch" }, { wenn: "duell_punkte_mittel", knoten: "mittel" }, { knoten: "niedrig" } ],
+    knoten: {
+      hoch: { speaker: "Abg. Anneke de Wit", wer: "dewit", emotion: "ueberrascht",
+        text: "Das war überzeugend – das muss sogar ich zugeben.",
+        next: "m" },
+      mittel: { speaker: "Abg. Anneke de Wit", wer: "dewit", emotion: "nachdenklich",
+        text: "Einiges hat mich überzeugt, anderes weniger. Das ist ehrlich gesagt ganz normal.",
+        next: "m" },
+      niedrig: { speaker: "Abg. Anneke de Wit", wer: "dewit", emotion: "skeptisch",
+        text: "Ich bin noch nicht überzeugt. Aber ich höre Ihnen weiter zu.",
+        next: "m" },
+      m: { speaker: "Abg. Lucia Vella", wer: "vella", emotion: "neutral",
+        text: "Kommen wir zum wichtigsten Teil: Was schlagen Sie vor? Wählen Sie drei Maßnahmen. Und bitte verschweigen Sie uns die Nachteile nicht.",
+        next: "m2" },
+      m2: { speaker: "Kim", emotion: "nachdenklich",
+        text: "Eine perfekte Lösung gibt es nicht. Aber ich weiß, was ich vorschlagen würde.",
+        aktion: "minispiel:massnahmen", next: "ende" }
+    }
+  },
+
+  finale_abschluss: {
+    knoten: {
+      start: { speaker: "Abg. Piotr Nowicki", wer: "nowicki", emotion: "froehlich",
+        text: "Danke, Kim. Der Ausschuss wird über Ihre Vorschläge beraten. Die Sitzung ist geschlossen.",
+        next: "k2" },
+      k2: { speaker: "Dr. Marie Laurent", wer: "laurent", emotion: "froehlich", emote: "herz",
+        text: "Du warst großartig, Kim. Was aus deinen Vorschlägen wird, zeigt sich erst mit der Zeit …",
+        next: "k3" },
+      k3: { speaker: "",
+        text: "Zehn Jahre später …",
+        aktion: "epilog", next: "ende" }
+    }
   }
 };
+
 
 /* =====================================================================
    Minispiele (Texte und Aufbau) – Zahlen kommen aus facts.js
@@ -1059,5 +1481,176 @@ DATA.minispiele = {
     setFlag: "lu_verhandelt",
     addNote: "verhandlung_tipps",
     danach: "lu_schmit_nach_spiel"
+  },
+
+  // ---------------- Finale 1: Beweisstücke präsentieren ----------------
+  praesentation: {
+    art: "praesentation",
+    titel: "Kims Beweisstücke",
+    zaehler: "Beweisstück {n} von {von}",
+    tasten: "E oder Enter: weiter",
+    weiter: "Nächstes Beweisstück",
+    fertig: "Zu den Fragen",
+    karten: [
+      { land: "de", text: "In Deutschland arbeiten etwa {fakt:de_teilzeit_frauen} der erwerbstätigen Frauen in Teilzeit – oft, weil Betreuungsplätze fehlen. Weniger Stunden heißt weniger Lohn und später weniger Rente." },
+      { land: "se", text: "In Schweden sind für jeden Elternteil {fakt:se_reservierte_tage} Elterngeld reserviert. Väter nehmen dort mehr Elternzeit als anderswo – aber immer noch weniger als Mütter." },
+      { land: "ee", text: "In Estland zahlt die IT ({fakt:ee_lohn_it}) deutlich mehr als die Pflege ({fakt:ee_lohn_pflege}). In der IT arbeiten wenige Frauen, in der Pflege sehr viele." },
+      { land: "lu", text: "Luxemburg hat im Durchschnitt fast keine Lücke ({fakt:gpg_lu}). Trotzdem werden in manchen Firmen vor allem Männer befördert – nur etwa {fakt:lu_frauen_fuehrung} der Führungskräfte sind Frauen." },
+      { land: "bxl", text: "Selbst wenn man Beruf, Branche und Arbeitszeit herausrechnet, bleibt in Deutschland eine Lücke von etwa {fakt:gpg_de_bereinigt}: der unerklärte Rest." }
+    ],
+    setFlag: "finale_praesentiert",
+    danach: "finale_nach_praesentation"
+  },
+
+  // ---------------- Finale 2: Argumentationsduell ----------------
+  // passend: Notizen (DATA.notes), die als gute Antwort zählen.
+  // Punkte: 2 beim ersten Versuch, 1 beim zweiten, danach 0. Kein Game Over.
+  duell: {
+    art: "duell",
+    titel: "Fragen des Ausschusses",
+    anleitung: "Wähle aus deinem Notizbuch die Notiz, die die Frage am besten beantwortet.",
+    tasten: "← → Reiter · ↑ ↓ Notiz · Enter: vorlegen",
+    vorlegen: "Diese Notiz vorlegen",
+    weiter: "Weiter",
+    punkteName: "Überzeugung",
+    keineNotiz: "Auf dieser Seite steht nichts.",
+    punkteRichtig: [2, 1],
+    versuche: 3,
+    fragen: [
+      { wer: "vella", haltung: "wirtschaftsliberal",
+        frage: "Viele Frauen entscheiden sich doch bewusst für Teilzeit. Das ist eine freie Wahl. Warum sollte die Politik da eingreifen?",
+        passend: ["teilzeit_gruende", "kita_luecke", "meinung_strukturen", "rechnet_sich", "se_modell", "se_vaeter", "elternzeit_geteilt"],
+        richtig: "Hm. Wenn Betreuungsplätze fehlen oder sich nur eine Aufteilung rechnet, ist die Wahl also nicht ganz so frei. Das nehme ich mit.",
+        falsch: "Interessant – aber das beantwortet meine Frage nicht. Mir geht es um die angeblich freie Wahl bei der Arbeitszeit.",
+        tipp: "Tipp: Schau unter „Teilzeit“ oder „Elternzeit“.",
+        aufgeben: "Lassen wir das so stehen. Ich hätte gern gehört, warum die Wahl vielleicht nicht ganz frei ist – zum Beispiel wegen fehlender Kita-Plätze." },
+      { wer: "nowicki", haltung: "gewerkschaftsnah",
+        frage: "Die Arbeitgeber sagen mir immer: Die Lücke erklärt sich komplett durch Beruf, Branche und Arbeitszeit – also ist alles fair. Was antworten Sie darauf?",
+        passend: ["rest_bereinigt", "rest_bedeutung", "rest_erklaert", "branchen_muster", "verhandlung_fair", "befoerderung"],
+        richtig: "Genau solche Belege brauche ich. Mit „alles erklärbar“ ist es also nicht getan.",
+        falsch: "Das mag stimmen, hilft mir aber nicht gegen das Argument „alles erklärbar“.",
+        tipp: "Tipp: Schau unter „Unerklärter Rest“.",
+        aufgeben: "Dann sage ich es selbst: Auch wenn man Beruf, Branche und Arbeitszeit herausrechnet, bleibt eine Lücke. Das zeigt Ihre Akte aus dem Archiv." },
+      { wer: "dewit", haltung: "skeptisch gegenüber EU-Regeln",
+        frage: "Luxemburg hat im Durchschnitt fast keine Lohnlücke. Die Länder schaffen das also allein. Warum sollte sich Brüssel einmischen?",
+        passend: ["durchschnitt", "gpg_lu", "befoerderung", "fuehrung_lu", "eu_umsetzung"],
+        richtig: "Hm. Ein niedriger Durchschnitt heißt also nicht, dass alles in Ordnung ist. Das muss ich mir überlegen.",
+        falsch: "Das mag sein, erklärt aber nicht, warum ein Land mit fast keiner Lücke gemeinsame Regeln braucht.",
+        tipp: "Tipp: Schau unter „Verhandlung & Beförderung“ oder „EU-Recht“.",
+        aufgeben: "Ich hätte erwartet, dass Sie auf die Beförderungsliste aus Luxemburg verweisen. Ein Durchschnitt zeigt eben nicht alles." }
+    ],
+    ergebnis: "Du hast {p} von {max} Überzeugungspunkten gesammelt.",
+    grenzeHoch: 5,
+    grenzeMittel: 3,
+    setFlag: "finale_duell",
+    danach: "finale_nach_duell"
+  },
+
+  // ---------------- Finale 3: Drei Maßnahmen wählen ----------------
+  massnahmen: {
+    art: "massnahmen",
+    titel: "Drei Maßnahmen für den Ausschuss",
+    anleitung: "Wähle genau drei Maßnahmen. Jede hat Vor- und Nachteile – eine einzig richtige Lösung gibt es nicht.",
+    tasten: "Pfeiltasten: wählen · E oder Leertaste: an/aus · Enter: vorlegen",
+    zaehler: "{n} von {von} gewählt",
+    vorlegen: "Maßnahmen vorlegen",
+    zuWenig: "Wähle genau drei Maßnahmen.",
+    schonVoll: "Du hast schon drei Maßnahmen gewählt. Nimm erst eine wieder heraus.",
+    pro: "Dafür",
+    contra: "Dagegen",
+    anzahl: 3,
+    optionen: [
+      { id: "kita", titel: "Kita-Ausbau", farbe: "de",
+        kurz: "Mehr und bessere Betreuungsplätze für kleine Kinder, mit Förderung der EU.",
+        pro: ["Eltern können freier entscheiden, wie viel sie arbeiten.", "Kinder profitieren von früher Bildung."],
+        contra: ["Kostet viel Geld.", "Schon heute fehlen Erzieher*innen."] },
+      { id: "partnermonate", titel: "Mehr Partnermonate", farbe: "se",
+        kurz: "Jeder Elternteil bekommt eigene Elternzeitmonate, die nicht übertragbar sind.",
+        pro: ["Väter nehmen häufiger Elternzeit – das zeigt Schweden.", "Die Pause im Job verteilt sich gerechter."],
+        contra: ["Manche Familien fühlen sich bevormundet.", "Für kleine Betriebe schwerer zu planen."] },
+      { id: "transparenz", titel: "Lohntransparenz", farbe: "bxl",
+        kurz: "Nach der Richtlinie (EU) 2023/970: Firmen legen offen, wie sie Gehälter festlegen, und Beschäftigte dürfen Vergleichswerte erfragen.",
+        pro: ["Unterschiede werden sichtbar und können geklärt werden.", "Gilt in allen EU-Ländern."],
+        contra: ["Mehr Aufwand für Firmen.", "Offenheit allein ändert die Ursachen noch nicht."] },
+      { id: "aufwertung", titel: "Soziale Berufe aufwerten", farbe: "ee",
+        kurz: "Pflege, Erziehung und soziale Arbeit werden besser bezahlt.",
+        pro: ["Wichtige Arbeit wird gerechter bezahlt.", "Mehr Menschen wollen diese Berufe lernen."],
+        contra: ["Höhere Kosten, zum Beispiel für Pflegekassen und Gebühren.", "Löhne legt die EU nicht selbst fest – das machen die Länder und Tarifpartner."] },
+      { id: "quote", titel: "Frauenquote für Führungsposten", farbe: "lu",
+        kurz: "Große Unternehmen müssen einen Mindestanteil von Frauen in Führungspositionen erreichen.",
+        pro: ["Mehr Vorbilder in Chefetagen.", "Beförderungen werden genauer geprüft."],
+        contra: ["Kritik: Allein die Leistung sollte zählen.", "Hilft vor allem Frauen in großen Firmen."] },
+      { id: "keine", titel: "Keine Eingriffe – freie Entscheidung", farbe: "keine",
+        kurz: "Die EU macht keine neuen Regeln. Familien und Firmen entscheiden selbst.",
+        pro: ["Keine neue Bürokratie.", "Respektiert persönliche Entscheidungen."],
+        contra: ["Bestehende Hindernisse bleiben.", "Veränderungen können sehr lange dauern."] }
+    ],
+    setFlag: "finale_fertig",
+    danach: "finale_abschluss"
   }
 };
+
+/* =====================================================================
+   Epilog: „Anna und Jonas in 10 Jahren“
+   ---------------------------------------------------------------------
+   Kleine 3D-Szene auf dem Europaplatz im Abendlicht. Der Text setzt sich
+   aus Bausteinen zusammen:
+     1) eine Grundstimmung (die erste, deren Bedingung passt)
+     2) ein Baustein je gewählter Maßnahme (Flags massnahme_<id>)
+     3) ein Satz je nach Überzeugungspunkten im Duell
+     4) das Schlussgespräch
+   figuren: wie in npcs.js (nurWenn, start, blick, routine). Objekte-IDs
+   (z. B. Bänke) stammen von der Karte des Epilogs.
+   ===================================================================== */
+DATA.epilog = {
+  karte: "europaplatz",
+  stimmung: "abend",
+  kamera: { ziel: [18, 18.6], abstand: 10.5, neigung: 40, schwenk: 0.22 },
+  titel: "Zehn Jahre später …",
+  tasten: "E oder Enter: weiter",
+  weiter: "Weiter",
+  ende: "Zum Nachdenken",
+
+  figuren: {
+    anna:         { figur: "anna_10", start: [16.6, 18.1], blick: 30, nurWenn: "!massnahme_quote&!massnahme_transparenz" },
+    anna_chefin:  { figur: "anna_10_blazer", start: [16.6, 18.1], blick: 30, nurWenn: "massnahme_quote|massnahme_transparenz" },
+    jonas:        { figur: "jonas_10", start: [18.4, 18.1], blick: -30, nurWenn: "!massnahme_partnermonate" },
+    jonas_wagen:  { figur: "jonas_10_wagen", start: [18.4, 17.9], blick: -20, nurWenn: "massnahme_partnermonate" },
+    lina:         { figur: "lina", start: [15.6, 19.2], blick: 90, nurWenn: "massnahme_kita",
+                    routine: [ { tun: "gehen", weg: [[15.2, 17.6], [14.6, 19.6], [16.2, 20.2]] }, { tun: "warten", s: 1.2 } ] },
+    anu:          { figur: "anu_10", start: [9.5, 21.2], blick: 90, nurWenn: "massnahme_aufwertung",
+                    routine: [ { tun: "gehen", weg: [[26, 21.2]] }, { tun: "warten", s: 2 }, { tun: "gehen", weg: [[9.5, 21.2]] }, { tun: "warten", s: 2 } ] },
+    dimitriou:    { figur: "dimitriou", start: [21.2, 19.2], blick: -135, nurWenn: "massnahme_keine",
+                    routine: [ { tun: "sitzen", an: "hub_bank_3", s: 9999 } ] }
+  },
+
+  stimmungen: [
+    { wenn: "massnahme_keine",
+      text: "Die EU hat damals nur wenige neue Regeln beschlossen. Vieles blieb den Familien und Firmen selbst überlassen. Manches hat sich dadurch verändert – anderes ist geblieben, wie es war." },
+    { wenn: "massnahme_kita|massnahme_partnermonate",
+      text: "In den letzten zehn Jahren hat sich an vielen Stellen gleichzeitig etwas bewegt – zu Hause und im Job. Die Lücke ist kleiner geworden. Verschwunden ist sie nicht." },
+    { wenn: "",
+      text: "Auf den Gehaltszetteln hat sich in den letzten zehn Jahren einiges getan. Zu Hause ist vieles beim Alten geblieben: Wer Kinder betreut, arbeitet oft noch weniger Stunden." }
+  ],
+
+  massnahmen: {
+    kita: "**Kita-Ausbau:** Überall wurden neue Kitas gebaut, auch mit Geld der EU. Anna hat für ihre Tochter Lina gleich nach der Elternzeit einen Platz bekommen und arbeitet so viele Stunden, wie sie möchte. In manchen Städten fehlen allerdings noch immer Erzieher*innen.",
+    partnermonate: "**Partnermonate:** Jeder Elternteil hat eigene Elternzeitmonate, die verfallen, wenn man sie nicht nimmt. Jonas war mit seinem Sohn ein halbes Jahr zu Hause. Sein Chef fand das erst seltsam – inzwischen macht es die halbe Abteilung so. Manche Familien fühlen sich allerdings bevormundet.",
+    transparenz: "**Lohntransparenz:** Heute steht in jeder Stellenanzeige ein Gehalt, und alle dürfen fragen, was vergleichbare Kolleg*innen verdienen. Anna hat nachgefragt – und eine Gehaltserhöhung bekommen. Für kleine Firmen war der neue Papierkram aber lästig.",
+    aufwertung: "**Soziale Berufe:** Pflege, Erziehung und soziale Arbeit werden heute besser bezahlt. Anu aus Estland arbeitet inzwischen als Pflegerin – und muss nicht mehr nebenbei jobben. Dafür sind einige Beiträge und Gebühren gestiegen.",
+    quote: "**Frauenquote:** Große Firmen müssen mehr Frauen in Führungspositionen bringen. Anna leitet inzwischen ein Team. Ein Kollege murmelte anfangs etwas von „Quote“ – nach einem halben Jahr murmelte er nicht mehr. Manche finden die Quote trotzdem ungerecht.",
+    keine: "**Freie Entscheidung:** Ohne neue Regeln entscheiden Anna und Jonas alles selbst – mit allen Freiheiten und allen alten Hindernissen. Einige Firmen sind freiwillig vorangegangen, andere nicht."
+  },
+
+  punkte: [
+    { ab: 5, text: "Übrigens: Der Ausschuss hat Kims Bericht damals fast Wort für Wort übernommen." },
+    { ab: 3, text: "Übrigens: Kims Bericht wurde damals lange diskutiert – und in Teilen übernommen." },
+    { ab: 0, text: "Übrigens: Kims Bericht sorgte damals für viele Fragen. Die Diskussion darüber läuft bis heute." }
+  ],
+
+  schluss: [
+    { wer: "anna", name: "Anna", text: "Weißt du noch, wie wir damals unsere Gehaltszettel verglichen haben?" },
+    { wer: "jonas", name: "Jonas", text: "Klar. Und weißt du, was das Beste ist? Heute reden wir einfach darüber." }
+  ]
+};
+

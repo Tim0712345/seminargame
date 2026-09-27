@@ -61,11 +61,19 @@ Prompt abzuweichen. **Nichts darf nach Animal Crossing oder einem anderen besteh
   - Minispiele in `js/game/minigames.js` (Zuordnen, Verhandlung), Daten in `DATA.minispiele` (dialogues.js),
     Start per Dialog-Aktion `minispiel:id`, danach Folgedialog `danach`
   - Kim hält gefundene Beweisstücke beim Jubeln hoch; Kinderwagen als Figuren-Extra
-- **Als Nächstes – Phase 4:** Brüssel (Tor öffnet bei `alle_beweise`): Archiv mit Archivarin (Beweis „bxl“,
-  bereinigt vs. unbereinigt), Sitzungssaal: 5 Beweise präsentieren, Argumentationsduell (3 Abgeordnete,
-  Fakten aus dem Notizbuch), 3 aus 6 Maßnahmen, modularer Epilog, Reflexion, Titelbildschirm, Speichern.
-- Danach Phase 4 (Brüssel-Finale, Enden, Reflexion, Titelbildschirm, Speichern),
-  Phase 5 (Sound, Partikel, Touch, Barrierefreiheit, Performance, Bugfixes).
+- **Phase 4 fertig (wartet auf OK des Users):**
+  - Tor am Europaplatz: Objekte mit `wenn` (geschlossen/`tor_offen`), Ausgang nach Norden bei `alle_beweise`
+  - Karten `bxl` (Jugendstil, Archiv, Parlament, Comicwand), `bxl_archiv` (Fächer A/B/C, Frau Peeters,
+    Quiz → Beweis `bxl`), `bxl_saal` (3 Abgeordnete, Rednerpult, Anna/Jonas/Laurent)
+  - Finale als Minispiele in `minigames.js`: `praesentation`, `duell` (Notizen als Antworten, Live-Portrait,
+    2/1/0 Punkte, kein Game Over), `massnahmen` (3 aus 6); danach Dialog → Aktion `epilog`
+  - `GAME.Titelszene` (drehendes Diorama, Logo im Canvas gezeichnet), `GAME.Epilogszene` (Bausteine aus `DATA.epilog`),
+    Reflexion (`GAME.ui.reflexionZeigen`), Credits (Platzhalter `[Dein Name]` in `DATA.texte.credits`)
+  - `GAME.speicher` (quests.js): Autosave in einem Slot, Weiterspielen, Neues Spiel mit Rückfrage
+  - Dialog-Aktionen `reise:karte,spawn`, `epilog`, `reflexion`; Platzhalter auch in Antwortoptionen
+  - Innenraum-Kamera pro Karte: `kamera: { x, z, abstand }`; Türen mit `wenn`/`gesperrt`
+- **Als Nächstes – Phase 5:** Sound (Sprechlaute), Partikel, Touch-Joystick, Barrierefreiheit
+  (Schriftgröße, Kontrast, Bewegung reduzieren), Performance auf schwacher Hardware, Bugfixes.
 
 ## Gestaltungsregeln für Karten (aus Erfahrung)
 - **Türen müssen nach Süden (zur Kamera) zeigen**, sonst sieht man sie nicht. Gebäude deshalb nördlich von Wegen platzieren.
@@ -74,4 +82,5 @@ Prompt abzuweichen. **Nichts darf nach Animal Crossing oder einem anderen besteh
 
 ## Testen
 Mit einem einfachen lokalen Server im Projektordner, z. B. `python3 -m http.server 8765`,
-dann `http://localhost:8765/index.html?debug=1`. Der eigentliche Zielweg bleibt der Doppelklick (file://).
+dann `http://localhost:8765/index.html?debug=1` (Titelbildschirm) oder `…&karte=bxl_saal` (direkt).
+Der eigentliche Zielweg bleibt der Doppelklick (file://).

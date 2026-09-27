@@ -174,6 +174,9 @@ GAME.beweisHud = (function () {
     GAME.flags.beobachten(function (name) { if (name === "*" || name === "intro_fertig" || name.indexOf("beweis_") === 0) H.aktualisieren(); });
   };
 
+  // Symbol eines Beweisstücks als SVG (auch für die Präsentation im Finale)
+  H.icon = function (l) { return '<svg viewBox="0 0 32 32">' + (ICONS[l] || "") + "</svg>"; };
+
   H.aktualisieren = function () {
     if (!el) return;
     var sichtbar = GAME.flags.hat("intro_fertig");

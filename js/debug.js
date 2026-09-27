@@ -48,7 +48,7 @@ GAME.debug = (function () {
   D.dialogePruefen = function () {
     var e = GAME.dialog.pruefen();
     // Flags, die nicht aus Dialogen kommen, sondern vom Spiel gesetzt werden
-    var vomSpiel = /^(beweis_|notiz_|war_in_|alle_beweise$|finale_fertig$)/;
+    var vomSpiel = /^(beweis_|notiz_|war_in_|massnahme_|duell_punkte_|alle_beweise$|finale_fertig$)/;
     for (var m in (DATA.minispiele || {})) {
       if (DATA.minispiele[m].setFlag) e.gesetzt[DATA.minispiele[m].setFlag] = true;
       if (DATA.minispiele[m].erfolgFlag) e.gesetzt[DATA.minispiele[m].erfolgFlag] = true;
@@ -121,7 +121,11 @@ GAME.debug = (function () {
   D.teleportMenue = function () {
     var eintraege = Object.keys(DATA.maps).map(function (id) {
       var sp = Object.keys(DATA.maps[id].spawns || { start: 1 })[0];
-      return { text: (DATA.maps[id].name || id) + "  (" + id + ")", aktion: function () { GAME.ui.menueSchliessen(); GAME.Spielszene.wechseln(id, sp); } };
+      return { text: (DATA.maps[id].name || id) + "  (" + id + ")", aktion: function () {
+        GAME.ui.menueSchliessen();
+        if (GAME.szenen.aktiv === GAME.Spielszene) GAME.Spielszene.wechseln(id, sp);
+        else GAME.szenen.ueberblenden(GAME.Spielszene, { karte: id, spawn: sp });
+      } };
     });
     eintraege.push({ text: "Schließen", aktion: function () { GAME.ui.menueSchliessen(); } });
     GAME.ui.menueOeffnen({ titel: "Teleport (Debug)", eintraege: eintraege });
@@ -137,6 +141,17 @@ GAME.debug = (function () {
           F.setzen(["intro_fertig", "war_in_de", "de_lea_fertig", "de_tobias_fertig", "de_warteliste"]); Q.beweis("de"); GAME.ui.menueSchliessen(); } },
         { text: "Alle vier Beweisstücke geben", aktion: function () {
           F.setzen("intro_fertig"); ["de", "se", "ee", "lu"].forEach(Q.beweis); GAME.ui.menueSchliessen(); } },
+        { text: "Brüssel-Archiv erledigen (5. Beweisstück)", aktion: function () {
+          F.setzen(["intro_fertig", "hub_laurent_alle", "war_in_bxl", "bxl_peeters_auftrag", "bxl_fach_a", "bxl_fach_b", "bxl_fach_c"]);
+          ["de", "se", "ee", "lu", "bxl"].forEach(Q.beweis);
+          ["gpg_eu", "teilzeit_gruende", "kita_luecke", "se_modell", "elternzeit_geteilt", "branchen_muster", "durchschnitt", "befoerderung",
+           "fuehrung_lu", "rest_unbereinigt", "rest_erklaert", "rest_bereinigt", "rest_bedeutung"].forEach(Q.notiz);
+          GAME.ui.menueSchliessen(); } },
+        { text: "Epilog ansehen (Kita, Partnermonate, Transparenz)", aktion: function () {
+          F.setzen(["finale_praesentiert", "finale_duell", "finale_fertig", "duell_punkte_hoch", "massnahme_kita", "massnahme_partnermonate", "massnahme_transparenz"]);
+          GAME.zustand.finale = { punkte: 6, max: 6, massnahmen: ["kita", "partnermonate", "transparenz"] };
+          GAME.ui.menueSchliessen(); GAME.szenen.epilogStarten(); } },
+        { text: "Spielstand löschen", aktion: function () { GAME.speicher.loeschen(); GAME.ui.menueSchliessen(); GAME.ui.einblenden("Spielstand gelöscht"); } },
         { text: "Alles zurücksetzen", aktion: function () { F.zuruecksetzen(); GAME.zustand.gesehen = {}; GAME.ui.menueSchliessen(); } },
         { text: function () { return "Gesetzte Flags anzeigen (" + F.alle().length + ")"; },
           aktion: function () { console.log("Flags:", F.alle().join(", ") || "(keine)"); GAME.ui.einblenden(F.alle().length + " Flags – siehe Konsole"); } },
