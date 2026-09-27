@@ -24,7 +24,7 @@ DATA.npcs = {
   // ======================= Europaplatz =======================
   laurent: {
     figur: "laurent", karte: "europaplatz", start: [17.5, 21.1], blick: 0,
-    dialog: "hub_laurent", hinweis: "beweis_de&!hub_laurent_de",
+    dialog: "hub_laurent", hinweis: "beweis_de&!hub_laurent_de|beweis_se&!hub_laurent_se|beweis_ee&!hub_laurent_ee|beweis_lu&!hub_laurent_lu",
     routineWenn: "intro_fertig",
     routine: [
       { tun: "gehen", weg: [[17.5, 20.3], [15.5, 19.8]] },
@@ -165,5 +165,149 @@ DATA.npcs = {
       { tun: "schauen", richtung: 180, s: 5 },
       { tun: "gehen", weg: [[3.6, 4.4]] }
     ]
+  },
+
+  // ==================== Schweden-Viertel ====================
+  lars: {
+    figur: "lars", karte: "se", start: [18.2, 15.6], blick: 0,
+    dialog: "se_familie", hinweis: "se_amt_fertig&!beweis_se",
+    routine: [
+      { tun: "schauen", richtung: 20, s: 8 },
+      { tun: "gehen", weg: [[18.5, 13.9], [14.5, 14.2]] },
+      { tun: "warten", s: 3 },
+      { tun: "gehen", weg: [[18.5, 13.9], [18.2, 15.6]] }
+    ]
+  },
+  nora: {
+    figur: "nora", karte: "se", start: [16.5, 14.6], blick: 0,
+    dialog: "se_familie", hinweis: "se_amt_fertig&!beweis_se",
+    routine: [
+      { tun: "sitzen", an: "se_bank_see", s: 30 },
+      { tun: "schauen", richtung: 30, s: 4 }
+    ]
+  },
+  birgit: {
+    figur: "birgit", karte: "se", start: [8.5, 15.2], blick: 180,
+    dialog: "se_birgit",
+    routine: [
+      { tun: "sitzen", an: "se_bank_weg", s: 25 },
+      { tun: "giessen", an: "se_beet", s: 6 }
+    ]
+  },
+  erik: {
+    figur: "erik", karte: "se", start: [3, 12], blick: 90,
+    dialog: "se_erik",
+    routine: [
+      { tun: "gehen", weg: [[26, 12], [27.5, 15], [16, 14.2], [3, 12]] },
+      { tun: "warten", s: 2 }
+    ]
+  },
+  alva: {
+    figur: "alva", karte: "se", start: [7, 9.8], blick: 0,
+    dialog: "se_alva",
+    routine: [
+      { tun: "schauen", richtung: 180, s: 6 },
+      { tun: "gehen", weg: [[10, 10.2]] },
+      { tun: "warten", s: 4 },
+      { tun: "gehen", weg: [[7, 9.8]] }
+    ]
+  },
+  lindqvist: {
+    figur: "lindqvist", karte: "se_amt_innen", start: [5.5, 1.6], blick: 0,
+    dialog: "se_lindqvist", hinweis: "!se_amt_fertig",
+    routine: [
+      { tun: "warten", s: 8 },
+      { tun: "gehen", weg: [[3.5, 1.6]] },
+      { tun: "schauen", richtung: 180, s: 3 },
+      { tun: "gehen", weg: [[5.5, 1.6]] }
+    ]
+  },
+
+  // ==================== Estland-Viertel ====================
+  kadri: {
+    figur: "kadri", karte: "ee", start: [17, 17.9], blick: 0,
+    dialog: "ee_kadri", hinweis: "!beweis_ee",
+    routine: [
+      { tun: "warten", s: 6 },
+      { tun: "gehen", weg: [[15.2, 18]] },
+      { tun: "schauen", richtung: 0, s: 3 },
+      { tun: "gehen", weg: [[17, 17.9]] }
+    ]
+  },
+  mart: {
+    figur: "mart", karte: "ee", start: [7, 10.9], blick: 0,
+    dialog: "ee_mart", hinweis: "!ee_stand_it",
+    routine: [ { tun: "warten", s: 5 }, { tun: "gehen", weg: [[6.5, 10.9]] }, { tun: "warten", s: 3 }, { tun: "gehen", weg: [[7, 10.9]] } ]
+  },
+  liis: {
+    figur: "liis", karte: "ee", start: [12.5, 10.9], blick: 0,
+    dialog: "ee_liis", hinweis: "!ee_stand_pflege",
+    routine: [ { tun: "warten", s: 6 }, { tun: "gehen", weg: [[13, 10.9]] }, { tun: "warten", s: 3 }, { tun: "gehen", weg: [[12.5, 10.9]] } ]
+  },
+  kertu: {
+    figur: "kertu", karte: "ee", start: [20.5, 10.9], blick: 0,
+    dialog: "ee_kertu", hinweis: "!ee_stand_bau",
+    routine: [ { tun: "warten", s: 4 }, { tun: "gehen", weg: [[20, 10.9]] }, { tun: "warten", s: 4 }, { tun: "gehen", weg: [[20.5, 10.9]] } ]
+  },
+  priit: {
+    figur: "priit", karte: "ee", start: [26, 10.9], blick: 0,
+    dialog: "ee_priit", hinweis: "!ee_stand_soziales",
+    routine: [ { tun: "warten", s: 7 }, { tun: "gehen", weg: [[26.5, 10.9]] }, { tun: "warten", s: 2 }, { tun: "gehen", weg: [[26, 10.9]] } ]
+  },
+  anu: {
+    figur: "anu", karte: "ee", start: [10, 14], blick: 180,
+    dialog: "ee_anu",
+    routine: [
+      { tun: "gehen", weg: [[10, 13.2]] },
+      { tun: "schauen", richtung: 180, s: 4 },
+      { tun: "gehen", weg: [[22, 13.2]] },
+      { tun: "schauen", richtung: 180, s: 4 },
+      { tun: "gehen", weg: [[16, 15]] },
+      { tun: "warten", s: 3 }
+    ]
+  },
+
+  // ==================== Luxemburg-Viertel ====================
+  hoffmann: {
+    figur: "hoffmann", karte: "lu", start: [17.5, 18.8], blick: 90,
+    dialog: "lu_hoffmann", hinweis: "!lu_hoffmann_fertig",
+    routine: [
+      { tun: "schauen", richtung: 90, s: 8 },
+      { tun: "gehen", weg: [[17, 19.8]] },
+      { tun: "schauen", richtung: -90, s: 6 },
+      { tun: "gehen", weg: [[17.5, 18.8]] }
+    ]
+  },
+  marc: {
+    figur: "marc", karte: "lu", start: [23.5, 10.2], blick: 0,
+    dialog: "lu_marc",
+    routine: [
+      { tun: "gehen", weg: [[21.3, 10.3]] },
+      { tun: "warten", s: 3 },
+      { tun: "gehen", weg: [[24.2, 11.3]] },
+      { tun: "warten", s: 3 },
+      { tun: "gehen", weg: [[27.3, 10]] },
+      { tun: "warten", s: 3 }
+    ]
+  },
+  paul: {
+    figur: "paul", karte: "lu_etage_1", start: [5, 2.2], blick: 0,
+    dialog: "lu_paul",
+    routine: [ { tun: "warten", s: 8 }, { tun: "gehen", weg: [[4, 2.2]] }, { tun: "schauen", richtung: 180, s: 3 }, { tun: "gehen", weg: [[5, 2.2]] } ]
+  },
+  chloe: {
+    figur: "chloe", karte: "lu_etage_2", start: [2.5, 4.4], blick: 180,
+    dialog: "lu_chloe",
+    routine: [ { tun: "sitzen", an: "lu2_stuhl_1", s: 18 }, { tun: "gehen", weg: [[4, 1.8]] }, { tun: "schauen", richtung: 180, s: 4 }, { tun: "gehen", weg: [[2.8, 4.6]] } ]
+  },
+  tom: {
+    figur: "tom", karte: "lu_etage_2", start: [5.5, 4.4], blick: 180,
+    dialog: "lu_tom",
+    routine: [ { tun: "sitzen", an: "lu2_stuhl_2", s: 22 }, { tun: "gehen", weg: [[8, 5]] }, { tun: "warten", s: 3 }, { tun: "gehen", weg: [[5.8, 4.6]] } ]
+  },
+  schmit: {
+    figur: "schmit", karte: "lu_etage_3", start: [3, 4.4], blick: 180,
+    dialog: "lu_schmit", hinweis: "!beweis_lu",
+    routine: [ { tun: "sitzen", an: "lu3_stuhl", s: 20 }, { tun: "gehen", weg: [[5.2, 4.5]] }, { tun: "schauen", richtung: 90, s: 4 }, { tun: "gehen", weg: [[3.4, 4.6]] } ]
   }
 };

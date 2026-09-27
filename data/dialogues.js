@@ -64,6 +64,30 @@ DATA.texte = {
   hineingehen: "Hineingehen",
   hinausgehen: "Hinausgehen",
   ansehen: "Ansehen",
+  aufzug: "Aufzug",
+  aufzugTitel: "Aufzug – welche Etage?",
+  aufzugHier: "(hier)",
+  schliessen: "Schließen",
+
+  notizbuch: {
+    titel: "Kims Notizbuch",
+    reiter: [
+      { id: "teilzeit",    titel: "Teilzeit" },
+      { id: "elternzeit",  titel: "Elternzeit" },
+      { id: "branchen",    titel: "Branchen" },
+      { id: "verhandlung", titel: "Verhandlung & Beförderung" },
+      { id: "rest",        titel: "Unerklärter Rest" },
+      { id: "eurecht",     titel: "EU-Recht" }
+    ],
+    leer: "Hier ist noch nichts notiert. Sprich mit den Leuten in den Vierteln!",
+    quelle: "Quelle:",
+    fuss: "← → Reiter wechseln · ↑ ↓ blättern · N oder Esc schließen"
+  },
+  questlog: {
+    titel: "Aufgaben",
+    leer: "Noch keine Aufgaben. Sprich mit Dr. Laurent am Brunnen.",
+    fuss: "Q oder Esc schließen"
+  },
 
   test: {
     fundUntersuchen: "Untersuchen",
@@ -134,12 +158,16 @@ DATA.dialogues = {
   // ========================================================================
   hub_laurent: {
     einstieg: [
+      { wenn: "alle_beweise&!hub_laurent_alle", knoten: "alle" },
       { wenn: "beweis_de&!hub_laurent_de", knoten: "nach_de" },
+      { wenn: "beweis_se&!hub_laurent_se", knoten: "nach_se" },
+      { wenn: "beweis_ee&!hub_laurent_ee", knoten: "nach_ee" },
+      { wenn: "beweis_lu&!hub_laurent_lu", knoten: "nach_lu" },
       { knoten: "start" }
     ],
     knoten: {
       start: { speaker: "Dr. Marie Laurent", emotion: "neutral",
-        text: "Na, Kim? Das Deutschland-Viertel liegt im Westen. Die anderen Viertel werden gerade noch vorbereitet – dorthin geht es später.",
+        text: "Na, Kim? Deutschland liegt im Westen, Schweden im Osten, Estland im Südwesten und Luxemburg im Südosten. Die Wegweiser helfen dir.",
         options: [
           { label: "Kannst du den Auftrag noch mal erklären?", next: "erklaeren" },
           { label: "Bis später!", next: "ende" }
@@ -160,8 +188,29 @@ DATA.dialogues = {
         text: "Auch das stimmt. Die Frage ist nur: Unter welchen Bedingungen wird entschieden? Mit Kita-Platz entscheidet man anders als ohne.",
         next: "nach_de_ende" },
       nach_de_ende: { speaker: "Dr. Marie Laurent", emotion: "froehlich",
-        text: "Die anderen Viertel öffnen bald. Schau bis dahin gern noch bei Anna und Jonas vorbei.",
-        setFlag: "hub_laurent_de", next: "ende" }
+        text: "Weiter geht's: Schweden liegt im Osten, Estland im Südwesten, Luxemburg im Südosten.",
+        setFlag: "hub_laurent_de", next: "ende" },
+      nach_se: { speaker: "Dr. Marie Laurent", emotion: "froehlich",
+        text: "Ein Elternzeit-Kalender aus Schweden! Reservierte Tage für jeden Elternteil – was hältst du davon?",
+        options: [
+          { label: "Das könnte auch anderswo helfen.", next: "se_a" },
+          { label: "Das sollte jede Familie selbst entscheiden.", next: "se_b" }
+        ] },
+      se_a: { speaker: "Dr. Marie Laurent", emotion: "nachdenklich",
+        text: "Viele sehen das so. Und trotzdem nehmen auch in Schweden Väter noch weniger Tage als Mütter. Regeln helfen – ändern aber nicht alles über Nacht.",
+        setFlag: "hub_laurent_se", next: "ende" },
+      se_b: { speaker: "Dr. Marie Laurent", emotion: "nachdenklich",
+        text: "Ein wichtiger Einwand, den du in Brüssel sicher wieder hörst. Die Frage ist, ob eine Wahl ohne reservierte Tage wirklich frei ist.",
+        setFlag: "hub_laurent_se", next: "ende" },
+      nach_ee: { speaker: "Dr. Marie Laurent", emotion: "nachdenklich",
+        text: "Die Gehaltstabelle aus Estland. Branchen mit vielen Frauen zahlen oft weniger – und niemand hat das bewusst so beschlossen. Genau das macht es so schwierig.",
+        setFlag: "hub_laurent_ee", next: "ende" },
+      nach_lu: { speaker: "Dr. Marie Laurent", emotion: "ueberrascht",
+        text: "Eine Beförderungsliste aus Luxemburg – und das in einem Land mit fast keiner Lücke im Durchschnitt! Gut, dass du genauer hingeschaut hast.",
+        setFlag: "hub_laurent_lu", next: "ende" },
+      alle: { speaker: "Dr. Marie Laurent", emotion: "froehlich", emote: "herz",
+        text: "Alle vier Beweisstücke! Kim, das ist großartig. Das Tor im Norden ist bereit – in Brüssel wartet der Ausschuss.",
+        setFlag: ["hub_laurent_alle", "hub_laurent_de", "hub_laurent_se", "hub_laurent_ee", "hub_laurent_lu"], next: "ende" }
     }
   },
 
@@ -499,5 +548,516 @@ DATA.dialogues = {
         text: "Übrigens: Bald müssen Firmen offenlegen, wie sie Gehälter festlegen. Eine EU-Richtlinie. Ich bin gespannt, was dabei herauskommt.",
         addNote: "eu_richtlinie", next: "ende" }
     }
+  },
+
+  // ========================================================================
+  //  SCHWEDEN-VIERTEL: Elternzeit-Aufteilung
+  // ========================================================================
+  se_infoschild: {
+    knoten: {
+      start: { speaker: "Infoschild",
+        text: "**Schweden-Viertel.** Gender Pay Gap in Schweden: {fakt:gpg_se} ({jahr:gpg_se}). EU-Durchschnitt: {fakt:gpg_eu}.",
+        addNote: "gpg_se", next: "ende" }
+    }
+  },
+
+  se_plakat: {
+    knoten: {
+      start: { speaker: "Plakat",
+        text: "Zwei Hände schieben gemeinsam einen Kinderwagen. Darunter steht: „Elternzeit – teilt sie euch!“",
+        next: "ende" }
+    }
+  },
+
+  se_lindqvist: {
+    einstieg: [ { wenn: "se_amt_fertig", knoten: "danach" }, { knoten: "start" } ],
+    knoten: {
+      start: { speaker: "Frau Lindqvist", emotion: "froehlich",
+        text: "Välkommen – willkommen im Familienamt! Was kann ich für dich tun?",
+        options: [ { label: "Wie funktioniert Elternzeit in Schweden?", next: "modell" } ] },
+      modell: { speaker: "Frau Lindqvist", emotion: "nachdenklich",
+        text: "Eltern bekommen zusammen {fakt:se_elterngeld_tage} Elterngeld. Die dürfen sie sich weitgehend frei aufteilen – bis auf {fakt:se_reservierte_tage} pro Elternteil. Die sind fest reserviert.",
+        addNote: "se_modell",
+        options: [
+          { label: "Und wenn ein Elternteil die Tage nicht nimmt?", next: "verfallen" },
+          { label: "Warum reserviert man überhaupt Tage?", next: "warum" }
+        ] },
+      verfallen: { speaker: "Frau Lindqvist", emotion: "skeptisch",
+        text: "Dann verfallen sie. Man kann sie nicht an den anderen Elternteil verschenken. Streng? Vielleicht. Aber es wirkt.",
+        next: "vaeter" },
+      warum: { speaker: "Frau Lindqvist", emotion: "nachdenklich",
+        text: "Früher konnten Eltern alles frei aufteilen. Und dann haben viele Väter … sagen wir: großzügig verzichtet. Die reservierten Tage haben das verändert.",
+        next: "vaeter" },
+      vaeter: { speaker: "Frau Lindqvist", emotion: "nachdenklich",
+        text: "Heute nehmen Väter etwa {fakt:se_vaeter_anteil_tage} aller Elterngeldtage. Viel mehr als früher – aber immer noch nicht die Hälfte.",
+        addNote: "se_vaeter",
+        options: [
+          { label: "Wie ist das in Deutschland?", next: "de" },
+          { label: "Danke, das hilft mir sehr!", next: "familie" }
+        ] },
+      de: { speaker: "Frau Lindqvist", emotion: "neutral",
+        text: "Soweit ich weiß, gibt es bei euch {fakt:de_partnermonate} Partnermonate. Etwa {fakt:de_vaeter_elterngeld_anteil} der Väter nehmen Elterngeld – im Schnitt aber viel kürzer als die Mütter.",
+        addNote: "de_elternzeit", next: "familie" },
+      familie: { speaker: "Frau Lindqvist", emotion: "froehlich",
+        text: "Wenn du sehen willst, wie das im echten Leben aussieht: Am See sitzen oft Lars und Nora. Die haben die Elternzeit genau halbiert.",
+        setFlag: "se_amt_fertig", aktion: "emoteKim:gluehbirne", next: "ende" },
+      danach: { speaker: "Frau Lindqvist", emotion: "froehlich",
+        text: "Noch Fragen? Ich habe Zeit. Und Kaffee. Vor allem Kaffee.",
+        options: [
+          { label: "Wie ist das in Deutschland?", next: "de", requiresFlag: "!notiz_de_elternzeit" },
+          { label: "Tschüss!", next: "ende" }
+        ] }
+    }
+  },
+
+  se_familie: {
+    einstieg: [
+      { wenn: "beweis_se", knoten: "danach" },
+      { wenn: "!se_amt_fertig", knoten: "vorher" },
+      { knoten: "start" }
+    ],
+    knoten: {
+      vorher: { speaker: "Nora", wer: "nora", emotion: "froehlich",
+        text: "Hej! Wir genießen gerade die Sonne. Falls du etwas über Elternzeit wissen willst: Frag erst im Familienamt – die erklären das viel besser als wir.",
+        next: "ende" },
+      start: { speaker: "Nora", wer: "nora", emotion: "froehlich",
+        text: "Hej! Du bist vom EU-Büro, oder? Frau Lindqvist hat dich schon angekündigt.",
+        next: "s2" },
+      s2: { speaker: "Lars", wer: "lars", emotion: "froehlich",
+        text: "Ich bin Lars, das ist Nora, und im Kinderwagen liegt Ella. Sie schläft. Zum ersten Mal heute.",
+        next: "s3" },
+      s3: { speaker: "Kim", emotion: "nachdenklich",
+        text: "Frau Lindqvist sagt, ihr habt die Elternzeit halbiert?",
+        next: "s4" },
+      s4: { speaker: "Nora", wer: "nora", emotion: "nachdenklich",
+        text: "Genau. Die ersten sechs Monate war ich zu Hause, jetzt ist Lars dran. Ich bin seit einem Monat wieder im Job.",
+        options: [
+          { label: "Wie ist das für dich, Lars?", next: "lars" },
+          { label: "Hat dein Job darunter gelitten, Nora?", next: "job" }
+        ] },
+      lars: { speaker: "Lars", wer: "lars", emotion: "ueberrascht", emote: "schweiss",
+        text: "Ehrlich? Anstrengender als mein Büro. Aber jetzt weiß ich, wie viel Arbeit das ist. Und niemand fragt mehr, ob Nora „nur“ zu Hause war.",
+        addNote: "elternzeit_geteilt", next: "kalender" },
+      job: { speaker: "Nora", wer: "nora", emotion: "skeptisch",
+        text: "Weniger, als ich dachte. Weil Lars auch weg war, war ich nicht die Einzige im Team, die gefehlt hat. Das macht einen Unterschied.",
+        addNote: "elternzeit_geteilt", next: "kalender" },
+      kalender: { speaker: "Lars", wer: "lars", emotion: "froehlich",
+        text: "Hier, unser Elternzeit-Kalender. Grün ist Nora, orange bin ich. Nimm ihn mit nach Brüssel – vielleicht überzeugt er dort jemanden.",
+        aktion: "beweis:se", next: "ende_s" },
+      ende_s: { speaker: "Nora", wer: "nora", emotion: "froehlich",
+        text: "Aber bring ihn wieder mit. Ohne Kalender weiß Lars nicht, wann er dran ist.",
+        next: "ende" },
+      danach: { speaker: "Lars", wer: "lars", emotion: "nachdenklich",
+        text: "Ella schläft immer noch. Wir flüstern ab jetzt nur noch.",
+        next: "ende" }
+    }
+  },
+
+  se_birgit: {
+    knoten: {
+      start: { speaker: "Birgit", emotion: "skeptisch",
+        text: "Früher blieb die Mutter zu Hause, und alle waren zufrieden. Na ja. Fast alle.",
+        options: [
+          { label: "Warum „fast“?", next: "fast" },
+          { label: "Was halten Sie von den reservierten Tagen?", next: "tage" }
+        ] },
+      fast: { speaker: "Birgit", emotion: "nachdenklich",
+        text: "Ich war zufrieden. Meine Schwester nicht – sie wäre gern Ärztin geworden. Das hat damals nicht gepasst.",
+        next: "ende" },
+      tage: { speaker: "Birgit", emotion: "skeptisch",
+        text: "Ich finde, jede Familie sollte selbst bestimmen, wer zu Hause bleibt. Warum schreibt der Staat Tage vor?",
+        addNote: "meinung_familie", next: "tage2" },
+      tage2: { speaker: "Birgit", emotion: "froehlich",
+        text: "Aber mein Enkel wickelt besser als sein Vater. Das muss ich zugeben.",
+        next: "ende" }
+    }
+  },
+
+  se_erik: {
+    knoten: {
+      start: { speaker: "Erik", emotion: "ueberrascht", emote: "schweiss",
+        text: "Psst! Nur kurz, ja? Der Kleine schläft nur, solange der Wagen rollt.",
+        options: [
+          { label: "Seit wann joggst du mit Kinderwagen?", next: "seit" },
+          { label: "Dann schnell weiter!", next: "ende" }
+        ] },
+      seit: { speaker: "Erik", emotion: "froehlich",
+        text: "Seit meiner Elternzeit. Ich war noch nie so fit. Und noch nie so müde.",
+        next: "ende" }
+    }
+  },
+
+  se_alva: {
+    knoten: {
+      start: { speaker: "Alva", emotion: "froehlich",
+        text: "Bei uns ist es normal, dass Papas Elternzeit nehmen. Mein Vater war ein Jahr zu Hause. Er behauptet, er hätte mir das Laufen beigebracht.",
+        options: [ { label: "Machen das alle so?", next: "alle" } ] },
+      alle: { speaker: "Alva", emotion: "nachdenklich",
+        text: "Hm, nicht alle. Ich glaube, viele Väter nehmen vor allem die reservierten Tage. Ein ganzes Jahr ist auch hier eher selten.",
+        next: "ende" }
+    }
+  },
+
+  // ========================================================================
+  //  ESTLAND-VIERTEL: Branchen & Berufswahl (Berufsmesse)
+  // ========================================================================
+  ee_infoschild: {
+    knoten: {
+      start: { speaker: "Infoschild",
+        text: "**Estland-Viertel – Berufsmesse.** Gender Pay Gap in Estland: {fakt:gpg_ee} ({jahr:gpg_ee}) – einer der höchsten Werte in der EU. EU-Durchschnitt: {fakt:gpg_eu}.",
+        addNote: "gpg_ee", next: "ende" }
+    }
+  },
+
+  ee_mart: {
+    knoten: {
+      start: { speaker: "Mart", emotion: "froehlich",
+        text: "Tere! Willkommen am IT-Stand. Wir suchen Leute, die gern knobeln. Und Kaffee trinken. Hauptsächlich knobeln.",
+        options: [ { label: "Was verdient man in der IT?", next: "lohn" } ] },
+      lohn: { speaker: "Mart", emotion: "neutral",
+        text: "Im Schnitt etwa {fakt:ee_lohn_it} brutto im Monat. Einer der bestbezahlten Bereiche hier.",
+        next: "frauen" },
+      frauen: { speaker: "Mart", emotion: "nachdenklich",
+        text: "Nur etwa {fakt:ee_frauen_it} der Leute bei uns sind Frauen. Dabei hat mir unsere beste Programmiererin alles beigebracht, was ich kann.",
+        addNote: "branchen_it", setFlag: "ee_stand_it", next: "ende" }
+    }
+  },
+
+  ee_liis: {
+    knoten: {
+      start: { speaker: "Liis", emotion: "froehlich",
+        text: "Hallo! Pflege – der Beruf, bei dem man jeden Tag gebraucht wird. Wirklich jeden Tag. Auch sonntags.",
+        options: [ { label: "Was verdient man in der Pflege?", next: "lohn" } ] },
+      lohn: { speaker: "Liis", emotion: "nachdenklich",
+        text: "Im Gesundheits- und Sozialwesen etwa {fakt:ee_lohn_pflege} im Schnitt. Etwa {fakt:ee_frauen_pflege} von uns sind Frauen.",
+        next: "meinung" },
+      meinung: { speaker: "Liis", emotion: "skeptisch",
+        text: "Warum wird ein Beruf, in dem man Menschen pflegt, schlechter bezahlt als einer, in dem man Apps baut? Gute Frage. Stell sie in Brüssel.",
+        addNote: "branchen_pflege", setFlag: "ee_stand_pflege", next: "ende" }
+    }
+  },
+
+  ee_kertu: {
+    knoten: {
+      start: { speaker: "Kertu", emotion: "froehlich",
+        text: "Tischlerin, seit zwölf Jahren. Und nein, ich muss den Hammer nicht erst suchen.",
+        options: [ { label: "Was verdient man im Handwerk?", next: "lohn" } ] },
+      lohn: { speaker: "Kertu", emotion: "neutral",
+        text: "Im Baugewerbe im Schnitt etwa {fakt:ee_lohn_bau}. Frauen gibt es hier wenige – etwa {fakt:ee_frauen_bau}.",
+        next: "erfahrung" },
+      erfahrung: { speaker: "Kertu", emotion: "skeptisch",
+        text: "Auf Baustellen werde ich oft nach „dem Chef“ gefragt. Dann sage ich: „Steht vor dir.“",
+        addNote: "branchen_bau", setFlag: "ee_stand_bau", next: "ende" }
+    }
+  },
+
+  ee_priit: {
+    knoten: {
+      start: { speaker: "Priit", emotion: "froehlich",
+        text: "Ich bin Erzieher. Die Kinder nennen mich „Onkel Priit“. Manche Eltern auch – das ist ein bisschen komisch.",
+        options: [ { label: "Was verdient man in der Erziehung?", next: "lohn" } ] },
+      lohn: { speaker: "Priit", emotion: "nachdenklich",
+        text: "In Erziehung und Unterricht etwa {fakt:ee_lohn_bildung}. Etwa {fakt:ee_frauen_bildung} der Beschäftigten sind Frauen.",
+        next: "mann" },
+      mann: { speaker: "Priit", emotion: "skeptisch",
+        text: "Als Mann bin ich hier die Ausnahme. Manche fragen, ob ich mir den Job „leisten“ kann. Eigentlich komisch – warum ist das überhaupt eine Frage?",
+        addNote: "branchen_bildung", setFlag: "ee_stand_soziales", next: "ende" }
+    }
+  },
+
+  ee_anu: {
+    knoten: {
+      start: { speaker: "Anu", emotion: "nachdenklich",
+        text: "Ich mache nächstes Jahr Abitur und will in die Pflege. Meine Tante sagt, ich soll lieber in die IT gehen – wegen des Geldes.",
+        options: [ { label: "Und was möchtest du selbst?", next: "selbst" } ] },
+      selbst: { speaker: "Anu", emotion: "skeptisch",
+        text: "Pflege. Weil ich das mag. Soll ich deshalb weniger verdienen – oder sollte Pflege besser bezahlt werden?",
+        addNote: "meinung_berufswahl", next: "ende" }
+    }
+  },
+
+  ee_kadri: {
+    einstieg: [
+      { wenn: "beweis_ee", knoten: "danach" },
+      { wenn: "ee_minispiel", knoten: "nachspiel" },
+      { knoten: "start" }
+    ],
+    knoten: {
+      start: { speaker: "Kadri", emotion: "froehlich",
+        text: "Willkommen auf der Berufsmesse! Ich bin Kadri, ich leite das hier. Du willst wissen, welche Branche wie viel zahlt?",
+        options: [
+          { label: "Ja! Ich möchte das Spiel spielen.", next: "spiel" },
+          { label: "Ich schaue mich erst an den Ständen um.", next: "umschauen" }
+        ] },
+      umschauen: { speaker: "Kadri", emotion: "froehlich",
+        text: "Gute Idee. An jedem Stand erfährst du etwas. Danach kannst du dein Wissen bei mir testen.",
+        next: "ende" },
+      spiel: { speaker: "Kadri", emotion: "froehlich",
+        text: "Dann los: Ordne jedem Stand das passende Durchschnittsgehalt zu. Wer vorher an den Ständen gefragt hat, ist klar im Vorteil!",
+        aktion: "minispiel:branchen", next: "ende" },
+      nachspiel: { speaker: "Kadri", emotion: "froehlich",
+        text: "Willkommen zurück! Möchtest du noch mal spielen oder die Gehaltstabelle mitnehmen?",
+        options: [
+          { label: "Noch mal spielen!", next: "spiel" },
+          { label: "Die Tabelle, bitte.", next: "tabelle" }
+        ] },
+      tabelle: { speaker: "Kadri", emotion: "froehlich",
+        text: "Hier, unsere Gehaltstabelle der Messe. Nimm sie mit nach Brüssel.",
+        aktion: "beweis:ee", addNote: "branchen_muster", next: "ende" },
+      danach: { speaker: "Kadri", emotion: "froehlich",
+        text: "Viel Erfolg in Brüssel! Und falls du mal den Beruf wechseln willst: Ich kenne da eine Messe.",
+        options: [
+          { label: "Noch mal spielen!", next: "spiel" },
+          { label: "Tschüss!", next: "ende" }
+        ] }
+    }
+  },
+
+  ee_kadri_nach_spiel: {
+    einstieg: [ { wenn: "beweis_ee", knoten: "schon" }, { knoten: "start" } ],
+    knoten: {
+      start: { speaker: "Kadri", emotion: "nachdenklich",
+        text: "Na, fällt dir etwas auf? Wo viele Frauen arbeiten, ist der Lohn im Schnitt oft niedriger.",
+        options: [
+          { label: "Liegt das an den Berufen oder an der Bezahlung?", next: "frage" },
+          { label: "Jeder sucht sich seinen Beruf doch selbst aus.", next: "frei" }
+        ] },
+      frage: { speaker: "Kadri", emotion: "nachdenklich",
+        text: "Beides hängt zusammen. Wer welchen Beruf wählt, hat viel mit Vorbildern und Erwartungen zu tun. Und wie viel ein Beruf wert ist, entscheidet am Ende die Gesellschaft.",
+        next: "tabelle" },
+      frei: { speaker: "Kadri", emotion: "skeptisch",
+        text: "Stimmt – aber mit welchen Vorbildern? Und die Frage bleibt: Warum ist Pflege weniger wert als Programmieren?",
+        next: "tabelle" },
+      tabelle: { speaker: "Kadri", emotion: "froehlich",
+        text: "Hier, unsere Gehaltstabelle der Messe. Nimm sie mit nach Brüssel.",
+        aktion: "beweis:ee", addNote: "branchen_muster", next: "ende" },
+      schon: { speaker: "Kadri", emotion: "froehlich",
+        text: "Gut gespielt! Die Tabelle hast du ja schon.",
+        next: "ende" }
+    }
+  },
+
+  // ========================================================================
+  //  LUXEMBURG-VIERTEL: Gehaltsverhandlung & Beförderung
+  // ========================================================================
+  lu_infoschild: {
+    knoten: {
+      start: { speaker: "Infoschild",
+        text: "**Luxemburg-Viertel.** Gender Pay Gap in Luxemburg: {fakt:gpg_lu} ({jahr:gpg_lu}). Also fast keine Lücke? Frag mal Dr. Hoffmann auf der Brücke.",
+        addNote: "gpg_lu", next: "ende" }
+    }
+  },
+
+  lu_hoffmann: {
+    einstieg: [ { wenn: "lu_hoffmann_fertig", knoten: "danach" }, { knoten: "start" } ],
+    knoten: {
+      start: { speaker: "Dr. Hoffmann", emotion: "froehlich",
+        text: "Ah, Besuch! Ich bin Dr. Hoffmann, Ökonomin im Ruhestand. Ich zähle Boote. Und Durchschnitte.",
+        options: [ { label: "Die Lücke in Luxemburg ist fast null. Ist hier alles gerecht?", next: "gerecht" } ] },
+      gerecht: { speaker: "Dr. Hoffmann", emotion: "nachdenklich",
+        text: "Schöne Frage! Ein Durchschnitt ist wie dieser Fluss: Oben sieht er ruhig aus. Was darunter passiert, sieht man nicht.",
+        next: "gruende" },
+      gruende: { speaker: "Dr. Hoffmann", emotion: "nachdenklich",
+        text: "Ein niedriger Wert kann viele Gründe haben – zum Beispiel, welche Berufe Frauen und Männer hier haben oder wer überhaupt erwerbstätig ist. Innerhalb einer Firma kann es trotzdem große Unterschiede geben.",
+        addNote: "durchschnitt",
+        options: [ { label: "Welche Unterschiede zum Beispiel?", next: "beispiel" } ] },
+      beispiel: { speaker: "Dr. Hoffmann", emotion: "skeptisch",
+        text: "Wer befördert wird. Wer verhandelt – und wie das ankommt. Fahr ins Hochhaus, 2. Etage, Personalabteilung. Herr Schmit ist ein alter Bekannter. Er redet gern. Sehr gern.",
+        setFlag: "lu_hoffmann_fertig", aktion: "emoteKim:gluehbirne", next: "ende" },
+      danach: { speaker: "Dr. Hoffmann", emotion: "froehlich",
+        text: "Die Boote zählen sich nicht von allein. Viel Glück bei Herrn Schmit!",
+        next: "ende" }
+    }
+  },
+
+  lu_marc: {
+    knoten: {
+      start: { speaker: "Marc", emotion: "froehlich",
+        text: "Kaffee? Heute im Angebot: Espresso, Cappuccino und ungefragte Meinungen.",
+        options: [
+          { label: "Eine ungefragte Meinung, bitte.", next: "meinung" },
+          { label: "Nein danke!", next: "ende" }
+        ] },
+      meinung: { speaker: "Marc", emotion: "froehlich",
+        text: "Meine Schwester und ich führen das Café zusammen. Gleiche Arbeit, gleicher Lohn – steht so im Vertrag. Den haben wir zusammen geschrieben. Auf eine Serviette.",
+        next: "ende" }
+    }
+  },
+
+  lu_paul: {
+    knoten: {
+      start: { speaker: "Paul", emotion: "froehlich",
+        text: "Willkommen im Capitol! Der Aufzug ist dort drüben. Er ist schneller als die Treppe. Und viel schneller als unsere Kaffeemaschine.",
+        options: [
+          { label: "Wo finde ich Herrn Schmit?", next: "schmit" },
+          { label: "Danke!", next: "ende" }
+        ] },
+      schmit: { speaker: "Paul", emotion: "neutral",
+        text: "2. Etage, Personalabteilung. Klopf lieber an – er übt gerade seinen Vortrag über Teamgeist.",
+        next: "ende" }
+    }
+  },
+
+  lu_chloe: {
+    knoten: {
+      start: { speaker: "Chloé", emotion: "nachdenklich",
+        text: "Ich habe mich zweimal auf die Teamleitung beworben. Beide Male hieß es: „Du bist noch nicht so weit.“",
+        options: [ { label: "Und wer hat die Stelle bekommen?", next: "wer" } ] },
+      wer: { speaker: "Chloé", emotion: "skeptisch",
+        text: "Tom. Er hatte weniger Erfahrung, aber er hat einfach gefragt, bevor die Stelle ausgeschrieben war. Ich wusste gar nicht, dass das geht.",
+        next: "ende" }
+    }
+  },
+
+  lu_tom: {
+    knoten: {
+      start: { speaker: "Tom", emotion: "froehlich",
+        text: "Ich bin Tom, seit drei Monaten Teamleiter. Ehrlich gesagt hat mich mein alter Chef vorgeschlagen – beim Fußball am Wochenende.",
+        options: [ { label: "Findest du das fair?", next: "fair" } ] },
+      fair: { speaker: "Tom", emotion: "nachdenklich", emote: "schweiss",
+        text: "Hm. Chloé hätte es auch verdient. Vielleicht mehr als ich. Das sage ich aber nur dir.",
+        next: "ende" }
+    }
+  },
+
+  lu_schmit: {
+    einstieg: [
+      { wenn: "beweis_lu", knoten: "danach" },
+      { wenn: "lu_verhandelt", knoten: "nachspiel" },
+      { knoten: "start" }
+    ],
+    knoten: {
+      start: { speaker: "Herr Schmit", emotion: "froehlich",
+        text: "Ah, das EU-Büro! Dr. Hoffmann hat schon angerufen. Sie redet gern. Sehr gern.",
+        options: [ { label: "Ich möchte verstehen, wie Gehaltsverhandlungen laufen.", next: "spiel" } ] },
+      spiel: { speaker: "Herr Schmit", emotion: "froehlich",
+        text: "Dann machen wir eine Übung: Du spielst Anna, ich spiele ihren Chef. Wähle deine Argumente gut!",
+        aktion: "minispiel:verhandlung", next: "ende" },
+      nachspiel: { speaker: "Herr Schmit", emotion: "neutral",
+        text: "Na? Noch eine Runde üben oder reden wir über Beförderungen?",
+        options: [
+          { label: "Noch mal verhandeln!", next: "spiel" },
+          { label: "Lass uns über Beförderungen reden.", next: "befoerderung" }
+        ] },
+      befoerderung: { speaker: "Herr Schmit", emotion: "nachdenklich",
+        text: "Schau dir diese Liste an: unsere letzten Beförderungen in Führungsjobs. Im Team arbeiten etwa gleich viele Frauen und Männer. Auf der Liste stehen fast nur Männer.",
+        addNote: "befoerderung", next: "fuehrung" },
+      fuehrung: { speaker: "Herr Schmit", emotion: "nachdenklich",
+        text: "Und das ist kein Einzelfall. In Luxemburg sind etwa {fakt:lu_frauen_fuehrung} der Führungskräfte Frauen, EU-weit etwa {fakt:eu_frauen_fuehrung}.",
+        addNote: "fuehrung_lu", next: "liste" },
+      liste: { speaker: "Herr Schmit", emotion: "froehlich",
+        text: "Nimm die Liste mit nach Brüssel. Vielleicht ändert sich ja was, wenn mehr Leute hinschauen. Bei uns zum Beispiel.",
+        aktion: "beweis:lu", next: "ende" },
+      danach: { speaker: "Herr Schmit", emotion: "froehlich",
+        text: "Grüß mir Brüssel! Und Dr. Hoffmann, falls du sie siehst. Obwohl – sie ruft sowieso an.",
+        options: [
+          { label: "Noch mal verhandeln!", next: "spiel" },
+          { label: "Tschüss!", next: "ende" }
+        ] }
+    }
+  },
+
+  lu_schmit_nach_spiel: {
+    einstieg: [ { wenn: "beweis_lu", knoten: "schon" }, { knoten: "start" } ],
+    knoten: {
+      start: { speaker: "Herr Schmit", emotion: "nachdenklich",
+        text: "Gut vorbereitet ist halb gewonnen. Aber ich muss ehrlich sein.",
+        next: "fair" },
+      fair: { speaker: "Herr Schmit", emotion: "skeptisch",
+        text: "Wenn Frauen hart verhandeln, gilt das hier manchmal als „fordernd“. Bei Männern heißt es „selbstbewusst“. Unfair – aber es passiert.",
+        addNote: "verhandlung_fair",
+        options: [ { label: "Und wie ist das bei Beförderungen?", next: "befoerderung" } ] },
+      befoerderung: { speaker: "Herr Schmit", emotion: "nachdenklich",
+        text: "Schau dir diese Liste an: unsere letzten Beförderungen in Führungsjobs. Im Team arbeiten etwa gleich viele Frauen und Männer. Auf der Liste stehen fast nur Männer.",
+        addNote: "befoerderung", next: "fuehrung" },
+      fuehrung: { speaker: "Herr Schmit", emotion: "nachdenklich",
+        text: "Und das ist kein Einzelfall. In Luxemburg sind etwa {fakt:lu_frauen_fuehrung} der Führungskräfte Frauen, EU-weit etwa {fakt:eu_frauen_fuehrung}.",
+        addNote: "fuehrung_lu", next: "liste" },
+      liste: { speaker: "Herr Schmit", emotion: "froehlich",
+        text: "Nimm die Liste mit nach Brüssel. Vielleicht ändert sich ja was, wenn mehr Leute hinschauen. Bei uns zum Beispiel.",
+        aktion: "beweis:lu", next: "ende" },
+      schon: { speaker: "Herr Schmit", emotion: "froehlich",
+        text: "Nicht schlecht! Du lernst schnell.",
+        next: "ende" }
+    }
+  }
+};
+
+/* =====================================================================
+   Minispiele (Texte und Aufbau) – Zahlen kommen aus facts.js
+   ===================================================================== */
+DATA.minispiele = {
+
+  branchen: {
+    art: "zuordnen",
+    titel: "Welche Branche zahlt mehr?",
+    anleitung: "Ordne jedem Messestand das durchschnittliche Bruttomonatsgehalt in Estland zu.",
+    tasten: "↑ ↓ Stand wählen · ← → oder E Gehalt wechseln · Enter prüfen (oder klicken)",
+    leer: "– Gehalt wählen –",
+    pruefen: "Prüfen",
+    weiter: "Weiter",
+    nochNichtFertig: "Ordne erst jedem Stand ein Gehalt zu!",
+    eintraege: [
+      { name: "IT & Kommunikation", fakt: "ee_lohn_it",      zusatz: "Frauenanteil: etwa {fakt:ee_frauen_it}" },
+      { name: "Bau & Handwerk",     fakt: "ee_lohn_bau",     zusatz: "Frauenanteil: etwa {fakt:ee_frauen_bau}" },
+      { name: "Gesundheit & Pflege", fakt: "ee_lohn_pflege", zusatz: "Frauenanteil: etwa {fakt:ee_frauen_pflege}" },
+      { name: "Bildung & Soziales", fakt: "ee_lohn_bildung", zusatz: "Frauenanteil: etwa {fakt:ee_frauen_bildung}" }
+    ],
+    aufloesung: "So sieht es aus! Schau dir den **Frauenanteil** unter den Gehältern an. Was fällt dir auf?",
+    setFlag: "ee_minispiel",
+    danach: "ee_kadri_nach_spiel"
+  },
+
+  verhandlung: {
+    art: "verhandlung",
+    titel: "Gehaltsverhandlung (Übung)",
+    rolle: "Du spielst Anna. Herr Schmit spielt ihren Chef. Überzeuge ihn mit guten Argumenten!",
+    gegenueber: "Herr Schmit",
+    meterName: "Überzeugung",
+    start: 35,
+    ziel: 70,
+    einleitung: "Setzen Sie sich, Anna. Sie wollten über Ihr Gehalt sprechen?",
+    tasten: "↑ ↓ Argument wählen · Enter oder E: sagen",
+    rundeText: "Runde {n} von {von}",
+    runden: [
+      { frage: "Warum sollten wir über Ihr Gehalt sprechen?",
+        optionen: [
+          { text: "Ich habe dieses Jahr das Kundenprojekt geleitet und drei neue Kunden gewonnen.", punkte: 25, reaktion: "Hm, das stimmt. Das war richtig gute Arbeit." },
+          { text: "Ich bräuchte einfach ein bisschen mehr Geld.", punkte: 0, reaktion: "Verstehe ich. Aber brauchen tun wir alle etwas." },
+          { text: "Tut mir leid, dass ich überhaupt frage …", punkte: -10, reaktion: "Äh … Sie müssen sich nicht entschuldigen." },
+          { text: "Wenn ich nicht mehr bekomme, bin ich weg!", punkte: -10, reaktion: "Drohungen sind kein guter Start." }
+        ] },
+      { frage: "Und an welche Summe haben Sie gedacht?",
+        optionen: [
+          { text: "Ich habe mich informiert: Für vergleichbare Stellen sind 8 Prozent mehr üblich.", punkte: 20, reaktion: "Sie haben sich vorbereitet. Das merkt man." },
+          { text: "Was Sie für angemessen halten.", punkte: -10, reaktion: "Dann sage ich mal: etwas weniger, als Sie gehofft haben." },
+          { text: "So viel wie mein Bruder.", punkte: 0, reaktion: "Vergleiche sind in Ordnung – aber lieber mit Zahlen vom Markt." },
+          { text: "Keine Ahnung … vielleicht ein bisschen?", punkte: -5, reaktion: "Ein bisschen ist schwer zu planen." }
+        ] },
+      { frage: "Das Budget ist dieses Jahr leider knapp.",
+        optionen: [
+          { text: "Dann lassen Sie uns einen Stufenplan machen: jetzt ein Teil, in sechs Monaten der Rest.", punkte: 15, reaktion: "Das ist ein fairer Vorschlag." },
+          { text: "Nach der neuen EU-Richtlinie darf ich doch erfahren, was vergleichbare Stellen verdienen, oder?", punkte: 10, reaktion: "Stimmt, die Transparenz kommt. Sie sind gut informiert." },
+          { text: "Oh, okay. Dann vielleicht nächstes Jahr.", punkte: -10, reaktion: "Ja … vielleicht." },
+          { text: "Dann kündige ich eben.", punkte: -15, reaktion: "Das würde ich nicht so schnell sagen." }
+        ] },
+      { frage: "Was bringen Sie im nächsten Jahr ein?",
+        optionen: [
+          { text: "Ich möchte das neue Projekt leiten – ich habe schon einen Plan dafür.", punkte: 15, reaktion: "Einen Plan? Den will ich sehen!" },
+          { text: "Ich arbeite einfach noch mehr Stunden.", punkte: 0, reaktion: "Mehr Stunden sind nicht dasselbe wie mehr Wert." },
+          { text: "Das Gleiche wie immer.", punkte: -5, reaktion: "Hm. Das Gleiche wie immer ist … das Gleiche wie immer." }
+        ] }
+    ],
+    ergebnisse: [
+      { ab: 90, text: "Herr Schmit lächelt: „Überzeugt. 8 Prozent mehr – und wir reden über die Projektleitung.“" },
+      { ab: 70, text: "Herr Schmit nickt: „Einverstanden. 5 Prozent jetzt, der Rest nach der nächsten Beurteilung.“" },
+      { ab: 0,  text: "Herr Schmit zuckt mit den Schultern: „Tut mir leid, dieses Jahr wird das nichts.“ Beim nächsten Versuch hilft bessere Vorbereitung." }
+    ],
+    lehre: "Gute Argumente: eigene Erfolge mit Beispielen, eine recherchierte Zahl, Lösungen statt Drohungen. Entschuldigungen und „was Sie für angemessen halten“ schwächen die Position.",
+    nochmal: "Noch mal üben",
+    weiter: "Weiter",
+    setFlag: "lu_verhandelt",
+    addNote: "verhandlung_tipps",
+    danach: "lu_schmit_nach_spiel"
   }
 };

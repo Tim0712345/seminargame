@@ -18,10 +18,10 @@ DATA.quests = {
     sichtbarWenn: "intro_fertig",
     schritte: [
       { text: "Geh ins Deutschland-Viertel (Weg nach Westen)", fertigWenn: "war_in_de|beweis_de" },
-      { text: "Bring das Beweisstück aus Deutschland zu Dr. Laurent", fertigWenn: "hub_laurent_de" },
-      { text: "Untersuche das Schweden-Viertel", fertigWenn: "beweis_se" },
-      { text: "Untersuche das Estland-Viertel", fertigWenn: "beweis_ee" },
-      { text: "Untersuche das Luxemburg-Viertel", fertigWenn: "beweis_lu" },
+      { text: "Erzähl Dr. Laurent am Brunnen, was du in Deutschland gelernt hast", fertigWenn: "hub_laurent_de|beweis_se|beweis_ee|beweis_lu" },
+      { text: "Untersuche das Schweden-Viertel (Weg nach Osten)", fertigWenn: "beweis_se" },
+      { text: "Untersuche das Estland-Viertel (Weg nach Südwesten)", fertigWenn: "beweis_ee" },
+      { text: "Untersuche das Luxemburg-Viertel (Weg nach Südosten)", fertigWenn: "beweis_lu" },
       { text: "Öffne das Tor nach Brüssel", fertigWenn: "finale_fertig" }
     ]
   },
@@ -36,5 +36,40 @@ DATA.quests = {
       { text: "Frag in der Kita nach der Warteliste", fertigWenn: "beweis_de" }
     ],
     belohnung: { beweis: "de" }
+  },
+
+  se: {
+    titel: "Elternzeit-Aufteilung",
+    viertel: "se",
+    sichtbarWenn: "war_in_se",
+    schritte: [
+      { text: "Frag im Familienamt, wie Elternzeit in Schweden funktioniert", fertigWenn: "se_amt_fertig" },
+      { text: "Sprich mit der Familie am See", fertigWenn: "beweis_se" }
+    ],
+    belohnung: { beweis: "se" }
+  },
+
+  ee: {
+    titel: "Branchen & Berufswahl",
+    viertel: "ee",
+    sichtbarWenn: "war_in_ee",
+    schritte: [
+      { text: "Frag an allen vier Messeständen nach dem Gehalt", fertigWenn: "ee_stand_it&ee_stand_pflege&ee_stand_bau&ee_stand_soziales" },
+      { text: "Spiel bei Kadri „Welche Branche zahlt mehr?“", fertigWenn: "ee_minispiel" },
+      { text: "Hol dir Kadris Gehaltstabelle", fertigWenn: "beweis_ee" }
+    ],
+    belohnung: { beweis: "ee" }
+  },
+
+  lu: {
+    titel: "Gehaltsverhandlung & Beförderung",
+    viertel: "lu",
+    sichtbarWenn: "war_in_lu",
+    schritte: [
+      { text: "Sprich mit Dr. Hoffmann auf der Brücke", fertigWenn: "lu_hoffmann_fertig" },
+      { text: "Fahr im Hochhaus in die 2. Etage und übe mit Herrn Schmit eine Gehaltsverhandlung", fertigWenn: "lu_verhandelt" },
+      { text: "Frag Herrn Schmit nach den Beförderungen", fertigWenn: "beweis_lu" }
+    ],
+    belohnung: { beweis: "lu" }
   }
 };

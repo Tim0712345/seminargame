@@ -19,6 +19,9 @@
       ENG.input.init();
       GAME.ui.init();
       GAME.dialog.init();
+      GAME.buch.init();
+      GAME.minispiel.init();
+      GAME.beweisHud.init();
       GAME.einstellungen.anwenden();
       GAME.debug.init();
       // Startkarte (im Debug-Modus per ?karte=… wählbar, z. B. ?debug=1&karte=testinsel)

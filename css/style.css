@@ -404,3 +404,121 @@ body.debug .dialog-text .fakt.ungeprueft { color: #c0392b; text-decoration: unde
   .dialog-portrait { width: 84px; height: 84px; }
   .dialog-karte { gap: 10px; padding: 14px; }
 }
+
+/* ---------- Beweisstücke im HUD (oben rechts) ---------- */
+.hud-beweise { display: flex; gap: 8px; }
+.beweis-slot {
+  width: 46px; height: 46px;
+  border: 2.5px dashed rgba(46, 41, 52, 0.45);
+  border-radius: 50% 46% 52% 48% / 48% 52% 46% 50%;
+  background: rgba(247, 240, 225, 0.75);
+  display: flex; align-items: center; justify-content: center;
+}
+.beweis-slot svg { width: 30px; height: 30px; fill: none; stroke: rgba(46, 41, 52, 0.25); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.beweis-slot.gefunden { border-style: solid; border-color: var(--tusche); box-shadow: 2px 3px 0 rgba(46, 41, 52, 0.18); }
+.beweis-slot.gefunden svg { stroke: var(--tusche); }
+.beweis-slot.gefunden.land-de  { background: radial-gradient(circle at 45% 40%, rgba(218, 140, 103, 0.75), rgba(218, 140, 103, 0.35) 70%, var(--papier)); }
+.beweis-slot.gefunden.land-se  { background: radial-gradient(circle at 45% 40%, rgba(160, 203, 234, 0.85), rgba(160, 203, 234, 0.35) 70%, var(--papier)); }
+.beweis-slot.gefunden.land-ee  { background: radial-gradient(circle at 45% 40%, rgba(99, 160, 162, 0.7), rgba(99, 160, 162, 0.3) 70%, var(--papier)); }
+.beweis-slot.gefunden.land-lu  { background: radial-gradient(circle at 45% 40%, rgba(242, 157, 137, 0.75), rgba(242, 157, 137, 0.35) 70%, var(--papier)); }
+.beweis-slot.gefunden.land-bxl { background: radial-gradient(circle at 45% 40%, rgba(228, 186, 93, 0.8), rgba(228, 186, 93, 0.35) 70%, var(--papier)); }
+
+/* ---------- Notizbuch & Aufgaben ---------- */
+#buch, #minispiel {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(46, 41, 52, 0.28);
+  pointer-events: auto;
+  padding: 16px;
+}
+.buch-karte {
+  position: relative;
+  width: min(760px, 100%);
+  max-height: calc(100vh - 40px);
+  display: flex; flex-direction: column;
+  padding: 22px 28px 16px 44px;
+  background:
+    repeating-linear-gradient(transparent 0 29px, rgba(120, 160, 190, 0.28) 29px 30px),
+    var(--papier);
+  background-position: 0 70px;
+  border: 3px solid var(--tusche);
+  border-radius: 10px 22px 18px 12px / 16px 10px 22px 14px;
+  box-shadow: 6px 7px 0 rgba(46, 41, 52, 0.2);
+}
+/* Spiralbindung links */
+.buch-karte::before {
+  content: ""; position: absolute; left: 12px; top: 18px; bottom: 18px; width: 14px;
+  background: radial-gradient(circle at 50% 50%, transparent 4px, var(--tusche) 4.5px, var(--tusche) 6px, transparent 6.5px) 0 0 / 14px 26px repeat-y;
+}
+.buch-titel { font-family: var(--hand); font-size: 1.7em; margin: 0 0 10px; }
+.buch-reiter { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.reiter {
+  font-family: var(--hand); font-weight: bold; font-size: 0.8em; color: var(--tusche);
+  border: 2px solid var(--tusche); border-bottom-width: 4px;
+  border-radius: 10px 12px 4px 4px;
+  padding: 4px 10px; cursor: pointer; opacity: 0.75;
+  background: var(--papier-dunkel);
+}
+.reiter.gewaehlt { opacity: 1; transform: translateY(-3px); }
+.reiter-teilzeit { background: rgba(218, 140, 103, 0.45); }
+.reiter-elternzeit { background: rgba(160, 203, 234, 0.55); }
+.reiter-branchen { background: rgba(99, 160, 162, 0.45); }
+.reiter-verhandlung { background: rgba(242, 157, 137, 0.5); }
+.reiter-rest { background: rgba(228, 186, 93, 0.55); }
+.reiter-eurecht { background: rgba(187, 173, 219, 0.55); }
+.buch-seite { overflow-y: auto; flex: 1 1 auto; padding-right: 8px; min-height: 180px; }
+.buch-leer { color: var(--tusche-hell); font-style: italic; }
+.notiz { margin: 0 0 16px; }
+.notiz h3, .quest h3 { font-family: var(--hand); font-size: 1.08em; margin: 0 0 4px; }
+.notiz p { margin: 0 0 4px; line-height: 1.5; }
+.notiz .quelle { font-size: 0.75em; color: var(--tusche-hell); }
+.notiz .fakt, .minispiel-karte .fakt { font-weight: bold; background: radial-gradient(ellipse at 50% 60%, var(--ocker-hell), transparent 75%); }
+body.debug .notiz .fakt.ungeprueft, body.debug .minispiel-karte .fakt.ungeprueft { color: #c0392b; text-decoration: underline wavy #c0392b; }
+.buch-fuss { font-size: 0.72em; color: var(--tusche-hell); margin: 10px 0 0; text-align: right; }
+.quest { margin-bottom: 16px; }
+.quest.fertig h3 { text-decoration: line-through; text-decoration-color: rgba(46, 41, 52, 0.5); }
+.quest ul { list-style: none; margin: 0; padding: 0; }
+.quest li { display: flex; align-items: flex-start; gap: 8px; padding: 3px 0; line-height: 1.4; }
+.quest li.erledigt { color: var(--tusche-hell); }
+.haken svg { width: 20px; height: 20px; fill: none; stroke: var(--tusche); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: 0 0 auto; }
+.haken .h { stroke-width: 2.6; stroke: #4f7f58; }
+
+/* ---------- Minispiele ---------- */
+.minispiel-karte { width: min(720px, 100%); max-height: calc(100vh - 40px); overflow-y: auto; }
+.minispiel-karte h2 { font-family: var(--hand); margin: 0 0 8px; font-size: 1.6em; }
+.minispiel-anleitung, .minispiel-rolle { line-height: 1.5; margin: 0 0 12px; }
+.minispiel-rolle { font-style: italic; color: var(--tusche-hell); }
+.minispiel-tipp { font-size: 0.72em; color: var(--tusche-hell); margin: 8px 0 0; }
+.minispiel-fuss { display: flex; align-items: center; gap: 12px; margin-top: 14px; flex-wrap: wrap; }
+.minispiel-fuss .knopf.gewaehlt { background: radial-gradient(ellipse at 50% 55%, var(--ocker-hell), transparent 85%); box-shadow: 3px 3px 0 var(--tusche); }
+.zuordnen { display: flex; flex-direction: column; gap: 8px; }
+.zuordnen-zeile {
+  display: grid; grid-template-columns: 1.2fr 1fr; gap: 6px 12px; align-items: center;
+  padding: 6px 10px; border: 2px solid rgba(46, 41, 52, 0.35);
+  border-radius: var(--krakel2);
+}
+.zuordnen-zeile.gewaehlt { border-color: var(--tusche); background: radial-gradient(ellipse at 30% 50%, rgba(226, 178, 90, 0.35), transparent 80%); }
+.zuordnen-name { font-weight: bold; }
+.zuordnen-wert {
+  font-family: var(--schrift); font-size: 1em; color: var(--tusche);
+  border: 2px solid var(--tusche); border-radius: 8px 12px 9px 11px;
+  background: var(--papier); padding: 4px 10px; cursor: pointer;
+}
+.zuordnen-wert.leer { color: var(--tusche-hell); border-style: dashed; }
+.zuordnen-wert.richtig { background: rgba(169, 198, 161, 0.7); }
+.zuordnen-wert.falsch { background: rgba(242, 157, 137, 0.55); }
+.zuordnen-zusatz { grid-column: 1 / -1; font-size: 0.8em; color: var(--tusche-hell); }
+@keyframes wackeln { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+.wackeln { animation: wackeln 0.25s 2; color: #a4452f; }
+.meter { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; }
+.meter-name { font-family: var(--hand); font-weight: bold; white-space: nowrap; }
+.meter-balken { position: relative; flex: 1; height: 18px; border: 2.5px solid var(--tusche); border-radius: 10px 6px 12px 8px; background: var(--papier); overflow: hidden; }
+.meter-fuellung { height: 100%; background: linear-gradient(90deg, rgba(226, 178, 90, 0.6), rgba(169, 198, 161, 0.9)); transition: width 0.5s ease-out; }
+.meter-ziel { position: absolute; top: -2px; bottom: -2px; width: 0; border-left: 2.5px dashed var(--tusche); }
+.verhandlung-rede p { margin: 0 0 8px; line-height: 1.5; }
+.rede-reaktion { color: var(--tusche-hell); }
+.verhandlung-ergebnis {
+  font-family: var(--hand); font-size: 1.1em; padding: 10px 14px; margin: 6px 0 12px;
+  border: 2.5px solid var(--tusche); border-radius: var(--krakel);
+  background: radial-gradient(ellipse at 50% 55%, var(--ocker-hell), transparent 85%);
+}

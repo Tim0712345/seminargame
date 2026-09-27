@@ -58,6 +58,10 @@ DATA.palette = {
   putz_salbei:   "#cfd9c0",
   glas:          "#b7d3de",
   kork:          "#c9a27a",
+  schwedenrot:   "#b45a4f",
+  dach_dunkel:   "#5e5966",
+  sandstein:     "#ddc9a0",
+  schiefer:      "#6f7280",
 
   // ---- Haut (bewusst breite Spanne) ----
   haut_1: "#fbe3d1",
@@ -118,6 +122,21 @@ DATA.stimmungen = {
   de: {
     himmel_oben: "#b9c9d6", horizont: "#f6e6cf", dunst: "#f3e4cc",
     sonne: "#ffefd6", schatten: "#b9a9c9", tusche: "tusche", kruemmung: 0
+  },
+  // Schweden-Viertel: kühles, klares Nordlicht
+  se: {
+    himmel_oben: "#9fc4dc", horizont: "#eef0ea", dunst: "#ecefe8",
+    sonne: "#fbfaf2", schatten: "#a9b3d6", tusche: "tusche", kruemmung: 0
+  },
+  // Estland-Viertel: frisches Grün, Kiefern, etwas Wind
+  ee: {
+    himmel_oben: "#a4c9d2", horizont: "#eff0e3", dunst: "#edeee0",
+    sonne: "#fdf7e6", schatten: "#a8b2cc", tusche: "tusche", kruemmung: 0
+  },
+  // Luxemburg-Viertel: warmer Sandstein, goldenes Licht
+  lu: {
+    himmel_oben: "#b3c8d8", horizont: "#f7e8cf", dunst: "#f4e5cb",
+    sonne: "#fff0d8", schatten: "#b6a8c8", tusche: "tusche", kruemmung: 0
   },
   // Innenräume
   innen_warm: {

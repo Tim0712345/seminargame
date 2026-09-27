@@ -185,7 +185,9 @@ GAME.ui = (function () {
   U.abblenden = function (an) { el.blende.classList.toggle("an", !!an); };
 
   // ---------------- Menüs (Tastatur + Maus) ----------------
-  U.blockiert = function () { return !!menue; };
+  U.blockiert = function () {
+    return !!menue || (GAME.buch && GAME.buch.istOffen()) || (GAME.minispiel && GAME.minispiel.laeuft());
+  };
 
   /* opt: { titel, klasse, inhalt (DOM, optional), eintraege: [ { text() | text, aktion(), umschalten(richtung) } ],
             schliessbar, beimSchliessen } */
@@ -242,6 +244,8 @@ GAME.ui = (function () {
   U.update = function () {
     var I = ENG.input;
     if (GAME.dialog && GAME.dialog.aktiv) return;
+    if (GAME.minispiel.laeuft()) { GAME.minispiel.update(); return; }
+    if (GAME.buch.istOffen()) { GAME.buch.update(); return; }
     if (menue) {
       var n = (menue.opt.eintraege || []).length;
       if (I.gedrueckt("hoch") && n) { menue.wahl = (menue.wahl + n - 1) % n; U.menueMalen(); }
@@ -254,6 +258,8 @@ GAME.ui = (function () {
       return;
     }
     if (I.gedrueckt("pause")) { I.verbrauchen("pause"); U.pauseOeffnen(); }
+    else if (I.gedrueckt("notizbuch")) { I.verbrauchen("notizbuch"); GAME.buch.oeffnen("notizbuch"); }
+    else if (I.gedrueckt("quests")) { I.verbrauchen("quests"); GAME.buch.oeffnen("questlog"); }
   };
 
   // ---------------- Steuerungshinweis ----------------

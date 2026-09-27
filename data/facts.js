@@ -63,6 +63,70 @@ DATA.facts = {
     beschreibung: "Anteil von Frauen an Führungskräften, Deutschland",
     quelle: "Statistisches Bundesamt (Destatis), Frauen in Führungspositionen" },   // TODO: verifizieren – Quelle: Destatis
 
+  // ---- Schweden: Elternzeit ----
+  se_elterngeld_tage: { wert: 480, einheit: "Tage", jahr: 2024, verifiziert: false,
+    beschreibung: "Tage Elterngeld (föräldrapenning) pro Kind in Schweden, für beide Eltern zusammen",
+    quelle: "Försäkringskassan (schwedische Sozialversicherung)" },   // TODO: verifizieren – Quelle: Försäkringskassan
+
+  se_reservierte_tage: { wert: 90, einheit: "Tage", jahr: 2024, verifiziert: false,
+    beschreibung: "Tage, die in Schweden fest für jeden Elternteil reserviert sind (nicht übertragbar)",
+    quelle: "Försäkringskassan" },   // TODO: verifizieren – Quelle: Försäkringskassan
+
+  se_vaeter_anteil_tage: { wert: 30, einheit: "%", jahr: 2023, verifiziert: false,
+    beschreibung: "Anteil der Elterngeldtage, die in Schweden von Vätern genommen werden",
+    quelle: "Försäkringskassan, Statistik zum föräldrapenning" },   // TODO: verifizieren – Quelle: Försäkringskassan
+
+  de_partnermonate: { wert: 2, einheit: "Monate", jahr: 2024, verifiziert: false,
+    beschreibung: "Partnermonate beim deutschen Elterngeld (zusätzlich, wenn beide Eltern Elterngeld nehmen)",
+    quelle: "Bundesministerium für Familie (BMFSFJ), Bundeselterngeld- und Elternzeitgesetz" },   // TODO: verifizieren – Quelle: BMFSFJ / BEEG
+
+  de_vaeter_elterngeld_anteil: { wert: 46, einheit: "%", jahr: 2022, verifiziert: false,
+    beschreibung: "Anteil der Väter in Deutschland, die Elterngeld beziehen (Väterbeteiligung)",
+    quelle: "Statistisches Bundesamt (Destatis), Elterngeldstatistik" },   // TODO: verifizieren – Quelle: Destatis
+
+  de_vaeter_bezugsdauer: { wert: 3.6, einheit: "Monate", jahr: 2022, verifiziert: false,
+    beschreibung: "Durchschnittliche geplante Bezugsdauer von Elterngeld bei Vätern in Deutschland",
+    quelle: "Statistisches Bundesamt (Destatis), Elterngeldstatistik" },   // TODO: verifizieren – Quelle: Destatis
+
+  de_muetter_bezugsdauer: { wert: 14.6, einheit: "Monate", jahr: 2022, verifiziert: false,
+    beschreibung: "Durchschnittliche geplante Bezugsdauer von Elterngeld bei Müttern in Deutschland",
+    quelle: "Statistisches Bundesamt (Destatis), Elterngeldstatistik" },   // TODO: verifizieren – Quelle: Destatis
+
+  // ---- Estland: Branchen & Berufswahl (Monatsbruttolöhne) ----
+  ee_lohn_it: { wert: 3300, einheit: "€", jahr: 2023, verifiziert: false,
+    beschreibung: "Durchschnittlicher Bruttomonatslohn in Estland: Information und Kommunikation",
+    quelle: "Statistikamt Estland (Statistikaamet), Löhne nach Wirtschaftszweig" },   // TODO: verifizieren – Quelle: Statistikaamet
+  ee_lohn_bau: { wert: 1900, einheit: "€", jahr: 2023, verifiziert: false,
+    beschreibung: "Durchschnittlicher Bruttomonatslohn in Estland: Baugewerbe",
+    quelle: "Statistikamt Estland (Statistikaamet), Löhne nach Wirtschaftszweig" },   // TODO: verifizieren – Quelle: Statistikaamet
+  ee_lohn_pflege: { wert: 1800, einheit: "€", jahr: 2023, verifiziert: false,
+    beschreibung: "Durchschnittlicher Bruttomonatslohn in Estland: Gesundheits- und Sozialwesen",
+    quelle: "Statistikamt Estland (Statistikaamet), Löhne nach Wirtschaftszweig" },   // TODO: verifizieren – Quelle: Statistikaamet
+  ee_lohn_bildung: { wert: 1600, einheit: "€", jahr: 2023, verifiziert: false,
+    beschreibung: "Durchschnittlicher Bruttomonatslohn in Estland: Erziehung und Unterricht",
+    quelle: "Statistikamt Estland (Statistikaamet), Löhne nach Wirtschaftszweig" },   // TODO: verifizieren – Quelle: Statistikaamet
+
+  ee_frauen_it: { wert: 30, einheit: "%", jahr: 2023, verifiziert: false,
+    beschreibung: "Frauenanteil unter den Beschäftigten in Information und Kommunikation, Estland",
+    quelle: "Eurostat lfsa_egan2 (Beschäftigte nach Geschlecht und Wirtschaftszweig)" },   // TODO: verifizieren – Quelle: Eurostat lfsa_egan2
+  ee_frauen_bau: { wert: 12, einheit: "%", jahr: 2023, verifiziert: false,
+    beschreibung: "Frauenanteil unter den Beschäftigten im Baugewerbe, Estland",
+    quelle: "Eurostat lfsa_egan2" },   // TODO: verifizieren – Quelle: Eurostat lfsa_egan2
+  ee_frauen_pflege: { wert: 85, einheit: "%", jahr: 2023, verifiziert: false,
+    beschreibung: "Frauenanteil unter den Beschäftigten im Gesundheits- und Sozialwesen, Estland",
+    quelle: "Eurostat lfsa_egan2" },   // TODO: verifizieren – Quelle: Eurostat lfsa_egan2
+  ee_frauen_bildung: { wert: 80, einheit: "%", jahr: 2023, verifiziert: false,
+    beschreibung: "Frauenanteil unter den Beschäftigten in Erziehung und Unterricht, Estland",
+    quelle: "Eurostat lfsa_egan2" },   // TODO: verifizieren – Quelle: Eurostat lfsa_egan2
+
+  // ---- Luxemburg: Verhandlung & Beförderung ----
+  lu_frauen_fuehrung: { wert: 22, einheit: "%", jahr: 2023, verifiziert: false,
+    beschreibung: "Anteil von Frauen an Führungskräften (Managern), Luxemburg",
+    quelle: "Eurostat lfsa_egais bzw. EIGE Gender Statistics Database" },   // TODO: verifizieren – Quelle: Eurostat / EIGE
+  eu_frauen_fuehrung: { wert: 35, einheit: "%", jahr: 2023, verifiziert: false,
+    beschreibung: "Anteil von Frauen an Führungskräften (Managern), EU-27",
+    quelle: "Eurostat lfsa_egais bzw. EIGE Gender Statistics Database" },   // TODO: verifizieren – Quelle: Eurostat / EIGE
+
   // ---- EU-Recht ----
   eu_richtlinie_jahr: { wert: 2023, einheit: "", jahr: 2023, verifiziert: false,
     beschreibung: "Entgelttransparenzrichtlinie (EU) 2023/970 – Jahr der Verabschiedung",
@@ -113,6 +177,69 @@ DATA.notes = {
   meinung_strukturen: { reiter: "teilzeit", titel: "Meinung: „Erst braucht es eine Wahl“",
     text: "Lea: „Frei entscheiden kann ich erst, wenn es überhaupt einen Kita-Platz gibt.“",
     quelle: "Gespräch mit Lea" },
+
+  // ---- Schweden ----
+  gpg_se: { reiter: "elternzeit", titel: "Die Lücke in Schweden",
+    text: "Gender Pay Gap in Schweden: {fakt:gpg_se} ({jahr:gpg_se}) – kleiner als der EU-Durchschnitt von {fakt:gpg_eu}, aber nicht null.",
+    quelle: "Eurostat sdg_05_20 (Infoschild im Schweden-Viertel)" },
+  se_modell: { reiter: "elternzeit", titel: "Das schwedische Modell",
+    text: "Eltern in Schweden haben zusammen {fakt:se_elterngeld_tage} Elterngeld. Davon sind {fakt:se_reservierte_tage} fest für jeden Elternteil reserviert – wer sie nicht nimmt, verliert sie.",
+    quelle: "Försäkringskassan; Gespräch mit Frau Lindqvist" },
+  se_vaeter: { reiter: "elternzeit", titel: "Väter nehmen Elternzeit – aber weniger",
+    text: "Väter in Schweden nehmen etwa {fakt:se_vaeter_anteil_tage} aller Elterngeldtage. Das ist viel im EU-Vergleich – aber immer noch weniger als die Hälfte.",
+    quelle: "Försäkringskassan; Gespräch mit Frau Lindqvist" },
+  de_elternzeit: { reiter: "elternzeit", titel: "Zum Vergleich: Deutschland",
+    text: "In Deutschland gibt es {fakt:de_partnermonate} Partnermonate. Etwa {fakt:de_vaeter_elterngeld_anteil} der Väter beziehen Elterngeld – im Schnitt für {fakt:de_vaeter_bezugsdauer}, Mütter für {fakt:de_muetter_bezugsdauer}.",
+    quelle: "BMFSFJ; Destatis Elterngeldstatistik" },
+  elternzeit_geteilt: { reiter: "elternzeit", titel: "Geteilte Elternzeit",
+    text: "Lars und Nora haben die Elternzeit halbiert. Lars: „Seitdem weiß ich, wie viel Arbeit das ist.“ Nora: „Und ich war nicht die Einzige, die im Job gefehlt hat.“",
+    quelle: "Gespräch mit Lars und Nora" },
+  meinung_familie: { reiter: "elternzeit", titel: "Meinung: „Das geht den Staat nichts an“",
+    text: "Birgit: „Ich finde, jede Familie sollte selbst bestimmen, wer zu Hause bleibt. Warum schreibt der Staat Tage vor?“",
+    quelle: "Gespräch mit Birgit" },
+
+  // ---- Estland ----
+  gpg_ee: { reiter: "branchen", titel: "Die Lücke in Estland",
+    text: "Gender Pay Gap in Estland: {fakt:gpg_ee} ({jahr:gpg_ee}) – einer der höchsten Werte in der EU.",
+    quelle: "Eurostat sdg_05_20 (Infoschild im Estland-Viertel)" },
+  branchen_it: { reiter: "branchen", titel: "IT: gut bezahlt, wenige Frauen",
+    text: "In der IT verdient man in Estland im Schnitt etwa {fakt:ee_lohn_it} brutto im Monat. Nur etwa {fakt:ee_frauen_it} der Beschäftigten sind Frauen.",
+    quelle: "Statistikaamet; Eurostat; Messestand IT" },
+  branchen_pflege: { reiter: "branchen", titel: "Pflege: wichtig, aber schlechter bezahlt",
+    text: "Im Gesundheits- und Sozialwesen liegt der Durchschnittslohn bei etwa {fakt:ee_lohn_pflege}. Rund {fakt:ee_frauen_pflege} der Beschäftigten sind Frauen.",
+    quelle: "Statistikaamet; Eurostat; Messestand Pflege" },
+  branchen_bau: { reiter: "branchen", titel: "Handwerk & Bau",
+    text: "Im Baugewerbe verdient man im Schnitt etwa {fakt:ee_lohn_bau}. Frauen sind dort mit rund {fakt:ee_frauen_bau} selten.",
+    quelle: "Statistikaamet; Eurostat; Messestand Handwerk" },
+  branchen_bildung: { reiter: "branchen", titel: "Bildung & Soziales",
+    text: "In Erziehung und Unterricht liegt der Durchschnittslohn bei etwa {fakt:ee_lohn_bildung}. Etwa {fakt:ee_frauen_bildung} der Beschäftigten sind Frauen.",
+    quelle: "Statistikaamet; Eurostat; Messestand Soziales" },
+  branchen_muster: { reiter: "branchen", titel: "Das Muster",
+    text: "Branchen, in denen viele Frauen arbeiten, zahlen im Schnitt oft weniger. Ein Teil der Lücke entsteht also dadurch, wer in welchem Beruf arbeitet – und wie viel die Gesellschaft diesen Berufen zahlt.",
+    quelle: "Minispiel „Welche Branche zahlt mehr?“" },
+  meinung_berufswahl: { reiter: "branchen", titel: "Meinung: „Jeder sucht sich den Beruf selbst aus“",
+    text: "Anu: „Ich will Pflegerin werden, weil ich das mag. Soll ich deshalb weniger verdienen – oder sollte Pflege besser bezahlt werden?“",
+    quelle: "Gespräch mit Anu" },
+
+  // ---- Luxemburg ----
+  gpg_lu: { reiter: "verhandlung", titel: "Luxemburg: fast keine Lücke?",
+    text: "Der unbereinigte Gender Pay Gap in Luxemburg liegt bei {fakt:gpg_lu} ({jahr:gpg_lu}) – nahe null. Das heißt aber nicht, dass Frauen und Männer überall gleich behandelt werden. Ein Durchschnitt zeigt nicht alles.",
+    quelle: "Eurostat sdg_05_20 (Infoschild im Luxemburg-Viertel)" },
+  durchschnitt: { reiter: "verhandlung", titel: "Warum ein Durchschnitt täuschen kann",
+    text: "Ein niedriger Durchschnittswert kann viele Gründe haben – zum Beispiel, welche Berufe Frauen und Männer im Land haben oder wer überhaupt erwerbstätig ist. Innerhalb einer Firma kann es trotzdem große Unterschiede geben, etwa bei Beförderungen.",
+    quelle: "Gespräch mit Dr. Hoffmann" },
+  fuehrung_lu: { reiter: "verhandlung", titel: "Wer führt?",
+    text: "In Luxemburg sind etwa {fakt:lu_frauen_fuehrung} der Führungskräfte Frauen, im EU-Schnitt etwa {fakt:eu_frauen_fuehrung}.",
+    quelle: "Eurostat / EIGE; Gespräch mit Herrn Schmit" },
+  verhandlung_tipps: { reiter: "verhandlung", titel: "Gut verhandeln",
+    text: "Was hilft: eigene Erfolge mit Beispielen, eine recherchierte Zahl, Lösungen statt Drohungen. Was nicht hilft: Entschuldigungen oder „was Sie für angemessen halten“.",
+    quelle: "Minispiel Gehaltsverhandlung mit Herrn Schmit" },
+  verhandlung_fair: { reiter: "verhandlung", titel: "Verhandeln ist nicht für alle gleich",
+    text: "Herr Schmit gibt zu: Wenn Frauen hart verhandeln, gilt das manchmal als „fordernd“, bei Männern als „selbstbewusst“. Verhandeln allein löst die Lücke also nicht.",
+    quelle: "Gespräch mit Herrn Schmit" },
+  befoerderung: { reiter: "verhandlung", titel: "Die Beförderungsliste",
+    text: "In Herrn Schmits Firma arbeiten etwa gleich viele Frauen und Männer. Auf der Liste der letzten Beförderungen in Führungsjobs stehen aber fast nur Männer.",
+    quelle: "Gespräch mit Herrn Schmit (fiktive Firma)" },
 
   // ---- EU-Recht ----
   eu_richtlinie: { reiter: "eurecht", titel: "Lohntransparenz",

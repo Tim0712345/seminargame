@@ -122,6 +122,7 @@ GAME.Spielszene = (function () {
       npc: npc, kim: kim,
       figurVon: Z.figurVon,
       kimEmote: function (s) { Z.kimEmote = { symbol: s, zeit: 2.2 }; },
+      beweisZeigen: function (land) { Z.gezeigterBeweis = { land: land, zeit: 1.8 }; },
       beiEnde: function () {
         if (npc) npc.loslassen();
         (beteiligte || []).forEach(function (n) { n.loslassen(); });
@@ -157,6 +158,18 @@ GAME.Spielszene = (function () {
     return l;
   }
 
+  // Aufzug: Etage wählen (Karten mit Startpunkt "aufzug")
+  function aufzugMenue(ziel) {
+    var T = DATA.texte;
+    var eintraege = ziel.etagen.map(function (id) {
+      var hier = id === Z.welt.id;
+      return { text: (DATA.maps[id] ? DATA.maps[id].etage || DATA.maps[id].name : id) + (hier ? " " + T.aufzugHier : ""),
+               aktion: function () { GAME.ui.menueSchliessen(); if (!hier) Z.wechseln(id, "aufzug"); } };
+    });
+    eintraege.push({ text: T.schliessen, aktion: function () { GAME.ui.menueSchliessen(); } });
+    GAME.ui.menueOeffnen({ titel: T.aufzugTitel, eintraege: eintraege });
+  }
+
   function interagieren(ziel) {
     var kim = Z.spieler.figur;
     switch (ziel.art) {
@@ -166,6 +179,7 @@ GAME.Spielszene = (function () {
         Z.dialogStarten(ziel.dialog, null);
         break;
       case "tuer": Z.wechseln(ziel.ziel, ziel.spawn); break;
+      case "aufzug": aufzugMenue(ziel); break;
       case "fund":
         Z.fund.aktiv = false;
         kim.jubeln(); kim.emotion = "froehlich";
@@ -266,6 +280,7 @@ GAME.Spielszene = (function () {
       MM.m4compose(Z.fund.model, Z.fund.x, Z.fund.y + Math.sin(t * 2) * 0.08, Z.fund.z, 0.25, t * 1.2, 0, 1, 1, 1);
     }
     if (Z.kimEmote) { Z.kimEmote.zeit -= dt; if (Z.kimEmote.zeit <= 0) Z.kimEmote = null; }
+    if (Z.gezeigterBeweis) { Z.gezeigterBeweis.zeit -= dt; if (Z.gezeigterBeweis.zeit <= 0) Z.gezeigterBeweis = null; }
 
     // HUD-Hinweis zur aktuellen Aufgabe
     GAME.ui.hinweis(GAME.flags.hat("intro_fertig") ? GAME.quests.hinweis(Z.welt.map.land || null) : "");
@@ -273,6 +288,27 @@ GAME.Spielszene = (function () {
     Z.kamera.folgen(kim.x, kim.y, kim.z, sp.vx, sp.vz, dt, false);
     ENG.partikel.update(dt);
   };
+
+  // Beweisstück, das Kim beim Jubeln hochhält (kleine Akte in Landesfarbe)
+  var beweisMeshes = {}, beweisModel = MM.m4();
+  var BEWEIS_FARBE = { de: "terrakotta", se: "himmelblau", ee: "petrol", lu: "koralle", bxl: "senf" };
+  function beweisZeichnen(b, t) {
+    if (!beweisMeshes[b.land]) {
+      var m = ENG.mesh.neu(), F = GAME.farbe;
+      m.add(ENG.mesh.form("box", { groesse: [0.36, 0.26, 0.05], rund: 0.02 }, true), { pos: [0, 0, 0], farbe: F(BEWEIS_FARBE[b.land] || "senf") });
+      m.add(ENG.mesh.form("box", { groesse: [0.3, 0.22, 0.02], rund: 0.01 }, true), { pos: [0.01, 0.02, 0.03], farbe: F("creme") });
+      m.add(ENG.mesh.form("box", { groesse: [0.18, 0.02, 0.01], rund: 0.004 }, true), { pos: [-0.02, 0.08, 0.045], farbe: F("tusche") });
+      m.add(ENG.mesh.form("box", { groesse: [0.22, 0.02, 0.01], rund: 0.004 }, true), { pos: [0, 0.02, 0.045], farbe: F("grau") });
+      m.add(ENG.mesh.form("box", { groesse: [0.16, 0.02, 0.01], rund: 0.004 }, true), { pos: [-0.03, -0.04, 0.045], farbe: F("grau") });
+      beweisMeshes[b.land] = m.fertig();
+    }
+    var kim = Z.spieler.figur;
+    var h = kim.y + kim.info.kopfHoehe * kim.info.groesse + 0.2 + Math.sin(t * 6) * 0.04;
+    MM.m4compose(beweisModel, kim.x, h, kim.z, -0.2, Math.sin(t * 2.5) * 0.4, 0, 1.2, 1.2, 1.2);
+    ENG.renderer.mesh(beweisMeshes[b.land], beweisModel, { kontur: 0.0018 });
+    if (Math.random() < 0.3) ENG.partikel.neu({ x: kim.x + (Math.random() - 0.5) * 0.6, y: h + (Math.random() - 0.3) * 0.4, z: kim.z + (Math.random() - 0.5) * 0.4,
+      vy: 0.5, leben: 0.7, groesse: 0.07, farbe: [1, 0.93, 0.65], alpha: 0.9 });
+  }
 
   // Weltpunkt -> Bildschirm (mit Weltkrümmung, wie im Shader)
   function aufBildschirm(x, y, z) {
@@ -294,6 +330,7 @@ GAME.Spielszene = (function () {
     npcs.forEach(function (n) { n.figur.zeichnen(); });
     Z.figuren.forEach(function (f) { f.zeichnen(); });
     if (Z.fund && Z.fund.aktiv) R.mesh(Z.fund.mesh, Z.fund.model, { kontur: 0.0018 });
+    if (Z.gezeigterBeweis) beweisZeichnen(Z.gezeigterBeweis, t);
 
     w.schattenZeichnen(k);
     Z.spieler.figur.schatten(hf);
@@ -323,6 +360,7 @@ GAME.Spielszene = (function () {
         case "tuer": hoehe = (z.y || 0) + (z.hoehe || 1.6); text = DATA.texte.hineingehen; break;
         case "dialog": hoehe = (z.y || 0) + (z.hoehe || 1.4); text = z.text || DATA.texte.ansehen; break;
         case "fund": hoehe = Z.fund.y + 0.45; text = DATA.texte.test.fundUntersuchen; break;
+        case "aufzug": hoehe = (z.y || 0) + (z.hoehe || 2.3); text = DATA.texte.aufzug; break;
         default: hoehe = (z.y || 0) + 1.2; text = DATA.texte.ansehen;
       }
       var mitEmote = z.art === "npc" && (z.npc.emote || (z.npc.def.hinweis && GAME.flags.pruefen(z.npc.def.hinweis)));

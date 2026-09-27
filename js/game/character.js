@@ -186,10 +186,11 @@ GAME.character = (function () {
     extras.forEach(function (ex) { extraBauen(teil, ex, { W: W, T: T, kSkal: kSkal, armX: armX, haut: haut, def: def }); });
 
     var info = {
+      kinderwagen: !!hat("kinderwagen"),
       rollstuhl: !!rollstuhl,
       gehstock: !!gehstock,
       groesse: def.alter === "kind" ? 0.78 : 1,
-      radius: rollstuhl ? 0.4 : 0.28,
+      radius: rollstuhl ? 0.4 : (hat("kinderwagen") ? 0.45 : 0.28),
       armX: armX * KS[0],
       kopfHoehe: KOPF_Y_NEU + KOPF_R * KOPF_SKAL * ks[1] + 0.12
     };
@@ -351,6 +352,22 @@ GAME.character = (function () {
         teil("box", { groesse: [0.08, 0.2, 0.04], rund: 0.02 }, { pos: [0.07, 0.6, T / 2 + 0.03], rot: [0, 0, 8], farbe: scf, knochen: K.KOERPER });
         break;
       }
+      case "kinderwagen": {
+        var kf = F(ex.farbe || "salbei"), kr = F("anthrazit");
+        teil("box", { groesse: [0.34, 0.24, 0.48], rund: 0.08 }, { pos: [0, 0.42, 0.66], farbe: kf, knochen: K.WURZEL });
+        teil("kugel", { r: 1, seg: 12, ring: 6, lat0: 0, lat1: 1.6, lon0: Math.PI * 0.5, lon1: Math.PI * 1.5 },
+          { pos: [0, 0.5, 0.56], skal: [0.18, 0.2, 0.22], farbe: kf, knochen: K.WURZEL });
+        teil("box", { groesse: [0.3, 0.03, 0.4], rund: 0.01 }, { pos: [0, 0.55, 0.68], farbe: F("creme"), knochen: K.WURZEL });
+        [[-0.15, 0.48], [0.15, 0.48], [-0.15, 0.86], [0.15, 0.86]].forEach(function (r) {
+          teil("torus", { R: 0.075, r: 0.018 }, { pos: [r[0], 0.09, r[1]], rot: [0, 90, 0], farbe: kr, knochen: K.WURZEL });
+        });
+        teil("box", { groesse: [0.03, 0.03, 0.42], rund: 0.01 }, { pos: [-0.15, 0.2, 0.67], farbe: kr, knochen: K.WURZEL });
+        teil("box", { groesse: [0.03, 0.03, 0.42], rund: 0.01 }, { pos: [0.15, 0.2, 0.67], farbe: kr, knochen: K.WURZEL });
+        teil("box", { groesse: [0.03, 0.34, 0.03], rund: 0.01 }, { pos: [-0.15, 0.5, 0.36], rot: [-25, 0, 0], farbe: kr, knochen: K.WURZEL });
+        teil("box", { groesse: [0.03, 0.34, 0.03], rund: 0.01 }, { pos: [0.15, 0.5, 0.36], rot: [-25, 0, 0], farbe: kr, knochen: K.WURZEL });
+        teil("kapsel", { r: 0.022, h: 0.36 }, { pos: [0, 0.66, 0.29], rot: [0, 0, 90], farbe: kr, knochen: K.WURZEL });
+        break;
+      }
       case "ohrringe": {
         var of = F(ex.farbe || "senf");
         teil("kugel", { r: 0.018 }, { pos: [-ks[0] * 0.98, KOPF_Y - 0.08, 0], farbe: of, knochen: K.KOPF });
@@ -463,6 +480,7 @@ GAME.character = (function () {
     var armL = armS, armR = -armS;
     var armRz = 0.12 * lm;
     if (info.gehstock) armR = -armS * 0.25 - 0.15 * lm;
+    if (info.kinderwagen) { armL = armR = -0.95 + armS * 0.08; armRz = 0.05; }
     if (info.rollstuhl) {
       var schub = Math.sin(this.phase * 0.8);
       armL = armR = -0.35 - 0.35 * lm - schub * 0.4 * lm;

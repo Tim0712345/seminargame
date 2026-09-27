@@ -49,6 +49,10 @@ GAME.debug = (function () {
     var e = GAME.dialog.pruefen();
     // Flags, die nicht aus Dialogen kommen, sondern vom Spiel gesetzt werden
     var vomSpiel = /^(beweis_|notiz_|war_in_|alle_beweise$|finale_fertig$)/;
+    for (var m in (DATA.minispiele || {})) {
+      if (DATA.minispiele[m].setFlag) e.gesetzt[DATA.minispiele[m].setFlag] = true;
+      if (DATA.minispiele[m].erfolgFlag) e.gesetzt[DATA.minispiele[m].erfolgFlag] = true;
+    }
     var nieGesetzt = Object.keys(e.benutzt).filter(function (f) { return !e.gesetzt[f] && !vomSpiel.test(f); });
     for (var q in DATA.quests) DATA.quests[q].schritte.forEach(function (s) {
       String(s.fertigWenn || "").split(/[|&]/).forEach(function (f) {

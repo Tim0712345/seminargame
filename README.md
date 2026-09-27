@@ -25,8 +25,8 @@ kein WebGL nutzen. Dann in den Browser-Einstellungen die
 | E oder Leertaste | sprechen, untersuchen, weiter |
 | Enter | Auswahl bestätigen |
 | Esc | Pause und Einstellungen |
-| N | Notizbuch (ab Phase 3) |
-| Q | Aufgaben (ab Phase 3) |
+| N | Notizbuch (Reiter mit ← →) |
+| Q | Aufgaben |
 
 Im Pausemenü lässt sich die **Grafik** (Hoch/Niedrig) umschalten.
 „Niedrig“ ist für langsame Schul-Laptops gedacht.
@@ -89,6 +89,10 @@ DATA.dialogues.de_lea = {
 - Emotionen: froehlich, nachdenklich, ueberrascht, skeptisch, neutral
 - `aktion: "beweis:de"` gibt ein Beweisstück, `emote: "gluehbirne"` zeigt ein Symbol
 - Wer spricht, wird über `speaker` angezeigt; `"Kim"` ist die Spielfigur
+
+### Minispiele
+- `data/dialogues.js` → `DATA.minispiele`: Texte, Antworten und Punkte der Minispiele.
+  Gestartet werden sie aus einem Dialog mit `aktion: "minispiel:branchen"`.
 
 ### NPCs
 - `data/npcs.js`: Karte, Startplatz, Dialog und Tagesablauf (gehen, warten, sitzen, gießen, schauen)

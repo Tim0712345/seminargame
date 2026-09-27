@@ -55,10 +55,15 @@ Prompt abzuweichen. **Nichts darf nach Animal Crossing oder einem anderen besteh
   - Kartenwechsel mit Abblende, Türen (E oder hineinlaufen), Ausgänge am Kartenrand, Innenräume (Wände, feste Kamera)
   - Karten: `europaplatz` (Intro startet automatisch), `de`, `de_kita_innen`, `de_buero_innen`
   - Debug: T = Teleport, F = Flags, automatische Prüfung aller Dialoge und Karten (Erreichbarkeit) in der Konsole
-- **Als Nächstes – Phase 3:** Schweden-, Estland-, Luxemburg-Viertel (LU: Hochhaus mit 3 Etagen + Aufzug),
-  Notizbuch (Taste N, Reiter), Questlog (Taste Q), Beweisstück-Icons im HUD, Minispiele
-  („Welche Branche zahlt mehr?“, Gehaltsverhandlung). Absperrungen auf dem Europaplatz dann entfernen
-  und Ausgänge in `maps.europaplatz.uebergaenge` ergänzen.
+- **Phase 3 fertig (wartet auf OK des Users):**
+  - Viertel `se` (+ `se_amt_innen`), `ee` (Berufsmesse), `lu` (+ Hochhaus `lu_etage_1..3` mit Aufzug)
+  - Notizbuch (N) und Aufgabenliste (Q) in `js/game/notebook.js`, Beweisstück-Leiste im HUD
+  - Minispiele in `js/game/minigames.js` (Zuordnen, Verhandlung), Daten in `DATA.minispiele` (dialogues.js),
+    Start per Dialog-Aktion `minispiel:id`, danach Folgedialog `danach`
+  - Kim hält gefundene Beweisstücke beim Jubeln hoch; Kinderwagen als Figuren-Extra
+- **Als Nächstes – Phase 4:** Brüssel (Tor öffnet bei `alle_beweise`): Archiv mit Archivarin (Beweis „bxl“,
+  bereinigt vs. unbereinigt), Sitzungssaal: 5 Beweise präsentieren, Argumentationsduell (3 Abgeordnete,
+  Fakten aus dem Notizbuch), 3 aus 6 Maßnahmen, modularer Epilog, Reflexion, Titelbildschirm, Speichern.
 - Danach Phase 4 (Brüssel-Finale, Enden, Reflexion, Titelbildschirm, Speichern),
   Phase 5 (Sound, Partikel, Touch, Barrierefreiheit, Performance, Bugfixes).
 

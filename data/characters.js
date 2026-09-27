@@ -17,7 +17,7 @@
    schuhe    : Farbname
    extras    : Liste von { typ, farbe? }
                typ: umhaengetasche | brille | gehstock | rollstuhl |
-                    muetze | schal | ohrringe | bart
+                    muetze | schal | ohrringe | bart | kinderwagen
    stimme    : { tonhoehe } – für die Sprechlaute (ab Phase 5)
 
    Alle Farben sind Namen aus palette.js.
@@ -171,6 +171,192 @@ DATA.characters = {
     schuhe: "koralle",
     extras: [],
     stimme: { tonhoehe: 1.35 }
+  },
+
+  // ---- Schweden-Viertel ----
+  lindqvist: {
+    name: "Frau Lindqvist",
+    haut: "haut_1", kopf: "oval", koerper: "schmal", alter: "erwachsen",
+    haare: { stil: "bob", farbe: "haar_blond" },
+    oberteil: { typ: "blazer", farbe: "himmelblau", innen: "weiss" },
+    unterteil: { typ: "hose", farbe: "anthrazit" },
+    schuhe: "schwarz",
+    extras: [ { typ: "brille" } ],
+    stimme: { tonhoehe: 1.0 }
+  },
+  lars: {
+    name: "Lars",
+    haut: "haut_2", kopf: "breit", koerper: "mittel", alter: "erwachsen",
+    haare: { stil: "kurz", farbe: "haar_rot" },
+    oberteil: { typ: "pullover", farbe: "oliv" },
+    unterteil: { typ: "hose", farbe: "jeans" },
+    schuhe: "weiss",
+    extras: [ { typ: "kinderwagen", farbe: "petrol" }, { typ: "bart" } ],
+    stimme: { tonhoehe: 0.9 }
+  },
+  nora: {
+    name: "Nora",
+    haut: "haut_4", kopf: "rund", koerper: "mittel", alter: "erwachsen",
+    haare: { stil: "locken", farbe: "haar_dunkelbraun" },
+    oberteil: { typ: "hoodie", farbe: "koralle" },
+    unterteil: { typ: "hose", farbe: "jeans_hell" },
+    schuhe: "creme",
+    extras: [],
+    stimme: { tonhoehe: 1.05 }
+  },
+  birgit: {
+    name: "Birgit",
+    haut: "haut_1", kopf: "rund", koerper: "kraeftig", alter: "alt",
+    haare: { stil: "dutt", farbe: "haar_weiss" },
+    oberteil: { typ: "strickjacke", farbe: "rosa", innen: "creme" },
+    unterteil: { typ: "rock", farbe: "anthrazit", beine: "grau" },
+    schuhe: "holz_dunkel",
+    extras: [ { typ: "brille" } ],
+    stimme: { tonhoehe: 1.1 }
+  },
+  erik: {
+    name: "Erik",
+    haut: "haut_5", kopf: "oval", koerper: "schmal", alter: "erwachsen",
+    haare: { stil: "kurz", farbe: "haar_schwarz" },
+    oberteil: { typ: "tshirt", farbe: "senf" },
+    unterteil: { typ: "shorts", farbe: "anthrazit" },
+    schuhe: "koralle",
+    extras: [ { typ: "kinderwagen", farbe: "terrakotta" } ],
+    stimme: { tonhoehe: 0.95 }
+  },
+  alva: {
+    name: "Alva",
+    haut: "haut_3", kopf: "oval", koerper: "schmal", alter: "jung",
+    haare: { stil: "lang", farbe: "haar_blond" },
+    oberteil: { typ: "hoodie", farbe: "lavendel" },
+    unterteil: { typ: "hose", farbe: "schwarz" },
+    schuhe: "weiss",
+    extras: [ { typ: "ohrringe", farbe: "senf" } ],
+    stimme: { tonhoehe: 1.15 }
+  },
+
+  // ---- Estland-Viertel ----
+  kadri: {
+    name: "Kadri",
+    haut: "haut_2", kopf: "oval", koerper: "mittel", alter: "erwachsen",
+    haare: { stil: "zopf", farbe: "haar_dunkelbraun" },
+    oberteil: { typ: "blazer", farbe: "petrol", innen: "creme" },
+    unterteil: { typ: "hose", farbe: "grau" },
+    schuhe: "schwarz",
+    extras: [ { typ: "umhaengetasche", farbe: "senf" } ],
+    stimme: { tonhoehe: 1.0 }
+  },
+  mart: {
+    name: "Mart",
+    haut: "haut_1", kopf: "breit", koerper: "schmal", alter: "jung",
+    haare: { stil: "kurz", farbe: "haar_blond" },
+    oberteil: { typ: "hoodie", farbe: "anthrazit" },
+    unterteil: { typ: "hose", farbe: "jeans" },
+    schuhe: "weiss",
+    extras: [ { typ: "brille" } ],
+    stimme: { tonhoehe: 0.95 }
+  },
+  liis: {
+    name: "Liis",
+    haut: "haut_5", kopf: "rund", koerper: "mittel", alter: "erwachsen",
+    haare: { stil: "dutt", farbe: "haar_schwarz" },
+    oberteil: { typ: "tshirt", farbe: "mint" },
+    unterteil: { typ: "hose", farbe: "mint" },
+    schuhe: "weiss",
+    extras: [],
+    stimme: { tonhoehe: 1.05 }
+  },
+  kertu: {
+    name: "Kertu",
+    haut: "haut_2", kopf: "oval", koerper: "kraeftig", alter: "erwachsen",
+    haare: { stil: "zopf", farbe: "haar_rot" },
+    oberteil: { typ: "hemd", farbe: "ocker" },
+    unterteil: { typ: "latzhose", farbe: "jeans" },
+    schuhe: "holz_dunkel",
+    extras: [],
+    stimme: { tonhoehe: 1.0 }
+  },
+  priit: {
+    name: "Priit",
+    haut: "haut_3", kopf: "breit", koerper: "mittel", alter: "erwachsen",
+    haare: { stil: "locken", farbe: "haar_kastanie" },
+    oberteil: { typ: "pullover", farbe: "terrakotta" },
+    unterteil: { typ: "hose", farbe: "oliv" },
+    schuhe: "anthrazit",
+    extras: [ { typ: "bart" } ],
+    stimme: { tonhoehe: 0.9 }
+  },
+  anu: {
+    name: "Anu",
+    haut: "haut_6", kopf: "oval", koerper: "schmal", alter: "jung",
+    haare: { stil: "afro", farbe: "haar_schwarz" },
+    oberteil: { typ: "tshirt", farbe: "himmelblau" },
+    unterteil: { typ: "rock", farbe: "senf", beine: "haut_6" },
+    schuhe: "weiss",
+    extras: [ { typ: "umhaengetasche", farbe: "koralle" } ],
+    stimme: { tonhoehe: 1.2 }
+  },
+
+  // ---- Luxemburg-Viertel ----
+  schmit: {
+    name: "Herr Schmit",
+    haut: "haut_2", kopf: "breit", koerper: "kraeftig", alter: "erwachsen",
+    haare: { stil: "kurz", farbe: "haar_grau" },
+    oberteil: { typ: "hemd", farbe: "weiss" },
+    unterteil: { typ: "hose", farbe: "anthrazit" },
+    schuhe: "schwarz",
+    extras: [ { typ: "brille" } ],
+    stimme: { tonhoehe: 0.85 }
+  },
+  paul: {
+    name: "Paul",
+    haut: "haut_4", kopf: "rund", koerper: "mittel", alter: "jung",
+    haare: { stil: "locken", farbe: "haar_schwarz" },
+    oberteil: { typ: "pullover", farbe: "lavendel" },
+    unterteil: { typ: "hose", farbe: "grau" },
+    schuhe: "weiss",
+    extras: [],
+    stimme: { tonhoehe: 1.0 }
+  },
+  chloe: {
+    name: "Chloé",
+    haut: "haut_3", kopf: "oval", koerper: "schmal", alter: "erwachsen",
+    haare: { stil: "lang", farbe: "haar_schwarz" },
+    oberteil: { typ: "blazer", farbe: "senf", innen: "creme" },
+    unterteil: { typ: "hose", farbe: "anthrazit" },
+    schuhe: "schwarz",
+    extras: [ { typ: "ohrringe", farbe: "weiss" } ],
+    stimme: { tonhoehe: 1.05 }
+  },
+  tom: {
+    name: "Tom",
+    haut: "haut_1", kopf: "oval", koerper: "mittel", alter: "erwachsen",
+    haare: { stil: "kurz", farbe: "haar_blond" },
+    oberteil: { typ: "hemd", farbe: "himmelblau" },
+    unterteil: { typ: "hose", farbe: "jeans" },
+    schuhe: "anthrazit",
+    extras: [],
+    stimme: { tonhoehe: 0.95 }
+  },
+  hoffmann: {
+    name: "Dr. Hoffmann",
+    haut: "haut_5", kopf: "oval", koerper: "mittel", alter: "alt",
+    haare: { stil: "kurz", farbe: "haar_grau" },
+    oberteil: { typ: "strickjacke", farbe: "weinrot", innen: "creme" },
+    unterteil: { typ: "hose", farbe: "grau" },
+    schuhe: "holz_dunkel",
+    extras: [ { typ: "brille" }, { typ: "schal", farbe: "senf" } ],
+    stimme: { tonhoehe: 0.95 }
+  },
+  marc: {
+    name: "Marc",
+    haut: "haut_6", kopf: "breit", koerper: "kraeftig", alter: "erwachsen",
+    haare: { stil: "glatze", farbe: "haar_schwarz" },
+    oberteil: { typ: "tshirt", farbe: "weiss" },
+    unterteil: { typ: "hose", farbe: "anthrazit" },
+    schuhe: "schwarz",
+    extras: [ { typ: "bart" } ],
+    stimme: { tonhoehe: 0.85 }
   },
 
   // ---- Probefiguren (Test-Insel, zeigen den Baukasten) ----

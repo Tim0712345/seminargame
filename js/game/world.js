@@ -175,6 +175,9 @@ GAME.Welt = (function () {
         var tx0 = pf.tuer[0], tz0 = pf.tuer[1] + 0.35;
         self.interaktionen.push({ art: "tuer", id: o.id, x: wx + tx0 * c + tz0 * sn, y: wy, z: wz - tx0 * sn + tz0 * c,
           radius: 0.35, ziel: o.tuer.ziel, spawn: o.tuer.spawn, wenn: o.tuer.wenn, gesperrt: o.tuer.gesperrt, hoehe: 1.6 });
+      } else if (o.aufzug) {
+        self.interaktionen.push({ art: "aufzug", id: o.id, x: wx, y: wy, z: wz, radius: (kolRadius(pf) || 0.4) + 0.15,
+          etagen: o.aufzug, hoehe: pf.hoehe || 2.3 });
       } else if (o.dialog) {
         self.interaktionen.push({ art: "dialog", id: o.id, x: wx, y: wy, z: wz, radius: (kolRadius(pf) || 0.3) + 0.1,
           dialog: o.dialog, hoehe: pf.hoehe || 1.4, text: o.text });
@@ -269,12 +272,12 @@ GAME.Welt = (function () {
         var holz = F(a.farbe);
         b.add(ENG.mesh.form("box", { groesse: [1.0, 0.16, 0.98], rund: 0.03 }), {
           pos: [x + 0.5, STEG_Y - 0.08, z + 0.5], farbe: [holz[0] * jitter, holz[1] * jitter, holz[2] * jitter],
-          muster: ENG.mesh.MUSTER.holz, texSkal: 0.5
+          muster: ENG.mesh.MUSTER[a.textur] || 0, texSkal: 0.5
         });
         // Pfosten an den Seiten, die ans Wasser grenzen
         var pfosten = F("holz_dunkel");
         [[-1, 0], [1, 0]].forEach(function (d) {
-          if (!self.art(x + d[0], z).wasser) return;
+          if (a.pfosten === false || !self.art(x + d[0], z).wasser) return;
           b.add(ENG.mesh.form("zylinder", { r: 0.06, h: 0.8, seg: 8 }), { pos: [x + 0.5 + d[0] * 0.46, -0.32, z + 0.5], farbe: pfosten });
         });
       }

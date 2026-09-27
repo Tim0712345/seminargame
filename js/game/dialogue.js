@@ -13,7 +13,7 @@
      options   [{ label, next, setFlag, requiresFlag, addNote, aktion }]
      setFlag / addNote / aktion  werden beim Anzeigen des Knotens ausgeführt
    Aktionen (mehrere mit ";"): beweis:de · emote:gluehbirne · emoteKim:herz
-                               jubeln · einblenden:Text
+                               jubeln · einblenden:Text · minispiel:branchen
    ===================================================================== */
 var GAME = window.GAME = window.GAME || {};
 
@@ -25,6 +25,7 @@ GAME.dialog = (function () {
   var segmente = [], gesamt = 0, gezeigt = 0, tippGeschw = 48;
   var optionen = [], wahl = 0, sprecher = null, sprecherIstKim = false;
   var bildZaehler = 0;
+  var wartendesMinispiel = null;   // startet, sobald der Dialog endet
 
   function neu(tag, klasse) { var e = document.createElement(tag); if (klasse) e.className = klasse; return e; }
 
@@ -188,6 +189,7 @@ GAME.dialog = (function () {
           if (GAME.quests.beweis(wert)) {
             var land = DATA.countries[wert];
             if (kontext.kim) { kontext.kim.jubeln(); kontext.kim.emotion = "froehlich"; }
+            if (kontext.beweisZeigen) kontext.beweisZeigen(wert);
             GAME.ui.einblenden(DATA.texte.beweisNeu + " " + (land ? land.beweis.name : wert), 3);
           }
           break;
@@ -195,6 +197,7 @@ GAME.dialog = (function () {
         case "emoteKim": emote(wert, true); break;
         case "jubeln": if (kontext.kim) kontext.kim.jubeln(); break;
         case "einblenden": GAME.ui.einblenden(wert, 2.6); break;
+        case "minispiel": wartendesMinispiel = { id: wert, npc: kontext.npc }; break;
         default: console.warn("Unbekannte Dialog-Aktion: " + a);
       }
     });
@@ -241,6 +244,14 @@ GAME.dialog = (function () {
     var k = kontext;
     dlg = null; knoten = null; sprecher = null; kontext = null;
     if (k && k.beiEnde) k.beiEnde();
+    if (wartendesMinispiel) {
+      var mp = wartendesMinispiel;
+      wartendesMinispiel = null;
+      GAME.minispiel.starten(mp.id, function () {
+        var danach = (DATA.minispiele[mp.id] || {}).danach;
+        if (danach) GAME.Spielszene.dialogStarten(danach, mp.npc);
+      });
+    }
   };
 
   D.update = function (dt) {

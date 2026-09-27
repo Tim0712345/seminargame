@@ -612,6 +612,429 @@ DATA.prefabs = {
     schatten: 0
   },
 
+  // ================= Schweden-Viertel =================
+
+  // Schwedisches Holzhaus (rot mit weißen Ecken)
+  haus_schweden: {
+    teile: [
+      { form: "box", groesse: [4, 2.6, 3], rund: 0.05, pos: [0, 1.3, 0], farbe: "schwedenrot", textur: "holz" },
+      { form: "box", groesse: [4.08, 0.24, 3.08], rund: 0.04, pos: [0, 0.12, 0], farbe: "stein" },
+      { form: "box", groesse: [0.16, 2.6, 0.16], rund: 0.03, pos: [-2, 1.3, -1.5], farbe: "weiss" },
+      { form: "box", groesse: [0.16, 2.6, 0.16], rund: 0.03, pos: [-2, 1.3, 1.5], farbe: "weiss" },
+      { form: "box", groesse: [0.16, 2.6, 0.16], rund: 0.03, pos: [2, 1.3, -1.5], farbe: "weiss" },
+      { form: "box", groesse: [0.16, 2.6, 0.16], rund: 0.03, pos: [2, 1.3, 1.5], farbe: "weiss" },
+      { form: "box", groesse: [4.4, 0.16, 2.288], rund: 0.05, pos: [0, 3.225, 0.75], rot: [42, 0, 0], farbe: "dach_dunkel" },
+      { form: "box", groesse: [4.4, 0.16, 2.288], rund: 0.05, pos: [0, 3.225, -0.75], rot: [-42, 0, 0], farbe: "dach_dunkel" },
+      { form: "box", groesse: [3.9, 1.797, 1.797], rund: 0.05, pos: [0, 2.6, 0], rot: [45, 0, 0], farbe: "schwedenrot" },
+      { form: "box", groesse: [0.95, 1.5, 0.1], rund: 0.06, pos: [-1.2, 0.75, 1.52], farbe: "weiss" },
+      { form: "box", groesse: [0.72, 1.35, 0.06], rund: 0.06, pos: [-1.2, 0.72, 1.56], farbe: "petrol", textur: "holz" },
+      { form: "box", groesse: [1, 0.12, 0.5], rund: 0.03, pos: [-1.2, 0.06, 1.8], farbe: "holz", textur: "holz" },
+      { form: "box", groesse: [0.55, 0.75, 0.05], rund: 0.03, pos: [0.2, 1.55, 1.51], farbe: "fenster" },
+      { form: "box", groesse: [0.69, 0.08, 0.09], rund: 0.02, pos: [0.2, 1.135, 1.53], farbe: "weiss" },
+      { form: "box", groesse: [0.55, 0.75, 0.05], rund: 0.03, pos: [1.3, 1.55, 1.51], farbe: "fenster" },
+      { form: "box", groesse: [0.69, 0.08, 0.09], rund: 0.02, pos: [1.3, 1.135, 1.53], farbe: "weiss" },
+      { form: "box", groesse: [0.35, 0.8, 0.35], rund: 0.04, pos: [1.2, 2.9, -0.3], farbe: "stein" }
+    ],
+    kollision: { box: [4.1, 3.1] },
+    schatten: 0,
+    tuer: [-1.2, 1.5]
+  },
+
+  // Schwedisches Holzhaus (rot mit weißen Ecken)
+  haus_schweden_gelb: {
+    teile: [
+      { form: "box", groesse: [4, 2.6, 3], rund: 0.05, pos: [0, 1.3, 0], farbe: "senf", textur: "holz" },
+      { form: "box", groesse: [4.08, 0.24, 3.08], rund: 0.04, pos: [0, 0.12, 0], farbe: "stein" },
+      { form: "box", groesse: [0.16, 2.6, 0.16], rund: 0.03, pos: [-2, 1.3, -1.5], farbe: "weiss" },
+      { form: "box", groesse: [0.16, 2.6, 0.16], rund: 0.03, pos: [-2, 1.3, 1.5], farbe: "weiss" },
+      { form: "box", groesse: [0.16, 2.6, 0.16], rund: 0.03, pos: [2, 1.3, -1.5], farbe: "weiss" },
+      { form: "box", groesse: [0.16, 2.6, 0.16], rund: 0.03, pos: [2, 1.3, 1.5], farbe: "weiss" },
+      { form: "box", groesse: [4.4, 0.16, 2.288], rund: 0.05, pos: [0, 3.225, 0.75], rot: [42, 0, 0], farbe: "dach_dunkel" },
+      { form: "box", groesse: [4.4, 0.16, 2.288], rund: 0.05, pos: [0, 3.225, -0.75], rot: [-42, 0, 0], farbe: "dach_dunkel" },
+      { form: "box", groesse: [3.9, 1.797, 1.797], rund: 0.05, pos: [0, 2.6, 0], rot: [45, 0, 0], farbe: "senf" },
+      { form: "box", groesse: [0.95, 1.5, 0.1], rund: 0.06, pos: [-1.2, 0.75, 1.52], farbe: "weiss" },
+      { form: "box", groesse: [0.72, 1.35, 0.06], rund: 0.06, pos: [-1.2, 0.72, 1.56], farbe: "petrol", textur: "holz" },
+      { form: "box", groesse: [1, 0.12, 0.5], rund: 0.03, pos: [-1.2, 0.06, 1.8], farbe: "holz", textur: "holz" },
+      { form: "box", groesse: [0.55, 0.75, 0.05], rund: 0.03, pos: [0.2, 1.55, 1.51], farbe: "fenster" },
+      { form: "box", groesse: [0.69, 0.08, 0.09], rund: 0.02, pos: [0.2, 1.135, 1.53], farbe: "weiss" },
+      { form: "box", groesse: [0.55, 0.75, 0.05], rund: 0.03, pos: [1.3, 1.55, 1.51], farbe: "fenster" },
+      { form: "box", groesse: [0.69, 0.08, 0.09], rund: 0.02, pos: [1.3, 1.135, 1.53], farbe: "weiss" },
+      { form: "box", groesse: [0.35, 0.8, 0.35], rund: 0.04, pos: [1.2, 2.9, -0.3], farbe: "stein" }
+    ],
+    kollision: { box: [4.1, 3.1] },
+    schatten: 0,
+    tuer: [-1.2, 1.5]
+  },
+
+  // Familienamt (heller Neubau, Tür vorne rechts)
+  familienamt: {
+    teile: [
+      { form: "box", groesse: [5, 3.2, 3], rund: 0.06, pos: [0, 1.6, 0], farbe: "weiss" },
+      { form: "box", groesse: [5.2, 0.18, 3.2], rund: 0.04, pos: [0, 3.28, 0], farbe: "anthrazit" },
+      { form: "box", groesse: [5.06, 0.24, 3.06], rund: 0.03, pos: [0, 0.12, 0], farbe: "stein_hell" },
+      { form: "box", groesse: [5, 0.2, 0.06], rund: 0.02, pos: [0, 1.55, 1.52], farbe: "himmelblau" },
+      { form: "box", groesse: [1, 1.5, 0.08], rund: 0.03, pos: [0.9, 0.78, 1.52], farbe: "glas" },
+      { form: "box", groesse: [0.05, 1.5, 0.02], rund: 0.005, pos: [0.9, 0.78, 1.56], farbe: "anthrazit" },
+      { form: "box", groesse: [1.3, 0.3, 0.06], rund: 0.05, pos: [0.9, 1.72, 1.58], farbe: "creme" },
+      { form: "kugel", r: 0.06, pos: [0.6, 1.76, 1.62], farbe: "terrakotta" },
+      { form: "kugel", r: 0.05, pos: [0.82, 1.73, 1.62], farbe: "petrol" },
+      { form: "kugel", r: 0.04, pos: [1, 1.71, 1.62], farbe: "senf" },
+      { form: "box", groesse: [1.2, 0.12, 0.5], rund: 0.03, pos: [0.9, 0.06, 1.8], farbe: "stein_hell" },
+      { form: "box", groesse: [0.8, 0.9, 0.05], rund: 0.03, pos: [-1.8, 0.95, 1.51], farbe: "glas" },
+      { form: "box", groesse: [0.94, 0.08, 0.09], rund: 0.02, pos: [-1.8, 0.46, 1.53], farbe: "anthrazit" },
+      { form: "box", groesse: [0.8, 0.9, 0.05], rund: 0.03, pos: [-0.6, 0.95, 1.51], farbe: "glas" },
+      { form: "box", groesse: [0.94, 0.08, 0.09], rund: 0.02, pos: [-0.6, 0.46, 1.53], farbe: "anthrazit" },
+      { form: "box", groesse: [0.8, 0.8, 0.05], rund: 0.03, pos: [-1.8, 2.45, 1.51], farbe: "glas" },
+      { form: "box", groesse: [0.94, 0.08, 0.09], rund: 0.02, pos: [-1.8, 2.01, 1.53], farbe: "anthrazit" },
+      { form: "box", groesse: [0.8, 0.8, 0.05], rund: 0.03, pos: [-0.6, 2.45, 1.51], farbe: "glas" },
+      { form: "box", groesse: [0.94, 0.08, 0.09], rund: 0.02, pos: [-0.6, 2.01, 1.53], farbe: "anthrazit" },
+      { form: "box", groesse: [0.8, 0.8, 0.05], rund: 0.03, pos: [0.6, 2.45, 1.51], farbe: "glas" },
+      { form: "box", groesse: [0.94, 0.08, 0.09], rund: 0.02, pos: [0.6, 2.01, 1.53], farbe: "anthrazit" },
+      { form: "box", groesse: [0.8, 0.8, 0.05], rund: 0.03, pos: [1.8, 2.45, 1.51], farbe: "glas" },
+      { form: "box", groesse: [0.94, 0.08, 0.09], rund: 0.02, pos: [1.8, 2.01, 1.53], farbe: "anthrazit" }
+    ],
+    kollision: { box: [5.1, 3.1] },
+    schatten: 0,
+    tuer: [0.9, 1.5]
+  },
+
+  // Einfache Holzbank ohne Lehne
+  steg_bank: {
+    teile: [
+      { form: "box", groesse: [1.4, 0.08, 0.5], rund: 0.03, pos: [0, 0.45, 0], farbe: "holz", textur: "holz" },
+      { form: "box", groesse: [0.08, 0.44, 0.44], rund: 0.03, pos: [-0.6, 0.22, 0], farbe: "holz_dunkel" },
+      { form: "box", groesse: [0.08, 0.44, 0.44], rund: 0.03, pos: [0.6, 0.22, 0], farbe: "holz_dunkel" }
+    ],
+    kollision: { box: [1.4, 0.5] },
+    schatten: 0.6,
+    sitz: [0, 0],
+    sitzHoehe: 0.49
+  },
+
+  // ================= Estland-Viertel =================
+
+  // Messestand (it)
+  messestand_it: {
+    teile: [
+      { form: "box", groesse: [2.2, 2.1, 0.1], rund: 0.04, pos: [0, 1.05, -0.55], farbe: "petrol" },
+      { form: "box", groesse: [0.08, 2.1, 1.2], rund: 0.03, pos: [-1.05, 1.05, 0], farbe: "holz_hell", textur: "holz" },
+      { form: "box", groesse: [0.08, 2.1, 1.2], rund: 0.03, pos: [1.05, 1.05, 0], farbe: "holz_hell", textur: "holz" },
+      { form: "box", groesse: [2.4, 0.4, 1.3], rund: 0.06, pos: [0, 2.2, 0], farbe: "petrol" },
+      { form: "box", groesse: [1.6, 0.26, 0.03], rund: 0.03, pos: [0, 2.2, 0.66], farbe: "creme" },
+      { form: "box", groesse: [1.9, 1, 0.5], rund: 0.04, pos: [0, 0.5, 0.35], farbe: "holz_hell", textur: "holz" },
+      { form: "box", groesse: [2, 0.06, 0.6], rund: 0.02, pos: [0, 1.02, 0.35], farbe: "creme" },
+      { form: "box", groesse: [0.9, 0.6, 0.05], rund: 0.03, pos: [0, 1.35, -0.47], farbe: "anthrazit" },
+      { form: "box", groesse: [0.8, 0.5, 0.02], rund: 0.02, pos: [0, 1.35, -0.44], farbe: "glas" },
+      { form: "box", groesse: [0.4, 0.03, 0.28], rund: 0.01, pos: [-0.5, 1.1, 0.4], farbe: "anthrazit" },
+      { form: "box", groesse: [0.4, 0.25, 0.02], rund: 0.01, pos: [-0.5, 1.22, 0.28], rot: [-15, 0, 0], farbe: "anthrazit" },
+      { form: "box", groesse: [0.18, 0.12, 0.02], rund: 0.01, pos: [-0.45, 2.2, 0.68], farbe: "petrol" },
+      { form: "box", groesse: [0.18, 0.12, 0.02], rund: 0.01, pos: [0.45, 2.2, 0.68], farbe: "petrol" }
+    ],
+    kollision: { box: [2.3, 1.3] },
+    schatten: 0,
+    hoehe: 2.6
+  },
+
+  // Messestand (pflege)
+  messestand_pflege: {
+    teile: [
+      { form: "box", groesse: [2.2, 2.1, 0.1], rund: 0.04, pos: [0, 1.05, -0.55], farbe: "mint" },
+      { form: "box", groesse: [0.08, 2.1, 1.2], rund: 0.03, pos: [-1.05, 1.05, 0], farbe: "holz_hell", textur: "holz" },
+      { form: "box", groesse: [0.08, 2.1, 1.2], rund: 0.03, pos: [1.05, 1.05, 0], farbe: "holz_hell", textur: "holz" },
+      { form: "box", groesse: [2.4, 0.4, 1.3], rund: 0.06, pos: [0, 2.2, 0], farbe: "mint" },
+      { form: "box", groesse: [1.6, 0.26, 0.03], rund: 0.03, pos: [0, 2.2, 0.66], farbe: "creme" },
+      { form: "box", groesse: [1.9, 1, 0.5], rund: 0.04, pos: [0, 0.5, 0.35], farbe: "holz_hell", textur: "holz" },
+      { form: "box", groesse: [2, 0.06, 0.6], rund: 0.02, pos: [0, 1.02, 0.35], farbe: "creme" },
+      { form: "kugel", radien: [0.2, 0.2, 0.06], pos: [-0.12, 1.5, -0.46], farbe: "koralle" },
+      { form: "kugel", radien: [0.2, 0.2, 0.06], pos: [0.12, 1.5, -0.46], farbe: "koralle" },
+      { form: "kegel", r: 0.28, h: 0.34, pos: [0, 1.3, -0.46], rot: [180, 0, 0], farbe: "koralle" },
+      { form: "zylinder", r: 0.08, h: 0.18, pos: [0.5, 1.13, 0.4], farbe: "weiss" },
+      { form: "kugel", r: 0.06, pos: [-0.45, 2.2, 0.68], farbe: "koralle" },
+      { form: "kugel", r: 0.06, pos: [0.45, 2.2, 0.68], farbe: "koralle" }
+    ],
+    kollision: { box: [2.3, 1.3] },
+    schatten: 0,
+    hoehe: 2.6
+  },
+
+  // Messestand (handwerk)
+  messestand_handwerk: {
+    teile: [
+      { form: "box", groesse: [2.2, 2.1, 0.1], rund: 0.04, pos: [0, 1.05, -0.55], farbe: "ocker" },
+      { form: "box", groesse: [0.08, 2.1, 1.2], rund: 0.03, pos: [-1.05, 1.05, 0], farbe: "holz_hell", textur: "holz" },
+      { form: "box", groesse: [0.08, 2.1, 1.2], rund: 0.03, pos: [1.05, 1.05, 0], farbe: "holz_hell", textur: "holz" },
+      { form: "box", groesse: [2.4, 0.4, 1.3], rund: 0.06, pos: [0, 2.2, 0], farbe: "ocker" },
+      { form: "box", groesse: [1.6, 0.26, 0.03], rund: 0.03, pos: [0, 2.2, 0.66], farbe: "creme" },
+      { form: "box", groesse: [1.9, 1, 0.5], rund: 0.04, pos: [0, 0.5, 0.35], farbe: "holz_hell", textur: "holz" },
+      { form: "box", groesse: [2, 0.06, 0.6], rund: 0.02, pos: [0, 1.02, 0.35], farbe: "creme" },
+      { form: "box", groesse: [0.08, 0.7, 0.05], rund: 0.02, pos: [0.1, 1.45, -0.46], rot: [0, 0, -30], farbe: "holz_dunkel" },
+      { form: "box", groesse: [0.35, 0.14, 0.08], rund: 0.03, pos: [-0.1, 1.72, -0.46], rot: [0, 0, -30], farbe: "metall" },
+      { form: "box", groesse: [0.5, 0.14, 0.3], rund: 0.02, pos: [-0.5, 1.12, 0.4], farbe: "holz", textur: "holz" },
+      { form: "zylinder", r: 0.05, h: 0.2, pos: [0.5, 1.15, 0.4], farbe: "metall" },
+      { form: "box", groesse: [0.2, 0.1, 0.02], rund: 0.01, pos: [-0.45, 2.2, 0.68], farbe: "holz_dunkel" },
+      { form: "box", groesse: [0.2, 0.1, 0.02], rund: 0.01, pos: [0.45, 2.2, 0.68], farbe: "holz_dunkel" }
+    ],
+    kollision: { box: [2.3, 1.3] },
+    schatten: 0,
+    hoehe: 2.6
+  },
+
+  // Messestand (soziales)
+  messestand_soziales: {
+    teile: [
+      { form: "box", groesse: [2.2, 2.1, 0.1], rund: 0.04, pos: [0, 1.05, -0.55], farbe: "koralle" },
+      { form: "box", groesse: [0.08, 2.1, 1.2], rund: 0.03, pos: [-1.05, 1.05, 0], farbe: "holz_hell", textur: "holz" },
+      { form: "box", groesse: [0.08, 2.1, 1.2], rund: 0.03, pos: [1.05, 1.05, 0], farbe: "holz_hell", textur: "holz" },
+      { form: "box", groesse: [2.4, 0.4, 1.3], rund: 0.06, pos: [0, 2.2, 0], farbe: "koralle" },
+      { form: "box", groesse: [1.6, 0.26, 0.03], rund: 0.03, pos: [0, 2.2, 0.66], farbe: "creme" },
+      { form: "box", groesse: [1.9, 1, 0.5], rund: 0.04, pos: [0, 0.5, 0.35], farbe: "holz_hell", textur: "holz" },
+      { form: "box", groesse: [2, 0.06, 0.6], rund: 0.02, pos: [0, 1.02, 0.35], farbe: "creme" },
+      { form: "kugel", r: 0.13, pos: [-0.25, 1.62, -0.46], farbe: "senf" },
+      { form: "box", groesse: [0.3, 0.35, 0.05], rund: 0.06, pos: [-0.25, 1.3, -0.46], farbe: "senf" },
+      { form: "kugel", r: 0.1, pos: [0.22, 1.55, -0.46], farbe: "petrol" },
+      { form: "box", groesse: [0.24, 0.3, 0.05], rund: 0.06, pos: [0.22, 1.28, -0.46], farbe: "petrol" },
+      { form: "box", groesse: [0.14, 0.14, 0.14], rund: 0.02, pos: [-0.5, 1.12, 0.4], farbe: "koralle" },
+      { form: "box", groesse: [0.14, 0.14, 0.14], rund: 0.02, pos: [-0.33, 1.12, 0.42], farbe: "senf" },
+      { form: "box", groesse: [0.14, 0.14, 0.14], rund: 0.02, pos: [-0.42, 1.26, 0.41], farbe: "himmelblau" }
+    ],
+    kollision: { box: [2.3, 1.3] },
+    schatten: 0,
+    hoehe: 2.6
+  },
+
+  // Runder Infotresen der Messe
+  infotresen: {
+    teile: [
+      { form: "zylinder", r: 0.85, h: 1, rOben: 0.8, pos: [0, 0.5, 0], farbe: "holz_hell", textur: "holz" },
+      { form: "zylinder", r: 0.9, h: 0.06, pos: [0, 1.03, 0], farbe: "creme" },
+      { form: "zylinder", r: 0.05, h: 1.7, pos: [0, 1.9, 0], farbe: "metall_dunkel" },
+      { form: "box", groesse: [1.2, 0.5, 0.06], rund: 0.05, pos: [0, 2.5, 0], farbe: "petrol" },
+      { form: "box", groesse: [1, 0.34, 0.02], rund: 0.03, pos: [0, 2.5, 0.04], farbe: "creme" }
+    ],
+    kollision: { kreis: 0.9 },
+    schatten: 0.8,
+    hoehe: 2.9
+  },
+
+  // Moderner Glasbau
+  glasbau: {
+    teile: [
+      { form: "box", groesse: [4, 4.8, 3], rund: 0.04, pos: [0, 2.4, 0], farbe: "glas" },
+      { form: "box", groesse: [4.1, 0.12, 3.1], rund: 0.03, pos: [0, 4.86, 0], farbe: "anthrazit" },
+      { form: "box", groesse: [4.1, 0.16, 3.1], rund: 0.03, pos: [0, 0.08, 0], farbe: "anthrazit" },
+      { form: "box", groesse: [4.06, 0.1, 3.06], rund: 0.02, pos: [0, 1.6, 0], farbe: "anthrazit" },
+      { form: "box", groesse: [4.06, 0.1, 3.06], rund: 0.02, pos: [0, 3.2, 0], farbe: "anthrazit" },
+      { form: "box", groesse: [0.08, 4.8, 0.08], rund: 0.02, pos: [-2, 2.4, 1.5], farbe: "anthrazit" },
+      { form: "box", groesse: [0.08, 4.8, 0.08], rund: 0.02, pos: [-0.67, 2.4, 1.5], farbe: "anthrazit" },
+      { form: "box", groesse: [0.08, 4.8, 0.08], rund: 0.02, pos: [0.67, 2.4, 1.5], farbe: "anthrazit" },
+      { form: "box", groesse: [0.08, 4.8, 0.08], rund: 0.02, pos: [2, 2.4, 1.5], farbe: "anthrazit" },
+      { form: "box", groesse: [0.9, 1.4, 0.06], rund: 0.02, pos: [0, 0.75, 1.52], farbe: "anthrazit" }
+    ],
+    kollision: { box: [4.1, 3.1] },
+    schatten: 0
+  },
+
+  // Estnisches Holzhaus mit grünem Dach
+  holzhaus: {
+    teile: [
+      { form: "box", groesse: [3, 2.2, 2.6], rund: 0.05, pos: [0, 1.1, 0], farbe: "holz_hell", textur: "holz" },
+      { form: "box", groesse: [3.06, 0.2, 2.66], rund: 0.03, pos: [0, 0.1, 0], farbe: "stein" },
+      { form: "box", groesse: [3.4, 0.16, 1.904], rund: 0.05, pos: [0, 2.658, 0.65], rot: [38, 0, 0], farbe: "kiefer" },
+      { form: "box", groesse: [3.4, 0.16, 1.904], rund: 0.05, pos: [0, 2.658, -0.65], rot: [-38, 0, 0], farbe: "kiefer" },
+      { form: "box", groesse: [2.9, 1.323, 1.323], rund: 0.05, pos: [0, 2.2, 0], rot: [45, 0, 0], farbe: "holz_hell" },
+      { form: "box", groesse: [0.75, 1.4, 0.1], rund: 0.06, pos: [-0.7, 0.72, 1.32], farbe: "tuer", textur: "holz" },
+      { form: "box", groesse: [0.55, 0.75, 0.05], rund: 0.03, pos: [0.6, 1.3, 1.31], farbe: "fenster" },
+      { form: "box", groesse: [0.69, 0.08, 0.09], rund: 0.02, pos: [0.6, 0.885, 1.33], farbe: "weiss" }
+    ],
+    kollision: { box: [3.1, 2.7] },
+    schatten: 0
+  },
+
+  // ================= Luxemburg-Viertel =================
+
+  // Luxemburger Sandsteinhaus mit Fensterläden
+  sandstein_haus: {
+    teile: [
+      { form: "box", groesse: [4, 4, 3], rund: 0.05, pos: [0, 2, 0], farbe: "sandstein" },
+      { form: "box", groesse: [4.08, 0.6, 3.08], rund: 0.04, pos: [0, 0.3, 0], farbe: "stein" },
+      { form: "box", groesse: [4.14, 0.14, 3.14], rund: 0.03, pos: [0, 4.02, 0], farbe: "stein_hell" },
+      { form: "box", groesse: [4.4, 0.16, 2.404], rund: 0.05, pos: [0, 4.75, 0.75], rot: [45, 0, 0], farbe: "schiefer" },
+      { form: "box", groesse: [4.4, 0.16, 2.404], rund: 0.05, pos: [0, 4.75, -0.75], rot: [-45, 0, 0], farbe: "schiefer" },
+      { form: "box", groesse: [3.9, 2.008, 2.008], rund: 0.05, pos: [0, 4.05, 0], rot: [45, 0, 0], farbe: "sandstein" },
+      { form: "box", groesse: [0.8, 1.5, 0.1], rund: 0.1, pos: [-1.2, 0.82, 1.52], farbe: "tuer", textur: "holz" },
+      { form: "box", groesse: [0.55, 0.8, 0.05], rund: 0.03, pos: [-1.2, 2.9, 1.51], farbe: "fenster" },
+      { form: "box", groesse: [0.69, 0.08, 0.09], rund: 0.02, pos: [-1.2, 2.46, 1.53], farbe: "stein_hell" },
+      { form: "box", groesse: [0.12, 0.8, 0.04], rund: 0.02, pos: [-1.56, 2.9, 1.53], farbe: "salbei" },
+      { form: "box", groesse: [0.12, 0.8, 0.04], rund: 0.02, pos: [-0.84, 2.9, 1.53], farbe: "salbei" },
+      { form: "box", groesse: [0.55, 0.8, 0.05], rund: 0.03, pos: [0, 1.6, 1.51], farbe: "fenster" },
+      { form: "box", groesse: [0.69, 0.08, 0.09], rund: 0.02, pos: [0, 1.16, 1.53], farbe: "stein_hell" },
+      { form: "box", groesse: [0.12, 0.8, 0.04], rund: 0.02, pos: [-0.36, 1.6, 1.53], farbe: "salbei" },
+      { form: "box", groesse: [0.12, 0.8, 0.04], rund: 0.02, pos: [0.36, 1.6, 1.53], farbe: "salbei" },
+      { form: "box", groesse: [0.55, 0.8, 0.05], rund: 0.03, pos: [0, 2.9, 1.51], farbe: "fenster" },
+      { form: "box", groesse: [0.69, 0.08, 0.09], rund: 0.02, pos: [0, 2.46, 1.53], farbe: "stein_hell" },
+      { form: "box", groesse: [0.12, 0.8, 0.04], rund: 0.02, pos: [-0.36, 2.9, 1.53], farbe: "salbei" },
+      { form: "box", groesse: [0.12, 0.8, 0.04], rund: 0.02, pos: [0.36, 2.9, 1.53], farbe: "salbei" },
+      { form: "box", groesse: [0.55, 0.8, 0.05], rund: 0.03, pos: [1.2, 1.6, 1.51], farbe: "fenster" },
+      { form: "box", groesse: [0.69, 0.08, 0.09], rund: 0.02, pos: [1.2, 1.16, 1.53], farbe: "stein_hell" },
+      { form: "box", groesse: [0.12, 0.8, 0.04], rund: 0.02, pos: [0.84, 1.6, 1.53], farbe: "salbei" },
+      { form: "box", groesse: [0.12, 0.8, 0.04], rund: 0.02, pos: [1.56, 1.6, 1.53], farbe: "salbei" },
+      { form: "box", groesse: [0.55, 0.8, 0.05], rund: 0.03, pos: [1.2, 2.9, 1.51], farbe: "fenster" },
+      { form: "box", groesse: [0.69, 0.08, 0.09], rund: 0.02, pos: [1.2, 2.46, 1.53], farbe: "stein_hell" },
+      { form: "box", groesse: [0.12, 0.8, 0.04], rund: 0.02, pos: [0.84, 2.9, 1.53], farbe: "salbei" },
+      { form: "box", groesse: [0.12, 0.8, 0.04], rund: 0.02, pos: [1.56, 2.9, 1.53], farbe: "salbei" }
+    ],
+    kollision: { box: [4.1, 3.1] },
+    schatten: 0
+  },
+
+  // Bürohochhaus (Tür vorne Mitte)
+  hochhaus: {
+    teile: [
+      { form: "box", groesse: [5, 8, 4], rund: 0.06, pos: [0, 4, 0], farbe: "putz_salbei" },
+      { form: "box", groesse: [5.1, 0.2, 4.1], rund: 0.04, pos: [0, 8.1, 0], farbe: "anthrazit" },
+      { form: "box", groesse: [5.06, 0.24, 4.06], rund: 0.03, pos: [0, 0.12, 0], farbe: "stein_hell" },
+      { form: "box", groesse: [1.2, 0.8, 1], rund: 0.05, pos: [1.2, 8.6, -0.6], farbe: "metall" },
+      { form: "box", groesse: [4.6, 0.9, 0.05], rund: 0.02, pos: [0, 2.5, 2.01], farbe: "glas" },
+      { form: "box", groesse: [4.9, 0.12, 0.08], rund: 0.02, pos: [0, 1.95, 2.04], farbe: "anthrazit" },
+      { form: "box", groesse: [4.6, 0.9, 0.05], rund: 0.02, pos: [0, 3.9, 2.01], farbe: "glas" },
+      { form: "box", groesse: [4.9, 0.12, 0.08], rund: 0.02, pos: [0, 3.35, 2.04], farbe: "anthrazit" },
+      { form: "box", groesse: [4.6, 0.9, 0.05], rund: 0.02, pos: [0, 5.3, 2.01], farbe: "glas" },
+      { form: "box", groesse: [4.9, 0.12, 0.08], rund: 0.02, pos: [0, 4.75, 2.04], farbe: "anthrazit" },
+      { form: "box", groesse: [4.6, 0.9, 0.05], rund: 0.02, pos: [0, 6.7, 2.01], farbe: "glas" },
+      { form: "box", groesse: [4.9, 0.12, 0.08], rund: 0.02, pos: [0, 6.15, 2.04], farbe: "anthrazit" },
+      { form: "box", groesse: [1.6, 1.2, 0.05], rund: 0.02, pos: [-1.4, 1, 2.01], farbe: "glas" },
+      { form: "box", groesse: [1.4, 1.2, 0.05], rund: 0.02, pos: [1.5, 1, 2.01], farbe: "glas" },
+      { form: "box", groesse: [1, 1.6, 0.08], rund: 0.02, pos: [0, 0.85, 2.02], farbe: "glas" },
+      { form: "box", groesse: [0.05, 1.6, 0.02], rund: 0.005, pos: [0, 0.85, 2.07], farbe: "anthrazit" },
+      { form: "box", groesse: [1.6, 0.12, 0.5], rund: 0.03, pos: [0, 1.85, 2.2], farbe: "anthrazit" },
+      { form: "box", groesse: [1.4, 0.12, 0.6], rund: 0.03, pos: [0, 0.06, 2.35], farbe: "stein_hell" }
+    ],
+    kollision: { box: [5.1, 4.1] },
+    schatten: 0,
+    tuer: [0, 2]
+  },
+
+  // Steingeländer einer Brücke (1 Kachel)
+  gelaender: {
+    teile: [
+      { form: "box", groesse: [1, 0.9, 0.28], rund: 0.06, pos: [0, 0.45, 0], farbe: "stein_hell" },
+      { form: "box", groesse: [1.06, 0.12, 0.34], rund: 0.04, pos: [0, 0.95, 0], farbe: "stein" }
+    ],
+    kollision: { box: [1, 0.3] },
+    schatten: 0
+  },
+
+  // Café-Tisch mit Sonnenschirm
+  cafe_tisch: {
+    teile: [
+      { form: "zylinder", r: 0.42, h: 0.05, pos: [0, 0.72, 0], farbe: "weiss" },
+      { form: "zylinder", r: 0.04, h: 0.72, pos: [0, 0.36, 0], farbe: "metall_dunkel" },
+      { form: "zylinder", r: 0.025, h: 1.2, pos: [0, 1.3, 0], farbe: "metall_dunkel" },
+      { form: "kegel", r: 0.95, h: 0.45, pos: [0, 1.95, 0], farbe: "koralle" },
+      { form: "box", groesse: [0.36, 0.05, 0.36], rund: 0.02, pos: [-0.55, 0.45, 0], farbe: "metall_dunkel" },
+      { form: "box", groesse: [0.36, 0.05, 0.36], rund: 0.02, pos: [0.55, 0.45, 0], farbe: "metall_dunkel" },
+      { form: "zylinder", r: 0.05, h: 0.1, pos: [0.12, 0.8, 0.1], farbe: "creme" }
+    ],
+    kollision: { kreis: 0.55 },
+    schatten: 0.9
+  },
+
+  // ================= Innenräume (Amt, Hochhaus) =================
+
+  // Schalter/Tresen mit Glasscheibe
+  schalter: {
+    teile: [
+      { form: "box", groesse: [3, 1.1, 0.6], rund: 0.04, pos: [0, 0.55, 0], farbe: "holz_hell", textur: "holz" },
+      { form: "box", groesse: [3.1, 0.06, 0.7], rund: 0.02, pos: [0, 1.12, 0], farbe: "creme" },
+      { form: "box", groesse: [2.8, 0.8, 0.03], rund: 0.02, pos: [0, 1.55, 0.1], farbe: "glas" },
+      { form: "box", groesse: [0.3, 0.02, 0.22], rund: 0.005, pos: [0.8, 1.2, 0.15], farbe: "weiss" },
+      { form: "box", groesse: [0.4, 0.3, 0.03], rund: 0.02, pos: [-0.6, 1.22, 0.1], farbe: "anthrazit" }
+    ],
+    kollision: { box: [3, 0.7] },
+    schatten: 0,
+    hoehe: 2
+  },
+
+  // Empfangstresen
+  empfangstresen: {
+    teile: [
+      { form: "box", groesse: [2.4, 1.1, 0.7], rund: 0.06, pos: [0, 0.55, 0], farbe: "weiss" },
+      { form: "box", groesse: [2.5, 0.06, 0.8], rund: 0.02, pos: [0, 1.12, 0], farbe: "holz", textur: "holz" },
+      { form: "box", groesse: [2.2, 0.3, 0.02], rund: 0.01, pos: [0, 0.55, 0.36], farbe: "lavendel" },
+      { form: "zylinder", r: 0.07, h: 0.1, pos: [0.7, 1.2, 0], farbe: "senf" }
+    ],
+    kollision: { box: [2.5, 0.8] },
+    schatten: 0,
+    hoehe: 2
+  },
+
+  // Sofa
+  sofa: {
+    teile: [
+      { form: "box", groesse: [1.8, 0.35, 0.8], rund: 0.1, pos: [0, 0.3, 0], farbe: "petrol" },
+      { form: "box", groesse: [1.8, 0.5, 0.2], rund: 0.08, pos: [0, 0.65, -0.32], farbe: "petrol" },
+      { form: "box", groesse: [0.2, 0.4, 0.8], rund: 0.08, pos: [-0.85, 0.5, 0], farbe: "petrol" },
+      { form: "box", groesse: [0.2, 0.4, 0.8], rund: 0.08, pos: [0.85, 0.5, 0], farbe: "petrol" },
+      { form: "box", groesse: [0.4, 0.3, 0.12], rund: 0.08, pos: [-0.4, 0.52, 0.02], rot: [-10, 0, 0], farbe: "senf" }
+    ],
+    kollision: { box: [1.9, 0.85] },
+    schatten: 0.6,
+    sitz: [0, 0.05],
+    sitzHoehe: 0.48
+  },
+
+  // Aufzug an der Wand (Objekt braucht aufzug: [Karten])
+  aufzug: {
+    teile: [
+      { form: "box", groesse: [1.4, 2.5, 0.14], rund: 0.04, pos: [0, 1.25, 0], farbe: "metall" },
+      { form: "box", groesse: [0.5, 2, 0.04], rund: 0.02, pos: [-0.27, 1.1, 0.06], farbe: "metall_dunkel" },
+      { form: "box", groesse: [0.5, 2, 0.04], rund: 0.02, pos: [0.27, 1.1, 0.06], farbe: "metall_dunkel" },
+      { form: "box", groesse: [0.5, 0.16, 0.02], rund: 0.02, pos: [0, 2.3, 0.08], farbe: "anthrazit" },
+      { form: "kugel", r: 0.035, pos: [0, 2.3, 0.1], farbe: "senf" },
+      { form: "box", groesse: [0.14, 0.3, 0.04], rund: 0.02, pos: [0.85, 1.2, 0.05], farbe: "anthrazit" },
+      { form: "kugel", r: 0.03, pos: [0.85, 1.28, 0.08], farbe: "weiss" },
+      { form: "kugel", r: 0.03, pos: [0.85, 1.14, 0.08], farbe: "weiss" }
+    ],
+    kollision: { box: [1.4, 0.3] },
+    schatten: 0,
+    hoehe: 2.6
+  },
+
+  // Plakat an der Wand
+  plakat: {
+    teile: [
+      { form: "box", groesse: [0.9, 1.2, 0.03], rund: 0.02, pos: [0, 1.4, 0], farbe: "creme" },
+      { form: "box", groesse: [0.7, 0.3, 0.01], rund: 0.01, pos: [0, 1.72, 0.02], farbe: "himmelblau" },
+      { form: "kugel", radien: [0.1, 0.1, 0.01], pos: [-0.15, 1.3, 0.02], farbe: "senf" },
+      { form: "kugel", radien: [0.1, 0.1, 0.01], pos: [0.15, 1.3, 0.02], farbe: "petrol" },
+      { form: "box", groesse: [0.6, 0.05, 0.01], rund: 0.005, pos: [0, 1.02, 0.02], farbe: "grau" }
+    ],
+    schatten: 0,
+    hoehe: 2.1
+  },
+
+  // Wartestühle
+  stuhlreihe: {
+    teile: [
+      { form: "box", groesse: [0.5, 0.06, 0.45], rund: 0.03, pos: [-0.9, 0.42, 0], farbe: "senf" },
+      { form: "box", groesse: [0.5, 0.45, 0.06], rund: 0.03, pos: [-0.9, 0.68, -0.2], farbe: "senf" },
+      { form: "box", groesse: [0.5, 0.06, 0.45], rund: 0.03, pos: [-0.3, 0.42, 0], farbe: "senf" },
+      { form: "box", groesse: [0.5, 0.45, 0.06], rund: 0.03, pos: [-0.3, 0.68, -0.2], farbe: "senf" },
+      { form: "box", groesse: [0.5, 0.06, 0.45], rund: 0.03, pos: [0.3, 0.42, 0], farbe: "senf" },
+      { form: "box", groesse: [0.5, 0.45, 0.06], rund: 0.03, pos: [0.3, 0.68, -0.2], farbe: "senf" },
+      { form: "box", groesse: [0.5, 0.06, 0.45], rund: 0.03, pos: [0.9, 0.42, 0], farbe: "senf" },
+      { form: "box", groesse: [0.5, 0.45, 0.06], rund: 0.03, pos: [0.9, 0.68, -0.2], farbe: "senf" },
+      { form: "box", groesse: [2.3, 0.05, 0.3], rund: 0.02, pos: [0, 0.2, 0], farbe: "metall_dunkel" },
+      { form: "box", groesse: [0.05, 0.4, 0.3], rund: 0.02, pos: [-1.1, 0.2, 0], farbe: "metall_dunkel" },
+      { form: "box", groesse: [0.05, 0.4, 0.3], rund: 0.02, pos: [1.1, 0.2, 0], farbe: "metall_dunkel" }
+    ],
+    kollision: { box: [2.4, 0.5] },
+    schatten: 0.5,
+    sitz: [-0.3, 0],
+    sitzHoehe: 0.45
+  },
+
+
   // ---------------- Nur für die Test-Insel ----------------
   testfund_sockel: {
     teile: [
