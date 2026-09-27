@@ -37,7 +37,7 @@
 ## 6. Gestaltung
 - Eigener Stil „Tusche & Aquarell“: wie ein illustriertes Bilderbuch
   - Tusche-Konturen, Schraffur statt weicher Schatten, Aquarell-Flecken
-  - schlanke Figuren mit Strichaugen, schräge Kamera
+  - schlanke Figuren mit Strichaugen
   - Menüs im Skizzenbuch-Stil
 - Vielfalt der Figuren (Alter, Hauttöne, Rollstuhl, Gehstock)
 - Keine Stereotype, keine Schuldzuweisungen
