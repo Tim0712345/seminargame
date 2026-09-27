@@ -467,6 +467,20 @@ GAME.character = (function () {
       var schub = Math.sin(this.phase * 0.8);
       armL = armR = -0.35 - 0.35 * lm - schub * 0.4 * lm;
     }
+    // Sitzen und Gießen (für NPC-Tagesabläufe)
+    this.sitzMix = MM.damp(this.sitzMix || 0, this.sitzt ? 1 : 0, 8, dt);
+    this.giessMix = MM.damp(this.giessMix || 0, this.giesst ? 1 : 0, 6, dt);
+    var sm = this.sitzMix, gm = this.giessMix;
+    if (sm > 0.001) { armL = MM.lerp(armL, -0.45, sm); armR = MM.lerp(armR, -0.45, sm); armRz *= 1 - sm; }
+    if (gm > 0.001) {
+      armR = MM.lerp(armR, -1.25 + Math.sin(t * 3) * 0.08, gm);
+      armL = MM.lerp(armL, -0.2, gm);
+      if (this.giesst && Math.random() < dt * 14) {
+        var cr = Math.cos(this.rot), sr = Math.sin(this.rot), hx = -(this.info.armX || 0.2);
+        ENG.partikel.neu({ x: this.x + hx * cr + sr * 0.45, y: this.y + 0.55, z: this.z - hx * sr + cr * 0.45,
+          vx: sr * 0.4, vy: -0.3, vz: cr * 0.4, leben: 0.45, groesse: 0.05, farbe: [0.55, 0.72, 0.85], alpha: 0.9, schwerkraft: 5 });
+      }
+    }
     if (arme > 0) {
       armL = MM.lerp(armL, -2.7, arme);
       armR = MM.lerp(armR, -2.7, arme);
@@ -484,8 +498,9 @@ GAME.character = (function () {
       this.setzeKnochen(K.RAD_R, null, 0, 0.25, -0.03, this.radWinkel, 0, 0, 1, 1, 1, 0, 0, 0);
     } else {
       var bein = s * 0.7 * lm;
-      this.setzeKnochen(K.BEIN_L, null, 0, 0.36 * KS[1], 0, -bein, 0, 0, 1, 1, 1, 0, hochY, 0);
-      this.setzeKnochen(K.BEIN_R, null, 0, 0.36 * KS[1], 0, bein, 0, 0, 1, 1, 1, 0, hochY, 0);
+      var bl = MM.lerp(-bein, -1.45, sm), br = MM.lerp(bein, -1.45, sm);
+      this.setzeKnochen(K.BEIN_L, null, 0, 0.36 * KS[1], 0, bl, 0, 0, 1, 1, 1, 0, hochY, 0);
+      this.setzeKnochen(K.BEIN_R, null, 0, 0.36 * KS[1], 0, br, 0, 0, 1, 1, 1, 0, hochY, 0);
     }
 
     // Staubwölkchen bei jedem Schritt

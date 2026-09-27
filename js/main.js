@@ -18,9 +18,13 @@
       ENG.textures.init();
       ENG.input.init();
       GAME.ui.init();
+      GAME.dialog.init();
       GAME.einstellungen.anwenden();
       GAME.debug.init();
-      GAME.szenen.wechseln(GAME.Spielszene, { karte: "testinsel", spawn: "start" });
+      // Startkarte (im Debug-Modus per ?karte=… wählbar, z. B. ?debug=1&karte=testinsel)
+      var m = /[?&]karte=([a-z_]+)/.exec(window.location.search);
+      var start = m && DATA.maps[m[1]] ? m[1] : "europaplatz";
+      GAME.szenen.wechseln(GAME.Spielszene, { karte: start, spawn: Object.keys(DATA.maps[start].spawns)[0] });
     } catch (e) {
       console.error(e);
       GAME.ui.fehlerZeigen(e && e.message);

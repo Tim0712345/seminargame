@@ -54,6 +54,10 @@ DATA.palette = {
   metall_dunkel: "#626a73",
   laterne_licht: "#fff3bd",
   brille:        "#4d4a52",
+  backstein:     "#c97d62",
+  putz_salbei:   "#cfd9c0",
+  glas:          "#b7d3de",
+  kork:          "#c9a27a",
 
   // ---- Haut (bewusst breite Spanne) ----
   haut_1: "#fbe3d1",
@@ -90,6 +94,7 @@ DATA.palette = {
   mint:       "#abdecb",
   ocker:      "#dba75e",
   grau:       "#b6b3ae",
+  grau_hell:  "#d4cfc6",
   weiss:      "#fbf8f2",
   schwarz:    "#3c3638"
 };
@@ -101,12 +106,26 @@ DATA.palette = {
    kruemmung = Stärke einer gekrümmten Welt (0 = aus, Standard)    */
 DATA.stimmungen = {
   test: {
-    himmel_oben: "#a7c6d8",
-    horizont:    "#f4ecdb",
-    dunst:       "#f2e9d6",
-    sonne:       "#fff7e8",
-    schatten:    "#b3aed3",
-    tusche:      "tusche",
-    kruemmung:   0
+    himmel_oben: "#a7c6d8", horizont: "#f4ecdb", dunst: "#f2e9d6",
+    sonne: "#fff7e8", schatten: "#b3aed3", tusche: "tusche", kruemmung: 0
+  },
+  // Europaplatz: hell und freundlich
+  hub: {
+    himmel_oben: "#a9cbe0", horizont: "#f5eddc", dunst: "#f2e9d6",
+    sonne: "#fff8ec", schatten: "#b1afd6", tusche: "tusche", kruemmung: 0
+  },
+  // Deutschland-Viertel: warmes Ocker/Rot, späte Nachmittagssonne
+  de: {
+    himmel_oben: "#b9c9d6", horizont: "#f6e6cf", dunst: "#f3e4cc",
+    sonne: "#ffefd6", schatten: "#b9a9c9", tusche: "tusche", kruemmung: 0
+  },
+  // Innenräume
+  innen_warm: {
+    himmel_oben: "#efe2cc", horizont: "#efe2cc", dunst: "#ebdfc9",
+    sonne: "#fff3e0", schatten: "#c2b4c8", tusche: "tusche", kruemmung: 0
+  },
+  innen_kuehl: {
+    himmel_oben: "#e3e6e0", horizont: "#e3e6e0", dunst: "#e4e4dc",
+    sonne: "#f8f7f0", schatten: "#b3b5cf", tusche: "tusche", kruemmung: 0
   }
 };

@@ -48,6 +48,7 @@ GAME.Welt = (function () {
     this.chunks = [];
     this.statSchatten = [];
     this.interaktionen = [];
+    this.objekte = {};
     this.belegt = new Uint8Array(w * h);
     this.stimmung = GAME.Welt.umgebung(DATA.stimmungen[map.stimmung] || DATA.stimmungen.test);
     this.bauen();
@@ -127,8 +128,8 @@ GAME.Welt = (function () {
     for (var z = 0; z < this.h; z++) {
       for (var x = 0; x < this.w; x++) {
         var a = this.arten[x + z * this.w];
-        var gesperrt = !!a.wasser;
-        if (!a.wasser && !a.steg) {
+        var gesperrt = !!a.wasser || !!a.wand;
+        if (!a.wasser && !a.steg && !a.wand) {
           var e = [this.ecke(x, z), this.ecke(x + 1, z), this.ecke(x, z + 1), this.ecke(x + 1, z + 1)];
           if (Math.max.apply(null, e) - Math.min.apply(null, e) > 0.8) gesperrt = true;
         }
@@ -166,12 +167,28 @@ GAME.Welt = (function () {
       if (kol && kol.kreis) self.koll.kreis(wx, wz, kol.kreis, { objekt: o });
       else if (kol && kol.box) self.koll.rechteck(wx, wz, kol.box[0] / 2, kol.box[1] / 2, o.rot || 0, { objekt: o });
       if (pf.schatten) self.statSchatten.push({ x: wx, z: wz, r: pf.schatten });
-      if (o.id) self.interaktionen.push({ id: o.id, x: wx, y: wy, z: wz, objekt: o, prefab: pf });
+      var rr = (o.rot || 0) * MM.DEG, c = Math.cos(rr), sn = Math.sin(rr);
+      var eintrag = { id: o.id, x: wx, y: wy, z: wz, rot: rr, objekt: o, prefab: pf };
+      if (o.id) self.objekte[o.id] = eintrag;
+      if (o.tuer && pf.tuer) {
+        // Tür: Interaktionspunkt vor der Tür (lokaler Versatz aus dem Prefab, mitgedreht)
+        var tx0 = pf.tuer[0], tz0 = pf.tuer[1] + 0.35;
+        self.interaktionen.push({ art: "tuer", id: o.id, x: wx + tx0 * c + tz0 * sn, y: wy, z: wz - tx0 * sn + tz0 * c,
+          radius: 0.35, ziel: o.tuer.ziel, spawn: o.tuer.spawn, wenn: o.tuer.wenn, gesperrt: o.tuer.gesperrt, hoehe: 1.6 });
+      } else if (o.dialog) {
+        self.interaktionen.push({ art: "dialog", id: o.id, x: wx, y: wy, z: wz, radius: (kolRadius(pf) || 0.3) + 0.1,
+          dialog: o.dialog, hoehe: pf.hoehe || 1.4, text: o.text });
+      } else if (o.id) {
+        self.interaktionen.push({ art: "objekt", id: o.id, x: wx, y: wy, z: wz, objekt: o, prefab: pf });
+      }
       var rad = kol ? (kol.kreis || Math.max(kol.box[0], kol.box[1]) / 2) : 0.4;
       for (var tz = Math.floor(wz - rad); tz <= Math.floor(wz + rad); tz++)
         for (var tx = Math.floor(wx - rad); tx <= Math.floor(wx + rad); tx++)
           if (tx >= 0 && tz >= 0 && tx < w && tz < h) self.belegt[tx + tz * w] = 1;
     });
+
+    // Wände (zu langen Stücken zusammengefasst, damit keine Fugen-Konturen entstehen)
+    this.waendeBauen(chunkVon);
 
     // Boden
     for (var z = 0; z < h; z++) {
@@ -183,10 +200,47 @@ GAME.Welt = (function () {
     deko.forEach(function (b) { if (!b.leer()) self.dekoChunks.push(b.fertig()); });
 
     if (this.map.aussen === "wasser") this.meer = this.meerBauen();
+    else if (!this.map.innen && this.map.aussen !== "leer") this.meer = this.randBauen();
+
+    // Ausgänge zu anderen Karten
+    this.ausgaenge = (this.map.uebergaenge || []).map(function (u) {
+      return { x0: u.x, z0: u.y, x1: u.x + (u.b || 1), z1: u.y + (u.h || 1), ziel: u.ziel, spawn: u.spawn,
+               richtung: u.richtung, wenn: u.wenn, gesperrt: u.gesperrt };
+    });
+
+    // Kamera-Grenzen (Innenräume: Kamera bleibt über dem Raum)
+    this.kameraGrenzen = this.map.innen ? [w / 2, h / 2 - 0.4, w / 2, h / 2 - 0.4]
+                                        : [5, 4, w - 5, h - 2];
+  };
+
+  function kolRadius(pf) {
+    var k = pf.kollision;
+    if (!k) return 0;
+    return k.kreis || Math.max(k.box[0], k.box[1]) / 2;
+  }
+
+  Welt.prototype.waendeBauen = function (chunkVon) {
+    var w = this.w, h = this.h, benutzt = new Uint8Array(w * h), F = GAME.farbe;
+    for (var z = 0; z < h; z++) {
+      for (var x = 0; x < w; x++) {
+        var k = x + z * w, a = this.arten[k];
+        if (!a.wand || benutzt[k]) continue;
+        var name = this.artNamen[k], lx = 1, lz = 1;
+        while (x + lx < w && this.artNamen[k + lx] === name && !benutzt[k + lx]) lx++;
+        if (lx === 1) while (z + lz < h && this.artNamen[k + lz * w] === name && !benutzt[k + lz * w]) lz++;
+        for (var j = 0; j < lz; j++) for (var i = 0; i < lx; i++) benutzt[k + i + j * w] = 1;
+        var fa = F(a.farbe);
+        chunkVon(x + lx / 2, z + lz / 2).add(ENG.mesh.form("box", { groesse: [lx, a.wand, lz], rund: 0.04 }), {
+          pos: [x + lx / 2, a.wand / 2, z + lz / 2], farbe: fa,
+          muster: a.textur ? (ENG.mesh.MUSTER[a.textur] || 0) : 0, texSkal: 0.5
+        });
+      }
+    }
   };
 
   Welt.prototype.kachelBauen = function (b, x, z, deko) {
     var a = this.arten[x + z * this.w];
+    if (a.wand) return;
     var F = GAME.farbe;
     var jitter = 1 + (MM.hash2(x, z) - 0.5) * 0.05;
     var y00 = this.ecke(x, z), y10 = this.ecke(x + 1, z), y01 = this.ecke(x, z + 1), y11 = this.ecke(x + 1, z + 1);
@@ -334,6 +388,35 @@ GAME.Welt = (function () {
     return b.fertig();
   };
 
+  // Umgebung außerhalb einer Landkarte (flacher Boden in der Farbe von "aussen")
+  Welt.prototype.randBauen = function () {
+    var b = ENG.mesh.neu(), R = 30, s = 2, a = this.aussen, F = GAME.farbe;
+    var f = F(a.farbe), mu = a.textur ? (ENG.mesh.MUSTER[a.textur] || 0) : 0;
+    for (var z = -R; z < this.h + R; z += s) {
+      for (var x = -R; x < this.w + R; x += s) {
+        if (x >= 0 && z >= 0 && x + s <= this.w && z + s <= this.h) continue;
+        var j = 1 + (MM.hash2(x, z) - 0.5) * 0.05, c = [f[0] * j, f[1] * j, f[2] * j];
+        var v = [
+          [x, -0.01, z, 0, 1, 0, c[0], c[1], c[2], x * 0.5, z * 0.5, 0, 0, 0, mu],
+          [x + s, -0.01, z, 0, 1, 0, c[0], c[1], c[2], (x + s) * 0.5, z * 0.5, 0, 0, 0, mu],
+          [x, -0.01, z + s, 0, 1, 0, c[0], c[1], c[2], x * 0.5, (z + s) * 0.5, 0, 0, 0, mu],
+          [x + s, -0.01, z + s, 0, 1, 0, c[0], c[1], c[2], (x + s) * 0.5, (z + s) * 0.5, 0, 0, 0, mu]
+        ];
+        b.roh(v, [2, 3, 1, 2, 1, 0]);
+      }
+    }
+    return b.fertig();
+  };
+
+  // In welchem Ausgang steht (x, z)?
+  Welt.prototype.ausgangBei = function (x, z) {
+    for (var i = 0; i < this.ausgaenge.length; i++) {
+      var a = this.ausgaenge[i];
+      if (x >= a.x0 && x <= a.x1 && z >= a.z0 && z <= a.z1) return a;
+    }
+    return null;
+  };
+
   // ---------------- Zeichnen ----------------
   Welt.prototype.zeichnen = function (kam) {
     var R = ENG.renderer;
@@ -399,7 +482,8 @@ GAME.Welt = (function () {
       dunstWeite: [26, 60],
       kruemmung: st.kruemmung || 0,
       schattenFarbe: [0.3, 0.27, 0.45],
-      tusche: F(st.tusche || "tusche")
+      tusche: F(st.tusche || "tusche"),
+      papier: F(st.papier || "papier")
     };
   };
 

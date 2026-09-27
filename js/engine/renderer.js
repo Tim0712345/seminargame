@@ -410,6 +410,65 @@ ENG.renderer = (function () {
     linienN++;
   };
 
+  // ---------------- 3D-Portrait (Dialogfenster) ----------------
+  /* Zeichnet eine Figur (Kopf und Schultern) in einen eigenen Framebuffer im
+     selben WebGL-Kontext und kopiert das Bild in ein 2D-Canvas.
+     Aufruf nach R.ende(), damit das Hauptbild fertig ist.               */
+  var PG = 256, pFbo = null, pTex, pRb, pPixel, pBild, pKam = null;
+  R.portrait = function (figur, zielCanvas, umgebung, t, drehung) {
+    if (!pFbo) {
+      pTex = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, pTex);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, PG, PG, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      pRb = gl.createRenderbuffer();
+      gl.bindRenderbuffer(gl.RENDERBUFFER, pRb);
+      gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, PG, PG);
+      pFbo = gl.createFramebuffer();
+      gl.bindFramebuffer(gl.FRAMEBUFFER, pFbo);
+      gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, pTex, 0);
+      gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, pRb);
+      pPixel = new Uint8Array(PG * PG * 4);
+      pKam = { view: MM.m4(), proj: MM.m4(), viewProj: MM.m4(), invViewProj: MM.m4(), pos: [0, 0, 0], ziel: [0, 0, 0] };
+    }
+    var ctx = zielCanvas.getContext("2d");
+    if (!pBild || pBild.width !== PG) pBild = ctx.createImageData(PG, PG);
+
+    var g = figur.info.groesse || 1;
+    var kopf = (figur.info.kopfHoehe - 0.2) * g;
+    pKam.ziel[0] = 0; pKam.ziel[1] = kopf - 0.1 * g; pKam.ziel[2] = 0;
+    pKam.pos[0] = 0.25 * g; pKam.pos[1] = kopf + 0.05 * g; pKam.pos[2] = 1.45 * g;
+    MM.m4lookAt(pKam.view, pKam.pos, pKam.ziel, [0, 1, 0]);
+    MM.m4perspective(pKam.proj, 24 * MM.DEG, 1, 0.1, 20);
+    MM.m4mul(pKam.viewProj, pKam.proj, pKam.view);
+
+    var altKam = kam, altUmg = umg, altKr = R.kruemmung;
+    kam = pKam; umg = umgebung; zeit = t; R.kruemmung = 0;
+    gl.bindFramebuffer(gl.FRAMEBUFFER, pFbo);
+    gl.viewport(0, 0, PG, PG);
+    var pap = umgebung.papier || umgebung.dunst;
+    gl.clearColor(pap[0], pap[1], pap[2], 1);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    hauptVorbereiten();
+    var model = MM.m4compose(MM.m4(), 0, 0, 0, 0, drehung === undefined ? 0.35 : drehung, 0, g, g, g);
+    var ge = figur.gesicht();
+    R.mesh(figur.mesh, model, { knochen: figur.knochen, augen: ge.augen, mund: ge.mund, kontur: 0.0045 });
+    gl.readPixels(0, 0, PG, PG, gl.RGBA, gl.UNSIGNED_BYTE, pPixel);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    kam = altKam; umg = altUmg; R.kruemmung = altKr;
+
+    // Zeilen umdrehen (WebGL liest von unten nach oben)
+    var d = pBild.data, zeile = PG * 4;
+    for (var y = 0; y < PG; y++) {
+      var q = (PG - 1 - y) * zeile, z = y * zeile;
+      for (var i = 0; i < zeile; i++) d[z + i] = pPixel[q + i];
+    }
+    if (zielCanvas.width !== PG) { zielCanvas.width = PG; zielCanvas.height = PG; }
+    ctx.putImageData(pBild, 0, 0);
+  };
+
   // ---------------- Abschluss: Schatten, Partikel, Linien ----------------
   R.ende = function () {
     // Partikel an die Schatten anhängen (Billboards)

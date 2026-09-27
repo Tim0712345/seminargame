@@ -295,3 +295,112 @@ html, body {
   .menue { min-width: 0; width: calc(100vw - 32px); }
   .steuerung-tasten { min-width: 120px; }
 }
+
+/* ---------- HUD: Aufgabenhinweis ---------- */
+.hud-links { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+.hud-hinweis {
+  max-width: min(420px, 60vw);
+  font-size: 0.8em;
+  padding: 5px 12px 6px;
+  background: rgba(247, 240, 225, 0.92);
+  border: 2px solid var(--tusche);
+  border-radius: var(--krakel2);
+  box-shadow: 2px 3px 0 rgba(46, 41, 52, 0.15);
+}
+.hud-hinweis::before { content: "\270E  "; }
+
+/* ---------- Emote-Symbole ---------- */
+.blase.nur-emote { padding: 2px 4px; }
+.blase-emote { display: inline-block; width: 30px; height: 30px; vertical-align: middle; }
+.emote-svg { width: 30px; height: 30px; fill: none; stroke: var(--tusche); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.emote-svg .voll { fill: var(--tusche); stroke: none; }
+.emote-svg .gelb { fill: #f2d27a; }
+.emote-svg .rot { fill: #e59a8e; }
+.emote-svg .blau { fill: #a9cfe0; }
+.emote-svg .duenn { stroke-width: 1.8; }
+
+/* ---------- Dialogfenster ---------- */
+#dialog {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 18px;
+  display: flex;
+  justify-content: center;
+  padding: 0 16px;
+  pointer-events: none;
+}
+.dialog-karte {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  width: min(860px, 100%);
+  min-height: 170px;
+  padding: 18px 22px 20px;
+  cursor: pointer;
+}
+.dialog-karte.kim-spricht { flex-direction: row-reverse; }
+.dialog-portrait {
+  flex: 0 0 auto;
+  width: 136px;
+  height: 136px;
+  border: 3px solid var(--tusche);
+  border-radius: 46% 54% 50% 50% / 52% 46% 54% 48%;
+  overflow: hidden;
+  background: var(--papier-dunkel);
+  transform: rotate(-2deg);
+}
+.dialog-karte.kim-spricht .dialog-portrait { transform: rotate(2deg); }
+.dialog-portrait canvas { width: 100%; height: 100%; display: block; }
+.dialog-inhalt { flex: 1 1 auto; min-width: 0; }
+.dialog-name {
+  display: inline-block;
+  font-family: var(--hand);
+  font-weight: bold;
+  font-size: 1.05em;
+  padding: 1px 14px 3px;
+  margin: -34px 0 8px -6px;
+  background: var(--papier);
+  border: 2.5px solid var(--tusche);
+  border-radius: var(--krakel);
+  transform: rotate(-1.5deg);
+}
+.dialog-text { font-size: 1.05em; line-height: 1.5; min-height: 3em; }
+.dialog-text .fakt { font-weight: bold; background: radial-gradient(ellipse at 50% 60%, var(--ocker-hell), transparent 75%); padding: 0 2px; }
+.dialog-text .fakt.ungeprueft { }
+body.debug .dialog-text .fakt.ungeprueft { color: #c0392b; text-decoration: underline wavy #c0392b; }
+.dialog-text .fett { font-weight: bold; }
+.dialog-optionen { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+.dialog-option {
+  text-align: left;
+  font-family: var(--schrift);
+  font-size: 0.95em;
+  color: var(--tusche);
+  background: transparent;
+  border: 2px solid rgba(46, 41, 52, 0.55);
+  border-radius: var(--krakel2);
+  padding: 6px 12px;
+  cursor: pointer;
+  pointer-events: auto;
+}
+.dialog-option::before { content: "\2192  "; opacity: 0.4; }
+.dialog-option.gewaehlt {
+  border-color: var(--tusche);
+  background: radial-gradient(ellipse at 40% 55%, var(--ocker-hell), rgba(226, 178, 90, 0.18) 70%, transparent 90%);
+}
+.dialog-option.gewaehlt::before { opacity: 1; }
+.dialog-option.gesehen { color: var(--tusche-hell); }
+.dialog-weiter {
+  position: absolute;
+  right: 20px;
+  bottom: 10px;
+  font-size: 0.9em;
+  animation: wippen 0.9s ease-in-out infinite;
+}
+@keyframes wippen { 50% { transform: translateY(4px); } }
+.dialog-karte, .dialog-karte * { pointer-events: auto; }
+
+@media (max-width: 600px) {
+  .dialog-portrait { width: 84px; height: 84px; }
+  .dialog-karte { gap: 10px; padding: 14px; }
+}

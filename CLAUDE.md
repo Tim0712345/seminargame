@@ -46,15 +46,26 @@ Prompt abzuweichen. **Nichts darf nach Animal Crossing oder einem anderen besteh
 - Dateien zusätzlich zum Konzept: `js/main.js`, `js/debug.js` (genehmigt). Menütexte in `DATA.texte` (`data/dialogues.js`).
 
 ## Stand
-- **Phase 1 fertig:** Engine, Test-Insel (`DATA.maps.testinsel`), Kim mit Animationen, Probefiguren,
-  Pausemenü, Steuerungshinweis, Debug-Modus, danach Umbau auf „Tusche & Aquarell“.
-- **Als Nächstes – Phase 2 (wartet auf OK des Users):** NPCs mit Tagesroutinen, Dialogsystem mit
-  Optionen/Flags und 3D-Portrait (Framebuffer + readPixels im selben Kontext), Emote-Blasen,
-  Kartenwechsel mit Abblende und Innenräumen, Intro, Europaplatz und Deutschland-Viertel komplett,
-  automatischer Check aller Dialog-`next`-Referenzen im Debug-Modus.
-- Danach Phase 3 (restliche Viertel, Notizbuch, Questlog, Beweisstücke, Minispiele),
-  Phase 4 (Brüssel-Finale, Enden, Reflexion, Titelbildschirm, Speichern),
+- **Phase 1 fertig:** Engine, Test-Insel (`?debug=1&karte=testinsel`), Figuren-Baukasten, Umbau auf „Tusche & Aquarell“.
+- **Phase 2 fertig (wartet auf OK des Users):**
+  - NPCs mit Tagesabläufen (`js/game/npc.js`: gehen, warten, sitzen, giessen, schauen; `routineWenn`, `hinweis` = „!“)
+  - Dialogsystem (`js/game/dialogue.js`): Schreibmaschine, Optionen, Flags, Notizen, Aktionen, Platzhalter
+    `{fakt:id}`/`{wert:id}`/`{jahr:id}`, `**fett**`, 3D-Portrait (Framebuffer + readPixels), Emote-Blasen
+  - Spielstand/Flags/Quests (`js/game/quests.js`), HUD-Aufgabenhinweis
+  - Kartenwechsel mit Abblende, Türen (E oder hineinlaufen), Ausgänge am Kartenrand, Innenräume (Wände, feste Kamera)
+  - Karten: `europaplatz` (Intro startet automatisch), `de`, `de_kita_innen`, `de_buero_innen`
+  - Debug: T = Teleport, F = Flags, automatische Prüfung aller Dialoge und Karten (Erreichbarkeit) in der Konsole
+- **Als Nächstes – Phase 3:** Schweden-, Estland-, Luxemburg-Viertel (LU: Hochhaus mit 3 Etagen + Aufzug),
+  Notizbuch (Taste N, Reiter), Questlog (Taste Q), Beweisstück-Icons im HUD, Minispiele
+  („Welche Branche zahlt mehr?“, Gehaltsverhandlung). Absperrungen auf dem Europaplatz dann entfernen
+  und Ausgänge in `maps.europaplatz.uebergaenge` ergänzen.
+- Danach Phase 4 (Brüssel-Finale, Enden, Reflexion, Titelbildschirm, Speichern),
   Phase 5 (Sound, Partikel, Touch, Barrierefreiheit, Performance, Bugfixes).
+
+## Gestaltungsregeln für Karten (aus Erfahrung)
+- **Türen müssen nach Süden (zur Kamera) zeigen**, sonst sieht man sie nicht. Gebäude deshalb nördlich von Wegen platzieren.
+- Karten werden mit einem Python-Skript erzeugt, dürfen aber von Hand bearbeitet werden (`data/maps.js`).
+- Nach Änderungen im Debug-Modus die Konsole prüfen (Karten- und Dialog-Prüfung).
 
 ## Testen
 Mit einem einfachen lokalen Server im Projektordner, z. B. `python3 -m http.server 8765`,

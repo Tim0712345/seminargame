@@ -63,6 +63,7 @@ GAME.ui = (function () {
     TX = DATA.texte;
     el.ui = $("ui");
     el.ort = $("hud-ort");
+    el.hinweis = $("hud-hinweis");
     el.blasen = $("blasen");
     el.einblendung = $("einblendung");
     el.menue = $("menue-schicht");
@@ -114,6 +115,29 @@ GAME.ui = (function () {
     el.ort.classList.toggle("versteckt", !name);
   };
 
+  // Aufgabenhinweis unter dem Ortsnamen
+  U.hinweis = function (text) {
+    if (el.hinweis.textContent === text) return;
+    el.hinweis.textContent = text || "";
+    el.hinweis.classList.toggle("versteckt", !text);
+    el.hinweis.classList.remove("ploppen");
+    void el.hinweis.offsetWidth;
+    el.hinweis.classList.add("ploppen");
+  };
+
+  // Emote-Symbole als kleine Tusche-Zeichnungen (SVG)
+  var EMOTES = {
+    "!": '<path d="M16 5 L15 20" /><circle cx="15" cy="26" r="1.8" class="voll"/>',
+    "?": '<path d="M9.5 10.5 C9.5 5 20.5 4.5 20.5 10.5 C20.5 15 15 15 15 20" /><circle cx="15" cy="26" r="1.8" class="voll"/>',
+    "gluehbirne": '<path d="M10.5 18 C6 14 7.5 5 15 5 C22.5 5 24 14 19.5 18 L19 21 L11 21 Z" class="gelb"/><path d="M11.5 23.5 L18.5 23.5 M12.5 26.5 L17.5 26.5" /><path d="M3 9 L6 10 M27 9 L24 10 M15 1.5 L15 3" class="duenn"/>',
+    "herz": '<path d="M15 26 C4 18 4 8 10 7 C13 6.5 15 9 15 11 C15 9 17 6.5 20 7 C26 8 26 18 15 26 Z" class="rot"/>',
+    "schweiss": '<path d="M16 4 C22 12 23 16 23 19 C23 23.5 19.5 26 16 26 C12.5 26 9 23.5 9 19 C9 16 10 12 16 4 Z" class="blau"/><path d="M13 19 C13 21 14 22.5 16 23" class="duenn"/>'
+  };
+  U.emoteSvg = function (name) {
+    var inhalt = EMOTES[name] || EMOTES["!"];
+    return '<svg viewBox="0 0 30 30" class="emote-svg">' + inhalt + '</svg>';
+  };
+
   // ---------------- Blasen über Köpfen/Objekten ----------------
   U.blasenBeginn = function () { for (var k in blasen) blasen[k].benutzt = false; };
   /* inhalt: { taste: "E", text: "Untersuchen" } oder { symbol: "!" } */
@@ -127,12 +151,14 @@ GAME.ui = (function () {
       blasen[id] = b;
       b.schluessel = "";
     }
-    var schl = (inhalt.taste || "") + "|" + (inhalt.text || "") + "|" + (inhalt.symbol || "");
+    var schl = (inhalt.taste || "") + "|" + (inhalt.text || "") + "|" + (inhalt.symbol || "") + "|" + (inhalt.emote || "");
     if (schl !== b.schluessel) {
       b.el.innerHTML = "";
       if (inhalt.taste) b.el.appendChild(taste(inhalt.taste));
       if (inhalt.text) b.el.appendChild(neu("span", "blase-text", inhalt.text));
       if (inhalt.symbol) b.el.appendChild(neu("span", "blase-symbol", inhalt.symbol));
+      if (inhalt.emote) { var sv = neu("span", "blase-emote"); sv.innerHTML = U.emoteSvg(inhalt.emote); b.el.appendChild(sv); }
+      b.el.classList.toggle("nur-emote", !!inhalt.emote && !inhalt.text);
       b.schluessel = schl;
     }
     b.halter.style.transform = "translate(" + Math.round(sx) + "px," + Math.round(sy) + "px)";
@@ -215,6 +241,7 @@ GAME.ui = (function () {
   // Wird jedes Bild aufgerufen: Tastatur für Menüs
   U.update = function () {
     var I = ENG.input;
+    if (GAME.dialog && GAME.dialog.aktiv) return;
     if (menue) {
       var n = (menue.opt.eintraege || []).length;
       if (I.gedrueckt("hoch") && n) { menue.wahl = (menue.wahl + n - 1) % n; U.menueMalen(); }

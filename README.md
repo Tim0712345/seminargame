@@ -35,8 +35,14 @@ Im Pausemenü lässt sich die **Grafik** (Hoch/Niedrig) umschalten.
 
 `index.html?debug=1` in die Adresszeile schreiben (bei `file://` hinten anhängen).
 Dann erscheinen unten links FPS, Draw-Calls und Position.
-Mit **G** schaltest du das Kachel-Raster und die Kollisionsformen ein und aus.
-Die Konsole (F12) listet alle Zahlen auf, die noch nicht geprüft sind.
+- **G**: Kachel-Raster und Kollisionsformen ein/aus
+- **T**: Teleport zu jeder Karte
+- **F**: Flags setzen (Intro überspringen, Viertel erledigen, alles zurücksetzen)
+- `&karte=de` in der Adresse startet direkt auf einer Karte (z. B. `index.html?debug=1&karte=de`)
+
+Die Konsole (F12) prüft beim Start automatisch alle Dialoge (fehlende Knoten, nicht
+erreichbare Knoten, fehlende Fakten) und alle Karten (erreichbare Ausgänge, NPCs,
+Objekte) und listet alle Zahlen auf, die noch nicht geprüft sind (im Dialog rot).
 
 ## Dateistruktur
 
@@ -68,6 +74,24 @@ Seite im Browser neu laden (F5).
 **Wichtig:** Texte stehen in Anführungszeichen `"…"`. Nach jedem Eintrag
 steht ein Komma. Wenn nach einer Änderung nichts mehr geht, fehlt meist ein
 Komma oder ein Anführungszeichen. Die Konsole (F12) zeigt die Zeile an.
+
+### Dialoge schreiben (Kurzfassung – Details oben in `data/dialogues.js`)
+```js
+DATA.dialogues.de_lea = {
+  einstieg: [ { wenn: "de_lea_fertig", knoten: "danach" }, { knoten: "start" } ],
+  knoten: {
+    start: { speaker: "Lea", emotion: "froehlich", text: "Hallo!",
+             options: [ { label: "Warum?", next: "warum", addNote: "teilzeit_quote" } ] },
+    warum: { speaker: "Lea", emotion: "nachdenklich", text: "…", setFlag: "de_lea_fertig", next: "ende" }
+  }
+};
+```
+- Emotionen: froehlich, nachdenklich, ueberrascht, skeptisch, neutral
+- `aktion: "beweis:de"` gibt ein Beweisstück, `emote: "gluehbirne"` zeigt ein Symbol
+- Wer spricht, wird über `speaker` angezeigt; `"Kim"` ist die Spielfigur
+
+### NPCs
+- `data/npcs.js`: Karte, Startplatz, Dialog und Tagesablauf (gehen, warten, sitzen, gießen, schauen)
 
 ### Texte und Dialoge
 - Menü- und Hinweistexte: `data/dialogues.js` → `DATA.texte`

@@ -13,6 +13,12 @@ korrigieren, `verifiziert: true` setzen und hier „ja“ eintragen.
 | `gpg_ee` | 17,7 % (2023) | Eurostat `sdg_05_20` | nein |
 | `gpg_lu` | −0,7 % (2023) | Eurostat `sdg_05_20` | nein |
 | `gpg_de_bereinigt` | 6 % (2023) | Destatis, Pressemitteilung zum Gender Pay Gap | nein |
+| `de_teilzeit_frauen` | 50 % (2023) | Destatis (Mikrozensus) bzw. Eurostat `lfsa_eppgan` – Teilzeitquote Frauen | nein |
+| `de_teilzeit_maenner` | 13 % (2023) | Destatis (Mikrozensus) bzw. Eurostat `lfsa_eppgan` – Teilzeitquote Männer | nein |
+| `de_teilzeit_grund_betreuung` | 28 % (2023) | Eurostat `lfsa_epgar` – Hauptgrund Teilzeit: Betreuung von Kindern/Angehörigen (Frauen, DE) | nein |
+| `de_kita_fehlende_plaetze` | 300.000 Plätze (2023) | IW Köln, Kurzbericht zur Kita-Lücke; alternativ Bertelsmann Stiftung, Ländermonitor Frühkindliche Bildungssysteme | nein |
+| `de_gender_pension_gap` | 27 % (2023) | Destatis, Gender Pension Gap | nein |
+| `de_frauen_fuehrung` | 29 % (2023) | Destatis, Frauen in Führungspositionen | nein |
 | `eu_richtlinie_jahr` | 2023 | EUR-Lex, Richtlinie (EU) 2023/970 (CELEX 32023L0970) | nein |
 | `eu_richtlinie_frist` | 7. Juni 2026 | Richtlinie (EU) 2023/970, Art. 34 (Umsetzungsfrist) | nein |
 
@@ -27,5 +33,11 @@ korrigieren, `verifiziert: true` setzen und hier „ja“ eintragen.
 - **Luxemburg:** Der unbereinigte Wert liegt nahe null oder darunter. Im
   Spiel wird genau das thematisiert: Ein Durchschnitt zeigt nicht alles.
   Bitte besonders sorgfältig prüfen.
+
+- **Kita-Lücke:** Verschiedene Institute schätzen unterschiedlich (je nach Methode und
+  Jahr). Im Spiel steht „rund … fehlende Plätze“ – bitte eine Quelle wählen und im Text
+  (`DATA.notes.kita_luecke` in `facts.js`) nennen.
+- **Hinweis zu Spielinhalten:** Angaben wie „Lea arbeitet 20 Stunden“ oder „Frau Okafor
+  arbeitet 30 Stunden“ sind erfundene Geschichten der Figuren, keine Statistiken.
 
 *(Diese Liste wird in jeder Phase ergänzt, sobald neue Zahlen dazukommen.)*
