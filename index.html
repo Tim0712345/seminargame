@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Die Lücke – Ein europäischer Fall</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <canvas id="spiel" tabindex="0" aria-label="Spielwelt"></canvas>
+
+  <div id="ui">
+    <div id="hud">
+      <div id="hud-ort" class="plakette versteckt"></div>
+    </div>
+    <div id="blasen"></div>
+    <div id="einblendung"></div>
+    <div id="menue-schicht" class="versteckt"></div>
+    <div id="blende"></div>
+    <div id="debug-anzeige" class="versteckt"></div>
+  </div>
+
+  <div id="fehler" class="versteckt"></div>
+  <noscript>
+    <div class="karte fehler-karte" style="margin:40px auto">
+      <h1>JavaScript ist ausgeschaltet</h1>
+      <p>Dieses Spiel braucht JavaScript. Bitte schalte es im Browser ein und lade die Seite neu.</p>
+    </div>
+  </noscript>
+
+  <!-- 1) Daten (alle Texte, Farben, Karten, Figuren) -->
+  <script src="data/palette.js"></script>
+  <script src="data/facts.js"></script>
+  <script src="data/countries.js"></script>
+  <script src="data/characters.js"></script>
+  <script src="data/prefabs.js"></script>
+  <script src="data/maps.js"></script>
+  <script src="data/npcs.js"></script>
+  <script src="data/dialogues.js"></script>
+  <script src="data/quests.js"></script>
+
+  <!-- 2) Engine -->
+  <script src="js/engine/math.js"></script>
+  <script src="js/engine/gl.js"></script>
+  <script src="js/engine/textures.js"></script>
+  <script src="js/engine/mesh.js"></script>
+  <script src="js/engine/renderer.js"></script>
+  <script src="js/engine/camera.js"></script>
+  <script src="js/engine/collision.js"></script>
+  <script src="js/engine/input.js"></script>
+  <script src="js/engine/audio.js"></script>
+  <script src="js/engine/loop.js"></script>
+
+  <!-- 3) Spiel -->
+  <script src="js/game/character.js"></script>
+  <script src="js/game/player.js"></script>
+  <script src="js/game/npc.js"></script>
+  <script src="js/game/world.js"></script>
+  <script src="js/game/dialogue.js"></script>
+  <script src="js/game/quests.js"></script>
+  <script src="js/game/notebook.js"></script>
+  <script src="js/game/minigames.js"></script>
+  <script src="js/game/scenes.js"></script>
+  <script src="js/game/ui.js"></script>
+
+  <!-- 4) Debug und Start -->
+  <script src="js/debug.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
