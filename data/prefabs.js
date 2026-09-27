@@ -28,14 +28,18 @@ DATA.prefabs = {
   // ---------------- Bäume & Pflanzen ----------------
   baum_rund: {
     teile: [
-      { form: "zylinder", r: 0.15, rOben: 0.11, h: 1.1, pos: [0, 0.55, 0], farbe: "rinde", textur: "holz" },
-      { form: "kugel", r: 0.85, pos: [0, 1.75, 0], farbe: "laub", wind: 1 },
-      { form: "kugel", r: 0.6, pos: [0.5, 1.45, 0.25], farbe: "laub", wind: 1 },
-      { form: "kugel", r: 0.55, pos: [-0.45, 1.5, -0.2], farbe: "laub_dunkel", wind: 1 },
-      { form: "kugel", r: 0.45, pos: [0.1, 2.35, -0.1], farbe: "laub_hell", wind: 1 }
+      { form: "zylinder", r: 0.13, rOben: 0.09, h: 1.3, pos: [0, 0.65, 0], farbe: "rinde", textur: "holz" },
+      { form: "zylinder", r: 0.05, rOben: 0.03, h: 0.5, pos: [0.2, 1.25, 0], rot: [0, 0, -40], farbe: "rinde" },
+      // Krone als „Wolke“ aus flachen Klecksen
+      { form: "kugel", radien: [0.62, 0.48, 0.6], pos: [0, 1.6, 0], farbe: "laub", wind: 1 },
+      { form: "kugel", radien: [0.5, 0.4, 0.5], pos: [0.5, 1.78, 0.1], farbe: "laub", wind: 1 },
+      { form: "kugel", radien: [0.48, 0.38, 0.48], pos: [-0.45, 1.75, -0.08], farbe: "laub_dunkel", wind: 1 },
+      { form: "kugel", radien: [0.5, 0.4, 0.5], pos: [0.05, 2.1, -0.05], farbe: "laub_hell", wind: 1 },
+      { form: "kugel", radien: [0.42, 0.34, 0.42], pos: [0.12, 1.52, 0.45], farbe: "laub", wind: 1 },
+      { form: "kugel", radien: [0.4, 0.32, 0.4], pos: [-0.22, 1.55, -0.42], farbe: "laub_dunkel", wind: 1 }
     ],
     kollision: { kreis: 0.3 },
-    schatten: 1.2
+    schatten: 1.1
   },
 
   birke: {

@@ -28,9 +28,12 @@ GAME.Spieler = (function () {
     this.vx = this.vz = 0;
   };
 
-  Spieler.prototype.update = function (dt, welt, dyn) {
+  /* kamDrehung: Blickrichtung der Kamera – „hoch“ heißt immer „vom Bildschirm weg“ */
+  Spieler.prototype.update = function (dt, welt, dyn, kamDrehung) {
     var f = this.figur;
-    var r = this.gesperrt ? { x: 0, z: 0 } : ENG.input.richtung();
+    var e = this.gesperrt ? { x: 0, z: 0 } : ENG.input.richtung();
+    var c = Math.cos(kamDrehung || 0), sn = Math.sin(kamDrehung || 0);
+    var r = { x: e.x * c + e.z * sn, z: -e.x * sn + e.z * c };
     var sollX = r.x * MAX_TEMPO, sollZ = r.z * MAX_TEMPO;
     var laenge = Math.sqrt(r.x * r.x + r.z * r.z);
     var k = laenge > 0.01 ? ANFAHREN : BREMSEN;

@@ -80,7 +80,7 @@ GAME.Spielszene = (function () {
     sp.gesperrt = GAME.ui.blockiert();
 
     var dyn = Z.figuren.map(function (f) { return { x: f.x, z: f.z, r: f.info.radius }; });
-    sp.update(dt, Z.welt, dyn);
+    sp.update(dt, Z.welt, dyn, Z.kamera.drehung);
 
     // Probefiguren: drehen sich zu Kim, wenn Kim nah ist
     Z.figuren.forEach(function (f) {
@@ -149,7 +149,7 @@ GAME.Spielszene = (function () {
     var hf = function (x, z) { return w.hoeheBei(x, z); };
     Z.spieler.figur.zeichnen();
     Z.figuren.forEach(function (f) { f.zeichnen(); });
-    if (Z.fund && Z.fund.aktiv) R.mesh(Z.fund.mesh, Z.fund.model, { rand: 0.6 });
+    if (Z.fund && Z.fund.aktiv) R.mesh(Z.fund.mesh, Z.fund.model, { kontur: 0.0018 });
 
     w.schattenZeichnen(k);
     Z.spieler.figur.schatten(hf);

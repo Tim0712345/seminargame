@@ -12,7 +12,7 @@ var ENG = window.ENG = window.ENG || {};
 
 ENG.textures = (function () {
   "use strict";
-  var T = { detail: null, gesicht: null, weich: null, rects: { augen: {}, muender: {} } };
+  var T = { detail: null, gesicht: null, weich: null, papier: null, rects: { augen: {}, muender: {} } };
   var S = 256;
   var M = ENG.math;
 
@@ -180,70 +180,63 @@ ENG.textures = (function () {
     return out;
   }
 
-  // ---------------- Gesichter ----------------
-  var AUGE = "#2f2727", MUND = "#6e3b3b", ZUNGE = "#f09c9c";
+  // ---------------- Gesichter (Tusche-Stil) ----------------
+  // Strichaugen und Brauen in Tusche, eine kleine Nase, keine Wangenkreise.
+  var TUSCHE = "#2e2934", MUND = "#3a2c33", ZUNGE = "#d98a8a";
   var AUGEN_LISTE = ["offen", "zu", "froehlich", "ueberrascht", "skeptisch", "nachdenklich"];
   var MUND_LISTE = ["laecheln", "neutral", "grinsen", "o", "schief", "sprechen", "hmm", "offen"];
 
   function strich(ctx, breite) {
-    ctx.strokeStyle = AUGE;
+    ctx.strokeStyle = TUSCHE;
     ctx.lineWidth = breite;
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
     ctx.stroke();
   }
-  function glanz(ctx, x, y, gross) {
-    ctx.fillStyle = "#ffffff";
-    ellipse(ctx, x - 7 * gross, y - 10 * gross, 7 * gross, 8 * gross); ctx.fill();
-    ellipse(ctx, x + 7 * gross, y + 11 * gross, 3.2 * gross, 3.2 * gross); ctx.fill();
+  function braue(ctx, x, y, links, hoch, schraeg) {
+    // links: Braue des linken Auges (im Bild); schraeg > 0 = innen tiefer (ernst)
+    var i = links ? 1 : -1;
+    ctx.beginPath();
+    ctx.moveTo(x - 15 * i, y - hoch + schraeg * 0.2);
+    ctx.quadraticCurveTo(x - 2 * i, y - hoch - 5, x + 13 * i, y - hoch + schraeg);
+    strich(ctx, 7);
   }
-  function wange(ctx, x, y) {
-    var g = ctx.createRadialGradient(x, y, 0, x, y, 24);
-    g.addColorStop(0, "rgba(255,125,115,0.5)");
-    g.addColorStop(0.6, "rgba(255,125,115,0.25)");
-    g.addColorStop(1, "rgba(255,125,115,0)");
-    ctx.fillStyle = g;
-    ctx.save();
-    ctx.translate(x, y); ctx.scale(1, 0.55); ctx.translate(-x, -y);
-    ctx.beginPath(); ctx.arc(x, y, 24, 0, Math.PI * 2); ctx.fill();
-    ctx.restore();
+  function nase(ctx, x, y) {
+    ctx.beginPath();
+    ctx.moveTo(x + 2, y - 12);
+    ctx.quadraticCurveTo(x - 8, y + 4, x + 4, y + 4);
+    strich(ctx, 5);
   }
 
   function auge(ctx, x, y, typ, rechts) {
-    ctx.fillStyle = AUGE;
+    ctx.fillStyle = TUSCHE;
+    var links = !rechts;
     switch (typ) {
       case "zu":
-        ctx.beginPath(); ctx.moveTo(x - 24, y + 2); ctx.quadraticCurveTo(x, y + 18, x + 24, y + 2);
-        strich(ctx, 8); break;
+        ctx.beginPath(); ctx.moveTo(x - 14, y + 2); ctx.quadraticCurveTo(x, y + 11, x + 14, y + 2);
+        strich(ctx, 7); braue(ctx, x, y, links, 30, 0); break;
       case "froehlich":
-        ctx.beginPath(); ctx.moveTo(x - 24, y + 10); ctx.quadraticCurveTo(x, y - 22, x + 24, y + 10);
-        strich(ctx, 9); break;
+        ctx.beginPath(); ctx.moveTo(x - 15, y + 8); ctx.quadraticCurveTo(x, y - 12, x + 15, y + 8);
+        strich(ctx, 7); braue(ctx, x, y, links, 36, -3); break;
       case "ueberrascht":
-        ellipse(ctx, x, y - 2, 30, 38); ctx.fill();
-        glanz(ctx, x, y - 3, 1.45);
-        ctx.beginPath(); ctx.moveTo(x - 18, y - 47); ctx.quadraticCurveTo(x, y - 57, x + 18, y - 47);
-        strich(ctx, 5); break;
+        ellipse(ctx, x, y, 14, 18); ctx.fill();
+        braue(ctx, x, y, links, 46, -4); break;
       case "skeptisch":
-        ctx.save();
-        ctx.beginPath(); ctx.rect(x - 40, y - 8, 80, 60); ctx.clip();
-        ellipse(ctx, x, y, 26, 34); ctx.fill();
-        ctx.fillStyle = "#ffffff";
-        ellipse(ctx, x - 8, y + 2, 7, 5); ctx.fill();
-        ctx.restore();
-        ctx.beginPath(); ctx.moveTo(x - 27, y - 8); ctx.lineTo(x + 27, y - 8); strich(ctx, 6);
-        ctx.beginPath();
-        if (rechts) { ctx.moveTo(x - 18, y - 34); ctx.lineTo(x + 18, y - 46); }
-        else { ctx.moveTo(x - 18, y - 22); ctx.lineTo(x + 18, y - 21); }
-        strich(ctx, 6); break;
-      case "nachdenklich":
-        ellipse(ctx, x + 4, y - 3, 24, 31); ctx.fill();
-        ctx.fillStyle = "#ffffff";
-        ellipse(ctx, x + 10, y - 16, 8, 9); ctx.fill();
-        if (rechts) { ctx.beginPath(); ctx.moveTo(x - 15, y - 44); ctx.quadraticCurveTo(x + 2, y - 52, x + 19, y - 46); strich(ctx, 6); }
+        if (rechts) {
+          ellipse(ctx, x, y + 3, 10, 7); ctx.fill();
+          ctx.beginPath(); ctx.moveTo(x - 15, y - 5); ctx.lineTo(x + 15, y - 4); strich(ctx, 6);
+          braue(ctx, x, y, links, 24, 6);
+        } else {
+          ellipse(ctx, x, y, 11, 16); ctx.fill();
+          braue(ctx, x, y, links, 42, -6);
+        }
         break;
+      case "nachdenklich":
+        ellipse(ctx, x - 4, y - 4, 11, 16); ctx.fill();
+        braue(ctx, x, y, links, rechts ? 40 : 32, rechts ? -5 : 2); break;
       default: // offen
-        ellipse(ctx, x, y, 26, 34); ctx.fill();
-        glanz(ctx, x, y, 1.3);
+        ellipse(ctx, x, y, 11, 16); ctx.fill();
+        braue(ctx, x, y, links, 32, 1);
     }
   }
 
@@ -291,10 +284,9 @@ ENG.textures = (function () {
     var i;
     for (i = 0; i < AUGEN_LISTE.length; i++) {
       var ox = (i % 2) * 256, oy = Math.floor(i / 2) * 128;
-      wange(ctx, ox + 30, oy + 102);
-      wange(ctx, ox + 226, oy + 102);
-      auge(ctx, ox + 74, oy + 62, AUGEN_LISTE[i], false);
-      auge(ctx, ox + 182, oy + 62, AUGEN_LISTE[i], true);
+      nase(ctx, ox + 128, oy + 106);
+      auge(ctx, ox + 76, oy + 70, AUGEN_LISTE[i], false);
+      auge(ctx, ox + 180, oy + 70, AUGEN_LISTE[i], true);
       T.rects.augen[AUGEN_LISTE[i]] = [(ox + 1) / W, (oy + 1) / H, 254 / W, 126 / H];
     }
     for (i = 0; i < MUND_LISTE.length; i++) {
@@ -303,6 +295,25 @@ ENG.textures = (function () {
       T.rects.muender[MUND_LISTE[i]] = [(mx + 1) / W, (my + 1) / H, 126 / W, 126 / H];
     }
     return c;
+  }
+
+  /* Papier: R = feines Papierkorn, G = große Aquarell-Flecken */
+  function papierTextur() {
+    var n1 = rauschen(64, 71), n2 = rauschen(128, 72), f1 = rauschen(4, 73), f2 = rauschen(8, 74), f3 = rauschen(16, 75);
+    var out = new Uint8Array(S * S * 4), r = M.rng(76);
+    for (var y = 0; y < S; y++) {
+      for (var x = 0; x < S; x++) {
+        var i = (x + y * S) * 4;
+        var korn = 128 + (n1(x, y) - 0.5) * 70 + (n2(x, y) - 0.5) * 60 + (r() - 0.5) * 40;
+        var fleck = f1(x, y) * 0.55 + f2(x, y) * 0.3 + f3(x, y) * 0.15;
+        fleck = M.smoothstep(0.25, 0.75, fleck) * 255;
+        out[i] = Math.max(0, Math.min(255, korn));
+        out[i + 1] = fleck;
+        out[i + 2] = 128;
+        out[i + 3] = 255;
+      }
+    }
+    return out;
   }
 
   function weicherKreis() {
@@ -320,6 +331,7 @@ ENG.textures = (function () {
     T.detail = ENG.gl.texture(detailTextur(), { breite: S, hoehe: S, wiederholen: true, mipmap: true, anisotrop: true });
     T.gesicht = ENG.gl.texture(gesichtsAtlas(), { mipmap: true });
     T.weich = ENG.gl.texture(weicherKreis(), { mipmap: true });
+    T.papier = ENG.gl.texture(papierTextur(), { breite: S, hoehe: S, wiederholen: true, mipmap: true });
   };
 
   T.augen = function (name) { return T.rects.augen[name] || T.rects.augen.offen; };

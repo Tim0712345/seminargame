@@ -52,7 +52,6 @@ DATA.texte = {
     grafik: "Grafik",
     hoch: "Hoch",
     niedrig: "Niedrig",
-    kruemmung: "Gekrümmte Welt",
     an: "An",
     aus: "Aus",
     steuerung: "Steuerung anzeigen",

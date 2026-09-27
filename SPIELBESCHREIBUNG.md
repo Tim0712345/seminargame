@@ -35,7 +35,10 @@
 - Keine einzig richtige Lösung, mehrere Enden
 
 ## 6. Gestaltung
-- Eigener, gemütlicher Stil: kleine Figuren mit großen Köpfen, Pastellfarben
+- Eigener Stil „Tusche & Aquarell“: wie ein illustriertes Bilderbuch
+  - Tusche-Konturen, Schraffur statt weicher Schatten, Aquarell-Flecken
+  - schlanke Figuren mit Strichaugen, schräge Kamera
+  - Menüs im Skizzenbuch-Stil
 - Vielfalt der Figuren (Alter, Hauttöne, Rollstuhl, Gehstock)
 - Keine Stereotype, keine Schuldzuweisungen
 

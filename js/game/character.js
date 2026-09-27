@@ -35,8 +35,35 @@ GAME.character = (function () {
   var K = C.KNOCHEN = { WURZEL: 0, KOERPER: 1, KOPF: 2, ARM_L: 3, ARM_R: 4, BEIN_L: 5, BEIN_R: 6, RAD_L: 7, RAD_R: 8, HAND: 9 };
   var ANZ_KNOCHEN = 12;
 
+  // Der Kopf wird in einem „Bauraum“ (Radius 0.25, Mitte y 0.95) gebaut und
+  // danach verkleinert und angehoben. Der Körper wird schlanker und länger
+  // gezogen. Ergebnis: Figuren mit ca. 3 Kopflängen.
   var KOPF_R = 0.25;
   var KOPF_Y = 0.95;
+  var KOPF_SKAL = 0.8;          // echter Kopfradius = 0.2
+  var KOPF_Y_NEU = 1.04;        // echte Kopfmitte
+  var KS = [0.88, 1.2, 0.88];   // Streckung des Körpers (Breite, Höhe, Tiefe)
+  var MMk = ENG.math;
+  var mS = MMk.m4(), mT = MMk.m4(), mE = MMk.m4();
+  function bauMatrix(o, knochen) {
+    var p = o.pos || [0, 0, 0], r = o.rot || [0, 0, 0], sk = o.skal || [1, 1, 1];
+    var D = MMk.DEG;
+    MMk.m4compose(mT, p[0], p[1], p[2], r[0] * D, r[1] * D, r[2] * D, sk[0], sk[1], sk[2]);
+    if (knochen === K.KOPF) {
+      // T(0, neu) · S(k) · T(0, -alt)
+      MMk.m4compose(mS, 0, KOPF_Y_NEU - KOPF_Y * KOPF_SKAL, 0, 0, 0, 0, KOPF_SKAL, KOPF_SKAL, KOPF_SKAL);
+      return MMk.m4mul(mE, mS, mT);
+    }
+    if (knochen === K.RAD_L || knochen === K.RAD_R) return MMk.m4copy(mE, mT);
+    if (knochen === K.WURZEL) {
+      // Rollstuhl: nur die Position anpassen, Formen nicht verzerren
+      MMk.m4copy(mE, mT);
+      mE[13] = p[1] < 0.3 ? p[1] : p[1] * KS[1];
+      return mE;
+    }
+    MMk.m4compose(mS, 0, 0, 0, 0, 0, 0, KS[0], KS[1], KS[2]);
+    return MMk.m4mul(mE, mS, mT);
+  }
   var KOPF_FORM = { rund: [1, 1, 1], oval: [0.95, 1.07, 0.97], breit: [1.08, 0.96, 1.0] };
   var KOERPER = {
     schmal:   { b: 0.32, t: 0.24 },
@@ -64,7 +91,11 @@ GAME.character = (function () {
     var kleid = oben.typ === "kleid";
 
     function teil(form, masse, o) {
-      b.add(ENG.mesh.form(form, masse, true), o);
+      var kn = o.knochen || 0;
+      var o2 = {};
+      for (var k in o) if (k !== "pos" && k !== "rot" && k !== "skal") o2[k] = o[k];
+      o2.m = bauMatrix(o, kn);
+      b.add(ENG.mesh.form(form, masse, true), o2);
     }
 
     var W = kp.b, T = kp.t;
@@ -141,8 +172,6 @@ GAME.character = (function () {
     // ---------- Kopf ----------
     var kSkal = [KOPF_R * ks[0], KOPF_R * ks[1], KOPF_R * ks[2]];
     teil("kugel", { r: 1, seg: 16, ring: 12 }, { pos: [0, KOPF_Y, 0], skal: kSkal, farbe: haut, knochen: K.KOPF });
-    teil("kugel", { r: 0.05 }, { pos: [-KOPF_R * ks[0] * 0.97, KOPF_Y - 0.02, -0.01], skal: [0.6, 1, 1], farbe: haut, knochen: K.KOPF });
-    teil("kugel", { r: 0.05 }, { pos: [KOPF_R * ks[0] * 0.97, KOPF_Y - 0.02, -0.01], skal: [0.6, 1, 1], farbe: haut, knochen: K.KOPF });
     // Gesichtsflächen (Augen, Mund) – knapp über der Kopfoberfläche
     var gs = [kSkal[0] * 1.012, kSkal[1] * 1.012, kSkal[2] * 1.012];
     teil("kugel", { r: 1, seg: 14, ring: 8, lat0: 1.2, lat1: 2.1, lon0: -0.8, lon1: 0.8 },
@@ -161,8 +190,8 @@ GAME.character = (function () {
       gehstock: !!gehstock,
       groesse: def.alter === "kind" ? 0.78 : 1,
       radius: rollstuhl ? 0.4 : 0.28,
-      armX: armX,
-      kopfHoehe: KOPF_Y + KOPF_R * ks[1] + 0.12
+      armX: armX * KS[0],
+      kopfHoehe: KOPF_Y_NEU + KOPF_R * KOPF_SKAL * ks[1] + 0.12
     };
     var ergebnis = { mesh: b.fertig(), info: info };
     meshCache[id] = ergebnis;
@@ -175,7 +204,7 @@ GAME.character = (function () {
     function kappe(vorneBis, hintenBis, k, grenze) {
       grenze = grenze || 1.0;
       var sk = [ks[0] * k, ks[1] * k, ks[2] * k];
-      teil("kugel", { r: 1, seg: 12, ring: 8, lat0: 0, lat1: vorneBis, lon0: -grenze, lon1: grenze },
+      teil("kugel", { r: 1, seg: 12, ring: 8, lat0: 0, lat1: vorneBis - 0.1, lon0: -grenze, lon1: grenze },
         { pos: [0, KOPF_Y, 0], skal: sk, farbe: f, knochen: K.KOPF });
       teil("kugel", { r: 1, seg: 16, ring: 10, lat0: 0, lat1: hintenBis, lon0: grenze, lon1: 2 * P - grenze },
         { pos: [0, KOPF_Y, 0], skal: sk, farbe: f, knochen: K.KOPF });
@@ -426,8 +455,8 @@ GAME.character = (function () {
     var kopfNick = Math.sin(t * 1.3) * 0.025 * (1 - lm) - neig * 0.5;
     var kopfNeig = Math.sin(t * 0.7) * 0.03 * (1 - lm) - wiegen * 0.5;
 
-    var Kb = this.setzeKnochen(K.KOERPER, null, 0, 0.36, 0, neig, 0, wiegen, 1 - quetsch * 0.5, 1 + atmen + quetsch, 1 - quetsch * 0.5, 0, hochY, 0);
-    this.setzeKnochen(K.KOPF, Kb, 0, 0.7, 0, kopfNick + (this.spricht ? Math.sin(t * 9) * 0.02 : 0), 0, kopfNeig, 1, 1, 1, 0, 0, 0);
+    var Kb = this.setzeKnochen(K.KOERPER, null, 0, 0.36 * KS[1], 0, neig, 0, wiegen, 1 - quetsch * 0.5, 1 + atmen + quetsch, 1 - quetsch * 0.5, 0, hochY, 0);
+    this.setzeKnochen(K.KOPF, Kb, 0, 0.7 * KS[1], 0, kopfNick + (this.spricht ? Math.sin(t * 9) * 0.02 : 0), 0, kopfNeig, 1, 1, 1, 0, 0, 0);
 
     // Arme
     var armS = info.rollstuhl ? 0 : s * 0.8 * lm;
@@ -443,20 +472,20 @@ GAME.character = (function () {
       armR = MM.lerp(armR, -2.7, arme);
       armRz = MM.lerp(armRz, 0.35 + Math.sin(t * 14) * 0.08, arme);
     }
-    this.setzeKnochen(K.ARM_L, Kb, (this.info.armX || 0.2), 0.66, 0, armL, 0, armRz, 1, 1, 1, 0, 0, 0);
-    this.setzeKnochen(K.ARM_R, Kb, -(this.info.armX || 0.2), 0.66, 0, armR, 0, -armRz, 1, 1, 1, 0, 0, 0);
+    this.setzeKnochen(K.ARM_L, Kb, (this.info.armX || 0.2), 0.66 * KS[1], 0, armL, 0, armRz, 1, 1, 1, 0, 0, 0);
+    this.setzeKnochen(K.ARM_R, Kb, -(this.info.armX || 0.2), 0.66 * KS[1], 0, armR, 0, -armRz, 1, 1, 1, 0, 0, 0);
 
     // Beine
     if (info.rollstuhl) {
-      this.setzeKnochen(K.BEIN_L, null, 0, 0.36, 0, -1.15, 0, 0, 1, 1, 1, 0, 0, 0);
-      this.setzeKnochen(K.BEIN_R, null, 0, 0.36, 0, -1.15, 0, 0, 1, 1, 1, 0, 0, 0);
+      this.setzeKnochen(K.BEIN_L, null, 0, 0.36 * KS[1], 0, -1.15, 0, 0, 1, 1, 1, 0, 0, 0);
+      this.setzeKnochen(K.BEIN_R, null, 0, 0.36 * KS[1], 0, -1.15, 0, 0, 1, 1, 1, 0, 0, 0);
       this.radWinkel += this.tempo * dt / 0.23;
       this.setzeKnochen(K.RAD_L, null, 0, 0.25, -0.03, this.radWinkel, 0, 0, 1, 1, 1, 0, 0, 0);
       this.setzeKnochen(K.RAD_R, null, 0, 0.25, -0.03, this.radWinkel, 0, 0, 1, 1, 1, 0, 0, 0);
     } else {
       var bein = s * 0.7 * lm;
-      this.setzeKnochen(K.BEIN_L, null, 0, 0.36, 0, -bein, 0, 0, 1, 1, 1, 0, hochY, 0);
-      this.setzeKnochen(K.BEIN_R, null, 0, 0.36, 0, bein, 0, 0, 1, 1, 1, 0, hochY, 0);
+      this.setzeKnochen(K.BEIN_L, null, 0, 0.36 * KS[1], 0, -bein, 0, 0, 1, 1, 1, 0, hochY, 0);
+      this.setzeKnochen(K.BEIN_R, null, 0, 0.36 * KS[1], 0, bein, 0, 0, 1, 1, 1, 0, hochY, 0);
     }
 
     // Staubwölkchen bei jedem Schritt
@@ -496,7 +525,7 @@ GAME.character = (function () {
 
   Figur.prototype.zeichnen = function (hoeheFn) {
     var ge = this.gesicht();
-    ENG.renderer.mesh(this.mesh, this.model, { knochen: this.knochen, augen: ge.augen, mund: ge.mund, rand: 0.35 });
+    ENG.renderer.mesh(this.mesh, this.model, { knochen: this.knochen, augen: ge.augen, mund: ge.mund, kontur: 0.0017 });
   };
 
   Figur.prototype.schatten = function (hoeheFn) {

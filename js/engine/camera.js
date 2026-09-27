@@ -13,11 +13,11 @@ ENG.Kamera = (function () {
     this.ziel = [0, 0, 0];        // Punkt, auf den die Kamera schaut
     this.zielSoll = [0, 0, 0];
     this.pos = [0, 10, 10];
-    this.neigung = 46 * MM.DEG;
-    this.drehung = 0;             // Blickrichtung um die Hochachse (0 = von Süden)
-    this.abstand = 14.5;
-    this.abstandSoll = 14.5;
-    this.sichtfeld = 32 * MM.DEG;
+    this.neigung = 40 * MM.DEG;
+    this.drehung = 35 * MM.DEG;   // schräg von Südosten (0 = genau von Süden)
+    this.abstand = 15;
+    this.abstandSoll = 15;
+    this.sichtfeld = 30 * MM.DEG;
     this.nah = 0.5;
     this.fern = 160;
     this.grenzen = null;          // [minX, minZ, maxX, maxZ] – optional

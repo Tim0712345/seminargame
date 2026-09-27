@@ -28,8 +28,8 @@ kein WebGL nutzen. Dann in den Browser-Einstellungen die
 | N | Notizbuch (ab Phase 3) |
 | Q | Aufgaben (ab Phase 3) |
 
-Im Pausemenü lassen sich die **Grafik** (Hoch/Niedrig) und die
-**gekrümmte Welt** umschalten. „Niedrig“ ist für langsame Schul-Laptops gedacht.
+Im Pausemenü lässt sich die **Grafik** (Hoch/Niedrig) umschalten.
+„Niedrig“ ist für langsame Schul-Laptops gedacht.
 
 ## Debug-Modus (für die Entwicklung)
 
@@ -82,8 +82,8 @@ Komma oder ein Anführungszeichen. Die Konsole (F12) zeigt die Zeile an.
 ### Farben
 - `data/palette.js`: Farben als `"#rrggbb"`. Alle anderen Dateien benutzen nur
   die Namen (z. B. `"salbei"`). Eine Farbe hier zu ändern, ändert sie überall.
-- Unter `DATA.stimmungen` stehen Himmel, Sonnenlicht, Schattenfarbe und die
-  Stärke der gekrümmten Welt pro Ort.
+- Unter `DATA.stimmungen` stehen Himmel, Sonnenlicht, Schattenfarbe und
+  Tuschefarbe pro Ort.
 
 ### Aussehen der Figuren
 - `data/characters.js`: Jede Figur wird aus Bausteinen zusammengesetzt
@@ -113,5 +113,7 @@ Komma oder ein Anführungszeichen. Die Konsole (F12) zeigt die Zeile an.
   Mesh zusammengefasst (wenige Draw-Calls). Jede Figur ist ein einziger Draw-Call.
 - Alle Texturen (Gras, Pflaster, Holz, Kopfstein, Gesichter) werden beim Start
   im Code gezeichnet. Es gibt keine Bilddateien.
-- Toon-Shading mit drei weichen Lichtstufen, runde Blob-Schatten, Dunst und
-  eine optionale gekrümmte Welt
+- Eigener Zeichenstil „Tusche & Aquarell“: Tusche-Konturen um alle Formen
+  (Inverted Hull), zwei Lichtstufen mit Schraffur im Schatten, schraffierte
+  Bodenschatten, Aquarell-Flecken, Papierkorn und gezeichnete Wasserwellen
+- Farbe der Tusche und des Papiers: `tusche` und `papier` in `data/palette.js`

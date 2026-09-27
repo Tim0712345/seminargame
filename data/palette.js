@@ -9,25 +9,29 @@
 var DATA = window.DATA = window.DATA || {};
 
 DATA.palette = {
+  // ---- Zeichenmittel ----
+  tusche:        "#2e2934",   // Konturen, Schraffur, Gesichter
+  papier:        "#f4ecdb",   // Hintergrund / Papierton
+
   // ---- Boden ----
-  gras:          "#a3d38c",
-  gras_hell:     "#b9df98",
-  weg:           "#ead3a2",
-  pflaster:      "#ddd5c8",
-  kopfstein:     "#cbc2b6",
-  sand:          "#f2e1b3",
-  seegrund:      "#b8c79c",
-  wasser:        "#86cfd9",
+  gras:          "#a8c27c",
+  gras_hell:     "#c4d392",
+  weg:           "#e2c793",
+  pflaster:      "#e3dac7",
+  kopfstein:     "#cbbfae",
+  sand:          "#eed9a9",
+  seegrund:      "#9fb49a",
+  wasser:        "#8ab8cc",
   holz:          "#cf9f70",
   holz_hell:     "#e0bb8c",
   holz_dunkel:   "#a57855",
 
   // ---- Natur ----
-  laub:          "#93c77c",
-  laub_dunkel:   "#79b56f",
-  laub_hell:     "#b5da8a",
-  birke_laub:    "#bddf83",
-  kiefer:        "#6aa57a",
+  laub:          "#8db06a",
+  laub_dunkel:   "#6c955c",
+  laub_hell:     "#b4c982",
+  birke_laub:    "#bccb77",
+  kiefer:        "#5b8a6a",
   rinde:         "#a27a5c",
   birke_rinde:   "#f3efe6",
   birke_fleck:   "#6d6763",
@@ -93,14 +97,16 @@ DATA.palette = {
 /* Farbstimmung pro Ort (Himmel, Dunst, Licht).
    sonne   = Farbe des direkten Sonnenlichts
    schatten= Farbe der Schattenseite (kühler Himmelston)
-   kruemmung = Stärke der „gekrümmten Welt“ (0 = aus)            */
+   tusche   = Farbe der Konturen und Schraffur
+   kruemmung = Stärke einer gekrümmten Welt (0 = aus, Standard)    */
 DATA.stimmungen = {
   test: {
-    himmel_oben: "#8ecbef",
-    horizont:    "#fdeed8",
-    dunst:       "#eef1ee",
-    sonne:       "#fff0dc",
-    schatten:    "#b4b9e0",
-    kruemmung:   0.012
+    himmel_oben: "#a7c6d8",
+    horizont:    "#f4ecdb",
+    dunst:       "#f2e9d6",
+    sonne:       "#fff7e8",
+    schatten:    "#b3aed3",
+    tusche:      "tusche",
+    kruemmung:   0
   }
 };

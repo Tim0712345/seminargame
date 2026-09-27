@@ -257,8 +257,6 @@ GAME.ui = (function () {
         { text: p.weiter, aktion: function () { U.menueSchliessen(); } },
         { text: function () { return p.grafik + ": " + (E.qualitaet === "hoch" ? p.hoch : p.niedrig); },
           umschalten: function () { E.qualitaet = E.qualitaet === "hoch" ? "niedrig" : "hoch"; E.anwenden(); E.speichern(); } },
-        { text: function () { return p.kruemmung + ": " + (E.kruemmung ? p.an : p.aus); },
-          umschalten: function () { E.kruemmung = !E.kruemmung; E.anwenden(); E.speichern(); } },
         { text: p.steuerung, aktion: function () { U.steuerungZeigen(); } }
       ],
       fussnote: p.hinweisNeuladen

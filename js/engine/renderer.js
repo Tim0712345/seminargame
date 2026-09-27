@@ -13,10 +13,10 @@ ENG.renderer = (function () {
   "use strict";
   var MM = ENG.math;
   var R = { stats: { drawCalls: 0, dreiecke: 0 }, breite: 1, hoehe: 1, skala: 1, fx: true, kruemmungAn: true, kruemmung: 0 };
-  var gl, pHaupt, pBlob, pHimmel, pLinie;
+  var gl, pHaupt, pKontur, pBlob, pHimmel, pLinie;
   var MAX_KNOCHEN = 12;
   var einheitsKnochen = new Float32Array(16 * MAX_KNOCHEN);
-  var knochenSindEinheit = false;
+  var knochenSindEinheit = false, konturKnochenEinheit = false;
   var kam = null, umg = null, zeit = 0;
 
   var FS_PREC = "#ifdef GL_FRAGMENT_PRECISION_HIGH\nprecision highp float;\n#else\nprecision mediump float;\n#endif\n";
@@ -52,25 +52,30 @@ ENG.renderer = (function () {
   ].join("\n");
 
   var FS_HAUPT = FS_PREC + [
-    "uniform sampler2D uDetail; uniform sampler2D uGesichtTex;",
+    "uniform sampler2D uDetail; uniform sampler2D uGesichtTex; uniform sampler2D uPapier;",
     "uniform vec4 uAugen; uniform vec4 uMund;",
-    "uniform vec3 uSonnenRichtung; uniform vec3 uSonne; uniform vec3 uSchatten;",
+    "uniform vec3 uSonnenRichtung; uniform vec3 uSonne; uniform vec3 uSchatten; uniform vec3 uTusche;",
     "uniform vec3 uDunst; uniform vec2 uDunstWeite; uniform vec3 uKamPos;",
-    "uniform float uZeit; uniform float uRand; uniform vec3 uTon;",
+    "uniform float uZeit; uniform vec3 uTon; uniform float uPixel; uniform float uSchraffur;",
     "varying vec3 vNrm; varying vec3 vCol; varying vec2 vUv; varying vec3 vWelt;",
     "varying vec4 vSel; varying float vWasser; varying float vGesicht;",
     "void main() {",
     "  vec3 basis = vCol;",
+    // Oberflächenmuster, dezent
     "  if (vSel.x + vSel.y + vSel.z + vSel.w > 0.0) {",
     "    float d = dot(texture2D(uDetail, vUv), vSel);",
-    "    basis *= 0.84 + d * 0.32;",
+    "    basis *= 0.9 + d * 0.2;",
     "  }",
+    // Aquarell: große, unregelmäßige Farbflecken in der Welt
+    "  float fleck = texture2D(uPapier, vWelt.xz * 0.045 + vec2(vWelt.y * 0.03, 0.0)).g;",
+    "  basis *= 0.9 + fleck * 0.18;",
+    // Wasser: gezeichnete Wellenlinien in Tusche
+    "  float linie = 0.0;",
     "  if (vWasser > 0.5) {",
-    "    vec2 wuv = vWelt.xz * 0.11;",
-    "    float r1 = texture2D(uDetail, wuv + vec2(uZeit * 0.013, uZeit * 0.009)).a;",
-    "    float r2 = texture2D(uDetail, wuv * 1.37 + vec2(-uZeit * 0.011, uZeit * 0.014)).a;",
-    "    float g = smoothstep(0.6, 0.7, 1.0 - (r1 + r2) * 0.5);",
-    "    basis = mix(basis, vec3(1.0), g * 0.4);",
+    "    float wl = vWelt.z * 1.1 + sin(vWelt.x * 0.9 + uZeit * 0.9) * 0.22 + sin(vWelt.x * 0.23 - uZeit * 0.4) * 0.6;",
+    "    float f = abs(fract(wl) - 0.5);",
+    "    float luecke = step(0.52, texture2D(uPapier, vec2(vWelt.x * 0.04 + uZeit * 0.008, floor(wl) * 0.137)).g);",
+    "    linie = smoothstep(0.07, 0.025, f) * luecke * 0.5;",
     "  }",
     "  if (vGesicht > 0.5) {",
     "    vec4 r = vGesicht < 1.5 ? uAugen : uMund;",
@@ -78,18 +83,57 @@ ENG.renderer = (function () {
     "    if (f.a < 0.04) discard;",
     "    basis = mix(basis, f.rgb, f.a);",
     "  }",
+    // Licht: zwei klare Stufen
     "  vec3 N = normalize(vNrm);",
     "  float ndl = dot(N, uSonnenRichtung);",
-    "  float t = smoothstep(-0.06, 0.06, ndl) * 0.55 + smoothstep(0.38, 0.5, ndl) * 0.45;",
-    "  vec3 licht = mix(uSchatten, uSonne, t);",
+    "  float licht = smoothstep(0.02, 0.1, ndl);",
+    "  float kern = smoothstep(-0.2, -0.45, ndl);",
+    "  vec3 col = mix(basis * uSchatten, basis * uSonne, licht);",
+    // Schraffur im Schatten (diagonal), Kreuzschraffur im Kernschatten
+    "  vec2 fc = gl_FragCoord.xy / uPixel;",
+    "  float s1 = smoothstep(0.16, 0.06, abs(fract((fc.x + fc.y) / 6.0) - 0.5));",
+    "  float s2 = smoothstep(0.14, 0.05, abs(fract((fc.x - fc.y) / 6.0) - 0.5));",
+    "  float schraffur = (s1 * (1.0 - licht) * 0.3 + s2 * kern * 0.26) * uSchraffur;",
+    "  if (vGesicht > 0.5) schraffur *= 0.3;",
+    // Pigment sammelt sich am Rand (Aquarell-Kante)
     "  vec3 V = normalize(uKamPos - vWelt);",
-    "  float rand = pow(1.0 - max(dot(N, V), 0.0), 3.0) * uRand;",
-    "  vec3 col = basis * licht + rand * uSonne * 0.45;",
+    "  float rand = pow(1.0 - max(dot(N, V), 0.0), 2.5);",
+    "  col *= 1.0 - rand * 0.16;",
+    "  col = mix(col, uTusche, max(schraffur, linie));",
+    // Papierkorn
+    "  float korn = texture2D(uPapier, gl_FragCoord.xy / (256.0 * uPixel)).r;",
+    "  col *= 0.95 + korn * 0.08;",
     "  float dist = length(vWelt - uKamPos);",
     "  col = mix(col, uDunst, smoothstep(uDunstWeite.x, uDunstWeite.y, dist));",
     "  gl_FragColor = vec4(col * uTon, 1.0);",
     "}"
   ].join("\n");
+
+  /* Konturen: Rückseiten entlang der Normalen aufblähen und in Tusche füllen
+     („Inverted Hull“). Gesichter und Wasser bekommen keine Kontur.          */
+  var VS_KONTUR = [
+    "precision highp float;",
+    "attribute vec3 aPos; attribute vec3 aNrm; attribute vec3 aCol; attribute vec2 aUv; attribute vec4 aExtra;",
+    "uniform mat4 uViewProj; uniform mat4 uModel; uniform mat4 uBones[" + MAX_KNOCHEN + "];",
+    "uniform vec3 uKruemmMitte; uniform float uKruemmung; uniform float uZeit; uniform float uFx;",
+    "uniform vec3 uKamPos; uniform float uBreite;",
+    "void main() {",
+    "  if (aExtra.z > 0.5 || aExtra.w > 4.5) { gl_Position = vec4(0.0, 0.0, 2.0, 1.0); return; }",
+    "  mat4 bm = uBones[int(aExtra.x + 0.5)];",
+    "  vec4 w = uModel * (bm * vec4(aPos, 1.0));",
+    "  if (aExtra.y > 0.0) {",
+    "    float ph = uZeit * 1.6 + w.x * 0.37 + w.z * 0.23;",
+    "    w.x += sin(ph) * 0.05 * aExtra.y * uFx;",
+    "    w.z += cos(ph * 0.83) * 0.035 * aExtra.y * uFx;",
+    "  }",
+    "  vec3 n = normalize((uModel * (bm * vec4(aNrm, 0.0))).xyz);",
+    "  w.xyz += n * uBreite * length(uKamPos - w.xyz);",
+    "  vec2 d = w.xz - uKruemmMitte.xz;",
+    "  w.y -= dot(d, d) * uKruemmung;",
+    "  gl_Position = uViewProj * w;",
+    "}"
+  ].join("\n");
+  var FS_KONTUR = FS_PREC + "uniform vec3 uTusche; void main() { gl_FragColor = vec4(uTusche, 1.0); }";
 
   var VS_BLOB = [
     "precision highp float;",
@@ -102,11 +146,22 @@ ENG.renderer = (function () {
     "}"
   ].join("\n");
   var FS_BLOB = FS_PREC + [
-    "uniform sampler2D uTex; varying vec2 vUv; varying vec4 vCol;",
+    "uniform sampler2D uTex; uniform float uPixel; uniform vec3 uTusche; varying vec2 vUv; varying vec4 vCol;",
     "void main() {",
-    "  float a = texture2D(uTex, vUv).a * vCol.a;",
-    "  if (a < 0.004) discard;",
-    "  gl_FragColor = vec4(vCol.rgb, a);",
+    "  float t = texture2D(uTex, vUv).a;",
+    "  if (vCol.a < 0.0) {",
+    // Schatten: klar umrissene, schraffierte Fläche in Tusche
+    "    vec2 fc = gl_FragCoord.xy / uPixel;",
+    "    float l = smoothstep(0.2, 0.08, abs(fract((fc.x + fc.y) / 4.5) - 0.5));",
+    "    float form = smoothstep(0.3, 0.42, t);",
+    "    float a = form * (0.18 + l * 0.8) * -vCol.a;",
+    "    if (a < 0.004) discard;",
+    "    gl_FragColor = vec4(uTusche, a);",
+    "  } else {",
+    "    float a = t * vCol.a;",
+    "    if (a < 0.004) discard;",
+    "    gl_FragColor = vec4(vCol.rgb, a);",
+    "  }",
     "}"
   ].join("\n");
 
@@ -145,6 +200,7 @@ ENG.renderer = (function () {
   R.init = function (g) {
     gl = g;
     pHaupt = ENG.gl.program(VS_HAUPT, FS_HAUPT, ["aPos", "aNrm", "aCol", "aUv", "aExtra"]);
+    pKontur = ENG.gl.program(VS_KONTUR, FS_KONTUR, ["aPos", "aNrm", "aCol", "aUv", "aExtra"]);
     pBlob = ENG.gl.program(VS_BLOB, FS_BLOB, ["aPos", "aUv", "aCol"]);
     pHimmel = ENG.gl.program(VS_HIMMEL, FS_HIMMEL, ["aPos"]);
     pLinie = ENG.gl.program(VS_LINIE, FS_LINIE, ["aPos", "aCol"]);
@@ -170,7 +226,7 @@ ENG.renderer = (function () {
     var f = Math.min(dpr || 1, 2) * (skala || 1);
     var w = Math.max(1, Math.floor(cssB * f)), h = Math.max(1, Math.floor(cssH * f));
     if (c.width !== w || c.height !== h) { c.width = w; c.height = h; }
-    R.breite = w; R.hoehe = h; R.cssB = cssB; R.cssH = cssH;
+    R.breite = w; R.hoehe = h; R.cssB = cssB; R.cssH = cssH; R.pixel = f;
   };
 
   /* Umgebung: { oben, horizont, dunst, sonne, schatten (je [r,g,b]),
@@ -215,17 +271,35 @@ ENG.renderer = (function () {
     gl.uniform3fv(u.uDunst, umg.dunst);
     gl.uniform2fv(u.uDunstWeite, umg.dunstWeite);
     gl.uniform3fv(u.uKamPos, kam.pos);
-    gl.uniform1f(u.uRand, 0);
     gl.uniform3f(u.uTon, 1, 1, 1);
+    gl.uniform3fv(u.uTusche, umg.tusche);
+    gl.uniform1f(u.uPixel, R.pixel || 1);
+    gl.uniform1f(u.uSchraffur, 1);
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, ENG.textures.detail);
     gl.uniform1i(u.uDetail, 0);
     gl.activeTexture(gl.TEXTURE1);
     gl.bindTexture(gl.TEXTURE_2D, ENG.textures.gesicht);
     gl.uniform1i(u.uGesichtTex, 1);
+    gl.activeTexture(gl.TEXTURE2);
+    gl.bindTexture(gl.TEXTURE_2D, ENG.textures.papier);
+    gl.uniform1i(u.uPapier, 2);
     gl.activeTexture(gl.TEXTURE0);
     gl.uniformMatrix4fv(u.uBones, false, einheitsKnochen);
     knochenSindEinheit = true;
+    // Konturen-Programm: Werte für das ganze Bild
+    ENG.gl.use(pKontur);
+    var k = pKontur.u;
+    gl.uniformMatrix4fv(k.uViewProj, false, kam.viewProj);
+    gl.uniform3fv(k.uKruemmMitte, kam.ziel);
+    gl.uniform1f(k.uKruemmung, R.kruemmung);
+    gl.uniform1f(k.uZeit, zeit);
+    gl.uniform1f(k.uFx, R.fx ? 1 : 0);
+    gl.uniform3fv(k.uKamPos, kam.pos);
+    gl.uniform3fv(k.uTusche, umg.tusche);
+    gl.uniformMatrix4fv(k.uBones, false, einheitsKnochen);
+    konturKnochenEinheit = true;
+    ENG.gl.use(pHaupt);
   }
 
   var EINHEIT = MM.m4();
@@ -233,20 +307,8 @@ ENG.renderer = (function () {
   /* Mesh zeichnen.
      opt: { knochen: Float32Array(16*n), augen, mund (Atlas-Rechtecke),
             rand (Randlicht 0…1), ton [r,g,b] }                         */
-  R.mesh = function (mesh, model, opt) {
-    var u = pHaupt.u;
-    gl.uniformMatrix4fv(u.uModel, false, model || EINHEIT);
-    if (opt && opt.knochen) {
-      gl.uniformMatrix4fv(u.uBones, false, opt.knochen);
-      knochenSindEinheit = false;
-    } else if (!knochenSindEinheit) {
-      gl.uniformMatrix4fv(u.uBones, false, einheitsKnochen);
-      knochenSindEinheit = true;
-    }
-    if (opt && opt.augen) gl.uniform4fv(u.uAugen, opt.augen);
-    if (opt && opt.mund) gl.uniform4fv(u.uMund, opt.mund);
-    gl.uniform1f(u.uRand, opt && opt.rand ? opt.rand : 0);
-    if (opt && opt.ton) gl.uniform3fv(u.uTon, opt.ton); else gl.uniform3f(u.uTon, 1, 1, 1);
+  /* opt zusätzlich: kontur (Linienbreite, 0 = keine) */
+  function zeichneTeile(mesh) {
     var st = ENG.mesh.STRIDE * 4;
     for (var i = 0; i < mesh.teile.length; i++) {
       var t = mesh.teile[i];
@@ -260,6 +322,40 @@ ENG.renderer = (function () {
       gl.drawElements(gl.TRIANGLES, t.anzahl, gl.UNSIGNED_SHORT, 0);
       R.stats.drawCalls++;
       R.stats.dreiecke += t.anzahl / 3;
+    }
+  }
+
+  R.mesh = function (mesh, model, opt) {
+    var u = pHaupt.u;
+    gl.uniformMatrix4fv(u.uModel, false, model || EINHEIT);
+    if (opt && opt.knochen) {
+      gl.uniformMatrix4fv(u.uBones, false, opt.knochen);
+      knochenSindEinheit = false;
+    } else if (!knochenSindEinheit) {
+      gl.uniformMatrix4fv(u.uBones, false, einheitsKnochen);
+      knochenSindEinheit = true;
+    }
+    if (opt && opt.augen) gl.uniform4fv(u.uAugen, opt.augen);
+    if (opt && opt.mund) gl.uniform4fv(u.uMund, opt.mund);
+    if (opt && opt.ton) gl.uniform3fv(u.uTon, opt.ton); else gl.uniform3f(u.uTon, 1, 1, 1);
+    zeichneTeile(mesh);
+
+    if (opt && opt.kontur) {
+      var k = pKontur.u;
+      ENG.gl.use(pKontur);
+      gl.uniformMatrix4fv(k.uModel, false, model || EINHEIT);
+      if (opt.knochen) {
+        gl.uniformMatrix4fv(k.uBones, false, opt.knochen);
+        konturKnochenEinheit = false;
+      } else if (!konturKnochenEinheit) {
+        gl.uniformMatrix4fv(k.uBones, false, einheitsKnochen);
+        konturKnochenEinheit = true;
+      }
+      gl.uniform1f(k.uBreite, opt.kontur);
+      gl.cullFace(gl.FRONT);
+      zeichneTeile(mesh);
+      gl.cullFace(gl.BACK);
+      ENG.gl.use(pHaupt);
     }
   };
 
@@ -296,7 +392,7 @@ ENG.renderer = (function () {
     var e = 0.03;
     viereck(x - radius, h0 + e, z - radius, x - radius, h3 + e, z + radius,
             x + radius, h2 + e, z + radius, x + radius, h1 + e, z - radius,
-            umg.schattenFarbe[0], umg.schattenFarbe[1], umg.schattenFarbe[2], staerke);
+            umg.schattenFarbe[0], umg.schattenFarbe[1], umg.schattenFarbe[2], -staerke);
     blobSchattenN = blobN;
   };
 
@@ -337,6 +433,8 @@ ENG.renderer = (function () {
       gl.activeTexture(gl.TEXTURE0);
       gl.bindTexture(gl.TEXTURE_2D, ENG.textures.weich);
       gl.uniform1i(pBlob.u.uTex, 0);
+      gl.uniform1f(pBlob.u.uPixel, R.pixel || 1);
+      gl.uniform3fv(pBlob.u.uTusche, umg.tusche);
       gl.bindBuffer(gl.ARRAY_BUFFER, blobVbo);
       gl.bufferSubData(gl.ARRAY_BUFFER, 0, blobDaten.subarray(0, blobN * 36));
       gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 36, 0);

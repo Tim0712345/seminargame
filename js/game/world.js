@@ -144,8 +144,13 @@ GAME.Welt = (function () {
   Welt.prototype.bauen = function () {
     var self = this, w = this.w, h = this.h;
     var nx = Math.ceil(w / CHUNK), nz = Math.ceil(h / CHUNK);
-    var builder = [];
-    for (var i = 0; i < nx * nz; i++) builder.push(ENG.mesh.neu());
+    // Pro Block zwei Meshes: Welt (mit Tusche-Kontur) und Deko (Gras, Blumen – ohne Kontur)
+    var builder = [], deko = [];
+    for (var i = 0; i < nx * nz; i++) { builder.push(ENG.mesh.neu()); deko.push(ENG.mesh.neu()); }
+    function dekoVon(x, z) {
+      var cx = MM.clamp(Math.floor(x / CHUNK), 0, nx - 1), cz = MM.clamp(Math.floor(z / CHUNK), 0, nz - 1);
+      return deko[cx + cz * nx];
+    }
     function chunkVon(x, z) {
       var cx = MM.clamp(Math.floor(x / CHUNK), 0, nx - 1), cz = MM.clamp(Math.floor(z / CHUNK), 0, nz - 1);
       return builder[cx + cz * nx];
@@ -170,15 +175,17 @@ GAME.Welt = (function () {
 
     // Boden
     for (var z = 0; z < h; z++) {
-      for (var x = 0; x < w; x++) this.kachelBauen(chunkVon(x + 0.5, z + 0.5), x, z);
+      for (var x = 0; x < w; x++) this.kachelBauen(chunkVon(x + 0.5, z + 0.5), x, z, dekoVon(x + 0.5, z + 0.5));
     }
 
     builder.forEach(function (b) { if (!b.leer()) self.chunks.push(b.fertig()); });
+    this.dekoChunks = [];
+    deko.forEach(function (b) { if (!b.leer()) self.dekoChunks.push(b.fertig()); });
 
     if (this.map.aussen === "wasser") this.meer = this.meerBauen();
   };
 
-  Welt.prototype.kachelBauen = function (b, x, z) {
+  Welt.prototype.kachelBauen = function (b, x, z, deko) {
     var a = this.arten[x + z * this.w];
     var F = GAME.farbe;
     var jitter = 1 + (MM.hash2(x, z) - 0.5) * 0.05;
@@ -246,7 +253,7 @@ GAME.Welt = (function () {
     b.roh(vs, ts);
 
     // Deko: Grasbüschel und kleine Blumen
-    if (this.artNamen[x + z * this.w] === "gras" && !this.belegt[x + z * this.w]) this.dekoBauen(b, x, z);
+    if (this.artNamen[x + z * this.w] === "gras" && !this.belegt[x + z * this.w]) this.dekoBauen(deko || b, x, z);
   };
 
   // Grundfarbe einer Landkachel (mit leichter Streuung), null bei Wasser
@@ -333,7 +340,11 @@ GAME.Welt = (function () {
     if (this.meer) R.mesh(this.meer);
     for (var i = 0; i < this.chunks.length; i++) {
       var c = this.chunks[i];
-      if (R.sichtbar(c.min, c.max)) R.mesh(c);
+      if (R.sichtbar(c.min, c.max)) R.mesh(c, null, { kontur: Welt.KONTUR });
+    }
+    for (i = 0; i < this.dekoChunks.length; i++) {
+      var d = this.dekoChunks[i];
+      if (R.sichtbar(d.min, d.max)) R.mesh(d);
     }
   };
 
@@ -379,18 +390,20 @@ GAME.Welt = (function () {
   Welt.umgebung = function (st) {
     var F = GAME.farbe;
     var sonne = F(st.sonne);
-    var r = [-0.42, 0.8, 0.52], l = Math.sqrt(r[0] * r[0] + r[1] * r[1] + r[2] * r[2]);
+    var r = [-0.25, 0.85, 0.62], l = Math.sqrt(r[0] * r[0] + r[1] * r[1] + r[2] * r[2]);
     return {
       oben: F(st.himmel_oben), horizont: F(st.horizont), dunst: F(st.dunst),
       sonne: [sonne[0] * 1.02, sonne[1] * 1.02, sonne[2] * 1.02],
       schatten: F(st.schatten),
       sonnenRichtung: [r[0] / l, r[1] / l, r[2] / l],
-      dunstWeite: [24, 58],
+      dunstWeite: [26, 60],
       kruemmung: st.kruemmung || 0,
-      schattenFarbe: [0.3, 0.27, 0.45]
+      schattenFarbe: [0.3, 0.27, 0.45],
+      tusche: F(st.tusche || "tusche")
     };
   };
 
   Welt.WASSER_Y = WASSER_Y;
+  Welt.KONTUR = 0.0021;   // Linienbreite der Tusche-Konturen (relativ zum Abstand)
   return Welt;
 })();
