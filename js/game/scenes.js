@@ -472,6 +472,17 @@ GAME.Spielszene = (function () {
     // ---- Blasen über Köpfen und Objekten ----
     var U = GAME.ui;
     U.blasenBeginn();
+    // Ausgänge: schwebendes Schild mit Pfeil und Ziel (z. B. „→ Europaplatz“)
+    var PFEIL = { w: "←", o: "→", n: "↑", s: "↓" };
+    w.ausgaenge.forEach(function (a, i) {
+      if (!GAME.flags.pruefen(a.wenn) || !DATA.maps[a.ziel]) return;
+      var mx = (a.x0 + a.x1) / 2, mz = (a.z0 + a.z1) / 2;
+      // ein Stück ins Kartenfeld hinein, damit das Schild sichtbar bleibt
+      if (a.richtung === "w") mx += 1.2; if (a.richtung === "o") mx -= 1.2;
+      if (a.richtung === "n") mz += 1.4; if (a.richtung === "s") mz -= 1.0;
+      if (aufBildschirm(mx, w.hoeheBei(mx, mz) + 1.3, mz))
+        U.blase("ausgang_" + i, bp[0], bp[1], { text: (PFEIL[a.richtung] || "→") + " " + DATA.maps[a.ziel].name, klasse: "ausgang" });
+    });
     npcs.forEach(function (n) {
       var sym = n.emote || (!n.gespraech && n.def.hinweis && GAME.flags.pruefen(n.def.hinweis) ? "!" : null);
       if (sym && aufBildschirm(n.figur.x, kopfHoehe(n.figur) + 0.25, n.figur.z)) U.blase("emote_" + n.id, bp[0], bp[1], { emote: sym });
@@ -484,7 +495,12 @@ GAME.Spielszene = (function () {
       switch (z.art) {
         case "npc": hoehe = kopfHoehe(z.npc.figur) + 0.05; text = z.npc.name; break;
         case "figur": hoehe = kopfHoehe(z.figur) + 0.05; text = z.figur.def.name; break;
-        case "tuer": hoehe = (z.y || 0) + (z.hoehe || 1.6); text = GAME.flags.pruefen(z.wenn) ? DATA.texte.hineingehen : DATA.texte.verschlossen; break;
+        case "tuer":
+          hoehe = (z.y || 0) + (z.hoehe || 1.6);
+          text = GAME.flags.pruefen(z.wenn)
+            ? (DATA.maps[z.ziel] ? DATA.maps[z.ziel].name : DATA.texte.hineingehen) + " – " + DATA.texte.hineingehen
+            : DATA.texte.verschlossen;
+          break;
         case "dialog": hoehe = (z.y || 0) + (z.hoehe || 1.4); text = z.text || DATA.texte.ansehen; break;
         case "fund": hoehe = Z.fund.y + 0.45; text = DATA.texte.test.fundUntersuchen; break;
         case "aufzug": hoehe = (z.y || 0) + (z.hoehe || 2.3); text = DATA.texte.aufzug; break;

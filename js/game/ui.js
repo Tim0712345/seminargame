@@ -189,7 +189,7 @@ GAME.ui = (function () {
       blasen[id] = b;
       b.schluessel = "";
     }
-    var schl = (inhalt.taste || "") + "|" + (inhalt.text || "") + "|" + (inhalt.symbol || "") + "|" + (inhalt.emote || "");
+    var schl = (inhalt.taste || "") + "|" + (inhalt.text || "") + "|" + (inhalt.symbol || "") + "|" + (inhalt.emote || "") + "|" + (inhalt.klasse || "");
     if (schl !== b.schluessel) {
       b.el.innerHTML = "";
       if (inhalt.taste) b.el.appendChild(taste(inhalt.taste));
@@ -197,6 +197,7 @@ GAME.ui = (function () {
       if (inhalt.symbol) b.el.appendChild(neu("span", "blase-symbol", inhalt.symbol));
       if (inhalt.emote) { var sv = neu("span", "blase-emote"); sv.innerHTML = U.emoteSvg(inhalt.emote); b.el.appendChild(sv); }
       b.el.classList.toggle("nur-emote", !!inhalt.emote && !inhalt.text);
+      if (inhalt.klasse) b.el.classList.add(inhalt.klasse);
       b.schluessel = schl;
     }
     b.halter.style.transform = "translate(" + Math.round(sx) + "px," + Math.round(sy) + "px)";
@@ -453,7 +454,18 @@ GAME.ui = (function () {
   var logo = null;
   U.titelZeigen = function () {
     var T = DATA.texte.titel;
-    if (!logo) { logo = neu("canvas", "titel-logo"); U.logoZeichnen(logo); }
+    if (!logo) {
+      logo = neu("canvas", "titel-logo");
+      U.logoZeichnen(logo);
+      // Versteckt: fünfmal schnell aufs Logo tippen öffnet das Admin-Menü
+      var tipps = [];
+      logo.addEventListener("click", function () {
+        var jetzt = Date.now();
+        tipps = tipps.filter(function (t) { return jetzt - t < 2500; });
+        tipps.push(jetzt);
+        if (tipps.length >= 5) { tipps = []; GAME.admin.oeffnen(); }
+      });
+    }
     logo.setAttribute("aria-label", DATA.texte.spielTitel + " – " + DATA.texte.untertitel);
     var ein = [{ text: T.neu, aktion: U.neuesSpiel }];
     if (GAME.speicher.vorhanden()) ein.unshift({ text: T.weiter, aktion: U.weiterspielen });

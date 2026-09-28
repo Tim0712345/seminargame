@@ -16,7 +16,7 @@ DATA.palette = {
   // ---- Boden ----
   gras:          "#a8c27c",
   gras_hell:     "#c4d392",
-  weg:           "#e2c793",
+  weg:           "#d5ab72",
   pflaster:      "#e3dac7",
   kopfstein:     "#cbbfae",
   sand:          "#eed9a9",
@@ -60,6 +60,19 @@ DATA.palette = {
   kork:          "#c9a27a",
   schwedenrot:   "#b45a4f",
   dach_dunkel:   "#5e5966",
+  // Flaggen (kräftige Farben, damit man die Länder erkennt)
+  flagge_schwarz: "#26232b",
+  flagge_rot:     "#d23a2e",
+  flagge_gold:    "#f0c232",
+  se_blau:        "#2f6cae",
+  se_gelb:        "#f3c62e",
+  ee_blau:        "#2f82cf",
+  lu_rot:         "#df4b3f",
+  lu_blau:        "#3aa9dc",
+  be_gelb:        "#f5d02c",
+  be_rot:         "#df3a3f",
+  eu_blau:        "#2b4aa0",
+  eu_gelb:        "#f6d03a",
   sandstein:     "#ddc9a0",
   schiefer:      "#6f7280",
 

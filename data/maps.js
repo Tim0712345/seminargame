@@ -306,7 +306,14 @@ DATA.maps = {
       { p: "busch", x: 12, y: 3.5 },
       { p: "busch", x: 23, y: 3.5 },
       { p: "busch", x: 33.5, y: 19.5 },
-      { p: "busch", x: 14.5, y: 26 }
+      { p: "busch", x: 14.5, y: 26 },
+      { p: "flagge_de", x: 2.5, y: 11.6 },
+      { p: "flagge_se", x: 32.6, y: 11.6 },
+      { p: "flagge_ee", x: 1.0, y: 26.6 },
+      { p: "flagge_lu", x: 34.4, y: 26.6 },
+      { p: "flagge_eu", x: 14.6, y: 2.6 },
+      { p: "flagge_eu", x: 20.2, y: 2.6 },
+      { p: "wimpel_bunt", x: 17.5, y: 8.6 }
     ],
     spawns: {
       start:  { x: 17.5, y: 23, blick: 180 },
@@ -422,17 +429,12 @@ DATA.maps = {
       { p: "birke", x: 16, y: 7.6 },
       { p: "baum_rund", x: 21, y: 7.4 },
       { p: "birke", x: 26.8, y: 7.8 },
-      { p: "baum_rund", x: 33, y: 7.5 },
       { p: "baum_rund", x: 3, y: 18 },
       { p: "kiefer", x: 8.5, y: 21 },
-      { p: "baum_rund", x: 11, y: 17.8 },
       { p: "birke", x: 19.5, y: 19.5 },
       { p: "baum_rund", x: 23.5, y: 22 },
-      { p: "kiefer", x: 30, y: 20.5 },
       { p: "baum_rund", x: 32, y: 23.5 },
-      { p: "busch", x: 5, y: 23.5 },
       { p: "busch", x: 13.5, y: 23 },
-      { p: "busch", x: 27, y: 21.5 },
       { p: "blumenbeet", x: 21.5, y: 18.5 },
       { p: "hecke", x: 0, y: 25 },
       { p: "hecke", x: 1, y: 25 },
@@ -467,7 +469,14 @@ DATA.maps = {
       { p: "hecke", x: 30, y: 25 },
       { p: "hecke", x: 31, y: 25 },
       { p: "hecke", x: 32, y: 25 },
-      { p: "hecke", x: 33, y: 25 }
+      { p: "hecke", x: 33, y: 25 },
+      { p: "flagge_de", x: 32.2, y: 8.2 },
+      { p: "flagge_de", x: 32.2, y: 16.3 },
+      { p: "fachwerkhaus", x: 5, y: 20.5 },
+      { p: "fachwerkhaus", x: 28.5, y: 21 },
+      { p: "litfasssaeule", x: 10.5, y: 16.8 },
+      { p: "flagge_eu", x: 0.8, y: 8.2 },
+      { p: "wimpel_de", x: 21, y: 19.8 }
     ],
     spawns: {
       von_hub:   { x: 31.4, y: 12, blick: -90 },
@@ -663,7 +672,6 @@ DATA.maps = {
       { p: "birke", x: 28.5, y: 7.6 },
       { p: "birke", x: 33, y: 8.5 },
       { p: "birke", x: 2.5, y: 16 },
-      { p: "birke", x: 5, y: 19.5 },
       { p: "birke", x: 12.5, y: 17 },
       { p: "birke", x: 14, y: 21.5 },
       { p: "birke", x: 17.2, y: 23.5 },
@@ -708,7 +716,15 @@ DATA.maps = {
       { p: "hecke", x: 30, y: 25 },
       { p: "hecke", x: 31, y: 25 },
       { p: "hecke", x: 32, y: 25 },
-      { p: "hecke", x: 33, y: 25 }
+      { p: "hecke", x: 33, y: 25 },
+      { p: "flagge_se", x: 15.3, y: 6.5 },
+      { p: "kinderwagen_parkplatz", x: 11, y: 6.7 },
+      { p: "amtsschild", x: 11.8, y: 8.6, id: "se_amtsschild", dialog: "se_amtsschild" },
+      { p: "flagge_se", x: 1.6, y: 9.6 },
+      { p: "mittsommerstange", x: 5.5, y: 19.5 },
+      { p: "dalapferd", x: 11.2, y: 15.9, rot: 20 },
+      { p: "ruderboot", x: 27, y: 19.2, rot: 25 },
+      { p: "wimpel_se", x: 8.2, y: 21.6 }
     ],
     spawns: {
       von_hub: { x: 1.4, y: 12, blick: 90 },
@@ -852,9 +868,7 @@ DATA.maps = {
       { p: "kiefer", x: 26, y: 7.5 },
       { p: "kiefer", x: 32.5, y: 7 },
       { p: "kiefer", x: 2, y: 12 },
-      { p: "kiefer", x: 2.5, y: 17 },
       { p: "kiefer", x: 31, y: 12.5 },
-      { p: "kiefer", x: 31.5, y: 18 },
       { p: "kiefer", x: 3, y: 22.5 },
       { p: "kiefer", x: 10, y: 23 },
       { p: "kiefer", x: 16, y: 23.5 },
@@ -896,7 +910,14 @@ DATA.maps = {
       { p: "hecke", x: 30, y: 25 },
       { p: "hecke", x: 31, y: 25 },
       { p: "hecke", x: 32, y: 25 },
-      { p: "hecke", x: 33, y: 25 }
+      { p: "hecke", x: 33, y: 25 },
+      { p: "flagge_ee", x: 14.9, y: 9.1 },
+      { p: "flagge_ee", x: 18.3, y: 9.1 },
+      { p: "stadtturm", x: 31.6, y: 16.5 },
+      { p: "windmuehle", x: 2.3, y: 17 },
+      { p: "flagge_eu", x: 30.5, y: 9.4 },
+      { p: "wimpel_ee", x: 9.8, y: 14.2 },
+      { p: "wimpel_ee", x: 23.2, y: 14.2 }
     ],
     spawns: {
       von_hub: { x: 16.5, y: 1.4, blick: 0 }
@@ -996,13 +1017,9 @@ DATA.maps = {
       { p: "laterne", x: 20.5, y: 14.3 },
       { p: "laterne", x: 31, y: 14.3 },
       { p: "baum_rund", x: 1, y: 7 },
-      { p: "baum_rund", x: 12.5, y: 7.5 },
       { p: "birke", x: 21, y: 7.6 },
       { p: "baum_rund", x: 33, y: 8 },
-      { p: "baum_rund", x: 3, y: 16 },
       { p: "baum_rund", x: 27, y: 15.5 },
-      { p: "baum_rund", x: 6, y: 23.5 },
-      { p: "birke", x: 11, y: 24.5 },
       { p: "baum_rund", x: 25.5, y: 24 },
       { p: "kiefer", x: 30.5, y: 23 },
       { p: "busch", x: 14, y: 23.5 },
@@ -1042,7 +1059,13 @@ DATA.maps = {
       { p: "hecke", x: 30, y: 27 },
       { p: "hecke", x: 31, y: 27 },
       { p: "hecke", x: 32, y: 27 },
-      { p: "hecke", x: 33, y: 27 }
+      { p: "hecke", x: 33, y: 27 },
+      { p: "flagge_lu", x: 2.7, y: 1.6 },
+      { p: "flagge_lu", x: 6.4, y: 1.6 },
+      { p: "festung", x: 8, y: 23.3 },
+      { p: "goldsaeule", x: 3.6, y: 15.4 },
+      { p: "flagge_eu", x: 13.4, y: 8.2 },
+      { p: "wimpel_lu", x: 25, y: 15.8 }
     ],
     spawns: {
       von_hub:      { x: 4.5, y: 1.4, blick: 0 },
@@ -1283,7 +1306,12 @@ DATA.maps = {
       { p: "birke", x: 30.6, y: 15.2 },
       { p: "busch", x: 13.5, y: 15.2 },
       { p: "busch", x: 18.5, y: 15.2 },
-      { p: "busch", x: 12, y: 18.8 }
+      { p: "busch", x: 12, y: 18.8 },
+      { p: "flagge_be", x: 17.35, y: 5.8 },
+      { p: "flagge_eu", x: 18.55, y: 5.8 },
+      { p: "atomskulptur", x: 7.6, y: 12 },
+      { p: "waffelstand", x: 24, y: 12.2 },
+      { p: "wimpel_eu", x: 15.5, y: 8.8 }
     ],
     spawns: {
       von_hub:    { x: 15.5, y: 17.8, blick: 180 },

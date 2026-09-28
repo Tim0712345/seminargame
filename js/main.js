@@ -26,6 +26,7 @@
       GAME.speicher.init();
       GAME.einstellungen.anwenden();
       GAME.debug.init();
+      GAME.admin.init();
       // Normal: Titelbildschirm. Zum Testen direkt auf eine Karte: ?karte=… (z. B. ?debug=1&karte=testinsel)
       var m = /[?&]karte=([a-z_0-9]+)/.exec(window.location.search);
       if (m && DATA.maps[m[1]]) GAME.szenen.wechseln(GAME.Spielszene, { karte: m[1], spawn: Object.keys(DATA.maps[m[1]].spawns)[0] });
@@ -51,6 +52,13 @@
     });
 
     // Der Steuerungshinweis erscheint beim ersten „Neues Spiel“ (siehe ui.js)
+
+    // Spielstand auch beim Schließen/Neuladen der Seite sichern
+    function sichern() { if (GAME.szenen.aktiv === GAME.Spielszene && GAME.Spielszene.welt) GAME.Spielszene.speichern(); }
+    window.addEventListener("pagehide", sichern);
+    window.addEventListener("beforeunload", sichern);
+    document.addEventListener("visibilitychange", function () { if (document.hidden) sichern(); });
+    setInterval(sichern, 15000);
   }
 
   if (document.readyState === "complete") start();

@@ -101,6 +101,34 @@ GAME.debug = (function () {
         return false;
       };
       namen.forEach(function (n) { if (!nahe(spawns[n].x + 0.5, spawns[n].y + 0.5, 0)) ergebnis.push(id + ": Startpunkt \"" + n + "\" nicht erreichbar"); });
+      // Kann Kim nah genug heran, um anzusprechen? (Kachelmitte in Reichweite)
+      var ansprechbar = function (px, pz, reich) {
+        var r = Math.ceil(reich) + 1;
+        for (var dz = -r; dz <= r; dz++) for (var dx = -r; dx <= r; dx++) {
+          var tx = Math.floor(px) + dx, tz = Math.floor(pz) + dz;
+          if (tx < 0 || tz < 0 || tx >= w.w || tz >= w.h || !erreicht[tx + tz * w.w]) continue;
+          var ex = tx + 0.5 - px, ez = tz + 0.5 - pz;
+          if (ex * ex + ez * ez <= reich * reich) return true;
+        }
+        return false;
+      };
+      var R0 = GAME.Spieler.REICHWEITE;
+      w.interaktionen.forEach(function (i) {
+        if (i.art && i.art !== "objekt" && i.art !== "tuer" && !ansprechbar(i.x, i.z, R0 + (i.radius || 0)))
+          ergebnis.push(id + ": \"" + (i.id || i.dialog) + "\" ist zu weit weg zum Ansprechen");
+      });
+      for (var nid2 in DATA.npcs) {
+        var d2 = DATA.npcs[nid2];
+        if (d2.karte !== id || !d2.dialog) continue;
+        var punkte = [[d2.start[0] + 0.5, d2.start[1] + 0.5]];
+        (d2.routine || []).forEach(function (r) {
+          (r.weg || []).forEach(function (p) { punkte.push([p[0] + 0.5, p[1] + 0.5]); });
+          if (r.an && w.objekte[r.an]) punkte.push([w.objekte[r.an].x, w.objekte[r.an].z]);
+        });
+        punkte.forEach(function (p, k) {
+          if (!ansprechbar(p[0], p[1], R0 + 0.15)) ergebnis.push(id + ": NPC \"" + nid2 + "\" ist an Punkt " + k + " (" + p[0].toFixed(1) + "/" + p[1].toFixed(1) + ") nicht ansprechbar");
+        });
+      }
       w.ausgaenge.forEach(function (a) { if (!nahe((a.x0 + a.x1) / 2, (a.z0 + a.z1) / 2, 1)) ergebnis.push(id + ": Ausgang nach \"" + a.ziel + "\" nicht erreichbar"); });
       w.interaktionen.forEach(function (i) { if (i.art && !nahe(i.x, i.z, 1)) ergebnis.push(id + ": Objekt \"" + (i.id || i.dialog) + "\" nicht erreichbar"); });
       for (var nid in DATA.npcs) {
@@ -216,4 +244,86 @@ GAME.debug = (function () {
   };
 
   return D;
+})();
+
+/* =====================================================================
+   Verstecktes Admin-Menü (auch ohne ?debug=1)
+   Öffnen: auf der Tastatur „admin“ tippen – oder im Titelbildschirm
+   fünfmal schnell auf das Logo tippen (für das iPad).
+   Schaltet alles frei, springt zum Finale, reist zu jeder Karte.
+   ===================================================================== */
+GAME.admin = (function () {
+  "use strict";
+  var A = {};
+  var puffer = "";
+
+  A.init = function () {
+    window.addEventListener("keydown", function (e) {
+      if (!e.key || e.key.length !== 1) return;
+      puffer = (puffer + e.key.toLowerCase()).slice(-5);
+      if (puffer === "admin") { puffer = ""; A.oeffnen(); }
+    });
+  };
+
+  // Alles freischalten: alle Beweisstücke, alle Notizen, alle Quest-Schritte vor dem Finale
+  A.allesFrei = function () {
+    var F = GAME.flags, Q = GAME.quests;
+    F.setzen(["intro_fertig", "war_in_de", "war_in_se", "war_in_ee", "war_in_lu", "war_in_bxl",
+      "de_lea_fertig", "de_tobias_fertig", "se_amt_fertig", "ee_stand_it", "ee_stand_pflege", "ee_stand_bau",
+      "ee_stand_soziales", "ee_minispiel", "lu_hoffmann_fertig", "lu_verhandelt",
+      "hub_laurent_de", "hub_laurent_se", "hub_laurent_ee", "hub_laurent_lu", "hub_laurent_alle",
+      "bxl_peeters_auftrag", "bxl_fach_a", "bxl_fach_b", "bxl_fach_c"]);
+    ["de", "se", "ee", "lu", "bxl"].forEach(Q.beweis);
+    Object.keys(DATA.notes).forEach(Q.notiz);
+  };
+
+  function reisen(karte, spawn) {
+    GAME.ui.menueSchliessen(true);
+    var sp = spawn || Object.keys(DATA.maps[karte].spawns || { start: 1 })[0];
+    if (GAME.szenen.aktiv === GAME.Spielszene) GAME.Spielszene.wechseln(karte, sp);
+    else GAME.szenen.ueberblenden(GAME.Spielszene, { karte: karte, spawn: sp });
+  }
+
+  // Im Titelbildschirm: Freigeschaltetes als Spielstand sichern, damit „Weiterspielen“ es lädt
+  function zurueckZumTitel() {
+    if (GAME.szenen.aktiv !== GAME.Titelszene) return;
+    if (GAME.flags.alle().length) {
+      var sp = new GAME.Welt("europaplatz").spawn("start");
+      GAME.speicher.speichern({ karte: "europaplatz", x: sp.x, z: sp.z, rot: sp.rot });
+    }
+    GAME.ui.titelZeigen();
+  }
+
+  A.oeffnen = function () {
+    if (GAME.dialog.aktiv) GAME.dialog.beenden();
+    if (GAME.minispiel.laeuft()) return;
+    var T = DATA.texte.admin;
+    GAME.ui.menueOeffnen({
+      titel: T.titel, fussnote: T.hinweis,
+      eintraege: [
+        { text: T.allesFrei, aktion: function () { A.allesFrei(); GAME.ui.menueSchliessen(); GAME.ui.einblenden(T.freiGeschaltet); zurueckZumTitel(); } },
+        { text: T.finale, aktion: function () { A.allesFrei(); reisen("bxl_saal", "eingang"); } },
+        { text: T.epilog, aktion: function () {
+          A.allesFrei();
+          GAME.flags.setzen(["finale_praesentiert", "finale_duell", "finale_fertig", "duell_punkte_mittel",
+            "massnahme_kita", "massnahme_partnermonate", "massnahme_transparenz"]);
+          GAME.zustand.finale = { punkte: 4, max: 6, massnahmen: ["kita", "partnermonate", "transparenz"] };
+          GAME.ui.menueSchliessen(true); GAME.szenen.epilogStarten(); } },
+        { text: T.reisen, aktion: A.reiseMenue },
+        { text: T.loeschen, aktion: function () { GAME.speicher.loeschen(); GAME.flags.zuruecksetzen(); GAME.ui.menueSchliessen(); GAME.ui.einblenden(T.geloescht); zurueckZumTitel(); } },
+        { text: T.schliessen, aktion: function () { GAME.ui.menueSchliessen(); zurueckZumTitel(); } }
+      ]
+    });
+  };
+
+  A.reiseMenue = function () {
+    var ein = Object.keys(DATA.maps).filter(function (id) { return id !== "testinsel"; }).map(function (id) {
+      var m = DATA.maps[id];
+      return { text: m.etage ? m.name + " – " + m.etage : m.name, aktion: function () { reisen(id); } };
+    });
+    ein.push({ text: DATA.texte.admin.zurueck, aktion: A.oeffnen });
+    GAME.ui.menueOeffnen({ titel: DATA.texte.admin.reisen, eintraege: ein, klasse: "menue-lang" });
+  };
+
+  return A;
 })();

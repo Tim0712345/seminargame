@@ -319,8 +319,9 @@ GAME.Welt = (function () {
     }
     b.roh(vs, ts);
 
-    // Deko: Grasbüschel und kleine Blumen
+    // Deko: Grasbüschel und kleine Blumen, auf Wegen ein paar Kiesel
     if (this.artNamen[x + z * this.w] === "gras" && !this.belegt[x + z * this.w]) this.dekoBauen(deko || b, x, z);
+    else if (this.artNamen[x + z * this.w] === "weg") this.kieselBauen(deko || b, x, z);
   };
 
   // Grundfarbe einer Landkachel (mit leichter Streuung), null bei Wasser
@@ -380,6 +381,19 @@ GAME.Welt = (function () {
       b.add(ENG.mesh.form("zylinder", { r: 0.012, h: 0.2, seg: 4 }), { pos: [fx, fy + 0.1, fz], farbe: F("laub_dunkel"), wind: 0.6 });
       b.add(ENG.mesh.form("kugel", { r: 0.055, seg: 7, ring: 5 }), { pos: [fx, fy + 0.22, fz], farbe: F(bluete), wind: 0.6 });
       b.add(ENG.mesh.form("kugel", { r: 0.025, seg: 6, ring: 4 }), { pos: [fx, fy + 0.25, fz + 0.035], farbe: F("bluete_gelb"), wind: 0.6 });
+    }
+  };
+
+  // Kleine flache Steine auf Feldwegen – so heben sich Wege besser vom Gras ab
+  Welt.prototype.kieselBauen = function (b, x, z) {
+    var r = MM.rng(x * 3571 + z * 7919 + 5), F = GAME.farbe;
+    var farben = [F("stein"), F("stein_hell"), F("holz_hell")];
+    var n = r() < 0.5 ? 1 : 2;
+    for (var i = 0; i < n; i++) {
+      var kx = x + 0.15 + r() * 0.7, kz = z + 0.15 + r() * 0.7, ky = this.hoeheBei(kx, kz);
+      b.add(ENG.mesh.form("kugel", { radien: [0.06 + r() * 0.04, 0.025, 0.05 + r() * 0.03], seg: 6, ring: 4 }), {
+        pos: [kx, ky + 0.01, kz], rot: [0, r() * 180, 0], farbe: farben[Math.floor(r() * 3)]
+      });
     }
   };
 

@@ -667,38 +667,6 @@ DATA.prefabs = {
     tuer: [-1.2, 1.5]
   },
 
-  // Familienamt (heller Neubau, Tür vorne rechts)
-  familienamt: {
-    teile: [
-      { form: "box", groesse: [5, 3.2, 3], rund: 0.06, pos: [0, 1.6, 0], farbe: "weiss" },
-      { form: "box", groesse: [5.2, 0.18, 3.2], rund: 0.04, pos: [0, 3.28, 0], farbe: "anthrazit" },
-      { form: "box", groesse: [5.06, 0.24, 3.06], rund: 0.03, pos: [0, 0.12, 0], farbe: "stein_hell" },
-      { form: "box", groesse: [5, 0.2, 0.06], rund: 0.02, pos: [0, 1.55, 1.52], farbe: "himmelblau" },
-      { form: "box", groesse: [1, 1.5, 0.08], rund: 0.03, pos: [0.9, 0.78, 1.52], farbe: "glas" },
-      { form: "box", groesse: [0.05, 1.5, 0.02], rund: 0.005, pos: [0.9, 0.78, 1.56], farbe: "anthrazit" },
-      { form: "box", groesse: [1.3, 0.3, 0.06], rund: 0.05, pos: [0.9, 1.72, 1.58], farbe: "creme" },
-      { form: "kugel", r: 0.06, pos: [0.6, 1.76, 1.62], farbe: "terrakotta" },
-      { form: "kugel", r: 0.05, pos: [0.82, 1.73, 1.62], farbe: "petrol" },
-      { form: "kugel", r: 0.04, pos: [1, 1.71, 1.62], farbe: "senf" },
-      { form: "box", groesse: [1.2, 0.12, 0.5], rund: 0.03, pos: [0.9, 0.06, 1.8], farbe: "stein_hell" },
-      { form: "box", groesse: [0.8, 0.9, 0.05], rund: 0.03, pos: [-1.8, 0.95, 1.51], farbe: "glas" },
-      { form: "box", groesse: [0.94, 0.08, 0.09], rund: 0.02, pos: [-1.8, 0.46, 1.53], farbe: "anthrazit" },
-      { form: "box", groesse: [0.8, 0.9, 0.05], rund: 0.03, pos: [-0.6, 0.95, 1.51], farbe: "glas" },
-      { form: "box", groesse: [0.94, 0.08, 0.09], rund: 0.02, pos: [-0.6, 0.46, 1.53], farbe: "anthrazit" },
-      { form: "box", groesse: [0.8, 0.8, 0.05], rund: 0.03, pos: [-1.8, 2.45, 1.51], farbe: "glas" },
-      { form: "box", groesse: [0.94, 0.08, 0.09], rund: 0.02, pos: [-1.8, 2.01, 1.53], farbe: "anthrazit" },
-      { form: "box", groesse: [0.8, 0.8, 0.05], rund: 0.03, pos: [-0.6, 2.45, 1.51], farbe: "glas" },
-      { form: "box", groesse: [0.94, 0.08, 0.09], rund: 0.02, pos: [-0.6, 2.01, 1.53], farbe: "anthrazit" },
-      { form: "box", groesse: [0.8, 0.8, 0.05], rund: 0.03, pos: [0.6, 2.45, 1.51], farbe: "glas" },
-      { form: "box", groesse: [0.94, 0.08, 0.09], rund: 0.02, pos: [0.6, 2.01, 1.53], farbe: "anthrazit" },
-      { form: "box", groesse: [0.8, 0.8, 0.05], rund: 0.03, pos: [1.8, 2.45, 1.51], farbe: "glas" },
-      { form: "box", groesse: [0.94, 0.08, 0.09], rund: 0.02, pos: [1.8, 2.01, 1.53], farbe: "anthrazit" }
-    ],
-    kollision: { box: [5.1, 3.1] },
-    schatten: 0,
-    tuer: [0.9, 1.5]
-  },
-
   // Einfache Holzbank ohne Lehne
   steg_bank: {
     teile: [
@@ -1361,6 +1329,604 @@ DATA.prefabs = {
       { form: "torus", R: 0.5, r: 0.05, pos: [0, 1.95, 0.04], farbe: "senf" },
       { form: "kugel", radien: [0.12, 0.12, 0.02], pos: [0, 1.95, 0.04], farbe: "senf" }
     ],
+    schatten: 0
+  },
+
+  // ---------------- Flaggen und landestypische Wahrzeichen ----------------
+  // Fahnenmast mit der Flagge: Deutschland
+  flagge_de: {
+    teile: [
+      { form: "zylinder", r: 0.05, h: 3.4, pos: [0, 1.7, 0], farbe: "metall" },
+      { form: "kugel", r: 0.08, pos: [0, 3.45, 0], farbe: "senf" },
+      { form: "zylinder", r: 0.2, h: 0.12, pos: [0, 0.06, 0], farbe: "stein_hell" },
+      { form: "box", groesse: [1.3, 0.283, 0.03], rund: 0.005, pos: [0.73, 3.133, 0], farbe: "flagge_schwarz", wind: 1.4 },
+      { form: "box", groesse: [1.3, 0.283, 0.03], rund: 0.005, pos: [0.73, 2.85, 0], farbe: "flagge_rot", wind: 1.4 },
+      { form: "box", groesse: [1.3, 0.283, 0.03], rund: 0.005, pos: [0.73, 2.567, 0], farbe: "flagge_gold", wind: 1.4 }
+    ],
+    kollision: { kreis: 0.2 },
+    schatten: 0.2
+  },
+
+  // Fahnenmast mit der Flagge: Estland
+  flagge_ee: {
+    teile: [
+      { form: "zylinder", r: 0.05, h: 3.4, pos: [0, 1.7, 0], farbe: "metall" },
+      { form: "kugel", r: 0.08, pos: [0, 3.45, 0], farbe: "senf" },
+      { form: "zylinder", r: 0.2, h: 0.12, pos: [0, 0.06, 0], farbe: "stein_hell" },
+      { form: "box", groesse: [1.3, 0.283, 0.03], rund: 0.005, pos: [0.73, 3.133, 0], farbe: "ee_blau", wind: 1.4 },
+      { form: "box", groesse: [1.3, 0.283, 0.03], rund: 0.005, pos: [0.73, 2.85, 0], farbe: "flagge_schwarz", wind: 1.4 },
+      { form: "box", groesse: [1.3, 0.283, 0.03], rund: 0.005, pos: [0.73, 2.567, 0], farbe: "weiss", wind: 1.4 }
+    ],
+    kollision: { kreis: 0.2 },
+    schatten: 0.2
+  },
+
+  // Fahnenmast mit der Flagge: Luxemburg
+  flagge_lu: {
+    teile: [
+      { form: "zylinder", r: 0.05, h: 3.4, pos: [0, 1.7, 0], farbe: "metall" },
+      { form: "kugel", r: 0.08, pos: [0, 3.45, 0], farbe: "senf" },
+      { form: "zylinder", r: 0.2, h: 0.12, pos: [0, 0.06, 0], farbe: "stein_hell" },
+      { form: "box", groesse: [1.3, 0.283, 0.03], rund: 0.005, pos: [0.73, 3.133, 0], farbe: "lu_rot", wind: 1.4 },
+      { form: "box", groesse: [1.3, 0.283, 0.03], rund: 0.005, pos: [0.73, 2.85, 0], farbe: "weiss", wind: 1.4 },
+      { form: "box", groesse: [1.3, 0.283, 0.03], rund: 0.005, pos: [0.73, 2.567, 0], farbe: "lu_blau", wind: 1.4 }
+    ],
+    kollision: { kreis: 0.2 },
+    schatten: 0.2
+  },
+
+  // Fahnenmast mit der Flagge: Belgien
+  flagge_be: {
+    teile: [
+      { form: "zylinder", r: 0.05, h: 3.4, pos: [0, 1.7, 0], farbe: "metall" },
+      { form: "kugel", r: 0.08, pos: [0, 3.45, 0], farbe: "senf" },
+      { form: "zylinder", r: 0.2, h: 0.12, pos: [0, 0.06, 0], farbe: "stein_hell" },
+      { form: "box", groesse: [0.433, 0.85, 0.03], rund: 0.005, pos: [0.297, 2.85, 0], farbe: "flagge_schwarz", wind: 1.4 },
+      { form: "box", groesse: [0.433, 0.85, 0.03], rund: 0.005, pos: [0.73, 2.85, 0], farbe: "be_gelb", wind: 1.4 },
+      { form: "box", groesse: [0.433, 0.85, 0.03], rund: 0.005, pos: [1.163, 2.85, 0], farbe: "be_rot", wind: 1.4 }
+    ],
+    kollision: { kreis: 0.2 },
+    schatten: 0.2
+  },
+
+  // Fahnenmast mit der Flagge: Schweden
+  flagge_se: {
+    teile: [
+      { form: "zylinder", r: 0.05, h: 3.4, pos: [0, 1.7, 0], farbe: "metall" },
+      { form: "kugel", r: 0.08, pos: [0, 3.45, 0], farbe: "senf" },
+      { form: "zylinder", r: 0.2, h: 0.12, pos: [0, 0.06, 0], farbe: "stein_hell" },
+      { form: "box", groesse: [1.3, 0.85, 0.03], rund: 0.005, pos: [0.73, 2.85, 0], farbe: "se_blau", wind: 1.4 },
+      { form: "box", groesse: [0.16, 0.85, 0.035], rund: 0.004, pos: [0.548, 2.85, 0], farbe: "se_gelb", wind: 1.4 },
+      { form: "box", groesse: [1.3, 0.16, 0.035], rund: 0.004, pos: [0.73, 2.85, 0], farbe: "se_gelb", wind: 1.4 }
+    ],
+    kollision: { kreis: 0.2 },
+    schatten: 0.2
+  },
+
+  // Fahnenmast mit der Flagge: Europäische Union
+  flagge_eu: {
+    teile: [
+      { form: "zylinder", r: 0.05, h: 3.4, pos: [0, 1.7, 0], farbe: "metall" },
+      { form: "kugel", r: 0.08, pos: [0, 3.45, 0], farbe: "senf" },
+      { form: "zylinder", r: 0.2, h: 0.12, pos: [0, 0.06, 0], farbe: "stein_hell" },
+      { form: "box", groesse: [1.3, 0.85, 0.03], rund: 0.005, pos: [0.73, 2.85, 0], farbe: "eu_blau", wind: 1.4 },
+      { form: "kugel", radien: [0.045, 0.045, 0.02], pos: [1, 2.85, 0.02], farbe: "eu_gelb", wind: 1.4 },
+      { form: "kugel", radien: [0.045, 0.045, 0.02], pos: [0.964, 2.985, 0.02], farbe: "eu_gelb", wind: 1.4 },
+      { form: "kugel", radien: [0.045, 0.045, 0.02], pos: [0.865, 3.084, 0.02], farbe: "eu_gelb", wind: 1.4 },
+      { form: "kugel", radien: [0.045, 0.045, 0.02], pos: [0.73, 3.12, 0.02], farbe: "eu_gelb", wind: 1.4 },
+      { form: "kugel", radien: [0.045, 0.045, 0.02], pos: [0.595, 3.084, 0.02], farbe: "eu_gelb", wind: 1.4 },
+      { form: "kugel", radien: [0.045, 0.045, 0.02], pos: [0.496, 2.985, 0.02], farbe: "eu_gelb", wind: 1.4 },
+      { form: "kugel", radien: [0.045, 0.045, 0.02], pos: [0.46, 2.85, 0.02], farbe: "eu_gelb", wind: 1.4 },
+      { form: "kugel", radien: [0.045, 0.045, 0.02], pos: [0.496, 2.715, 0.02], farbe: "eu_gelb", wind: 1.4 },
+      { form: "kugel", radien: [0.045, 0.045, 0.02], pos: [0.595, 2.616, 0.02], farbe: "eu_gelb", wind: 1.4 },
+      { form: "kugel", radien: [0.045, 0.045, 0.02], pos: [0.73, 2.58, 0.02], farbe: "eu_gelb", wind: 1.4 },
+      { form: "kugel", radien: [0.045, 0.045, 0.02], pos: [0.865, 2.616, 0.02], farbe: "eu_gelb", wind: 1.4 },
+      { form: "kugel", radien: [0.045, 0.045, 0.02], pos: [0.964, 2.715, 0.02], farbe: "eu_gelb", wind: 1.4 }
+    ],
+    kollision: { kreis: 0.2 },
+    schatten: 0.2
+  },
+
+  // Schweden: großes, bemaltes Holzpferd (Dalapferd)
+  dalapferd: {
+    teile: [
+      { form: "box", groesse: [1.2, 0.5, 0.4], rund: 0.06, pos: [0, 0.28, 0], farbe: "holz_dunkel" },
+      { form: "box", groesse: [0.9, 0.55, 0.34], rund: 0.14, pos: [0, 1, 0], farbe: "schwedenrot" },
+      { form: "box", groesse: [0.18, 0.55, 0.3], rund: 0.06, pos: [-0.32, 0.62, 0], farbe: "schwedenrot" },
+      { form: "box", groesse: [0.18, 0.55, 0.3], rund: 0.06, pos: [0.32, 0.62, 0], farbe: "schwedenrot" },
+      { form: "box", groesse: [0.28, 0.7, 0.26], rund: 0.1, pos: [0.42, 1.45, 0], rot: [0, 0, -25], farbe: "schwedenrot" },
+      { form: "box", groesse: [0.42, 0.26, 0.24], rund: 0.1, pos: [0.62, 1.78, 0], rot: [0, 0, -10], farbe: "schwedenrot" },
+      { form: "box", groesse: [0.08, 0.2, 0.1], rund: 0.03, pos: [0.5, 1.98, 0.06], farbe: "schwedenrot" },
+      { form: "box", groesse: [0.08, 0.2, 0.1], rund: 0.03, pos: [0.5, 1.98, -0.06], farbe: "schwedenrot" },
+      { form: "box", groesse: [0.12, 0.5, 0.2], rund: 0.05, pos: [-0.48, 1.05, 0], rot: [0, 0, 30], farbe: "schwedenrot" },
+      { form: "box", groesse: [0.4, 0.3, 0.36], rund: 0.1, pos: [0, 1.2, 0], farbe: "se_blau" },
+      { form: "box", groesse: [0.5, 0.08, 0.36], rund: 0.03, pos: [0, 1.02, 0], farbe: "se_gelb" },
+      { form: "kugel", radien: [0.07, 0.07, 0.02], pos: [0.28, 1, 0.175], farbe: "se_gelb" },
+      { form: "kugel", radien: [0.07, 0.07, 0.02], pos: [-0.28, 1, 0.175], farbe: "se_gelb" },
+      { form: "kugel", radien: [0.07, 0.07, 0.02], pos: [0.28, 1, -0.175], farbe: "se_gelb" },
+      { form: "kugel", radien: [0.07, 0.07, 0.02], pos: [-0.28, 1, -0.175], farbe: "se_gelb" },
+      { form: "kugel", radien: [0.04, 0.04, 0.015], pos: [0.66, 1.82, 0.125], farbe: "weiss" },
+      { form: "kugel", radien: [0.04, 0.04, 0.015], pos: [0.66, 1.82, -0.125], farbe: "weiss" }
+    ],
+    kollision: { box: [1.3, 0.6] },
+    schatten: 0.5,
+    hoehe: 2.3
+  },
+
+  // Schweden: geschmückte Mittsommerstange
+  mittsommerstange: {
+    teile: [
+      { form: "zylinder", r: 0.08, h: 4.2, pos: [0, 2.1, 0], farbe: "holz" },
+      { form: "box", groesse: [2, 0.12, 0.12], rund: 0.03, pos: [0, 3.3, 0], farbe: "holz" },
+      { form: "torus", R: 0.45, r: 0.08, pos: [-0.75, 2.8, 0], farbe: "laub" },
+      { form: "torus", R: 0.45, r: 0.08, pos: [0.75, 2.8, 0], farbe: "laub" },
+      { form: "zylinder", r: 0.1, h: 1, rOben: 0.12, pos: [0, 3.55, 0], farbe: "laub" },
+      { form: "kugel", radien: [0.12, 0.1, 0.12], pos: [0.1, 0.9, 0], farbe: "bluete_gelb" },
+      { form: "kugel", radien: [0.12, 0.1, 0.12], pos: [0.027, 1.35, 0.096], farbe: "bluete_lila" },
+      { form: "kugel", radien: [0.12, 0.1, 0.12], pos: [-0.086, 1.8, 0.052], farbe: "bluete_weiss" },
+      { form: "kugel", radien: [0.12, 0.1, 0.12], pos: [-0.073, 2.25, -0.069], farbe: "bluete_koralle" },
+      { form: "kugel", radien: [0.12, 0.1, 0.12], pos: [0.047, 2.7, -0.088], farbe: "bluete_gelb" },
+      { form: "kugel", radien: [0.12, 0.1, 0.12], pos: [0.098, 3.15, 0.022], farbe: "bluete_lila" },
+      { form: "kugel", r: 0.07, pos: [-0.3, 2.8, 0.06], farbe: "bluete_weiss" },
+      { form: "kugel", r: 0.07, pos: [-0.977, 3.188, 0.06], farbe: "bluete_gelb" },
+      { form: "kugel", r: 0.07, pos: [-0.971, 2.408, 0.06], farbe: "bluete_koralle" },
+      { form: "kugel", r: 0.07, pos: [1.2, 2.8, 0.06], farbe: "bluete_weiss" },
+      { form: "kugel", r: 0.07, pos: [0.523, 3.188, 0.06], farbe: "bluete_gelb" },
+      { form: "kugel", r: 0.07, pos: [0.529, 2.408, 0.06], farbe: "bluete_koralle" },
+      { form: "box", groesse: [0.03, 0.9, 0.02], rund: 0.005, pos: [-0.4, 2.8, 0.05], farbe: "se_blau", wind: 1.5 },
+      { form: "box", groesse: [0.03, 0.9, 0.02], rund: 0.005, pos: [0.4, 2.8, 0.05], farbe: "se_gelb", wind: 1.5 }
+    ],
+    kollision: { kreis: 0.3 },
+    schatten: 0.4,
+    hoehe: 4.3
+  },
+
+  // Schweden: rotes Ruderboot (liegt im Wasser)
+  ruderboot: {
+    teile: [
+      { form: "box", groesse: [1.8, 0.3, 0.7], rund: 0.15, pos: [0, 0.05, 0], farbe: "schwedenrot", textur: "holz" },
+      { form: "box", groesse: [1.6, 0.06, 0.55], rund: 0.02, pos: [0, 0.18, 0], farbe: "holz_hell" },
+      { form: "box", groesse: [0.12, 0.06, 0.6], rund: 0.02, pos: [0.2, 0.2, 0], farbe: "holz" },
+      { form: "zylinder", r: 0.03, h: 1.2, pos: [0.3, 0.25, 0.35], rot: [0, 0, 75], farbe: "holz" }
+    ],
+    schatten: 0
+  },
+
+  // Deutschland: Fachwerkhaus mit roten Ziegeln und Blumenkasten
+  fachwerkhaus: {
+    teile: [
+      { form: "box", groesse: [4, 3.2, 3], rund: 0.04, pos: [0, 1.6, 0], farbe: "putz_creme" },
+      { form: "box", groesse: [4.08, 0.3, 3.08], rund: 0.03, pos: [0, 0.15, 0], farbe: "stein" },
+      { form: "box", groesse: [4.5, 0.16, 2.35], rund: 0.05, pos: [0, 3.95, 0.8], rot: [45, 0, 0], farbe: "dach_rot" },
+      { form: "box", groesse: [4.5, 0.16, 2.35], rund: 0.05, pos: [0, 3.95, -0.8], rot: [-45, 0, 0], farbe: "dach_rot" },
+      { form: "box", groesse: [3.9, 1.9, 1.9], rund: 0.03, pos: [0, 3.2, 0], rot: [45, 0, 0], farbe: "putz_creme" },
+      { form: "box", groesse: [0.14, 3.1, 0.06], rund: 0.01, pos: [-1.95, 1.65, 1.52], farbe: "holz_dunkel" },
+      { form: "box", groesse: [0.14, 3.1, 0.06], rund: 0.01, pos: [-0.65, 1.65, 1.52], farbe: "holz_dunkel" },
+      { form: "box", groesse: [0.14, 3.1, 0.06], rund: 0.01, pos: [0.65, 1.65, 1.52], farbe: "holz_dunkel" },
+      { form: "box", groesse: [0.14, 3.1, 0.06], rund: 0.01, pos: [1.95, 1.65, 1.52], farbe: "holz_dunkel" },
+      { form: "box", groesse: [4, 0.14, 0.06], rund: 0.01, pos: [0, 0.3, 1.52], farbe: "holz_dunkel" },
+      { form: "box", groesse: [4, 0.14, 0.06], rund: 0.01, pos: [0, 1.6, 1.52], farbe: "holz_dunkel" },
+      { form: "box", groesse: [4, 0.14, 0.06], rund: 0.01, pos: [0, 3.1, 1.52], farbe: "holz_dunkel" },
+      { form: "box", groesse: [0.12, 1.6, 0.05], rund: 0.01, pos: [-1.3, 0.95, 1.53], rot: [0, 0, 40], farbe: "holz_dunkel" },
+      { form: "box", groesse: [0.12, 1.6, 0.05], rund: 0.01, pos: [1.3, 0.95, 1.53], rot: [0, 0, -40], farbe: "holz_dunkel" },
+      { form: "box", groesse: [0.12, 1.6, 0.05], rund: 0.01, pos: [-1.3, 2.35, 1.53], rot: [0, 0, -40], farbe: "holz_dunkel" },
+      { form: "box", groesse: [0.12, 1.6, 0.05], rund: 0.01, pos: [1.3, 2.35, 1.53], rot: [0, 0, 40], farbe: "holz_dunkel" },
+      { form: "box", groesse: [0.6, 0.7, 0.05], rund: 0.02, pos: [0, 2.35, 1.52], farbe: "fenster" },
+      { form: "box", groesse: [0.5, 0.6, 0.05], rund: 0.02, pos: [1.3, 2.35, 1.49], farbe: "fenster" },
+      { form: "box", groesse: [0.8, 1.25, 0.08], rund: 0.03, pos: [0, 0.95, 1.54], farbe: "tuer", textur: "holz" },
+      { form: "box", groesse: [0.5, 0.5, 0.05], rund: 0.02, pos: [-1.3, 0.95, 1.51], farbe: "fenster" },
+      { form: "box", groesse: [0.5, 0.5, 0.05], rund: 0.02, pos: [1.3, 0.95, 1.51], farbe: "fenster" },
+      { form: "box", groesse: [0.6, 0.12, 0.25], rund: 0.02, pos: [-1.3, 0.62, 1.6], farbe: "holz_dunkel" },
+      { form: "kugel", radien: [0.1, 0.08, 0.08], pos: [-1.45, 0.72, 1.68], farbe: "bluete_koralle" },
+      { form: "kugel", radien: [0.1, 0.08, 0.08], pos: [-1.15, 0.72, 1.68], farbe: "bluete_gelb" }
+    ],
+    kollision: { box: [4.1, 3.1] },
+    schatten: 0
+  },
+
+  // Deutschland: Litfaßsäule mit Plakaten
+  litfasssaeule: {
+    teile: [
+      { form: "zylinder", r: 0.45, h: 2.2, pos: [0, 1.1, 0], farbe: "putz_ocker" },
+      { form: "zylinder", r: 0.5, h: 0.18, pos: [0, 2.3, 0], farbe: "metall_dunkel" },
+      { form: "kegel", r: 0.5, h: 0.4, pos: [0, 2.58, 0], farbe: "metall_dunkel" },
+      { form: "kugel", r: 0.08, pos: [0, 2.82, 0], farbe: "metall_dunkel" },
+      { form: "zylinder", r: 0.52, h: 0.2, pos: [0, 0.1, 0], farbe: "metall_dunkel" },
+      { form: "box", groesse: [0.5, 0.75, 0.03], rund: 0.02, pos: [-0.37, 1.35, 0.265], rot: [0, -54.431, 0], farbe: "himmelblau" },
+      { form: "box", groesse: [0.34, 0.08, 0.02], rund: 0.01, pos: [-0.382, 1.5, 0.273], rot: [0, -54.431, 0], farbe: "tusche" },
+      { form: "box", groesse: [0.5, 0.75, 0.03], rund: 0.02, pos: [0, 1.35, 0.455], rot: [0, 0, 0], farbe: "koralle" },
+      { form: "box", groesse: [0.34, 0.08, 0.02], rund: 0.01, pos: [0, 1.5, 0.47], rot: [0, 0, 0], farbe: "tusche" },
+      { form: "box", groesse: [0.5, 0.75, 0.03], rund: 0.02, pos: [0.37, 1.35, 0.265], rot: [0, 54.431, 0], farbe: "mint" },
+      { form: "box", groesse: [0.34, 0.08, 0.02], rund: 0.01, pos: [0.382, 1.5, 0.273], rot: [0, 54.431, 0], farbe: "tusche" },
+      { form: "box", groesse: [0.5, 0.75, 0.03], rund: 0.02, pos: [0.001, 1.35, -0.455], rot: [0, 179.909, 0], farbe: "senf" },
+      { form: "box", groesse: [0.34, 0.08, 0.02], rund: 0.01, pos: [0.001, 1.5, -0.47], rot: [0, 179.909, 0], farbe: "tusche" }
+    ],
+    kollision: { kreis: 0.5 },
+    schatten: 0.5
+  },
+
+  // Estland: runder Stadtturm mit roter Spitze (wie in Tallinns Altstadt)
+  stadtturm: {
+    teile: [
+      { form: "zylinder", r: 1.1, h: 4.2, rOben: 1, pos: [0, 2.1, 0], farbe: "stein_hell" },
+      { form: "zylinder", r: 1.15, h: 0.3, pos: [0, 4.35, 0], farbe: "stein" },
+      { form: "kegel", r: 1.3, h: 2.3, pos: [0, 5.65, 0], farbe: "dach_rot" },
+      { form: "kugel", r: 0.1, pos: [0, 6.85, 0], farbe: "senf" },
+      { form: "box", groesse: [0.22, 0.28, 0.2], rund: 0.02, pos: [0, 4.55, 1.08], rot: [0, 0, 0], farbe: "stein" },
+      { form: "box", groesse: [0.22, 0.28, 0.2], rund: 0.02, pos: [0.764, 4.55, 0.764], rot: [0, 45, 0], farbe: "stein" },
+      { form: "box", groesse: [0.22, 0.28, 0.2], rund: 0.02, pos: [1.08, 4.55, 0], rot: [0, 90, 0], farbe: "stein" },
+      { form: "box", groesse: [0.22, 0.28, 0.2], rund: 0.02, pos: [0.764, 4.55, -0.764], rot: [0, 135, 0], farbe: "stein" },
+      { form: "box", groesse: [0.22, 0.28, 0.2], rund: 0.02, pos: [0, 4.55, -1.08], rot: [0, 180, 0], farbe: "stein" },
+      { form: "box", groesse: [0.22, 0.28, 0.2], rund: 0.02, pos: [-0.764, 4.55, -0.764], rot: [0, 225, 0], farbe: "stein" },
+      { form: "box", groesse: [0.22, 0.28, 0.2], rund: 0.02, pos: [-1.08, 4.55, 0], rot: [0, 270, 0], farbe: "stein" },
+      { form: "box", groesse: [0.22, 0.28, 0.2], rund: 0.02, pos: [-0.764, 4.55, 0.764], rot: [0, 315, 0], farbe: "stein" },
+      { form: "box", groesse: [0.3, 0.55, 0.05], rund: 0.02, pos: [0, 1.4, 1.06], rot: [0, 0, 0], farbe: "fenster" },
+      { form: "box", groesse: [0.3, 0.55, 0.05], rund: 0.02, pos: [0, 3, 1.06], rot: [0, 0, 0], farbe: "fenster" },
+      { form: "box", groesse: [0.3, 0.55, 0.05], rund: 0.02, pos: [0.76, 2.2, 0.739], rot: [0, 45.837, 0], farbe: "fenster" },
+      { form: "box", groesse: [0.3, 0.55, 0.05], rund: 0.02, pos: [-0.76, 2.2, 0.739], rot: [0, -45.837, 0], farbe: "fenster" },
+      { form: "box", groesse: [0.7, 1.2, 0.1], rund: 0.05, pos: [0, 0.6, 1.08], farbe: "tuer", textur: "holz" }
+    ],
+    kollision: { kreis: 1.15 },
+    schatten: 0
+  },
+
+  // Estland: kleine hölzerne Windmühle (wie auf den Inseln)
+  windmuehle: {
+    teile: [
+      { form: "zylinder", r: 0.75, h: 2.6, rOben: 0.6, pos: [0, 1.3, 0], farbe: "holz" },
+      { form: "kegel", r: 0.8, h: 1, pos: [0, 3.1, 0], farbe: "dach_dunkel" },
+      { form: "box", groesse: [0.5, 0.9, 0.06], rund: 0.03, pos: [0, 0.45, 0.72], farbe: "tuer" },
+      { form: "kugel", r: 0.15, pos: [0, 2.6, 0.72], farbe: "holz_dunkel" },
+      { form: "box", groesse: [0.18, 1.6, 0.04], rund: 0.02, pos: [0.291, 3.399, 0.8], rot: [0, 0, -20], farbe: "creme" },
+      { form: "box", groesse: [0.04, 1.7, 0.05], rund: 0.01, pos: [0.291, 3.399, 0.78], rot: [0, 0, -20], farbe: "holz_dunkel" },
+      { form: "box", groesse: [0.18, 1.6, 0.04], rund: 0.02, pos: [0.799, 2.309, 0.8], rot: [0, 0, -110], farbe: "creme" },
+      { form: "box", groesse: [0.04, 1.7, 0.05], rund: 0.01, pos: [0.799, 2.309, 0.78], rot: [0, 0, -110], farbe: "holz_dunkel" },
+      { form: "box", groesse: [0.18, 1.6, 0.04], rund: 0.02, pos: [-0.291, 1.801, 0.8], rot: [0, 0, -200], farbe: "creme" },
+      { form: "box", groesse: [0.04, 1.7, 0.05], rund: 0.01, pos: [-0.291, 1.801, 0.78], rot: [0, 0, -200], farbe: "holz_dunkel" },
+      { form: "box", groesse: [0.18, 1.6, 0.04], rund: 0.02, pos: [-0.799, 2.891, 0.8], rot: [0, 0, -290], farbe: "creme" },
+      { form: "box", groesse: [0.04, 1.7, 0.05], rund: 0.01, pos: [-0.799, 2.891, 0.78], rot: [0, 0, -290], farbe: "holz_dunkel" }
+    ],
+    kollision: { kreis: 0.8 },
+    schatten: 0
+  },
+
+  // Luxemburg: Stück Festungsmauer mit Bögen und Turm
+  festung: {
+    teile: [
+      { form: "box", groesse: [6, 2.2, 1], rund: 0.04, pos: [0, 1.1, 0], farbe: "sandstein" },
+      { form: "box", groesse: [6.1, 0.2, 1.1], rund: 0.03, pos: [0, 2.25, 0], farbe: "stein" },
+      { form: "box", groesse: [0.5, 0.4, 1], rund: 0.03, pos: [-2.7, 2.55, 0], farbe: "sandstein" },
+      { form: "box", groesse: [0.5, 0.4, 1], rund: 0.03, pos: [-1.8, 2.55, 0], farbe: "sandstein" },
+      { form: "box", groesse: [0.5, 0.4, 1], rund: 0.03, pos: [-0.9, 2.55, 0], farbe: "sandstein" },
+      { form: "box", groesse: [0.5, 0.4, 1], rund: 0.03, pos: [0, 2.55, 0], farbe: "sandstein" },
+      { form: "box", groesse: [0.5, 0.4, 1], rund: 0.03, pos: [0.9, 2.55, 0], farbe: "sandstein" },
+      { form: "box", groesse: [0.5, 0.4, 1], rund: 0.03, pos: [1.8, 2.55, 0], farbe: "sandstein" },
+      { form: "box", groesse: [0.5, 0.4, 1], rund: 0.03, pos: [2.7, 2.55, 0], farbe: "sandstein" },
+      { form: "box", groesse: [0.9, 1.1, 0.06], rund: 0.02, pos: [-1.5, 0.55, 0.51], farbe: "schiefer" },
+      { form: "zylinder", r: 0.45, h: 0.06, pos: [-1.5, 1.1, 0.51], rot: [90, 0, 0], farbe: "schiefer" },
+      { form: "box", groesse: [0.9, 1.1, 0.06], rund: 0.02, pos: [0, 0.55, 0.51], farbe: "schiefer" },
+      { form: "zylinder", r: 0.45, h: 0.06, pos: [0, 1.1, 0.51], rot: [90, 0, 0], farbe: "schiefer" },
+      { form: "box", groesse: [0.9, 1.1, 0.06], rund: 0.02, pos: [1.5, 0.55, 0.51], farbe: "schiefer" },
+      { form: "zylinder", r: 0.45, h: 0.06, pos: [1.5, 1.1, 0.51], rot: [90, 0, 0], farbe: "schiefer" },
+      { form: "zylinder", r: 1, h: 3.6, pos: [3.4, 1.8, 0], farbe: "sandstein" },
+      { form: "zylinder", r: 1.08, h: 0.25, pos: [3.4, 3.7, 0], farbe: "stein" },
+      { form: "kegel", r: 1.15, h: 1.6, pos: [3.4, 4.6, 0], farbe: "schiefer" },
+      { form: "box", groesse: [0.3, 0.5, 0.05], rund: 0.02, pos: [3.4, 2.5, 1], farbe: "fenster" }
+    ],
+    kollision: { boxen: [[0, 0, 6, 1.1], [3.4, 0, 2.1, 2.1]] },
+    schatten: 0
+  },
+
+  // Luxemburg: Säule mit goldener Figur (Denkmal)
+  goldsaeule: {
+    teile: [
+      { form: "box", groesse: [1.1, 0.5, 1.1], rund: 0.04, pos: [0, 0.25, 0], farbe: "stein" },
+      { form: "zylinder", r: 0.3, h: 3.2, rOben: 0.25, pos: [0, 2.1, 0], farbe: "sandstein" },
+      { form: "box", groesse: [0.7, 0.2, 0.7], rund: 0.03, pos: [0, 3.8, 0], farbe: "stein" },
+      { form: "zylinder", r: 0.18, h: 0.7, rOben: 0.1, pos: [0, 4.25, 0], farbe: "senf" },
+      { form: "kugel", r: 0.12, pos: [0, 4.72, 0], farbe: "senf" },
+      { form: "box", groesse: [0.5, 0.08, 0.12], rund: 0.03, pos: [0.2, 4.7, 0], rot: [0, 0, 40], farbe: "senf" },
+      { form: "kugel", radien: [0.12, 0.08, 0.05], pos: [0.4, 4.9, 0], farbe: "senf" }
+    ],
+    kollision: { kreis: 0.6 },
+    schatten: 0.5
+  },
+
+  // Brüssel: kleine Skulptur aus neun Kugeln (Modell eines bekannten Wahrzeichens)
+  atomskulptur: {
+    teile: [
+      { form: "box", groesse: [2.2, 0.3, 2.2], rund: 0.05, pos: [0, 0.15, 0], farbe: "stein_hell" },
+      { form: "kugel", r: 0.28, pos: [0, 2.2, 0], farbe: "metall" },
+      { form: "kugel", r: 0.28, pos: [-0.6, 1.6, -0.6], farbe: "metall" },
+      { form: "kugel", r: 0.28, pos: [-0.6, 1.6, 0.6], farbe: "metall" },
+      { form: "kugel", r: 0.28, pos: [-0.6, 2.8, -0.6], farbe: "metall" },
+      { form: "kugel", r: 0.28, pos: [-0.6, 2.8, 0.6], farbe: "metall" },
+      { form: "kugel", r: 0.28, pos: [0.6, 1.6, -0.6], farbe: "metall" },
+      { form: "kugel", r: 0.28, pos: [0.6, 1.6, 0.6], farbe: "metall" },
+      { form: "kugel", r: 0.28, pos: [0.6, 2.8, -0.6], farbe: "metall" },
+      { form: "kugel", r: 0.28, pos: [0.6, 2.8, 0.6], farbe: "metall" },
+      { form: "zylinder", r: 0.06, h: 1.039, pos: [-0.3, 1.9, -0.3], rot: [125.264, -135, 0], farbe: "metall" },
+      { form: "zylinder", r: 0.06, h: 1.039, pos: [-0.3, 1.9, 0.3], rot: [125.264, -45, 0], farbe: "metall" },
+      { form: "zylinder", r: 0.06, h: 1.039, pos: [-0.3, 2.5, -0.3], rot: [54.736, -135, 0], farbe: "metall" },
+      { form: "zylinder", r: 0.06, h: 1.039, pos: [-0.3, 2.5, 0.3], rot: [54.736, -45, 0], farbe: "metall" },
+      { form: "zylinder", r: 0.06, h: 1.039, pos: [0.3, 1.9, -0.3], rot: [125.264, 135, 0], farbe: "metall" },
+      { form: "zylinder", r: 0.06, h: 1.039, pos: [0.3, 1.9, 0.3], rot: [125.264, 45, 0], farbe: "metall" },
+      { form: "zylinder", r: 0.06, h: 1.039, pos: [0.3, 2.5, -0.3], rot: [54.736, 135, 0], farbe: "metall" },
+      { form: "zylinder", r: 0.06, h: 1.039, pos: [0.3, 2.5, 0.3], rot: [54.736, 45, 0], farbe: "metall" },
+      { form: "zylinder", r: 0.1, h: 1.6, pos: [0, 0.95, 0], farbe: "metall" }
+    ],
+    kollision: { kreis: 1.0 },
+    schatten: 0.8,
+    hoehe: 3.2
+  },
+
+  // Brüssel: Waffelstand mit Markise
+  waffelstand: {
+    teile: [
+      { form: "box", groesse: [1.6, 1, 0.8], rund: 0.05, pos: [0, 0.5, 0], farbe: "creme" },
+      { form: "box", groesse: [1.7, 0.08, 0.9], rund: 0.02, pos: [0, 1.04, 0], farbe: "holz" },
+      { form: "zylinder", r: 0.04, h: 1.2, pos: [-0.75, 1.6, 0.35], farbe: "metall_dunkel" },
+      { form: "zylinder", r: 0.04, h: 1.2, pos: [0.75, 1.6, 0.35], farbe: "metall_dunkel" },
+      { form: "box", groesse: [1.9, 0.12, 1.1], rund: 0.04, pos: [0, 2.25, 0.1], rot: [-12, 0, 0], farbe: "koralle" },
+      { form: "box", groesse: [1.9, 0.25, 0.04], rund: 0.02, pos: [0, 2.1, 0.66], farbe: "weiss" },
+      { form: "box", groesse: [0.36, 0.05, 0.26], rund: 0.02, pos: [-0.35, 1.1, 0.1], farbe: "senf" },
+      { form: "box", groesse: [0.36, 0.05, 0.26], rund: 0.02, pos: [0.1, 1.1, 0.1], farbe: "senf" },
+      { form: "box", groesse: [0.3, 0.03, 0.2], rund: 0.01, pos: [-0.35, 1.14, 0.1], farbe: "holz" },
+      { form: "box", groesse: [1.2, 0.35, 0.03], rund: 0.02, pos: [0, 0.6, 0.41], farbe: "senf" }
+    ],
+    kollision: { box: [1.7, 0.9] },
+    schatten: 0.5
+  },
+
+  // Schild „hier geht es weiter“ am Rand einer Karte (zeigt nach rechts, drehbar)
+  ausgangsschild: {
+    teile: [
+      { form: "zylinder", r: 0.06, h: 1.6, pos: [0, 0.8, 0], farbe: "holz_dunkel" },
+      { form: "box", groesse: [1, 0.3, 0.06], rund: 0.03, pos: [0.3, 1.4, 0], farbe: "creme" },
+      { form: "kegel", r: 0.18, h: 0.25, pos: [0.88, 1.4, 0], rot: [0, 0, -90], farbe: "creme" },
+      { form: "box", groesse: [0.6, 0.05, 0.02], rund: 0.01, pos: [0.25, 1.4, 0.04], farbe: "tusche" }
+    ],
+    kollision: { kreis: 0.15 },
+    schatten: 0.15,
+    hoehe: 1.9
+  },
+
+  // Schweden: Familienamt – heller Holzbau mit Glasfront, Gründach und großem Familien-Schild
+  familienamt: {
+    teile: [
+      { form: "box", groesse: [5, 2.9, 3], rund: 0.06, pos: [0, 1.45, 0], farbe: "holz_hell", textur: "holz" },
+      { form: "box", groesse: [5.4, 0.22, 3.4], rund: 0.04, pos: [0, 3, 0.1], farbe: "weiss" },
+      { form: "box", groesse: [5.2, 0.12, 3.1], rund: 0.04, pos: [0, 3.17, 0], farbe: "laub" },
+      { form: "box", groesse: [5.06, 0.24, 3.06], rund: 0.03, pos: [0, 0.12, 0], farbe: "stein_hell" },
+      { form: "box", groesse: [2.6, 1.8, 0.05], rund: 0.02, pos: [-1, 1.25, 1.51], farbe: "glas" },
+      { form: "box", groesse: [2.7, 0.1, 0.08], rund: 0.02, pos: [-1, 2.2, 1.54], farbe: "weiss" },
+      { form: "box", groesse: [0.08, 1.8, 0.06], rund: 0.01, pos: [-1, 1.25, 1.54], farbe: "weiss" },
+      { form: "box", groesse: [1.1, 1.7, 0.08], rund: 0.03, pos: [1.35, 0.85, 1.52], farbe: "glas" },
+      { form: "box", groesse: [0.05, 1.7, 0.02], rund: 0.005, pos: [1.35, 0.85, 1.57], farbe: "anthrazit" },
+      { form: "box", groesse: [1.8, 0.12, 0.9], rund: 0.03, pos: [1.35, 1.95, 1.9], farbe: "se_blau" },
+      { form: "zylinder", r: 0.04, h: 1.9, pos: [0.6, 0.95, 2.25], farbe: "metall" },
+      { form: "zylinder", r: 0.04, h: 1.9, pos: [2.1, 0.95, 2.25], farbe: "metall" },
+      { form: "box", groesse: [1.4, 0.12, 0.5], rund: 0.03, pos: [1.35, 0.06, 1.85], farbe: "stein_hell" },
+      { form: "box", groesse: [2.4, 0.95, 0.1], rund: 0.08, pos: [-0.6, 2.75, 1.6], farbe: "weiss" },
+      { form: "box", groesse: [2.44, 0.14, 0.11], rund: 0.03, pos: [-0.6, 2.28, 1.6], farbe: "se_blau" },
+      { form: "kugel", r: 0.13, pos: [-1.25, 3, 1.67], farbe: "se_blau" },
+      { form: "box", groesse: [0.26, 0.34, 0.05], rund: 0.1, pos: [-1.25, 2.66, 1.67], farbe: "se_blau" },
+      { form: "kugel", r: 0.13, pos: [-0.8, 3, 1.67], farbe: "se_gelb" },
+      { form: "box", groesse: [0.26, 0.34, 0.05], rund: 0.1, pos: [-0.8, 2.66, 1.67], farbe: "se_gelb" },
+      { form: "kugel", r: 0.09, pos: [-0.43, 2.86, 1.67], farbe: "koralle" },
+      { form: "box", groesse: [0.18, 0.24, 0.05], rund: 0.08, pos: [-0.43, 2.62, 1.67], farbe: "koralle" },
+      { form: "torus", R: 0.18, r: 0.03, pos: [0.15, 2.78, 1.67], farbe: "koralle" },
+      { form: "kugel", radien: [0.08, 0.08, 0.02], pos: [0.15, 2.78, 1.66], farbe: "koralle" }
+    ],
+    kollision: { box: [5.1, 3.1] },
+    schatten: 0,
+    tuer: [1.35, 1.5]
+  },
+
+  // Schweden: großes Hinweisschild am Weg zum Familienamt (Familien-Symbol)
+  amtsschild: {
+    teile: [
+      { form: "zylinder", r: 0.06, h: 1.2, pos: [-0.45, 0.6, 0], farbe: "metall" },
+      { form: "zylinder", r: 0.06, h: 1.2, pos: [0.45, 0.6, 0], farbe: "metall" },
+      { form: "box", groesse: [1.5, 1.2, 0.1], rund: 0.08, pos: [0, 1.75, 0], farbe: "se_blau" },
+      { form: "box", groesse: [1.3, 0.95, 0.04], rund: 0.06, pos: [0, 1.8, 0.06], farbe: "weiss" },
+      { form: "kugel", r: 0.12, pos: [-0.35, 2.05, 0.1], farbe: "se_blau" },
+      { form: "box", groesse: [0.24, 0.36, 0.05], rund: 0.1, pos: [-0.35, 1.72, 0.1], farbe: "se_blau" },
+      { form: "kugel", r: 0.12, pos: [0.05, 2.05, 0.1], farbe: "se_gelb" },
+      { form: "box", groesse: [0.24, 0.36, 0.05], rund: 0.1, pos: [0.05, 1.72, 0.1], farbe: "se_gelb" },
+      { form: "kugel", r: 0.09, pos: [0.38, 1.9, 0.1], farbe: "koralle" },
+      { form: "box", groesse: [0.18, 0.26, 0.05], rund: 0.08, pos: [0.38, 1.66, 0.1], farbe: "koralle" },
+      { form: "box", groesse: [1.3, 0.1, 0.05], rund: 0.02, pos: [0, 1.42, 0.08], farbe: "se_gelb" }
+    ],
+    kollision: { box: [1.2, 0.3] },
+    schatten: 0.3,
+    hoehe: 2.6
+  },
+
+  // Schweden: abgestellte Kinderwagen vor dem Familienamt
+  kinderwagen_parkplatz: {
+    teile: [
+      { form: "box", groesse: [1.6, 0.08, 0.7], rund: 0.02, pos: [0, 0.04, 0], farbe: "stein_hell" },
+      { form: "zylinder", r: 0.03, h: 0.9, pos: [-0.7, 0.45, -0.3], farbe: "metall" },
+      { form: "zylinder", r: 0.03, h: 0.9, pos: [0.7, 0.45, -0.3], farbe: "metall" },
+      { form: "box", groesse: [1.5, 0.25, 0.03], rund: 0.02, pos: [0, 0.8, -0.3], farbe: "se_blau" },
+      { form: "box", groesse: [0.5, 0.35, 0.55], rund: 0.12, pos: [-0.35, 0.45, 0], farbe: "petrol" },
+      { form: "torus", R: 0.1, r: 0.025, pos: [-0.55, 0.15, 0.2], rot: [0, 90, 0], farbe: "anthrazit" },
+      { form: "torus", R: 0.1, r: 0.025, pos: [-0.15, 0.15, 0.2], rot: [0, 90, 0], farbe: "anthrazit" },
+      { form: "box", groesse: [0.5, 0.35, 0.55], rund: 0.12, pos: [0.4, 0.45, 0], farbe: "senf" },
+      { form: "torus", R: 0.1, r: 0.025, pos: [0.2, 0.15, 0.2], rot: [0, 90, 0], farbe: "anthrazit" },
+      { form: "torus", R: 0.1, r: 0.025, pos: [0.6, 0.15, 0.2], rot: [0, 90, 0], farbe: "anthrazit" }
+    ],
+    kollision: { box: [1.6, 0.7] },
+    schatten: 0.5
+  },
+
+  // Wimpelketten zwischen zwei Masten (Länge 6), in Landesfarben
+  wimpel_de: {
+    teile: [
+      { form: "zylinder", r: 0.05, h: 2.7, pos: [-3, 1.35, 0], farbe: "holz_dunkel" },
+      { form: "zylinder", r: 0.05, h: 2.7, pos: [3, 1.35, 0], farbe: "holz_dunkel" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [-2.625, 2.502, 0], rot: [0, 0, -14.708], farbe: "tusche" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [-1.875, 2.333, 0], rot: [0, 0, -10.62], farbe: "tusche" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [-1.125, 2.22, 0], rot: [0, 0, -6.419], farbe: "tusche" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [-0.375, 2.164, 0], rot: [0, 0, -2.148], farbe: "tusche" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [0.375, 2.164, 0], rot: [0, 0, 2.148], farbe: "tusche" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [1.125, 2.22, 0], rot: [0, 0, 6.419], farbe: "tusche" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [1.875, 2.333, 0], rot: [0, 0, 10.62], farbe: "tusche" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [2.625, 2.502, 0], rot: [0, 0, 14.708], farbe: "tusche" },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [-2.5, 2.273, 0], rot: [180, 0, 0], farbe: "flagge_schwarz", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [-2, 2.16, 0], rot: [180, 0, 0], farbe: "flagge_rot", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [-1.5, 2.073, 0], rot: [180, 0, 0], farbe: "flagge_gold", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [-1, 2.01, 0], rot: [180, 0, 0], farbe: "flagge_schwarz", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [-0.5, 1.973, 0], rot: [180, 0, 0], farbe: "flagge_rot", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [0, 1.96, 0], rot: [180, 0, 0], farbe: "flagge_gold", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [0.5, 1.973, 0], rot: [180, 0, 0], farbe: "flagge_schwarz", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [1, 2.01, 0], rot: [180, 0, 0], farbe: "flagge_rot", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [1.5, 2.073, 0], rot: [180, 0, 0], farbe: "flagge_gold", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [2, 2.16, 0], rot: [180, 0, 0], farbe: "flagge_schwarz", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [2.5, 2.273, 0], rot: [180, 0, 0], farbe: "flagge_rot", wind: 1.2 }
+    ],
+    kollision: { boxen: [[-3, 0, 0.3, 0.3], [3, 0, 0.3, 0.3]] },
+    schatten: 0
+  },
+
+  wimpel_se: {
+    teile: [
+      { form: "zylinder", r: 0.05, h: 2.7, pos: [-3, 1.35, 0], farbe: "holz_dunkel" },
+      { form: "zylinder", r: 0.05, h: 2.7, pos: [3, 1.35, 0], farbe: "holz_dunkel" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [-2.625, 2.502, 0], rot: [0, 0, -14.708], farbe: "tusche" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [-1.875, 2.333, 0], rot: [0, 0, -10.62], farbe: "tusche" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [-1.125, 2.22, 0], rot: [0, 0, -6.419], farbe: "tusche" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [-0.375, 2.164, 0], rot: [0, 0, -2.148], farbe: "tusche" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [0.375, 2.164, 0], rot: [0, 0, 2.148], farbe: "tusche" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [1.125, 2.22, 0], rot: [0, 0, 6.419], farbe: "tusche" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [1.875, 2.333, 0], rot: [0, 0, 10.62], farbe: "tusche" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [2.625, 2.502, 0], rot: [0, 0, 14.708], farbe: "tusche" },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [-2.5, 2.273, 0], rot: [180, 0, 0], farbe: "se_blau", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [-2, 2.16, 0], rot: [180, 0, 0], farbe: "se_gelb", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [-1.5, 2.073, 0], rot: [180, 0, 0], farbe: "se_blau", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [-1, 2.01, 0], rot: [180, 0, 0], farbe: "se_gelb", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [-0.5, 1.973, 0], rot: [180, 0, 0], farbe: "se_blau", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [0, 1.96, 0], rot: [180, 0, 0], farbe: "se_gelb", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [0.5, 1.973, 0], rot: [180, 0, 0], farbe: "se_blau", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [1, 2.01, 0], rot: [180, 0, 0], farbe: "se_gelb", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [1.5, 2.073, 0], rot: [180, 0, 0], farbe: "se_blau", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [2, 2.16, 0], rot: [180, 0, 0], farbe: "se_gelb", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [2.5, 2.273, 0], rot: [180, 0, 0], farbe: "se_blau", wind: 1.2 }
+    ],
+    kollision: { boxen: [[-3, 0, 0.3, 0.3], [3, 0, 0.3, 0.3]] },
+    schatten: 0
+  },
+
+  wimpel_ee: {
+    teile: [
+      { form: "zylinder", r: 0.05, h: 2.7, pos: [-3, 1.35, 0], farbe: "holz_dunkel" },
+      { form: "zylinder", r: 0.05, h: 2.7, pos: [3, 1.35, 0], farbe: "holz_dunkel" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [-2.625, 2.502, 0], rot: [0, 0, -14.708], farbe: "tusche" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [-1.875, 2.333, 0], rot: [0, 0, -10.62], farbe: "tusche" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [-1.125, 2.22, 0], rot: [0, 0, -6.419], farbe: "tusche" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [-0.375, 2.164, 0], rot: [0, 0, -2.148], farbe: "tusche" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [0.375, 2.164, 0], rot: [0, 0, 2.148], farbe: "tusche" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [1.125, 2.22, 0], rot: [0, 0, 6.419], farbe: "tusche" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [1.875, 2.333, 0], rot: [0, 0, 10.62], farbe: "tusche" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [2.625, 2.502, 0], rot: [0, 0, 14.708], farbe: "tusche" },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [-2.5, 2.273, 0], rot: [180, 0, 0], farbe: "ee_blau", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [-2, 2.16, 0], rot: [180, 0, 0], farbe: "flagge_schwarz", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [-1.5, 2.073, 0], rot: [180, 0, 0], farbe: "weiss", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [-1, 2.01, 0], rot: [180, 0, 0], farbe: "ee_blau", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [-0.5, 1.973, 0], rot: [180, 0, 0], farbe: "flagge_schwarz", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [0, 1.96, 0], rot: [180, 0, 0], farbe: "weiss", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [0.5, 1.973, 0], rot: [180, 0, 0], farbe: "ee_blau", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [1, 2.01, 0], rot: [180, 0, 0], farbe: "flagge_schwarz", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [1.5, 2.073, 0], rot: [180, 0, 0], farbe: "weiss", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [2, 2.16, 0], rot: [180, 0, 0], farbe: "ee_blau", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [2.5, 2.273, 0], rot: [180, 0, 0], farbe: "flagge_schwarz", wind: 1.2 }
+    ],
+    kollision: { boxen: [[-3, 0, 0.3, 0.3], [3, 0, 0.3, 0.3]] },
+    schatten: 0
+  },
+
+  wimpel_lu: {
+    teile: [
+      { form: "zylinder", r: 0.05, h: 2.7, pos: [-3, 1.35, 0], farbe: "holz_dunkel" },
+      { form: "zylinder", r: 0.05, h: 2.7, pos: [3, 1.35, 0], farbe: "holz_dunkel" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [-2.625, 2.502, 0], rot: [0, 0, -14.708], farbe: "tusche" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [-1.875, 2.333, 0], rot: [0, 0, -10.62], farbe: "tusche" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [-1.125, 2.22, 0], rot: [0, 0, -6.419], farbe: "tusche" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [-0.375, 2.164, 0], rot: [0, 0, -2.148], farbe: "tusche" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [0.375, 2.164, 0], rot: [0, 0, 2.148], farbe: "tusche" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [1.125, 2.22, 0], rot: [0, 0, 6.419], farbe: "tusche" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [1.875, 2.333, 0], rot: [0, 0, 10.62], farbe: "tusche" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [2.625, 2.502, 0], rot: [0, 0, 14.708], farbe: "tusche" },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [-2.5, 2.273, 0], rot: [180, 0, 0], farbe: "lu_rot", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [-2, 2.16, 0], rot: [180, 0, 0], farbe: "weiss", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [-1.5, 2.073, 0], rot: [180, 0, 0], farbe: "lu_blau", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [-1, 2.01, 0], rot: [180, 0, 0], farbe: "lu_rot", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [-0.5, 1.973, 0], rot: [180, 0, 0], farbe: "weiss", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [0, 1.96, 0], rot: [180, 0, 0], farbe: "lu_blau", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [0.5, 1.973, 0], rot: [180, 0, 0], farbe: "lu_rot", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [1, 2.01, 0], rot: [180, 0, 0], farbe: "weiss", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [1.5, 2.073, 0], rot: [180, 0, 0], farbe: "lu_blau", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [2, 2.16, 0], rot: [180, 0, 0], farbe: "lu_rot", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [2.5, 2.273, 0], rot: [180, 0, 0], farbe: "weiss", wind: 1.2 }
+    ],
+    kollision: { boxen: [[-3, 0, 0.3, 0.3], [3, 0, 0.3, 0.3]] },
+    schatten: 0
+  },
+
+  wimpel_eu: {
+    teile: [
+      { form: "zylinder", r: 0.05, h: 2.7, pos: [-3, 1.35, 0], farbe: "holz_dunkel" },
+      { form: "zylinder", r: 0.05, h: 2.7, pos: [3, 1.35, 0], farbe: "holz_dunkel" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [-2.625, 2.502, 0], rot: [0, 0, -14.708], farbe: "tusche" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [-1.875, 2.333, 0], rot: [0, 0, -10.62], farbe: "tusche" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [-1.125, 2.22, 0], rot: [0, 0, -6.419], farbe: "tusche" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [-0.375, 2.164, 0], rot: [0, 0, -2.148], farbe: "tusche" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [0.375, 2.164, 0], rot: [0, 0, 2.148], farbe: "tusche" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [1.125, 2.22, 0], rot: [0, 0, 6.419], farbe: "tusche" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [1.875, 2.333, 0], rot: [0, 0, 10.62], farbe: "tusche" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [2.625, 2.502, 0], rot: [0, 0, 14.708], farbe: "tusche" },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [-2.5, 2.273, 0], rot: [180, 0, 0], farbe: "eu_blau", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [-2, 2.16, 0], rot: [180, 0, 0], farbe: "eu_gelb", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [-1.5, 2.073, 0], rot: [180, 0, 0], farbe: "eu_blau", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [-1, 2.01, 0], rot: [180, 0, 0], farbe: "eu_gelb", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [-0.5, 1.973, 0], rot: [180, 0, 0], farbe: "eu_blau", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [0, 1.96, 0], rot: [180, 0, 0], farbe: "eu_gelb", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [0.5, 1.973, 0], rot: [180, 0, 0], farbe: "eu_blau", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [1, 2.01, 0], rot: [180, 0, 0], farbe: "eu_gelb", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [1.5, 2.073, 0], rot: [180, 0, 0], farbe: "eu_blau", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [2, 2.16, 0], rot: [180, 0, 0], farbe: "eu_gelb", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [2.5, 2.273, 0], rot: [180, 0, 0], farbe: "eu_blau", wind: 1.2 }
+    ],
+    kollision: { boxen: [[-3, 0, 0.3, 0.3], [3, 0, 0.3, 0.3]] },
+    schatten: 0
+  },
+
+  wimpel_bunt: {
+    teile: [
+      { form: "zylinder", r: 0.05, h: 2.7, pos: [-3, 1.35, 0], farbe: "holz_dunkel" },
+      { form: "zylinder", r: 0.05, h: 2.7, pos: [3, 1.35, 0], farbe: "holz_dunkel" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [-2.625, 2.502, 0], rot: [0, 0, -14.708], farbe: "tusche" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [-1.875, 2.333, 0], rot: [0, 0, -10.62], farbe: "tusche" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [-1.125, 2.22, 0], rot: [0, 0, -6.419], farbe: "tusche" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [-0.375, 2.164, 0], rot: [0, 0, -2.148], farbe: "tusche" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [0.375, 2.164, 0], rot: [0, 0, 2.148], farbe: "tusche" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [1.125, 2.22, 0], rot: [0, 0, 6.419], farbe: "tusche" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [1.875, 2.333, 0], rot: [0, 0, 10.62], farbe: "tusche" },
+      { form: "box", groesse: [0.77, 0.025, 0.025], rund: 0.005, pos: [2.625, 2.502, 0], rot: [0, 0, 14.708], farbe: "tusche" },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [-2.5, 2.273, 0], rot: [180, 0, 0], farbe: "koralle", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [-2, 2.16, 0], rot: [180, 0, 0], farbe: "senf", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [-1.5, 2.073, 0], rot: [180, 0, 0], farbe: "himmelblau", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [-1, 2.01, 0], rot: [180, 0, 0], farbe: "mint", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [-0.5, 1.973, 0], rot: [180, 0, 0], farbe: "lavendel", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [0, 1.96, 0], rot: [180, 0, 0], farbe: "koralle", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [0.5, 1.973, 0], rot: [180, 0, 0], farbe: "senf", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [1, 2.01, 0], rot: [180, 0, 0], farbe: "himmelblau", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [1.5, 2.073, 0], rot: [180, 0, 0], farbe: "mint", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [2, 2.16, 0], rot: [180, 0, 0], farbe: "lavendel", wind: 1.2 },
+      { form: "kegel", r: 0.16, h: 0.34, pos: [2.5, 2.273, 0], rot: [180, 0, 0], farbe: "koralle", wind: 1.2 }
+    ],
+    kollision: { boxen: [[-3, 0, 0.3, 0.3], [3, 0, 0.3, 0.3]] },
     schatten: 0
   },
 

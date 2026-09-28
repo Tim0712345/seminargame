@@ -141,6 +141,21 @@ DATA.texte = {
     weiterErkunden: "Weiter erkunden"
   },
 
+  // Verstecktes Admin-Menü („admin“ tippen oder 5× aufs Logo im Titel)
+  admin: {
+    titel: "Admin-Menü",
+    hinweis: "Nur zum Testen und Vorführen. Freischalten verändert den Spielstand.",
+    allesFrei: "Alles freischalten (Beweisstücke, Notizen, Aufgaben)",
+    freiGeschaltet: "Alles freigeschaltet!",
+    finale: "Direkt zum Finale (Sitzungssaal)",
+    epilog: "Epilog ansehen",
+    reisen: "Reisen zu …",
+    loeschen: "Spielstand löschen",
+    geloescht: "Spielstand gelöscht",
+    zurueck: "Zurück",
+    schliessen: "Schließen"
+  },
+
   speichern: {
     fehlt: "Es gibt noch keinen Spielstand.",
     geladen: "Spielstand geladen"
@@ -640,6 +655,14 @@ DATA.dialogues = {
       start: { speaker: "Infoschild",
         text: "**Schweden-Viertel.** Gender Pay Gap in Schweden: {fakt:gpg_se} ({jahr:gpg_se}). EU-Durchschnitt: {fakt:gpg_eu}.",
         addNote: "gpg_se", next: "ende" }
+    }
+  },
+
+  se_amtsschild: {
+    knoten: {
+      start: { speaker: "Schild",
+        text: "**Familjekontoret – Familienamt.** Elterngeld, Elternzeit, Kinderbetreuung. Darunter ein Bild: zwei Erwachsene und ein Kind, Hand in Hand.",
+        next: "ende" }
     }
   },
 
