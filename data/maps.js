@@ -188,6 +188,7 @@ DATA.maps = {
   /* ---------------- Europaplatz (Hub): Brunnen, Wegweiser, Tor nach Brüssel ---------------- */
   europaplatz: {
     name: "Europaplatz",
+    fakt: "gpg_eu",
     stimmung: "hub",
     innen: false,
     aussen: "gras",

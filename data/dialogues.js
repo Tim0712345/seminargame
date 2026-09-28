@@ -38,6 +38,8 @@ DATA.texte = {
     zeilen: [
       ["W A S D", "oder Pfeiltasten: laufen"],
       ["E", "oder Leertaste: sprechen & untersuchen"],
+      ["Klick", "oder Tippen: hinlaufen, ansprechen, im Gespräch weiter"],
+      ["Ziehen", "mit Maus oder Finger: laufen wie mit einem Joystick"],
       ["Esc", "Pause & Einstellungen"],
       ["N", "Notizbuch"],
       ["Q", "Aufgaben"]
@@ -60,6 +62,8 @@ DATA.texte = {
   },
 
   hudTaste: "E",
+  gespraechBeenden: "Gespräch beenden (Esc)",
+  knoepfe: { buch: "Notizbuch (N)", aufgaben: "Aufgaben (Q)", pause: "Pause (Esc)" },
   notizNeu: "Neue Notiz:",
   beweisNeu: "Beweisstück gefunden:",
   hineingehen: "Hineingehen",
@@ -67,7 +71,8 @@ DATA.texte = {
   ansehen: "Ansehen",
   aufzug: "Aufzug",
   aufzugTitel: "Aufzug – welche Etage?",
-  aufzugHier: "(hier)",
+  aufzugHier: "Du bist hier:",
+  hudGpg: "Gender Pay Gap:",
   schliessen: "Schließen",
 
   notizbuch: {
@@ -155,6 +160,7 @@ DATA.dialogues = {
   //  INTRO (startet automatisch beim ersten Betreten des Europaplatzes)
   // ========================================================================
   intro: {
+    abbrechbar: false,
     knoten: {
       start: { speaker: "Dr. Marie Laurent", wer: "laurent", emotion: "froehlich",
         text: "Da bist du ja, Kim! Willkommen am Europaplatz. Ich bin Marie Laurent – ab heute deine Chefin im EU-Büro für Gleichstellung.",
@@ -237,10 +243,10 @@ DATA.dialogues = {
           { label: "Viele entscheiden sich bewusst für Teilzeit.", next: "nach_de_b" }
         ] },
       nach_de_a: { speaker: "Dr. Marie Laurent", emotion: "nachdenklich",
-        text: "Das hören wir oft. Wenn Betreuung fehlt, bleibt wenig Spielraum – und dann reduziert häufig die Person, die ohnehin weniger verdient.",
+        text: "Das hören wir oft. Wenn Betreuung fehlt, reduziert häufig die Person, die ohnehin weniger verdient. Teilzeit wird pro Stunde oft schlechter bezahlt und bremst Beförderungen – so wächst die Lohnlücke.",
         next: "nach_de_ende" },
       nach_de_b: { speaker: "Dr. Marie Laurent", emotion: "nachdenklich",
-        text: "Auch das stimmt. Die Frage ist nur: Unter welchen Bedingungen wird entschieden? Mit Kita-Platz entscheidet man anders als ohne.",
+        text: "Auch das stimmt. Die Frage ist nur: Unter welchen Bedingungen wird entschieden? Mit Kita-Platz entscheidet man anders als ohne. Und die Folgen für den Stundenlohn und die Karriere sind dieselben.",
         next: "nach_de_ende" },
       nach_de_ende: { speaker: "Dr. Marie Laurent", emotion: "froehlich",
         text: "Weiter geht's: Schweden liegt im Osten, Estland im Südwesten, Luxemburg im Südosten.",
@@ -252,7 +258,7 @@ DATA.dialogues = {
           { label: "Das sollte jede Familie selbst entscheiden.", next: "se_b" }
         ] },
       se_a: { speaker: "Dr. Marie Laurent", emotion: "nachdenklich",
-        text: "Viele sehen das so. Und trotzdem nehmen auch in Schweden Väter noch weniger Tage als Mütter. Regeln helfen – ändern aber nicht alles über Nacht.",
+        text: "Viele sehen das so. Wer lange allein aussetzt, verdient danach oft langsamer mehr – geteilte Elternzeit verteilt diesen Knick. Trotzdem nehmen auch in Schweden Väter noch weniger Tage als Mütter.",
         setFlag: "hub_laurent_se", next: "ende" },
       se_b: { speaker: "Dr. Marie Laurent", emotion: "nachdenklich",
         text: "Ein wichtiger Einwand, den du in Brüssel sicher wieder hörst. Die Frage ist, ob eine Wahl ohne reservierte Tage wirklich frei ist.",
@@ -444,8 +450,14 @@ DATA.dialogues = {
         text: "Und was heißt das für deine Arbeit?",
         next: "arbeit2" },
       arbeit2: { speaker: "Lea", emotion: "nachdenklich",
-        text: "Ich bin Bauingenieurin. Früher Vollzeit, jetzt 20 Stunden. Weniger Stunden heißt weniger Geld – und die spannenden Projekte bekommen die, die immer da sind.",
-        addNote: "teilzeit_quote",
+        text: "Ich bin Bauingenieurin. Früher Vollzeit, jetzt 20 Stunden. Weniger Stunden heißt weniger Geld – und die spannenden, besser bezahlten Projekte bekommen die, die immer da sind.",
+        addNote: "teilzeit_quote", next: "lohn" },
+      lohn: { speaker: "Kim", emotion: "nachdenklich",
+        text: "Moment – der Gender Pay Gap vergleicht doch Stundenlöhne. Dann zählen weniger Stunden doch gar nicht, oder?",
+        next: "lohn2" },
+      lohn2: { speaker: "Lea", emotion: "skeptisch",
+        text: "Direkt nicht. Aber Teilzeitstellen werden pro Stunde oft schlechter bezahlt. Und wer reduziert, wird seltener befördert. Mein Stundenlohn ist seit drei Jahren nicht gestiegen – der meiner Kollegen schon.",
+        addNote: "teilzeit_lohn",
         options: [
           { label: "Und dein Partner?", next: "partner" },
           { label: "Hast du dir das so ausgesucht?", next: "ausgesucht" }
@@ -495,7 +507,7 @@ DATA.dialogues = {
           { label: "Was würde euch helfen?", next: "politik" }
         ] },
       bereuen: { speaker: "Tobias", emotion: "froehlich",
-        text: "Nein. Aber ich verdiene jetzt weniger und merke zum ersten Mal, wie sich das anfühlt. Meine Partnerin kannte das schon lange.",
+        text: "Nein. Aber ich verdiene jetzt weniger – und bei der letzten Beförderungsrunde war ich plötzlich nicht mehr im Gespräch. Meine Partnerin kannte das schon lange.",
         setFlag: "de_tobias_fertig", next: "ende" },
       politik: { speaker: "Tobias", emotion: "nachdenklich",
         text: "Mehr Kita-Plätze. Und Chefs, die Müttern und Vätern dieselben Fragen stellen. Oder am besten gar keine.",
@@ -660,7 +672,13 @@ DATA.dialogues = {
         next: "vaeter" },
       vaeter: { speaker: "Frau Lindqvist", emotion: "nachdenklich",
         text: "Heute nehmen Väter etwa {fakt:se_vaeter_anteil_tage} aller Elterngeldtage. Viel mehr als früher – aber immer noch nicht die Hälfte.",
-        addNote: "se_vaeter",
+        addNote: "se_vaeter", next: "lohn" },
+      lohn: { speaker: "Kim", emotion: "nachdenklich",
+        text: "Und was hat die Elternzeit mit der Lohnlücke zu tun?",
+        next: "lohn2" },
+      lohn2: { speaker: "Frau Lindqvist", emotion: "nachdenklich",
+        text: "Sehr viel! Nach dem ersten Kind steigt das Gehalt von Müttern oft viel langsamer als das von Vätern. Fachleute nennen das die „Kinderstrafe“. Wenn beide eine Pause machen, verteilt sich dieser Knick – und die Lücke wird kleiner.",
+        addNote: "elternzeit_lohn",
         options: [
           { label: "Wie ist das in Deutschland?", next: "de" },
           { label: "Danke, das hilft mir sehr!", next: "familie" }
@@ -709,7 +727,7 @@ DATA.dialogues = {
         text: "Ehrlich? Anstrengender als mein Büro. Aber jetzt weiß ich, wie viel Arbeit das ist. Und niemand fragt mehr, ob Nora „nur“ zu Hause war.",
         addNote: "elternzeit_geteilt", next: "kalender" },
       job: { speaker: "Nora", wer: "nora", emotion: "skeptisch",
-        text: "Weniger, als ich dachte. Weil Lars auch weg war, war ich nicht die Einzige im Team, die gefehlt hat. Das macht einen Unterschied.",
+        text: "Weniger, als ich dachte. Weil Lars auch weg war, war ich nicht die Einzige im Team, die gefehlt hat. Mein Gehalt ist danach ganz normal weitergestiegen. Bei meiner Schwester, die zwei Jahre allein zu Hause war, war das anders.",
         addNote: "elternzeit_geteilt", next: "kalender" },
       kalender: { speaker: "Lars", wer: "lars", emotion: "froehlich",
         text: "Hier, unser Elternzeit-Kalender. Grün ist Nora, orange bin ich. Nimm ihn mit nach Brüssel – vielleicht überzeugt er dort jemanden.",
@@ -1413,9 +1431,10 @@ DATA.minispiele = {
   branchen: {
     art: "zuordnen",
     titel: "Welche Branche zahlt mehr?",
-    anleitung: "Ordne jedem Messestand das durchschnittliche Bruttomonatsgehalt in Estland zu.",
-    tasten: "↑ ↓ Stand wählen · ← → oder E Gehalt wechseln · Enter prüfen (oder klicken)",
-    leer: "– Gehalt wählen –",
+    anleitung: "Welcher Messestand zahlt wie viel? **Zieh jedes Gehalt auf den passenden Stand** – oder tipp erst ein Gehalt an und dann den Stand. Gemeint ist das durchschnittliche Bruttomonatsgehalt in Estland.",
+    tasten: "Tastatur: ↑ ↓ Stand wählen · ← → Gehalt wechseln · Enter prüfen",
+    leer: "hierher ziehen",
+    alleVerteilt: "Alle Gehälter sind verteilt – jetzt „Prüfen“!",
     pruefen: "Prüfen",
     weiter: "Weiter",
     nochNichtFertig: "Ordne erst jedem Stand ein Gehalt zu!",
@@ -1492,8 +1511,8 @@ DATA.minispiele = {
     weiter: "Nächstes Beweisstück",
     fertig: "Zu den Fragen",
     karten: [
-      { land: "de", text: "In Deutschland arbeiten etwa {fakt:de_teilzeit_frauen} der erwerbstätigen Frauen in Teilzeit – oft, weil Betreuungsplätze fehlen. Weniger Stunden heißt weniger Lohn und später weniger Rente." },
-      { land: "se", text: "In Schweden sind für jeden Elternteil {fakt:se_reservierte_tage} Elterngeld reserviert. Väter nehmen dort mehr Elternzeit als anderswo – aber immer noch weniger als Mütter." },
+      { land: "de", text: "In Deutschland arbeiten etwa {fakt:de_teilzeit_frauen} der erwerbstätigen Frauen in Teilzeit – oft, weil Betreuungsplätze fehlen. Teilzeitstellen werden pro Stunde oft schlechter bezahlt und seltener befördert. So wächst die Lohnlücke." },
+      { land: "se", text: "Nach dem ersten Kind steigen die Löhne von Müttern oft langsamer als die von Vätern. Schweden reserviert jedem Elternteil {fakt:se_reservierte_tage} Elterngeld – so teilen sich mehr Paare die Pause und den Lohnknick." },
       { land: "ee", text: "In Estland zahlt die IT ({fakt:ee_lohn_it}) deutlich mehr als die Pflege ({fakt:ee_lohn_pflege}). In der IT arbeiten wenige Frauen, in der Pflege sehr viele." },
       { land: "lu", text: "Luxemburg hat im Durchschnitt fast keine Lücke ({fakt:gpg_lu}). Trotzdem werden in manchen Firmen vor allem Männer befördert – nur etwa {fakt:lu_frauen_fuehrung} der Führungskräfte sind Frauen." },
       { land: "bxl", text: "Selbst wenn man Beruf, Branche und Arbeitszeit herausrechnet, bleibt in Deutschland eine Lücke von etwa {fakt:gpg_de_bereinigt}: der unerklärte Rest." }
@@ -1519,7 +1538,7 @@ DATA.minispiele = {
     fragen: [
       { wer: "vella", haltung: "wirtschaftsliberal",
         frage: "Viele Frauen entscheiden sich doch bewusst für Teilzeit. Das ist eine freie Wahl. Warum sollte die Politik da eingreifen?",
-        passend: ["teilzeit_gruende", "kita_luecke", "meinung_strukturen", "rechnet_sich", "se_modell", "se_vaeter", "elternzeit_geteilt"],
+        passend: ["teilzeit_gruende", "kita_luecke", "meinung_strukturen", "rechnet_sich", "teilzeit_lohn", "elternzeit_lohn", "se_modell", "se_vaeter", "elternzeit_geteilt"],
         richtig: "Hm. Wenn Betreuungsplätze fehlen oder sich nur eine Aufteilung rechnet, ist die Wahl also nicht ganz so frei. Das nehme ich mit.",
         falsch: "Interessant – aber das beantwortet meine Frage nicht. Mir geht es um die angeblich freie Wahl bei der Arbeitszeit.",
         tipp: "Tipp: Schau unter „Teilzeit“ oder „Elternzeit“.",

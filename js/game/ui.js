@@ -70,6 +70,34 @@ GAME.ui = (function () {
     el.menue = $("menue-schicht");
     el.blende = $("blende");
     el.hud = $("hud");
+    el.knoepfe = $("knoepfe");
+    el.joy = $("joystick");
+    el.joyKnauf = $("joystick-knauf");
+    // Runde Knöpfe unten rechts (für Maus und Touch, z. B. auf dem iPad)
+    var ICON = {
+      buch: '<svg viewBox="0 0 32 32"><path d="M7 5 H23 C24.5 5 25 6 25 7 V27 H9 C7.5 27 7 26 7 25 Z"/><path d="M7 23 C7 21.5 8 21 9 21 H25"/><path d="M12 10 H20 M12 14 H18"/></svg>',
+      aufgaben: '<svg viewBox="0 0 32 32"><rect x="6" y="5" width="20" height="23" rx="3"/><path d="M10 12 L12 14 L15 10 M18 12 H22 M10 20 L12 22 L15 18 M18 20 H22"/></svg>',
+      pause: '<svg viewBox="0 0 32 32"><path d="M8 10 H24 M8 16 H24 M8 22 H24"/></svg>'
+    };
+    [["knopf-buch", "buch", function () { GAME.buch.oeffnen("notizbuch"); }],
+     ["knopf-aufgaben", "aufgaben", function () { GAME.buch.oeffnen("questlog"); }],
+     ["knopf-pause", "pause", function () { U.pauseOeffnen(); }]].forEach(function (k) {
+      var b = $(k[0]);
+      b.innerHTML = ICON[k[1]];
+      b.title = DATA.texte.knoepfe[k[1]];
+      b.setAttribute("aria-label", DATA.texte.knoepfe[k[1]]);
+      b.addEventListener("click", function () {
+        if (GAME.szenen.aktiv !== GAME.Spielszene || U.blockiert() || GAME.dialog.aktiv) return;
+        k[2]();
+      });
+    });
+    // Buttons sollen beim Anklicken keinen Tastatur-Fokus behalten,
+    // sonst löst Enter/Leertaste sie später noch einmal aus
+    document.addEventListener("mousedown", function (e) { if (e.target.closest && e.target.closest("button")) e.preventDefault(); }, true);
+    window.addEventListener("keydown", function (e) {
+      var a = document.activeElement;
+      if (a && a.tagName === "BUTTON" && (e.code === "Enter" || e.code === "Space" || e.key === "Enter" || e.key === " ")) { e.preventDefault(); a.blur(); }
+    }, true);
     window.addEventListener("resize", U.groesseAnpassen);
     U.groesseAnpassen();
   };
@@ -109,8 +137,16 @@ GAME.ui = (function () {
   };
 
   // ---------------- HUD ----------------
-  U.ort = function (name) {
+  // Ortsname, darunter (draußen) der Gender Pay Gap des Landes
+  U.ort = function (name, faktId) {
     el.ort.textContent = name || "";
+    if (faktId && DATA.facts[faktId]) {
+      var z = neu("span", "ort-gpg");
+      z.appendChild(document.createTextNode(DATA.texte.hudGpg + " "));
+      var f = GAME.dialog.fakt("fakt", faktId);
+      z.appendChild(neu("b", "fakt" + (f.ungeprueft ? " ungeprueft" : ""), f.t));
+      el.ort.appendChild(z);
+    }
     el.ort.classList.remove("ploppen");
     void el.ort.offsetWidth;
     el.ort.classList.add("ploppen");
@@ -190,6 +226,19 @@ GAME.ui = (function () {
   U.hudZeigen = function (an) {
     el.hud.classList.toggle("versteckt", !an);
     el.blasen.classList.toggle("versteckt", !an);
+    el.knoepfe.classList.toggle("versteckt", !an);
+  };
+
+  // Joystick-Anzeige, solange mit Maus oder Finger gezogen wird
+  U.joystickMalen = function () {
+    var z = ENG.input.zeiger, r = ENG.input.JOY_RADIUS;
+    var an = z.zieht && GAME.szenen.aktiv === GAME.Spielszene && !U.blockiert() && !GAME.dialog.aktiv;
+    el.joy.classList.toggle("versteckt", !an);
+    if (!an) return;
+    var dx = z.x - z.sx, dy = z.y - z.sy, l = Math.sqrt(dx * dx + dy * dy);
+    if (l > r) { dx = dx / l * r; dy = dy / l * r; }
+    el.joy.style.transform = "translate(" + Math.round(z.sx) + "px," + Math.round(z.sy) + "px)";
+    el.joyKnauf.style.transform = "translate(" + Math.round(dx) + "px," + Math.round(dy) + "px)";
   };
 
   // ---------------- Menüs (Tastatur + Maus) ----------------
@@ -253,6 +302,7 @@ GAME.ui = (function () {
   // Wird jedes Bild aufgerufen: Tastatur für Menüs
   U.update = function () {
     var I = ENG.input;
+    U.joystickMalen();
     if (GAME.dialog && GAME.dialog.aktiv) return;
     if (GAME.minispiel.laeuft()) { GAME.minispiel.update(); return; }
     if (GAME.buch.istOffen()) { GAME.buch.update(); return; }

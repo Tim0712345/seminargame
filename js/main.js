@@ -17,6 +17,7 @@
       ENG.renderer.init(gl);
       ENG.textures.init();
       ENG.input.init();
+      ENG.input.zeigerInit(canvas);
       GAME.ui.init();
       GAME.dialog.init();
       GAME.buch.init();

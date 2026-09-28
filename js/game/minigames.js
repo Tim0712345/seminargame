@@ -88,9 +88,12 @@ GAME.minispiel = (function () {
     zuordnenMalen();
   }
 
+  /* Darstellung: links die Stände (Ablagefelder), unten die Gehälter als
+     Kärtchen. Kärtchen lassen sich ziehen (Maus/Finger) oder antippen und
+     dann auf einen Stand tippen. Tastatur: ↑ ↓ Stand, ← → Gehalt.         */
   function zuordnenMalen() {
     var z = zustand, def = z.def;
-    var karte = rahmen(def);
+    var karte = rahmen(def, "zuordnen-karte");
     var anl = neu("p", "minispiel-anleitung");
     anl.appendChild(textKnoten(z.geprueft ? def.aufloesung : def.anleitung));
     karte.appendChild(anl);
@@ -98,32 +101,120 @@ GAME.minispiel = (function () {
     def.eintraege.forEach(function (e, i) {
       var zeile = neu("div", "zuordnen-zeile" + (i === z.zeile && !z.geprueft ? " gewaehlt" : ""));
       zeile.appendChild(neu("span", "zuordnen-name", e.name));
-      var knopf = neu("button", "zuordnen-wert");
-      knopf.type = "button";
+      var feld = neu("div", "zuordnen-feld");
+      feld.setAttribute("data-zeile", i);
       if (z.geprueft) {
         var richtig = z.wahl[i] === i;
-        knopf.className += richtig ? " richtig" : " falsch";
-        knopf.textContent = wertText(e.fakt) + (richtig ? "  ✓" : "");
+        var c = neu("span", "gehalt-chip " + (richtig ? "richtig" : "falsch"), wertText(def.eintraege[z.wahl[i]].fakt) + (richtig ? "  ✓" : ""));
+        feld.appendChild(c);
+        if (!richtig) feld.appendChild(neu("span", "zuordnen-korrektur", "→ " + wertText(e.fakt)));
+        zeile.appendChild(feld);
         var zusatz = neu("span", "zuordnen-zusatz");
         zusatz.appendChild(textKnoten(e.zusatz || ""));
-        zeile.appendChild(knopf);
         zeile.appendChild(zusatz);
       } else {
-        knopf.textContent = z.wahl[i] >= 0 ? wertText(def.eintraege[z.wahl[i]].fakt) : def.leer;
-        if (z.wahl[i] < 0) knopf.className += " leer";
-        knopf.addEventListener("click", function () { z.zeile = i; wechseln(1); });
-        zeile.appendChild(knopf);
+        if (z.wahl[i] >= 0) feld.appendChild(chip(z.wahl[i]));
+        else feld.appendChild(neu("span", "zuordnen-leer", def.leer));
+        feld.classList.toggle("frei", z.wahl[i] < 0);
+        feld.addEventListener("click", function () { feldAntippen(i); });
+        zeile.appendChild(feld);
       }
       tab.appendChild(zeile);
     });
     karte.appendChild(tab);
+    if (!z.geprueft) {
+      var pool = neu("div", "gehalt-pool");
+      pool.setAttribute("data-zeile", "pool");
+      var frei = z.werte.filter(function (w) { return z.wahl.indexOf(w) < 0; });
+      if (!frei.length) pool.appendChild(neu("span", "zuordnen-leer", def.alleVerteilt));
+      frei.forEach(function (w) { pool.appendChild(chip(w)); });
+      karte.appendChild(pool);
+    }
     var fuss = neu("div", "minispiel-fuss");
-    var b = neu("button", "knopf", z.geprueft ? def.weiter : def.pruefen);
+    var b = neu("button", "knopf" + (z.geprueft || z.wahl.indexOf(-1) < 0 ? " gewaehlt" : ""), z.geprueft ? def.weiter : def.pruefen);
     b.type = "button";
     b.addEventListener("click", function () { bestaetigen(); });
     fuss.appendChild(b);
     if (!z.geprueft) fuss.appendChild(neu("span", "minispiel-tipp", def.tasten));
     karte.appendChild(fuss);
+  }
+
+  // Ein Gehalts-Kärtchen (ziehbar)
+  function chip(w) {
+    var z = zustand;
+    var c = neu("span", "gehalt-chip" + (z.gewaehlterWert === w ? " angetippt" : ""), wertText(z.def.eintraege[w].fakt));
+    c.addEventListener("pointerdown", function (e) { ziehenStart(e, w, c); });
+    return c;
+  }
+
+  // Wert w in Zeile i legen (Zeile -1 = zurück in den Vorrat)
+  function ablegen(w, i) {
+    var z = zustand, alt = z.wahl.indexOf(w);
+    if (i < 0) { if (alt >= 0) z.wahl[alt] = -1; }
+    else {
+      var dort = z.wahl[i];
+      z.wahl[i] = w;
+      if (alt >= 0 && alt !== i) z.wahl[alt] = dort;   // tauschen
+      z.zeile = i;
+    }
+    z.gewaehlterWert = null;
+    zuordnenMalen();
+  }
+
+  function feldAntippen(i) {
+    var z = zustand;
+    if (z.gewaehlterWert !== null && z.gewaehlterWert !== undefined) ablegen(z.gewaehlterWert, i);
+    else { z.zeile = i; zuordnenMalen(); }
+  }
+
+  // Ziehen mit Maus oder Finger
+  function ziehenStart(e, w, el0) {
+    e.preventDefault(); e.stopPropagation();
+    var z = zustand, sx = e.clientX, sy = e.clientY, gezogen = false, geist = null;
+    function bewegen(ev) {
+      var dx = ev.clientX - sx, dy = ev.clientY - sy;
+      if (!gezogen && dx * dx + dy * dy > 64) {
+        gezogen = true;
+        geist = el0.cloneNode(true);
+        geist.className += " geist";
+        document.body.appendChild(geist);
+        el0.classList.add("wird-gezogen");
+      }
+      if (geist) { geist.style.left = ev.clientX + "px"; geist.style.top = ev.clientY + "px"; }
+      markieren(ev.clientX, ev.clientY);
+    }
+    function ziel(x, y) {
+      var t = document.elementFromPoint(x, y);
+      var f = t && t.closest ? t.closest("[data-zeile]") : null;
+      if (!f) return null;
+      var a = f.getAttribute("data-zeile");
+      return a === "pool" ? -1 : parseInt(a, 10);
+    }
+    function markieren(x, y) {
+      var alle = el.querySelectorAll(".zuordnen-feld");
+      if (geist) geist.style.display = "none";
+      var zi = ziel(x, y);
+      if (geist) geist.style.display = "";
+      for (var k = 0; k < alle.length; k++) alle[k].classList.toggle("drueber", zi === k);
+    }
+    function loslassen(ev) {
+      window.removeEventListener("pointermove", bewegen);
+      window.removeEventListener("pointerup", loslassen);
+      window.removeEventListener("pointercancel", loslassen);
+      if (geist) geist.style.display = "none";
+      var zi = gezogen ? ziel(ev.clientX, ev.clientY) : null;
+      if (geist && geist.parentNode) geist.parentNode.removeChild(geist);
+      if (!zustand || zustand.geprueft) return;
+      if (!gezogen) {
+        // nur angetippt: auswählen (noch einmal antippen = abwählen)
+        z.gewaehlterWert = z.gewaehlterWert === w ? null : w;
+        zuordnenMalen();
+      } else if (zi !== null) ablegen(w, zi);
+      else zuordnenMalen();
+    }
+    window.addEventListener("pointermove", bewegen);
+    window.addEventListener("pointerup", loslassen);
+    window.addEventListener("pointercancel", loslassen);
   }
 
   // Wert der gewählten Zeile weiterschalten (nur noch freie Werte)

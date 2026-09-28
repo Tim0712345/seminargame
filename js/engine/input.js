@@ -1,12 +1,17 @@
 /* =====================================================================
-   Die Lücke – Engine: Eingabe (Tastatur, später auch Touch)
+   Die Lücke – Engine: Eingabe (Tastatur, Maus und Finger)
    Aktionen statt Tasten: das Spiel fragt z. B. input.gedrueckt("aktion").
+   Zeiger (Maus/Touch) auf dem Spielbild:
+     * kurz tippen/klicken → I.klick = { x, y } (Bildschirmpunkt)
+     * ziehen              → virtueller Joystick (I.touch), Mitte = Startpunkt
    ===================================================================== */
 var ENG = window.ENG = window.ENG || {};
 
 ENG.input = (function () {
   "use strict";
-  var I = { unten: {}, neu: {}, irgendeineTaste: false, touch: { x: 0, z: 0, aktiv: false } };
+  var I = { unten: {}, neu: {}, irgendeineTaste: false, touch: { x: 0, z: 0, aktiv: false },
+            zeiger: { aktiv: false, zieht: false, sx: 0, sy: 0, x: 0, y: 0 }, klick: null };
+  var JOY_RADIUS = 60, ZIEH_SCHWELLE = 14;
 
   var BELEGUNG = {
     hoch:      ["KeyW", "ArrowUp"],
@@ -49,6 +54,38 @@ ENG.input = (function () {
     document.addEventListener("visibilitychange", function () { if (document.hidden) { I.unten = {}; I.neu = {}; } });
   };
 
+  // Maus und Finger auf dem Spielbild
+  I.zeigerInit = function (el) {
+    var Z = I.zeiger, id = null, t0 = 0;
+    el.addEventListener("pointerdown", function (e) {
+      if (Z.aktiv || (e.pointerType === "mouse" && e.button !== 0)) return;
+      id = e.pointerId; t0 = Date.now();
+      Z.aktiv = true; Z.zieht = false;
+      Z.sx = Z.x = e.clientX; Z.sy = Z.y = e.clientY;
+      try { el.setPointerCapture(id); } catch (err) { /* egal */ }
+      e.preventDefault();
+    });
+    el.addEventListener("pointermove", function (e) {
+      if (!Z.aktiv || e.pointerId !== id) return;
+      Z.x = e.clientX; Z.y = e.clientY;
+      var dx = Z.x - Z.sx, dy = Z.y - Z.sy, l = Math.sqrt(dx * dx + dy * dy);
+      if (!Z.zieht && l > ZIEH_SCHWELLE) Z.zieht = true;
+      if (Z.zieht) {
+        var m = Math.max(l, JOY_RADIUS);
+        I.touch.aktiv = true; I.touch.x = dx / m; I.touch.z = dy / m;
+      }
+    });
+    function ende(e) {
+      if (!Z.aktiv || e.pointerId !== id) return;
+      if (!Z.zieht && Date.now() - t0 < 700 && e.type === "pointerup") I.klick = { x: Z.sx, y: Z.sy };
+      Z.aktiv = false; Z.zieht = false; id = null;
+      I.touch.aktiv = false; I.touch.x = I.touch.z = 0;
+    }
+    el.addEventListener("pointerup", ende);
+    el.addEventListener("pointercancel", ende);
+  };
+  I.JOY_RADIUS = JOY_RADIUS;
+
   I.gehalten = function (aktion) {
     var l = BELEGUNG[aktion];
     for (var i = 0; i < l.length; i++) if (I.unten[l[i]]) return true;
@@ -78,7 +115,7 @@ ENG.input = (function () {
     return { x: x, z: z };
   };
 
-  I.bildEnde = function () { I.neu = {}; I.irgendeineTaste = false; };
+  I.bildEnde = function () { I.neu = {}; I.irgendeineTaste = false; I.klick = null; };
 
   return I;
 })();

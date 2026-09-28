@@ -98,7 +98,8 @@ GAME.Spielszene = (function () {
     }
 
     Z.testfundBauen();
-    GAME.ui.ort(map.name);
+    var land = map.land && DATA.countries[map.land];
+    GAME.ui.ort(map.name, map.innen ? null : (map.fakt || (land && land.fakt)));
     ENG.partikel.leeren();
     if (map.land) GAME.flags.setzen("war_in_" + map.land);
     sperrZeit = 0.8;
@@ -204,13 +205,15 @@ GAME.Spielszene = (function () {
   // Aufzug: Etage wählen (Karten mit Startpunkt "aufzug")
   function aufzugMenue(ziel) {
     var T = DATA.texte;
-    var eintraege = ziel.etagen.map(function (id) {
-      var hier = id === Z.welt.id;
-      return { text: (DATA.maps[id] ? DATA.maps[id].etage || DATA.maps[id].name : id) + (hier ? " " + T.aufzugHier : ""),
-               aktion: function () { GAME.ui.menueSchliessen(); if (!hier) Z.wechseln(id, "aufzug"); } };
+    // Nur die anderen Etagen sind wählbar – so fährt E/Enter sofort los
+    var eintraege = ziel.etagen.filter(function (id) { return id !== Z.welt.id; }).map(function (id) {
+      return { text: "→ " + (DATA.maps[id] ? DATA.maps[id].etage || DATA.maps[id].name : id),
+               aktion: function () { GAME.ui.menueSchliessen(); Z.wechseln(id, "aufzug"); } };
     });
     eintraege.push({ text: T.schliessen, aktion: function () { GAME.ui.menueSchliessen(); } });
-    GAME.ui.menueOeffnen({ titel: T.aufzugTitel, eintraege: eintraege });
+    var hier = DATA.maps[Z.welt.id];
+    GAME.ui.menueOeffnen({ titel: T.aufzugTitel, eintraege: eintraege,
+      fussnote: T.aufzugHier + " " + (hier.etage || hier.name) });
   }
 
   function interagieren(ziel) {
@@ -249,6 +252,65 @@ GAME.Spielszene = (function () {
     }
   }
 
+  // ---------------- Klicken / Tippen ----------------
+  // Bildschirmpunkt → Punkt auf dem Boden (Höhe y0)
+  function bodenPunkt(sx, sy, y0) {
+    var R = ENG.renderer, m = Z.kamera.invViewProj;
+    var nx = sx / R.cssB * 2 - 1, ny = 1 - sy / R.cssH * 2;
+    function zurueck(nz) {
+      var x = m[0] * nx + m[4] * ny + m[8] * nz + m[12], y = m[1] * nx + m[5] * ny + m[9] * nz + m[13];
+      var z = m[2] * nx + m[6] * ny + m[10] * nz + m[14], w = m[3] * nx + m[7] * ny + m[11] * nz + m[15];
+      return [x / w, y / w, z / w];
+    }
+    var a = zurueck(-1), b = zurueck(1), t = (y0 - a[1]) / (b[1] - a[1]);
+    return { x: a[0] + (b[0] - a[0]) * t, z: a[2] + (b[2] - a[2]) * t };
+  }
+  function zielOben(c) {
+    switch (c.art) {
+      case "npc": return kopfHoehe(c.npc.figur) + 0.3;
+      case "figur": return kopfHoehe(c.figur) + 0.3;
+      case "fund": return Z.fund.y + 0.3;
+      default: return (c.y || 0) + (c.hoehe || 1.4);
+    }
+  }
+  function zuZielGehen(c) {
+    var kim = Z.spieler.figur, reich = GAME.Spieler.REICHWEITE + (c.radius || 0);
+    var los = function () {
+      var k = Z.spieler.figur;
+      k.rot = Math.atan2(c.x - k.x, c.z - k.z);
+      if (!GAME.dialog.aktiv && !GAME.ui.blockiert() && !wechsel) interagieren(c);
+    };
+    var dx = c.x - kim.x, dz = c.z - kim.z;
+    if (dx * dx + dz * dz <= reich * reich * 0.9) { los(); return; }
+    var punkte = (Z.welt.weg(kim.x, kim.z, c.x, c.z) || []).slice(0, -1);
+    Z.spieler.laufZiel = { x: c.x, z: c.z, punkte: punkte, stopp: Math.max(0.45, reich - 0.4), reichweite: reich, kandidat: c, fertig: los };
+  }
+  Z.klicken = function (k) {
+    var kim = Z.spieler.figur, best = null, bestD = 55 * 55;
+    kandidaten().forEach(function (c) {
+      var y0 = c.art === "npc" ? c.npc.figur.y : (c.art === "figur" ? c.figur.y : (c.y || 0)), oben = zielOben(c);
+      for (var s = 0; s <= 1.001; s += 0.25) {
+        if (!aufBildschirm(c.x, y0 + (oben - y0) * s, c.z)) continue;
+        var d = (bp[0] - k.x) * (bp[0] - k.x) + (bp[1] - k.y) * (bp[1] - k.y);
+        if (d < bestD) { bestD = d; best = c; }
+      }
+    });
+    if (best) { zuZielGehen(best); return; }
+    var p = bodenPunkt(k.x, k.y, kim.y);
+    if (!isFinite(p.x) || !isFinite(p.z)) return;
+    var punkte = Z.welt.weg(kim.x, kim.z, p.x, p.z);
+    if (!punkte || !punkte.length) return;
+    var letzt = punkte[punkte.length - 1];
+    Z.spieler.laufZiel = { x: letzt.x, z: letzt.z, punkte: punkte.slice(0, -1), stopp: 0.15 };
+    // kleiner Tusche-Kringel als Markierung
+    var hy = Z.welt.hoeheBei(letzt.x, letzt.z) + 0.05;
+    for (var i = 0; i < 10; i++) {
+      var a = i / 10 * Math.PI * 2;
+      ENG.partikel.neu({ x: letzt.x + Math.cos(a) * 0.28, y: hy, z: letzt.z + Math.sin(a) * 0.28, vy: 0.15,
+        leben: 0.5, groesse: 0.07, farbe: [0.2, 0.17, 0.22], alpha: 0.75 });
+    }
+  };
+
   // ---------------- Update ----------------
   Z.update = function (dt, t) {
     var sp = Z.spieler, kim = sp.figur, I = ENG.input;
@@ -267,6 +329,17 @@ GAME.Spielszene = (function () {
     GAME.dialog.update(dt);
     var blockiert = GAME.ui.blockiert() || GAME.dialog.aktiv || !!wechsel;
     sp.gesperrt = blockiert;
+
+    // Klicken / Tippen: im Gespräch weiter, sonst hinlaufen (und ansprechen)
+    if (I.klick) {
+      var klick = I.klick;
+      I.klick = null;
+      if (GAME.dialog.aktiv) GAME.dialog.weiter();
+      else if (!blockiert) Z.klicken(klick);
+    }
+    if (blockiert) sp.laufZiel = null;
+    var lz = sp.laufZiel;
+    if (lz && lz.kandidat && lz.kandidat.npc) { lz.x = lz.kandidat.npc.figur.x; lz.z = lz.kandidat.npc.figur.z; }
 
     var npcs = sichtbareNpcs();
     var dyn = npcs.map(function (n) { return { x: n.figur.x, z: n.figur.z, r: n.radius }; })
@@ -584,7 +657,8 @@ GAME.Epilogszene = (function () {
     sichtbare().forEach(function (n) { n.update(dt, E.welt, H.KEIN_SPIELER); });
     H.spritzen(E.spritzer, dt);
     ENG.partikel.update(dt);
-    if (!E.fertig && !GAME.ui.blockiert() && E.zeit > 0.6 && I.gedrueckt("ok")) E.weiter();
+    if (!E.fertig && !GAME.ui.blockiert() && E.zeit > 0.6 && (I.gedrueckt("ok") || I.klick)) E.weiter();
+    I.klick = null;
     I.verbrauchen("ok"); I.verbrauchen("aktion");
   };
 

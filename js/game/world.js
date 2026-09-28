@@ -454,6 +454,93 @@ GAME.Welt = (function () {
     }
   };
 
+  // ---------------- Wegsuche (für Klicken/Tippen) ----------------
+  // Welche Kachelmitten sind begehbar? (einmal pro Karte berechnet)
+  Welt.prototype.freiRaster = function () {
+    if (this._frei) return this._frei;
+    var w = this.w, h = this.h, frei = new Uint8Array(w * h);
+    for (var z = 0; z < h; z++) for (var x = 0; x < w; x++) {
+      if (this.koll.istGesperrt(x, z)) continue;
+      var p = { x: x + 0.5, z: z + 0.5 };
+      this.koll.aufloesen(p, 0.26);
+      if (Math.abs(p.x - x - 0.5) < 0.3 && Math.abs(p.z - z - 0.5) < 0.3) frei[x + z * w] = 1;
+    }
+    return (this._frei = frei);
+  };
+  Welt.prototype.istFrei = function (x, z) {
+    var tx = Math.floor(x), tz = Math.floor(z);
+    if (tx < 0 || tz < 0 || tx >= this.w || tz >= this.h) return false;
+    return !!this.freiRaster()[tx + tz * this.w];
+  };
+  function sichtFrei(welt, x0, z0, x1, z1) {
+    var dx = x1 - x0, dz = z1 - z0, n = Math.ceil(Math.sqrt(dx * dx + dz * dz) / 0.2);
+    for (var i = 1; i < n; i++) {
+      var t = i / n, px = x0 + dx * t, pz = z0 + dz * t;
+      if (!welt.istFrei(px, pz) || !welt.istFrei(px + 0.22, pz) || !welt.istFrei(px - 0.22, pz) ||
+          !welt.istFrei(px, pz + 0.22) || !welt.istFrei(px, pz - 0.22)) return false;
+    }
+    return true;
+  }
+  /* A*-Suche von (x0, z0) nach (x1, z1). Gibt Wegpunkte zurück (ohne Start),
+     oder null, wenn es keinen Weg gibt. Ist das Ziel selbst blockiert
+     (z. B. ein Schild), endet der Weg auf der nächsten freien Kachel.     */
+  Welt.prototype.weg = function (x0, z0, x1, z1) {
+    var w = this.w, h = this.h, frei = this.freiRaster();
+    var sx = MM.clamp(Math.floor(x0), 0, w - 1), sz = MM.clamp(Math.floor(z0), 0, h - 1);
+    var zx = MM.clamp(Math.floor(x1), 0, w - 1), zz = MM.clamp(Math.floor(z1), 0, h - 1);
+    if (!frei[zx + zz * w]) {
+      var best = -1, bestD = 1e9;
+      for (var dz = -3; dz <= 3; dz++) for (var dx = -3; dx <= 3; dx++) {
+        var tx = zx + dx, tz = zz + dz;
+        if (tx < 0 || tz < 0 || tx >= w || tz >= h || !frei[tx + tz * w]) continue;
+        var dd = Math.pow(tx + 0.5 - x0, 2) * 0.05 + Math.pow(tx + 0.5 - x1, 2) + Math.pow(tz + 0.5 - z1, 2);
+        if (dd < bestD) { bestD = dd; best = tx + tz * w; }
+      }
+      if (best < 0) return null;
+      zx = best % w; zz = (best - zx) / w;
+    }
+    if (sichtFrei(this, x0, z0, x1, z1) && frei[Math.floor(x1) + Math.floor(z1) * w]) return [{ x: x1, z: z1 }];
+    var start = sx + sz * w, ziel = zx + zz * w;
+    var g = new Float32Array(w * h), von = new Int32Array(w * h), zu = new Uint8Array(w * h);
+    for (var i = 0; i < w * h; i++) { g[i] = 1e9; von[i] = -1; }
+    g[start] = 0;
+    var offen = [start];
+    function hz(k) { var kx = k % w, kz = (k - kx) / w; return Math.sqrt((kx - zx) * (kx - zx) + (kz - zz) * (kz - zz)); }
+    var schritte = 0;
+    while (offen.length && schritte++ < 4000) {
+      var bi = 0;
+      for (i = 1; i < offen.length; i++) if (g[offen[i]] + hz(offen[i]) < g[offen[bi]] + hz(offen[bi])) bi = i;
+      var k = offen.splice(bi, 1)[0];
+      if (k === ziel) break;
+      zu[k] = 1;
+      var kx = k % w, kz = (k - kx) / w;
+      for (var nz = -1; nz <= 1; nz++) for (var nx = -1; nx <= 1; nx++) {
+        if (!nx && !nz) continue;
+        var ax = kx + nx, az = kz + nz;
+        if (ax < 0 || az < 0 || ax >= w || az >= h) continue;
+        var n = ax + az * w;
+        if (zu[n] || (!frei[n] && n !== start)) continue;
+        if (nx && nz && (!frei[kx + nx + kz * w] || !frei[kx + (kz + nz) * w])) continue;   // keine Ecken schneiden
+        var ng = g[k] + (nx && nz ? 1.414 : 1);
+        if (ng < g[n]) { g[n] = ng; von[n] = k; if (offen.indexOf(n) < 0) offen.push(n); }
+      }
+    }
+    if (von[ziel] < 0 && ziel !== start) return null;
+    var pfad = [];
+    for (var p = ziel; p !== start && p >= 0; p = von[p]) pfad.unshift({ x: p % w + 0.5, z: Math.floor(p / w) + 0.5 });
+    if (frei[Math.floor(x1) + Math.floor(z1) * w] && ziel === Math.floor(x1) + Math.floor(z1) * w) pfad[pfad.length - 1] = { x: x1, z: z1 };
+    // Pfad glätten: Punkte überspringen, zu denen man direkt laufen kann
+    var glatt = [], ax0 = x0, az0 = z0, j = 0;
+    while (j < pfad.length) {
+      var weit = j;
+      for (var q = pfad.length - 1; q > j; q--) if (sichtFrei(this, ax0, az0, pfad[q].x, pfad[q].z)) { weit = q; break; }
+      glatt.push(pfad[weit]);
+      ax0 = pfad[weit].x; az0 = pfad[weit].z;
+      j = weit + 1;
+    }
+    return glatt;
+  };
+
   Welt.prototype.spawn = function (name) {
     var sp = (this.map.spawns || {})[name] || (this.map.spawns || {}).start || { x: this.w / 2, y: this.h / 2, blick: 0 };
     return { x: sp.x + 0.5, z: sp.y + 0.5, rot: (sp.blick || 0) * MM.DEG };

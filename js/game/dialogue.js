@@ -48,16 +48,24 @@ GAME.dialog = (function () {
     el.optionen = neu("div", "dialog-optionen");
     el.weiter = neu("div", "dialog-weiter");
     el.weiter.textContent = "▼";
+    // ✕: Gespräch sofort beenden (auch mit Esc)
+    el.zu = neu("button", "dialog-zu");
+    el.zu.type = "button";
+    el.zu.textContent = "✕";
+    el.zu.title = DATA.texte.gespraechBeenden;
+    el.zu.setAttribute("aria-label", DATA.texte.gespraechBeenden);
+    el.zu.addEventListener("click", function (e) { e.stopPropagation(); D.abbrechen(); });
     inhalt.appendChild(el.name);
     inhalt.appendChild(el.text);
     inhalt.appendChild(el.optionen);
     karte.appendChild(el.portraitRahmen);
     karte.appendChild(inhalt);
     karte.appendChild(el.weiter);
+    karte.appendChild(el.zu);
     el.box.appendChild(karte);
     karte.addEventListener("click", function (e) {
-      if (e.target.closest && e.target.closest(".dialog-option")) return;
-      weiterDruecken();
+      if (e.target.closest && e.target.closest(".dialog-option, .dialog-zu")) return;
+      weiterDruecken("klick");
     });
   };
 
@@ -114,6 +122,8 @@ GAME.dialog = (function () {
     if (!d) { console.warn("Dialog fehlt in dialogues.js: " + id); return false; }
     dlg = d; dlgId = id; kontext = ktx || {};
     D.aktiv = true;
+    el.zu.classList.toggle("versteckt", d.abbrechbar === false);
+    document.body.classList.add("im-gespraech");
     el.box.classList.remove("versteckt");
     el.box.firstChild.classList.remove("ploppen");
     void el.box.offsetWidth;
@@ -235,14 +245,30 @@ GAME.dialog = (function () {
     zeigen(o.next || "ende");
   }
 
-  function weiterDruecken() {
+  /* quelle "klick": Klick/Tippen auf den Text. Sind Antworten zu sehen,
+     muss man eine davon anklicken – ein Klick daneben wählt nichts aus.
+     Mit der Tastatur wird die markierte Antwort erst nach einer kurzen
+     Pause gewählt, damit schnelles Weiterdrücken nichts überspringt.     */
+  function weiterDruecken(quelle) {
     if (!D.aktiv) return;
     if (gezeigt < gesamt) { gezeigt = gesamt; textMalen(); fertigGetippt(); return; }
-    if (optionen.length) { waehlen(); return; }
+    if (optionen.length) {
+      if (quelle === "klick" || optionenZeit < 0.3) return;
+      waehlen(); return;
+    }
     zeigen(knoten.next || "ende");
   }
+  D.weiter = function () { weiterDruecken("klick"); };
 
+  // Gespräch sofort beenden (✕ oder Esc) – nicht beim Intro
+  D.abbrechen = function () {
+    if (!D.aktiv || (dlg && dlg.abbrechbar === false)) return;
+    D.beenden();
+  };
+
+  var optionenZeit = 0;
   function fertigGetippt() {
+    optionenZeit = 0;
     if (sprecher) sprecher.spricht = false;
     if (optionen.length) optionenMalen();
     else el.weiter.classList.remove("versteckt");
@@ -251,6 +277,7 @@ GAME.dialog = (function () {
   D.beenden = function () {
     if (sprecher) sprecher.spricht = false;
     D.aktiv = false;
+    document.body.classList.remove("im-gespraech");
     el.box.classList.add("versteckt");
     var k = kontext;
     dlg = null; knoten = null; sprecher = null; kontext = null;
@@ -277,10 +304,12 @@ GAME.dialog = (function () {
       if (gezeigt >= gesamt) fertigGetippt();
     }
     if (optionen.length && gezeigt >= gesamt) {
+      optionenZeit += dt;
       if (I.gedrueckt("hoch")) { wahl = (wahl + optionen.length - 1) % optionen.length; optionenMalen(); }
       if (I.gedrueckt("runter")) { wahl = (wahl + 1) % optionen.length; optionenMalen(); }
     }
-    if (I.gedrueckt("ok")) weiterDruecken();
+    if (I.gedrueckt("pause")) D.abbrechen();
+    else if (I.gedrueckt("ok")) weiterDruecken("taste");
     I.verbrauchen("ok"); I.verbrauchen("aktion"); I.verbrauchen("pause");
   };
 
