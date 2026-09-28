@@ -297,9 +297,9 @@ ENG.textures = (function () {
     return c;
   }
 
-  /* Papier: R = feines Papierkorn, G = große Aquarell-Flecken */
+  /* Papier: R = feines Papierkorn, G = große Aquarell-Flecken, B = Wolken (für Wolkenschatten) */
   function papierTextur() {
-    var n1 = rauschen(64, 71), n2 = rauschen(128, 72), f1 = rauschen(4, 73), f2 = rauschen(8, 74), f3 = rauschen(16, 75);
+    var n1 = rauschen(64, 71), n2 = rauschen(128, 72), f1 = rauschen(4, 73), f2 = rauschen(8, 74), f3 = rauschen(16, 75), w1 = rauschen(4, 77), w2 = rauschen(8, 78);
     var out = new Uint8Array(S * S * 4), r = M.rng(76);
     for (var y = 0; y < S; y++) {
       for (var x = 0; x < S; x++) {
@@ -309,7 +309,7 @@ ENG.textures = (function () {
         fleck = M.smoothstep(0.25, 0.75, fleck) * 255;
         out[i] = Math.max(0, Math.min(255, korn));
         out[i + 1] = fleck;
-        out[i + 2] = 128;
+        out[i + 2] = Math.max(0, Math.min(255, (w1(x, y) * 0.7 + w2(x, y) * 0.3) * 255));
         out[i + 3] = 255;
       }
     }

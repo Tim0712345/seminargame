@@ -384,6 +384,8 @@ body.debug .dialog-text .fakt.ungeprueft { color: #c0392b; text-decoration: unde
   cursor: pointer;
   pointer-events: auto;
 }
+/* Touch: kein Doppeltipp-Zoom, keine Verzögerung beim Antippen */
+button, .dialog-option, .knopf { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 .dialog-option::before { content: "\2192  "; opacity: 0.4; }
 .dialog-option.gewaehlt {
   border-color: var(--tusche);

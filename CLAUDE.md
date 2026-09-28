@@ -29,6 +29,8 @@ Prompt abzuweichen. **Nichts darf nach Animal Crossing oder einem anderen besteh
 - Zwei Lichtstufen, Schraffur im Schatten, Kreuzschraffur im Kernschatten, schraffierte Bodenschatten
 - Aquarell-Flecken und Papierkorn (Textur `ENG.textures.papier`), gezeichnete Wasserwellen
 - Figuren: ca. 3 Kopflängen, Strichaugen mit Brauen und kleiner Nase, **keine** Glanzpunkt-Augen, **keine** rosa Wangen
+- Schlagschatten (Schattenkarte) schraffiert statt dunkel; Nachbearbeitung: wackelnde Linien,
+  Pigmentränder, Papierfaser, ausfransender Papierrand (nur Grafik „Hoch“)
 - **Keine** gekrümmte Welt
 - Kamera: frontal von Süden, 46° Neigung (der User wollte ausdrücklich diesen Winkel, nicht diagonal)
 - Oberfläche im Skizzenbuch-Stil (Papierkarten, krakelige Tusche-Ränder, Handschrift-Überschriften)
@@ -87,6 +89,23 @@ Prompt abzuweichen. **Nichts darf nach Animal Crossing oder einem anderen besteh
     automatische Absenkung auf „Niedrig“ bei < 28 FPS; Deko nur bei „Hoch“; Sichtfeld im Hochformat breiter
   - Speichern zusätzlich bei pagehide/visibilitychange und alle 15 s
   - Debug-Kartenprüfung testet jetzt auch, ob alle NPCs/Objekte ansprechbar sind
+- **Licht (2026-09-28, wartet auf OK des Users):** Punktlichter (max. 8, `R.lichter`, Auswahl in
+  `Welt.lichterSetzen`), Prefab-`licht` / Karten-`lichter`, Teil-`leuchten` (Muster 6), Fenster (Muster 7,
+  automatisch bei farbe "fenster"), Lichthöfe (`R.lichthof`), Wolkenschatten (Papier-Textur Kanal B),
+  Rücklicht; Werte je Stimmung + `DATA.lichtStandard` (palette.js). Neue Prefab `stehlampe`,
+  Schreibtischlampe. Bei „Niedrig“ keine Punktlichter/Wolken (`ENG.renderer.licht`).
+- **Grafik-Ausbau (2026-09-28, wartet auf OK des Users):** Schlagschatten per Schattenkarte
+  (`R.mesh` sammelt bei aktiven Schatten, `R.ende` zeichnet Schattenkarte + Bild; runde Schatten dann nur
+  als Kontaktschatten), Nachbearbeitung (`nachbearbeiten`, Bild per copyTexSubImage2D, `DATA.bildStil`),
+  Sonne kommt von links vorn (`sonnen_richtung`), Pollen/Staub (`dioramaHilfen.schweben`).
+  Grafikstufen Hoch/Mittel/Niedrig, Auto-Absenkung stufenweise.
+- **Grafik-Ausbau 2 (2026-09-28, wartet auf OK des Users):** Kontaktschatten (`Welt.verdeckung`,
+  Builder-Option `bodenY`/`bodenAO`), Lichtkante (`uLichtkante`), Wasser mit Uferschaum (UV.x = Ufernähe),
+  Spiegelung, nasser Sand (`sand_nass`), Lichtschleier in der Nachbearbeitung, fallende Blätter
+  (Prefab `blaetter`), weichere Schattenkanten, Innenräume `schlagschatten: 0.6`.
+- **iPad-Fix:** Hover-Markierung von Dialog-Antworten, Menüs und Verhandlung nur bei `pointerType === "mouse"`
+  (sonst verschluckt Safari den ersten Tipp, weil sich beim emulierten mouseenter die Knöpfe ändern);
+  Knöpfe mit `touch-action: manipulation`. **Nie** auf Hover Knöpfe neu bauen.
 - **Offen:** Test auf echtem iPad/Windows-Schul-Laptop, Zahlen verifizieren, Credits-Namen eintragen.
 
 ## Gestaltungsregeln für Karten (aus Erfahrung)

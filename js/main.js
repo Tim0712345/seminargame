@@ -9,7 +9,7 @@
     var canvas = document.getElementById("spiel");
     GAME.einstellungen.laden();
 
-    var gl = ENG.gl.create(canvas, GAME.einstellungen.qualitaet === "hoch");
+    var gl = ENG.gl.create(canvas, GAME.einstellungen.qualitaet !== "niedrig");
     if (!gl) { GAME.ui.fehlerZeigen(); return; }
     ENG.gl.onLost = function () { ENG.loop.stopp(); GAME.ui.meldung(DATA.texte.fehlerVerloren); };
 

@@ -50,10 +50,12 @@ kein WebGL nutzen. Dann in den Browser-Einstellungen die
 - Mit Maus oder Finger **ziehen**: laufen wie mit einem Joystick.
 - Runde Knöpfe unten rechts: Notizbuch, Aufgaben, Pause.
 
-**Einstellungen** (Pause → Einstellungen oder im Titelbildschirm): Grafik Hoch/Niedrig,
+**Einstellungen** (Pause → Einstellungen oder im Titelbildschirm): Grafik Hoch/Mittel/Niedrig,
 Ton, Sprechlaute, Schriftgröße (Normal/Groß/Sehr groß), hoher Kontrast, Bewegung reduzieren.
-„Niedrig“ ist für langsame Schul-Laptops gedacht. Läuft das Spiel länger ruckelig,
-schaltet es einmal automatisch auf „Niedrig“.
+- „Hoch“: alles – echte Schlagschatten, Nachbearbeitung (Papier, Pigmentränder, gezeichnete Linien)
+- „Mittel“: ohne Schlagschatten und Nachbearbeitung (runde Schatten wie früher)
+- „Niedrig“: für langsame Schul-Laptops (kleinere Auflösung, ohne Licht, Wolken und Deko)
+Läuft das Spiel länger ruckelig, schaltet es automatisch eine Stufe tiefer.
 
 **Verstecktes Admin-Menü** (zum Testen und Vorführen): auf der Tastatur `admin` tippen
 oder im Titelbildschirm fünfmal schnell aufs Logo tippen. Dort kann man alles freischalten,
@@ -151,6 +153,20 @@ DATA.dialogues.de_lea = {
   die Namen (z. B. `"salbei"`). Eine Farbe hier zu ändern, ändert sie überall.
 - Unter `DATA.stimmungen` stehen Himmel, Sonnenlicht, Schattenfarbe und
   Tuschefarbe pro Ort.
+- Licht pro Ort (ebenfalls in `DATA.stimmungen`, fehlende Werte aus `DATA.lichtStandard`):
+  `lampen` (wie hell Laternen/Lampen leuchten, 0 = aus, 1 = Abend), `lichthof`
+  (Schein um die Lampen), `wolken` (ziehende Wolkenschatten), `fenster`
+  (0 = Tag mit Glanzstrich, 1 = warmes Licht hinter den Fenstern),
+  `rueckstrahl` + `rueckstrahl_staerke` (warmer Widerschein vom Boden in den Schatten).
+- Lichtfarben: `lampe_warm`, `lampe_schirm`, `tageslicht`, `fensterglanz`.
+- Außerdem pro Ort: `schlagschatten` (0 = aus … 1), `sonnen_richtung` (woher die Sonne
+  scheint) und `pollen` (schwebende Pollen bzw. Staub, Farbe `pollen_farbe`).
+- `DATA.bildStil`: Nachbearbeitung – `wackeln` (Linien wie freihand), `pigmentrand`,
+  `papierrand` (ausgefranster Bildrand), `papierfaser`, `saettigung`, `lichter_ton`, `schatten_ton`,
+  `lichtschleier` (warmer Schimmer von der Sonnenseite); für alle Stufen außerdem
+  `kontaktschatten` (Farbe sammelt sich, wo Dinge den Boden berühren) und `lichtkante`
+  (papierweiße Kante auf der Sonnenseite).
+- Bäume lassen ab und zu Blätter fallen: `blaetter: { hoehe, farben }` am Prefab.
 
 ### Aussehen der Figuren
 - `data/characters.js`: Jede Figur wird aus Bausteinen zusammengesetzt
@@ -177,6 +193,13 @@ DATA.dialogues.de_lea = {
 - `data/prefabs.js`: Ein Prefab besteht aus Grundformen (Kugel, Box,
   Zylinder, Kegel, Kapsel, Torus) mit Position, Größe, Farbe und optional
   Muster (Holz, Pflaster …) oder Wind (für Blätter).
+- Lichtquellen: `licht: { pos: [x, y, z], farbe: "lampe_warm", radius: 4, staerke: 1, hof: 1 }`
+  am Prefab (so haben Laterne, Stehlampe, Schreibtisch und Innenfenster ihr Licht).
+  Ein Teil mit `leuchten: true` leuchtet selbst (Lampenschirm, Laternenglas).
+  In einer Karte gehen auch Lichter ohne sichtbare Lampe:
+  `lichter: [{ x: 5, y: 3, h: 1.5, farbe: "tageslicht", radius: 3, staerke: 0.8, art: "tag" }]`.
+  Pro Bild werden die 8 Lichter nächst der Kamera benutzt; bei „Niedrig“ sind sie aus.
+  Im Debug-Modus zeigt **G** die Reichweite als gelbe Kreise.
 
 ## Technik in Kürze
 
@@ -188,4 +211,15 @@ DATA.dialogues.de_lea = {
 - Eigener Zeichenstil „Tusche & Aquarell“: Tusche-Konturen um alle Formen
   (Inverted Hull), zwei Lichtstufen mit Schraffur im Schatten, schraffierte
   Bodenschatten, Aquarell-Flecken, Papierkorn und gezeichnete Wasserwellen
+- Licht: bis zu 8 Punktlichter als gemalte Lichtpfützen (zwei Stufen, unruhiger
+  Aquarell-Rand, warme Lasur, radieren die Schraffur weg), leuchtende Lampenschirme,
+  Lichthöfe, Fenster mit Glanzstrich (abends warm erleuchtet), ziehende
+  Wolkenschatten und warmer Widerschein vom Boden in den Schatten
+- Schlagschatten per Schattenkarte aus Sonnensicht (2048², Tiefe in RGBA verpackt),
+  schraffiert und mit unruhigem Rand; Schatten werfen alle Meshes mit Tusche-Kontur
+- Nachbearbeitung in einem Durchgang: leicht wackelnde Linien, Pigmentränder an
+  Farbkanten, Papierfaser, ausfransender Papierrand, Farbabstimmung, Lichtschleier
+- Kontaktschatten beim Bau der Welt eingerechnet (Boden neben Kollisionsformen und Wänden,
+  Fuß von Wänden und Objekten) – kostet im Spiel nichts
+- Wasser: Uferschaum-Linien, flaches Wasser heller, Himmelsspiegelung, nasser Sand am Ufer
 - Farbe der Tusche und des Papiers: `tusche` und `papier` in `data/palette.js`

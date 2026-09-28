@@ -289,7 +289,13 @@ GAME.minispiel = (function () {
       runde.optionen.forEach(function (o, i) {
         var b = neu("button", "dialog-option" + (i === z.wahl ? " gewaehlt" : ""), o.text);
         b.type = "button";
-        b.addEventListener("mouseenter", function () { z.wahl = i; verhandlungMalen(); });
+        // Markieren nur mit der Maus (auf dem iPad würde sonst der erste Tipp verschluckt)
+        b.addEventListener("pointerenter", function (e) {
+          if (e.pointerType !== "mouse") return;
+          z.wahl = i;
+          var k = opts.children;
+          for (var j = 0; j < k.length; j++) k[j].classList.toggle("gewaehlt", j === i);
+        });
         b.addEventListener("click", function () { z.wahl = i; waehlen(); });
         opts.appendChild(b);
       });

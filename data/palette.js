@@ -21,6 +21,7 @@ DATA.palette = {
   kopfstein:     "#cbbfae",
   sand:          "#eed9a9",
   seegrund:      "#9fb49a",
+  sand_nass:     "#d6bf8c",   // nasser Sand am Ufer
   wasser:        "#8ab8cc",
   holz:          "#cf9f70",
   holz_hell:     "#e0bb8c",
@@ -53,6 +54,14 @@ DATA.palette = {
   metall:        "#8a929b",
   metall_dunkel: "#626a73",
   laterne_licht: "#fff3bd",
+  lampe_warm:    "#ffd68f",   // Licht von Laternen und Lampen
+  lampe_schirm:  "#fbe7b8",   // Lampenschirm (leuchtet)
+  tageslicht:    "#fff1d6",   // Licht, das durchs Fenster fällt
+  fensterglanz:  "#ffd48a",   // Fenster, hinter denen abends Licht brennt
+  rueckstrahl:   "#e9c9a0",   // warmer Widerschein vom Boden in den Schatten
+  pollen:        "#fff3c4",   // schwebende Pollen im Sonnenlicht
+  staub:         "#fbeedd",   // Staubkörnchen in Innenräumen
+  lichtschleier: "#ffd9a0",   // warmer Schimmer von der Sonnenseite (Nachbearbeitung)
   brille:        "#4d4a52",
   backstein:     "#c97d62",
   putz_salbei:   "#cfd9c0",
@@ -120,7 +129,42 @@ DATA.palette = {
    sonne   = Farbe des direkten Sonnenlichts
    schatten= Farbe der Schattenseite (kühler Himmelston)
    tusche   = Farbe der Konturen und Schraffur
-   kruemmung = Stärke einer gekrümmten Welt (0 = aus, Standard)    */
+   kruemmung = Stärke einer gekrümmten Welt (0 = aus, Standard)
+   Lichtwerte (optional, sonst gilt DATA.lichtStandard unten):
+   lampen    = wie hell Laternen und Lampen leuchten (0 = aus … 1 = Abend)
+   lichthof  = Deckkraft des gemalten Scheins um Lampen (0 … 1)
+   wolken    = Wolkenschatten, die über die Welt ziehen (0 = keine … 1 = viele)
+   fenster   = Fenster leuchten von innen (0 = Tag, Glanzstrich … 1 = warmes Licht)
+   fenster_licht = Farbe der leuchtenden Fenster
+   rueckstrahl, rueckstrahl_staerke = warmer Widerschein vom Boden in den Schatten
+   schlagschatten  = Stärke der geworfenen Schatten (0 = aus … 1 = voll)
+   pollen, pollen_farbe = schwebende Pollen/Staubkörnchen (0 = keine … 1 = viele)
+   sonnen_richtung = woher die Sonne scheint [x, y, z] (x < 0: von links/Westen,
+                     z > 0: von vorn/Süden, y = Höhe)                           */
+DATA.lichtStandard = {
+  lampen: 0.4, lichthof: 0.3, wolken: 0.35, fenster: 0, fenster_licht: "fensterglanz",
+  rueckstrahl: "rueckstrahl", rueckstrahl_staerke: 0.4,
+  schlagschatten: 1, sonnen_richtung: [-0.5, 0.78, 0.45], pollen: 0.5, pollen_farbe: "pollen"
+};
+
+/* Bildstil der Nachbearbeitung (nur bei Grafik „Hoch“)
+   wackeln      = Linien wirken freihand gezeichnet (0 = aus, 1 = normal, 2 = stark)
+   pigmentrand  = an Farbkanten sammelt sich dunklere Farbe (0 = aus … 2)
+   papierrand   = Bildrand läuft ausgefranst ins Papier aus (0 = aus … 1)
+   papierfaser  = Papierstruktur im Bild (0 = aus … 2)
+   saettigung   = Farbkraft (1 = unverändert)
+   lichter_ton / schatten_ton = Farbstich heller bzw. dunkler Stellen [r, g, b] (1 = neutral)
+   lichtschleier = warmer Schimmer von der Sonnenseite (0 = aus … 1), Farbe lichtschleier_farbe
+   Auch ohne Nachbearbeitung (alle Stufen):
+   kontaktschatten = Farbe sammelt sich, wo Dinge den Boden berühren (0 = aus … 0,5)
+   lichtkante      = papierweiß ausgesparte Kante auf der Sonnenseite (0 = aus … 1)  */
+DATA.bildStil = {
+  wackeln: 1, pigmentrand: 1.3, papierrand: 1, papierfaser: 1, saettigung: 1.08,
+  lichter_ton: [1.03, 1.0, 0.95], schatten_ton: [0.94, 0.96, 1.04],
+  lichtschleier: 0.3, lichtschleier_farbe: "lichtschleier",
+  kontaktschatten: 0.3, lichtkante: 0.6
+};
+
 DATA.stimmungen = {
   test: {
     himmel_oben: "#a7c6d8", horizont: "#f4ecdb", dunst: "#f2e9d6",
@@ -139,12 +183,12 @@ DATA.stimmungen = {
   // Schweden-Viertel: kühles, klares Nordlicht
   se: {
     himmel_oben: "#9fc4dc", horizont: "#eef0ea", dunst: "#ecefe8",
-    sonne: "#fbfaf2", schatten: "#a9b3d6", tusche: "tusche", kruemmung: 0
+    sonne: "#fbfaf2", schatten: "#a9b3d6", tusche: "tusche", kruemmung: 0, wolken: 0.45
   },
   // Estland-Viertel: frisches Grün, Kiefern, etwas Wind
   ee: {
     himmel_oben: "#a4c9d2", horizont: "#eff0e3", dunst: "#edeee0",
-    sonne: "#fdf7e6", schatten: "#a8b2cc", tusche: "tusche", kruemmung: 0
+    sonne: "#fdf7e6", schatten: "#a8b2cc", tusche: "tusche", kruemmung: 0, wolken: 0.5
   },
   // Luxemburg-Viertel: warmer Sandstein, goldenes Licht
   lu: {
@@ -154,24 +198,28 @@ DATA.stimmungen = {
   // Brüssel: helles, leicht bewölktes Licht über Kopfsteinpflaster
   bxl: {
     himmel_oben: "#adc0d4", horizont: "#f1eadc", dunst: "#eee6d6",
-    sonne: "#fdf6ea", schatten: "#aeaacd", tusche: "tusche", kruemmung: 0
+    sonne: "#fdf6ea", schatten: "#aeaacd", tusche: "tusche", kruemmung: 0, wolken: 0.5
   },
   // Epilog: warmes Abendlicht
   abend: {
     himmel_oben: "#c3b3cf", horizont: "#f8dcbc", dunst: "#f4d9bd",
-    sonne: "#ffe6c4", schatten: "#a99bc4", tusche: "tusche", kruemmung: 0
+    sonne: "#ffe6c4", schatten: "#a99bc4", tusche: "tusche", kruemmung: 0,
+    lampen: 1, lichthof: 0.55, fenster: 0.8, wolken: 0.2
   },
   // Innenräume
   innen_archiv: {
     himmel_oben: "#e8dcc4", horizont: "#e8dcc4", dunst: "#e4d7bf",
-    sonne: "#fbefd9", schatten: "#b9a9c2", tusche: "tusche", kruemmung: 0
+    sonne: "#fbefd9", schatten: "#b9a9c2", tusche: "tusche", kruemmung: 0,
+    lampen: 1.3, lichthof: 0.35, wolken: 0, pollen: 0.35, pollen_farbe: "staub", schlagschatten: 0.6
   },
   innen_warm: {
     himmel_oben: "#efe2cc", horizont: "#efe2cc", dunst: "#ebdfc9",
-    sonne: "#fff3e0", schatten: "#c2b4c8", tusche: "tusche", kruemmung: 0
+    sonne: "#fff3e0", schatten: "#c2b4c8", tusche: "tusche", kruemmung: 0,
+    lampen: 1.3, lichthof: 0.35, wolken: 0, pollen: 0.35, pollen_farbe: "staub", schlagschatten: 0.6
   },
   innen_kuehl: {
     himmel_oben: "#e3e6e0", horizont: "#e3e6e0", dunst: "#e4e4dc",
-    sonne: "#f8f7f0", schatten: "#b3b5cf", tusche: "tusche", kruemmung: 0
+    sonne: "#f8f7f0", schatten: "#b3b5cf", tusche: "tusche", kruemmung: 0,
+    lampen: 1.3, lichthof: 0.35, wolken: 0, pollen: 0.35, pollen_farbe: "staub", schlagschatten: 0.6
   }
 };

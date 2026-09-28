@@ -195,6 +195,7 @@ GAME.debug = (function () {
       "FPS " + ENG.loop.fps +
       " · Draw-Calls " + R.stats.drawCalls +
       " · Dreiecke " + Math.round(R.stats.dreiecke) +
+      " · Lichter " + R.stats.lichter +
       " · " + (sz.welt ? sz.welt.id : "") +
       (f ? " · Kachel " + Math.floor(f.x) + "/" + Math.floor(f.z) : "") +
       " · G Raster · T Teleport · F Flags";
@@ -241,6 +242,11 @@ GAME.debug = (function () {
     Z.npcs.forEach(function (n) { kreis(n.figur.x, n.figur.z, n.radius, 0.3, 0.6, 1); });
     Z.figuren.forEach(function (g) { kreis(g.x, g.z, g.info.radius, 0.3, 0.6, 1); });
     kreis(f.x, f.z, Z.spieler.radius, 0.2, 0.9, 0.3);
+    // Lichtquellen: gelber Kreis = Reichweite am Boden
+    w.lichtQuellen.forEach(function (l) {
+      var dx = l.x - f.x, dz = l.z - f.z;
+      if (dx * dx + dz * dz < 400) kreis(l.x, l.z, l.radius, 1, 0.85, 0.2);
+    });
   };
 
   return D;

@@ -234,10 +234,17 @@ GAME.dialog = (function () {
       var b = neu("button", "dialog-option" + (i === wahl ? " gewaehlt" : "") + (o.next && besucht(o.next) ? " gesehen" : ""));
       b.type = "button";
       b.textContent = D.textFertig(o.label);
-      b.addEventListener("mouseenter", function () { wahl = i; optionenMalen(); });
+      // Markieren nur mit der Maus: Auf Touch-Geräten (iPad) löst der erste Tipp sonst ein
+      // „mouseenter“ aus, und wenn sich dabei die Knöpfe ändern, verwirft Safari den Klick.
+      b.addEventListener("pointerenter", function (e) { if (e.pointerType === "mouse") { wahl = i; markieren(); } });
       b.addEventListener("click", function () { wahl = i; waehlen(); });
       el.optionen.appendChild(b);
     });
+  }
+  // Nur die Markierung umsetzen, ohne die Knöpfe neu zu bauen
+  function markieren() {
+    var k = el.optionen.children;
+    for (var j = 0; j < k.length; j++) k[j].classList.toggle("gewaehlt", j === wahl);
   }
 
   function waehlen() {
@@ -315,8 +322,8 @@ GAME.dialog = (function () {
     }
     if (optionen.length && gezeigt >= gesamt) {
       optionenZeit += dt;
-      if (I.gedrueckt("hoch")) { wahl = (wahl + optionen.length - 1) % optionen.length; optionenMalen(); }
-      if (I.gedrueckt("runter")) { wahl = (wahl + 1) % optionen.length; optionenMalen(); }
+      if (I.gedrueckt("hoch")) { wahl = (wahl + optionen.length - 1) % optionen.length; markieren(); }
+      if (I.gedrueckt("runter")) { wahl = (wahl + 1) % optionen.length; markieren(); }
     }
     if (I.gedrueckt("pause")) D.abbrechen();
     else if (I.gedrueckt("ok")) weiterDruecken("taste");
