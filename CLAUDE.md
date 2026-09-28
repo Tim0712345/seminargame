@@ -103,6 +103,9 @@ Prompt abzuweichen. **Nichts darf nach Animal Crossing oder einem anderen besteh
   Builder-Option `bodenY`/`bodenAO`), Lichtkante (`uLichtkante`), Wasser mit Uferschaum (UV.x = Ufernähe),
   Spiegelung, nasser Sand (`sand_nass`), Lichtschleier in der Nachbearbeitung, fallende Blätter
   (Prefab `blaetter`), weichere Schattenkanten, Innenräume `schlagschatten: 0.6`.
+- **iPad-Fix:** Hover-Markierung von Dialog-Antworten, Menüs und Verhandlung nur bei `pointerType === "mouse"`
+  (sonst verschluckt Safari den ersten Tipp, weil sich beim emulierten mouseenter die Knöpfe ändern);
+  Knöpfe mit `touch-action: manipulation`. **Nie** auf Hover Knöpfe neu bauen.
 - **Offen:** Test auf echtem iPad/Windows-Schul-Laptop, Zahlen verifizieren, Credits-Namen eintragen.
 
 ## Gestaltungsregeln für Karten (aus Erfahrung)

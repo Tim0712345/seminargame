@@ -300,7 +300,8 @@ GAME.ui = (function () {
     (opt.eintraege || []).forEach(function (e, i) {
       var k = neu("button", "knopf");
       k.type = "button";
-      k.addEventListener("mouseenter", function () { menue.wahl = i; U.menueMalen(); });
+      // Markieren nur mit der Maus (auf dem iPad würde sonst der erste Tipp verschluckt)
+      k.addEventListener("pointerenter", function (e) { if (e.pointerType === "mouse") { menue.wahl = i; U.menueMalen(); } });
       k.addEventListener("click", function () { menue.wahl = i; eintragAusloesen(0); });
       liste.appendChild(k);
       menue.knoepfe.push(k);
