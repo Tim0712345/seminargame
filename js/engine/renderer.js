@@ -78,7 +78,7 @@ ENG.renderer = (function () {
     "uniform float uZeit; uniform vec3 uTon; uniform float uPixel; uniform float uSchraffur;",
     "uniform float uFx; uniform vec4 uRueck; uniform float uWolken; uniform float uLampen; uniform vec4 uFensterLicht;",
     "uniform vec4 uLichtPos[" + MAX_LICHTER + "]; uniform vec4 uLichtFarbe[" + MAX_LICHTER + "]; uniform int uLichtN;",
-    "uniform sampler2D uSchattenTex; uniform float uSchattenAn; uniform float uSchattenPixel;",
+    "uniform sampler2D uSchattenTex; uniform float uSchattenAn; uniform float uSchattenPixel; uniform float uLichtkante;",
     "varying vec3 vSchatten;",
     "float tiefeLesen(vec2 uv) { return dot(texture2D(uSchattenTex, uv), vec4(1.0, 1.0 / 255.0, 1.0 / 65025.0, 1.0 / 16581375.0)); }",
     "varying vec3 vNrm; varying vec3 vCol; varying vec2 vUv; varying vec3 vWelt;",
@@ -94,12 +94,19 @@ ENG.renderer = (function () {
     "  float fleck = texture2D(uPapier, vWelt.xz * 0.045 + vec2(vWelt.y * 0.03, 0.0)).g;",
     "  basis *= 0.9 + fleck * 0.18;",
     // Wasser: gezeichnete Wellenlinien in Tusche
-    "  float linie = 0.0;",
+    "  float linie = 0.0, schaum = 0.0;",
     "  if (vWasser > 0.5) {",
     "    float wl = vWelt.z * 1.1 + sin(vWelt.x * 0.9 + uZeit * 0.9) * 0.22 + sin(vWelt.x * 0.23 - uZeit * 0.4) * 0.6;",
     "    float f = abs(fract(wl) - 0.5);",
     "    float luecke = step(0.52, texture2D(uPapier, vec2(vWelt.x * 0.04 + uZeit * 0.008, floor(wl) * 0.137)).g);",
     "    linie = smoothstep(0.07, 0.025, f) * luecke * 0.5;",
+    // Ufer: flaches Wasser heller, zwei gezeichnete Schaumlinien, die sanft hin und her laufen
+    "    float ufer = vUv.x;",
+    "    basis *= mix(0.9, 1.12, ufer);",
+    "    float welle = ufer + (texture2D(uPapier, vWelt.xz * 0.35 + uZeit * 0.01).g - 0.5) * 0.25",
+    "      + sin(uZeit * 1.2 + vWelt.x * 0.7 + vWelt.z * 0.5) * 0.045;",
+    "    schaum = (smoothstep(0.06, 0.02, abs(welle - 0.8)) * 0.85 + smoothstep(0.04, 0.014, abs(welle - 0.56)) * 0.5) * step(0.04, ufer);",
+    "    linie *= 1.0 - ufer * 0.7;",
     "  }",
     "  if (vGesicht > 0.5) {",
     "    vec4 r = vGesicht < 1.5 ? uAugen : uMund;",
@@ -117,11 +124,11 @@ ENG.renderer = (function () {
     "      && vSchatten.x > 0.0 && vSchatten.x < 1.0 && vSchatten.y > 0.0 && vSchatten.y < 1.0 && vSchatten.z < 1.0) {",
     "    vec2 wob = (texture2D(uPapier, vWelt.xz * 0.9 + vWelt.y * 0.37).rg - 0.5) * uSchattenPixel * 3.0;",
     "    float z = vSchatten.z - 0.0005 - 0.0018 * (1.0 - clamp(ndl, 0.0, 1.0));",
-    "    vec2 uv = vSchatten.xy + wob; float o = uSchattenPixel * 1.25;",
+    "    vec2 uv = vSchatten.xy + wob; float o = uSchattenPixel * 1.6;",
     "    float sicht = step(z, tiefeLesen(uv)) * 2.0",
     "      + step(z, tiefeLesen(uv + vec2(o, o))) + step(z, tiefeLesen(uv + vec2(-o, o)))",
     "      + step(z, tiefeLesen(uv + vec2(o, -o))) + step(z, tiefeLesen(uv + vec2(-o, -o)));",
-    "    sicht = mix(1.0, smoothstep(1.5, 4.5, sicht), uSchattenAn);",
+    "    sicht = mix(1.0, smoothstep(1.0, 5.0, sicht), uSchattenAn);",
     "    licht *= sicht;",
     "  }",
     // Wolkenschatten: große, weiche Flecken ziehen langsam über die Welt
@@ -164,6 +171,16 @@ ENG.renderer = (function () {
     "  vec3 V = normalize(uKamPos - vWelt);",
     "  float rand = pow(1.0 - max(dot(N, V), 0.0), 2.5);",
     "  col *= 1.0 - rand * 0.16;",
+    // Lichtkante: auf der Sonnenseite bleibt am Umriss das Papier weiß ausgespart
+    "  if (uLichtkante > 0.0 && vGesicht < 0.5) {",
+    "    float kl = pow(1.0 - max(dot(N, V), 0.0), 3.0) * smoothstep(0.05, 0.45, ndl) * licht;",
+    "    col = mix(col, vec3(1.0, 0.985, 0.95), clamp(kl * uLichtkante, 0.0, 0.6));",
+    "  }",
+    // Wasser: Himmel spiegelt sich zum flachen Blickwinkel hin, Schaum in Papierweiß
+    "  if (vWasser > 0.5) {",
+    "    col = mix(col, uDunst, pow(1.0 - max(dot(N, V), 0.0), 3.0) * 0.5);",
+    "    col = mix(col, vec3(1.0, 0.99, 0.96), schaum);",
+    "  }",
     // Fenster: Glanzstrich wie mit Deckweiß – abends warmes Licht von innen
     "  if (vFenster > 0.5) {",
     "    float gs = fract((vWelt.x + vWelt.y * 0.8 + vWelt.z * 0.35) * 1.25);",
@@ -302,6 +319,7 @@ ENG.renderer = (function () {
     "uniform vec2 uGroesse; uniform vec2 uTexSkal; uniform float uPixel;",
     "uniform float uWackeln; uniform float uKante; uniform float uRand; uniform float uFaser; uniform float uSaettigung;",
     "uniform vec3 uPapierFarbe; uniform vec3 uLichterTon; uniform vec3 uSchattenTon;",
+    "uniform float uSchleier; uniform vec3 uSchleierFarbe; uniform vec2 uSchleierPos;",
     "vec3 bild(vec2 p) { return texture2D(uBild, p * uTexSkal).rgb; }",
     "void main() {",
     "  vec2 px = gl_FragCoord.xy;",
@@ -320,6 +338,9 @@ ENG.renderer = (function () {
     "  float hell = dot(c, vec3(0.299, 0.587, 0.114));",
     "  c = mix(vec3(hell), c, uSaettigung);",
     "  c *= mix(uSchattenTon, uLichterTon, smoothstep(0.25, 0.85, hell));",
+    // Lichtschleier: warmer, weicher Schimmer von der Sonnenseite her (wie eine lasierte Fläche)
+    "  float sl = smoothstep(1.25, 0.0, length((uv - uSchleierPos) * vec2(uGroesse.x / uGroesse.y, 1.0) * 0.8));",
+    "  c = 1.0 - (1.0 - c) * (1.0 - uSchleierFarbe * sl * uSchleier);",
     // Papierfaser und Körnung (Pigment setzt sich in den Vertiefungen ab)
     "  float faser = texture2D(uPapier, px / (uPixel * 180.0) * vec2(1.0, 0.33)).r;",
     "  float korn = texture2D(uPapier, px / (uPixel * 64.0)).r;",
@@ -507,6 +528,7 @@ ENG.renderer = (function () {
     gl.uniform1i(u.uLichtN, 0);
     lichtN = 0;
     gl.uniform1f(u.uSchattenAn, 0);
+    gl.uniform1f(u.uLichtkante, umg.lichtkante || 0);
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, ENG.textures.detail);
     gl.uniform1i(u.uDetail, 0);
@@ -858,6 +880,10 @@ ENG.renderer = (function () {
     gl.uniform3fv(u.uPapierFarbe, umg.papier);
     gl.uniform3fv(u.uLichterTon, b.lichterTon);
     gl.uniform3fv(u.uSchattenTon, b.schattenTon);
+    gl.uniform1f(u.uSchleier, b.schleier);
+    gl.uniform3fv(u.uSchleierFarbe, b.schleierFarbe);
+    // Die Sonne steht links (x < 0) bzw. rechts – der Schleier kommt von oben auf dieser Seite
+    gl.uniform2f(u.uSchleierPos, umg.sonnenRichtung[0] < 0 ? -0.05 : 1.05, 1.1);
     gl.disable(gl.DEPTH_TEST);
     gl.depthMask(false);
     gl.bindBuffer(gl.ARRAY_BUFFER, himmelVbo);

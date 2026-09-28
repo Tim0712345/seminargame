@@ -21,6 +21,7 @@ DATA.palette = {
   kopfstein:     "#cbbfae",
   sand:          "#eed9a9",
   seegrund:      "#9fb49a",
+  sand_nass:     "#d6bf8c",   // nasser Sand am Ufer
   wasser:        "#8ab8cc",
   holz:          "#cf9f70",
   holz_hell:     "#e0bb8c",
@@ -60,6 +61,7 @@ DATA.palette = {
   rueckstrahl:   "#e9c9a0",   // warmer Widerschein vom Boden in den Schatten
   pollen:        "#fff3c4",   // schwebende Pollen im Sonnenlicht
   staub:         "#fbeedd",   // Staubkörnchen in Innenräumen
+  lichtschleier: "#ffd9a0",   // warmer Schimmer von der Sonnenseite (Nachbearbeitung)
   brille:        "#4d4a52",
   backstein:     "#c97d62",
   putz_salbei:   "#cfd9c0",
@@ -151,10 +153,16 @@ DATA.lichtStandard = {
    papierrand   = Bildrand läuft ausgefranst ins Papier aus (0 = aus … 1)
    papierfaser  = Papierstruktur im Bild (0 = aus … 2)
    saettigung   = Farbkraft (1 = unverändert)
-   lichter_ton / schatten_ton = Farbstich heller bzw. dunkler Stellen [r, g, b] (1 = neutral) */
+   lichter_ton / schatten_ton = Farbstich heller bzw. dunkler Stellen [r, g, b] (1 = neutral)
+   lichtschleier = warmer Schimmer von der Sonnenseite (0 = aus … 1), Farbe lichtschleier_farbe
+   Auch ohne Nachbearbeitung (alle Stufen):
+   kontaktschatten = Farbe sammelt sich, wo Dinge den Boden berühren (0 = aus … 0,5)
+   lichtkante      = papierweiß ausgesparte Kante auf der Sonnenseite (0 = aus … 1)  */
 DATA.bildStil = {
   wackeln: 1, pigmentrand: 1.3, papierrand: 1, papierfaser: 1, saettigung: 1.08,
-  lichter_ton: [1.03, 1.0, 0.95], schatten_ton: [0.94, 0.96, 1.04]
+  lichter_ton: [1.03, 1.0, 0.95], schatten_ton: [0.94, 0.96, 1.04],
+  lichtschleier: 0.3, lichtschleier_farbe: "lichtschleier",
+  kontaktschatten: 0.3, lichtkante: 0.6
 };
 
 DATA.stimmungen = {
@@ -202,16 +210,16 @@ DATA.stimmungen = {
   innen_archiv: {
     himmel_oben: "#e8dcc4", horizont: "#e8dcc4", dunst: "#e4d7bf",
     sonne: "#fbefd9", schatten: "#b9a9c2", tusche: "tusche", kruemmung: 0,
-    lampen: 1.3, lichthof: 0.35, wolken: 0, pollen: 0.35, pollen_farbe: "staub"
+    lampen: 1.3, lichthof: 0.35, wolken: 0, pollen: 0.35, pollen_farbe: "staub", schlagschatten: 0.6
   },
   innen_warm: {
     himmel_oben: "#efe2cc", horizont: "#efe2cc", dunst: "#ebdfc9",
     sonne: "#fff3e0", schatten: "#c2b4c8", tusche: "tusche", kruemmung: 0,
-    lampen: 1.3, lichthof: 0.35, wolken: 0, pollen: 0.35, pollen_farbe: "staub"
+    lampen: 1.3, lichthof: 0.35, wolken: 0, pollen: 0.35, pollen_farbe: "staub", schlagschatten: 0.6
   },
   innen_kuehl: {
     himmel_oben: "#e3e6e0", horizont: "#e3e6e0", dunst: "#e4e4dc",
     sonne: "#f8f7f0", schatten: "#b3b5cf", tusche: "tusche", kruemmung: 0,
-    lampen: 1.3, lichthof: 0.35, wolken: 0, pollen: 0.35, pollen_farbe: "staub"
+    lampen: 1.3, lichthof: 0.35, wolken: 0, pollen: 0.35, pollen_farbe: "staub", schlagschatten: 0.6
   }
 };

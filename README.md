@@ -162,7 +162,11 @@ DATA.dialogues.de_lea = {
 - Außerdem pro Ort: `schlagschatten` (0 = aus … 1), `sonnen_richtung` (woher die Sonne
   scheint) und `pollen` (schwebende Pollen bzw. Staub, Farbe `pollen_farbe`).
 - `DATA.bildStil`: Nachbearbeitung – `wackeln` (Linien wie freihand), `pigmentrand`,
-  `papierrand` (ausgefranster Bildrand), `papierfaser`, `saettigung`, `lichter_ton`, `schatten_ton`.
+  `papierrand` (ausgefranster Bildrand), `papierfaser`, `saettigung`, `lichter_ton`, `schatten_ton`,
+  `lichtschleier` (warmer Schimmer von der Sonnenseite); für alle Stufen außerdem
+  `kontaktschatten` (Farbe sammelt sich, wo Dinge den Boden berühren) und `lichtkante`
+  (papierweiße Kante auf der Sonnenseite).
+- Bäume lassen ab und zu Blätter fallen: `blaetter: { hoehe, farben }` am Prefab.
 
 ### Aussehen der Figuren
 - `data/characters.js`: Jede Figur wird aus Bausteinen zusammengesetzt
@@ -214,5 +218,8 @@ DATA.dialogues.de_lea = {
 - Schlagschatten per Schattenkarte aus Sonnensicht (2048², Tiefe in RGBA verpackt),
   schraffiert und mit unruhigem Rand; Schatten werfen alle Meshes mit Tusche-Kontur
 - Nachbearbeitung in einem Durchgang: leicht wackelnde Linien, Pigmentränder an
-  Farbkanten, Papierfaser, ausfransender Papierrand, Farbabstimmung
+  Farbkanten, Papierfaser, ausfransender Papierrand, Farbabstimmung, Lichtschleier
+- Kontaktschatten beim Bau der Welt eingerechnet (Boden neben Kollisionsformen und Wänden,
+  Fuß von Wänden und Objekten) – kostet im Spiel nichts
+- Wasser: Uferschaum-Linien, flaches Wasser heller, Himmelsspiegelung, nasser Sand am Ufer
 - Farbe der Tusche und des Papiers: `tusche` und `papier` in `data/palette.js`

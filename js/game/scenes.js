@@ -567,6 +567,16 @@ GAME.dioramaHilfen = (function () {
         leben: 3.5 + Math.random() * 3, groesse: 0.045 + Math.random() * 0.04,
         farbe: st.pollenFarbe, alpha: 0.55 + Math.random() * 0.3 });
     }
+    // Ab und zu fällt ein Blatt aus einer Baumkrone in der Nähe
+    var bl = welt.blattQuellen, cx = kamera.ziel[0], cz = kamera.ziel[2];
+    for (var i = 0; i < bl.length; i++) {
+      var q = bl[i], dx = q.x - cx, dz = q.z - cz;
+      if (dx * dx + dz * dz > 220 || Math.random() > dt * 0.35) continue;
+      ENG.partikel.neu({ x: q.x + (Math.random() - 0.5) * 1.1, y: q.y + (Math.random() - 0.3) * 0.5, z: q.z + (Math.random() - 0.5) * 1.1,
+        vx: 0.3 + Math.random() * 0.5, vy: -0.05, vz: (Math.random() - 0.5) * 0.4,
+        leben: 3.2 + Math.random(), groesse: 0.07 + Math.random() * 0.03, schwerkraft: 0.32,
+        farbe: q.farben[Math.floor(Math.random() * q.farben.length)], alpha: 0.95 });
+    }
   };
   H.KEIN_SPIELER = { x: -999, z: -999 };
   return H;

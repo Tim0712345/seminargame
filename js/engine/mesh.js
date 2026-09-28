@@ -250,7 +250,9 @@ ENG.mesh = (function () {
   /* Form hinzufügen.
      o: { m (Matrix) | pos, rot (Grad), skal } , farbe [r,g,b],
         knochen, wind, gesicht, muster, uvGeo (UV der Form behalten),
-        texSkal (Muster-Maßstab)                                      */
+        texSkal (Muster-Maßstab),
+        bodenY + bodenAO: dicht über dem Boden (bodenY) wird die Farbe um
+        bis zu bodenAO dunkler (Kontaktschatten an Wänden und Füßen)   */
   Builder.prototype.add = function (form, o) {
     var g = form.g, s = form.s;
     var nv = g.p.length / 3;
@@ -270,6 +272,7 @@ ENG.mesh = (function () {
     var kn = o.knochen || 0, wind = o.wind || 0, gs = o.gesicht || 0, mu = o.muster || 0;
     var ts = o.texSkal || 0.5;
     var basis = this.n, v = this.v;
+    var mitAO = o.bodenY !== undefined && o.bodenAO > 0;
     for (var i = 0; i < nv; i++) {
       var px = g.p[i * 3], py = g.p[i * 3 + 1], pz = g.p[i * 3 + 2];
       var nx = g.n[i * 3], ny = g.n[i * 3 + 1], nz = g.n[i * 3 + 2];
@@ -290,7 +293,12 @@ ENG.mesh = (function () {
         else if (ax >= az) { u = wz * ts; w = wy * ts; }
         else { u = wx * ts; w = wy * ts; }
       }
-      v.push(wx, wy, wz, tx, ty, tz, farbe[0], farbe[1], farbe[2], u, w, kn, wind, gs, mu);
+      var k = 1;
+      if (mitAO) {
+        var hb = wy - o.bodenY;
+        if (hb < 0.7) { var t = 1 - Math.max(hb, 0) / 0.7; k = 1 - o.bodenAO * t * t * (1 - Math.abs(ty) * 0.7); }
+      }
+      v.push(wx, wy, wz, tx, ty, tz, farbe[0] * k, farbe[1] * k, farbe[2] * k, u, w, kn, wind, gs, mu);
       if (wx < this.min[0]) this.min[0] = wx; if (wx > this.max[0]) this.max[0] = wx;
       if (wy < this.min[1]) this.min[1] = wy; if (wy > this.max[1]) this.max[1] = wy;
       if (wz < this.min[2]) this.min[2] = wz; if (wz > this.max[2]) this.max[2] = wz;

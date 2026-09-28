@@ -28,6 +28,7 @@
      sitz, sitzHoehe: Sitzpunkt für NPCs (Bänke, Stühle)
      hoehe:     wie hoch die „E“-Blase über dem Objekt schwebt
      spritzer:  Höhe, aus der Wassertropfen spritzen (Brunnen)
+     blaetter:  { hoehe, farben: [...] } – ab und zu fällt ein Blatt aus der Krone
      licht:     Lichtquelle (oder Liste davon):
                 { pos: [x, y, z], farbe, radius, staerke, hof, art }
                 radius = wie weit das Licht reicht, staerke = 0…1,
@@ -53,7 +54,8 @@ DATA.prefabs = {
       { form: "kugel", radien: [0.4, 0.32, 0.4], pos: [-0.22, 1.55, -0.42], farbe: "laub_dunkel", wind: 1 }
     ],
     kollision: { kreis: 0.3 },
-    schatten: 1.1
+    schatten: 1.1,
+    blaetter: { hoehe: 1.7, farben: ["laub", "laub_hell", "laub_dunkel"] }
   },
 
   birke: {
@@ -66,7 +68,8 @@ DATA.prefabs = {
       { form: "kugel", r: 0.45, pos: [0.35, 2.05, 0.2], farbe: "birke_laub", wind: 1 }
     ],
     kollision: { kreis: 0.2 },
-    schatten: 0.9
+    schatten: 0.9,
+    blaetter: { hoehe: 2.2, farben: ["birke_laub", "bluete_gelb"] }
   },
 
   kiefer: {

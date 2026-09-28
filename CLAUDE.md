@@ -99,6 +99,10 @@ Prompt abzuweichen. **Nichts darf nach Animal Crossing oder einem anderen besteh
   als Kontaktschatten), Nachbearbeitung (`nachbearbeiten`, Bild per copyTexSubImage2D, `DATA.bildStil`),
   Sonne kommt von links vorn (`sonnen_richtung`), Pollen/Staub (`dioramaHilfen.schweben`).
   Grafikstufen Hoch/Mittel/Niedrig, Auto-Absenkung stufenweise.
+- **Grafik-Ausbau 2 (2026-09-28, wartet auf OK des Users):** Kontaktschatten (`Welt.verdeckung`,
+  Builder-Option `bodenY`/`bodenAO`), Lichtkante (`uLichtkante`), Wasser mit Uferschaum (UV.x = Ufernähe),
+  Spiegelung, nasser Sand (`sand_nass`), Lichtschleier in der Nachbearbeitung, fallende Blätter
+  (Prefab `blaetter`), weichere Schattenkanten, Innenräume `schlagschatten: 0.6`.
 - **Offen:** Test auf echtem iPad/Windows-Schul-Laptop, Zahlen verifizieren, Credits-Namen eintragen.
 
 ## Gestaltungsregeln für Karten (aus Erfahrung)

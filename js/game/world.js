@@ -50,6 +50,7 @@ GAME.Welt = (function () {
     this.chunks = [];
     this.statSchatten = [];
     this.lichtQuellen = [];
+    this.blattQuellen = [];
     this.interaktionen = [];
     this.objekte = {};
     this.belegt = new Uint8Array(w * h);
@@ -176,6 +177,8 @@ GAME.Welt = (function () {
         self.koll.rechteck(wx + k[0] * c + k[1] * sn, wz - k[0] * sn + k[1] * c, k[2] / 2, k[3] / 2, o.rot || 0, { objekt: o });
       });
       if (pf.schatten) self.statSchatten.push({ x: wx, z: wz, r: pf.schatten });
+      if (pf.blaetter) self.blattQuellen.push({ x: wx, y: wy + pf.blaetter.hoehe, z: wz,
+        farben: pf.blaetter.farben.map(function (f) { return GAME.farbe(f); }) });
       if (pf.licht) [].concat(pf.licht).forEach(function (l) {
         var p = l.pos || [0, 1, 0];
         self.lichtHinzufuegen(l, wx + p[0] * c + p[2] * sn, wy + p[1], wz - p[0] * sn + p[2] * c);
@@ -268,7 +271,8 @@ GAME.Welt = (function () {
         var fa = F(a.farbe);
         chunkVon(x + lx / 2, z + lz / 2).add(ENG.mesh.form("box", { groesse: [lx, a.wand, lz], rund: 0.04 }), {
           pos: [x + lx / 2, a.wand / 2, z + lz / 2], farbe: fa,
-          muster: a.textur ? (ENG.mesh.MUSTER[a.textur] || 0) : 0, texSkal: 0.5
+          muster: a.textur ? (ENG.mesh.MUSTER[a.textur] || 0) : 0, texSkal: 0.5,
+          bodenY: 0, bodenAO: ((DATA.bildStil && DATA.bildStil.kontaktschatten !== undefined) ? DATA.bildStil.kontaktschatten : 0.3) * 0.9
         });
       }
     }
@@ -298,9 +302,34 @@ GAME.Welt = (function () {
     }
 
     if (a.wasser || a.steg) {
-      var grund = F("seegrund"), wf = F(a.wasser ? a.farbe : "wasser");
-      viereck(y00, y10, y01, y11, [grund[0] * jitter, grund[1] * jitter, grund[2] * jitter], 0, n00, n10, n01, n11);
-      viereck(WASSER_Y, WASSER_Y, WASSER_Y, WASSER_Y, wf, 5);
+      var grund = F("seegrund"), wf = F(a.wasser ? a.farbe : "wasser"), nsand = F("sand_nass");
+      // Seegrund: was über die Wasserlinie ragt, ist nasser Sand
+      var gf = function (y) {
+        var t = MM.clamp((y - WASSER_Y + 0.12) / 0.2, 0, 1);
+        return [MM.lerp(grund[0], nsand[0], t) * jitter, MM.lerp(grund[1], nsand[1], t) * jitter, MM.lerp(grund[2], nsand[2], t) * jitter];
+      };
+      var g00 = gf(y00), g10 = gf(y10), g01 = gf(y01), g11 = gf(y11);
+      b.roh([
+        [x, y00, z, n00[0], n00[1], n00[2], g00[0], g00[1], g00[2], x * 0.5, z * 0.5, 0, 0, 0, 0],
+        [x + 1, y10, z, n10[0], n10[1], n10[2], g10[0], g10[1], g10[2], (x + 1) * 0.5, z * 0.5, 0, 0, 0, 0],
+        [x, y01, z + 1, n01[0], n01[1], n01[2], g01[0], g01[1], g01[2], x * 0.5, (z + 1) * 0.5, 0, 0, 0, 0],
+        [x + 1, y11, z + 1, n11[0], n11[1], n11[2], g11[0], g11[1], g11[2], (x + 1) * 0.5, (z + 1) * 0.5, 0, 0, 0, 0]
+      ], [2, 3, 1, 2, 1, 0]);
+      // Wasseroberfläche: UV.x = Nähe zum Ufer (für Schaumlinien und flaches, helles Wasser)
+      var ufer = function (cx, cz) {
+        for (var dz = -1; dz <= 0; dz++) for (var dx = -1; dx <= 0; dx++) {
+          var tx = cx + dx, tz = cz + dz;
+          if (tx < 0 || tz < 0 || tx >= self.w || tz >= self.h) continue;
+          if (!nass(self.arten[tx + tz * self.w])) return 1;
+        }
+        return 0;
+      };
+      b.roh([
+        [x, WASSER_Y, z, 0, 1, 0, wf[0], wf[1], wf[2], ufer(x, z), 0, 0, 0, 0, 5],
+        [x + 1, WASSER_Y, z, 0, 1, 0, wf[0], wf[1], wf[2], ufer(x + 1, z), 0, 0, 0, 0, 5],
+        [x, WASSER_Y, z + 1, 0, 1, 0, wf[0], wf[1], wf[2], ufer(x, z + 1), 0, 0, 0, 0, 5],
+        [x + 1, WASSER_Y, z + 1, 0, 1, 0, wf[0], wf[1], wf[2], ufer(x + 1, z + 1), 0, 0, 0, 0, 5]
+      ], [2, 3, 1, 2, 1, 0]);
       if (a.steg) {
         var holz = F(a.farbe);
         b.add(ENG.mesh.form("box", { groesse: [1.0, 0.16, 0.98], rund: 0.03 }), {
@@ -327,6 +356,8 @@ GAME.Welt = (function () {
       for (var i = 0; i <= N; i++) {
         var px = x + i / N, pz = z + j / N;
         var fa = hart ? eigene : this.mischFarbe(x, z, i === 0 ? 0 : (i === N ? 2 : 1), j === 0 ? 0 : (j === N ? 2 : 1), eigene);
+        var ao = this.verdeckung(px, pz);
+        if (ao < 1) fa = [fa[0] * ao, fa[1] * ao, fa[2] * ao * (0.96 + ao * 0.04)];
         var hy = this.hoeheBei(px, pz);
         var nl = this.hoeheBei(px - 0.5, pz), nr = this.hoeheBei(px + 0.5, pz);
         var no = this.hoeheBei(px, pz - 0.5), nu = this.hoeheBei(px, pz + 0.5);
@@ -345,6 +376,36 @@ GAME.Welt = (function () {
     // Deko: Grasbüschel und kleine Blumen, auf Wegen ein paar Kiesel
     if (this.artNamen[x + z * this.w] === "gras" && !this.belegt[x + z * this.w]) this.dekoBauen(deko || b, x, z);
     else if (this.artNamen[x + z * this.w] === "weg") this.kieselBauen(deko || b, x, z);
+  };
+
+  /* Kontaktschatten am Boden: Wo Wände, Häuser und Möbel den Boden berühren,
+     sammelt sich Farbe (wie Pigment in einer Ecke). 1 = frei, kleiner = dunkler. */
+  Welt.prototype.verdeckung = function (px, pz) {
+    var staerke = (DATA.bildStil && DATA.bildStil.kontaktschatten !== undefined) ? DATA.bildStil.kontaktschatten : 0.3;
+    if (staerke <= 0) return 1;
+    var WEIT = 0.85, nah = WEIT;
+    var formen = this.koll.formenNahe(px, pz, WEIT + 0.5);
+    for (var i = 0; i < formen.length; i++) {
+      var f = formen[i], d;
+      if (f.typ === "kreis") d = Math.sqrt((px - f.x) * (px - f.x) + (pz - f.z) * (pz - f.z)) - f.r;
+      else {
+        var wx = px - f.x, wz = pz - f.z;
+        var lx = Math.abs(wx * f.c - wz * f.s) - f.hb, lz = Math.abs(wx * f.s + wz * f.c) - f.ht;
+        d = Math.sqrt(Math.max(lx, 0) * Math.max(lx, 0) + Math.max(lz, 0) * Math.max(lz, 0)) + Math.min(Math.max(lx, lz), 0);
+      }
+      if (d < nah) nah = d;
+    }
+    // Wände (Innenräume)
+    for (var tz = Math.floor(pz - 1); tz <= Math.floor(pz + 1); tz++) {
+      for (var tx = Math.floor(px - 1); tx <= Math.floor(px + 1); tx++) {
+        if (tx < 0 || tz < 0 || tx >= this.w || tz >= this.h || !this.arten[tx + tz * this.w].wand) continue;
+        var dx = Math.max(tx - px, 0, px - tx - 1), dz = Math.max(tz - pz, 0, pz - tz - 1);
+        var dw = Math.sqrt(dx * dx + dz * dz);
+        if (dw < nah) nah = dw;
+      }
+    }
+    var t = MM.clamp(1 - nah / WEIT, 0, 1);
+    return 1 - staerke * t * t;
   };
 
   // Grundfarbe einer Landkachel (mit leichter Streuung), null bei Wasser
@@ -618,6 +679,7 @@ GAME.Welt = (function () {
 
   /* Prefab in einen Builder einbauen (Weltposition, Drehung in Grad) */
   Welt.prefabEinbauen = function (b, pf, x, y, z, rotGrad) {
+    var bodenAO = ((DATA.bildStil && DATA.bildStil.kontaktschatten !== undefined) ? DATA.bildStil.kontaktschatten : 0.3) * 0.9;
     MM.m4compose(tmpA, x, y, z, 0, rotGrad * MM.DEG, 0, 1, 1, 1);
     for (var i = 0; i < pf.teile.length; i++) {
       var t = pf.teile[i];
@@ -632,7 +694,8 @@ GAME.Welt = (function () {
         muster: t.leuchten ? ENG.mesh.MUSTER.leuchten
           : (t.farbe === "fenster" && t.fenster !== false) ? ENG.mesh.MUSTER.fenster
           : t.textur ? (ENG.mesh.MUSTER[t.textur] || 0) : 0,
-        texSkal: 0.6
+        texSkal: 0.6,
+        bodenY: y, bodenAO: bodenAO
       });
     }
   };
@@ -663,12 +726,14 @@ GAME.Welt = (function () {
       fenster: w("fenster") || 0,
       fensterLicht: F(w("fenster_licht") || "laterne_licht"),
       schlagschatten: w("schlagschatten") || 0,
+      lichtkante: zahl("lichtkante", 0.6),
       pollen: w("pollen") || 0, pollenFarbe: F(w("pollen_farbe") || "pollen"),
       // Nachbearbeitung (DATA.bildStil in palette.js)
       bild: {
         wackeln: zahl("wackeln", 1), kante: zahl("pigmentrand", 1.2), rand: zahl("papierrand", 1),
         faser: zahl("papierfaser", 1), saettigung: zahl("saettigung", 1.06),
-        lichterTon: F(B.lichter_ton || [1, 1, 1]), schattenTon: F(B.schatten_ton || [1, 1, 1])
+        lichterTon: F(B.lichter_ton || [1, 1, 1]), schattenTon: F(B.schatten_ton || [1, 1, 1]),
+        schleier: zahl("lichtschleier", 0.3), schleierFarbe: F(B.lichtschleier_farbe || "lichtschleier")
       }
     };
   };
