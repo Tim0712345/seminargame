@@ -54,6 +54,7 @@ DATA.texte = {
     einstellungen: "Einstellungen",
     grafik: "Grafik",
     hoch: "Hoch",
+    mittel: "Mittel",
     niedrig: "Niedrig",
     an: "An",
     aus: "Aus",
@@ -67,6 +68,7 @@ DATA.texte = {
     steuerung: "Steuerung anzeigen",
     titelbildschirm: "Zum Titelbildschirm",
     autosave: "Das Spiel speichert automatisch.",
+    autoMittel: "Das Spiel lief ruckelig – die Grafik ist jetzt auf „Mittel“ gestellt (änderbar unter Pause → Einstellungen).",
     autoNiedrig: "Das Spiel lief ruckelig – die Grafik ist jetzt auf „Niedrig“ gestellt (änderbar unter Pause → Einstellungen).",
     hinweisNeuladen: "← → oder Enter ändert einen Wert. Die Kantenglättung ändert sich erst nach dem Neuladen."
   },

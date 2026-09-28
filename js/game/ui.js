@@ -9,7 +9,9 @@
 var GAME = window.GAME = window.GAME || {};
 
 /* ---------------- Einstellungen (optional in localStorage) ----------------
-   qualitaet   "hoch" | "niedrig" (Renderskala 0,75, ohne Zusatzeffekte, Lampenlicht, Wolken und Deko)
+   qualitaet   "hoch"    alles: Schlagschatten, Nachbearbeitung (Papier, Pigmentränder), Licht, Deko
+               "mittel"  ohne Schlagschatten und Nachbearbeitung
+               "niedrig" Renderskala 0,75, ohne Zusatzeffekte, Lampenlicht, Wolken und Deko
    stumm       alle Töne aus
    sprechlaute Silben-Töne beim Sprechen
    schrift     "normal" | "gross" | "sehrgross"
@@ -39,9 +41,13 @@ GAME.einstellungen = (function () {
     } catch (e) { /* ignorieren */ }
   };
   E.anwenden = function () {
-    ENG.renderer.fx = E.qualitaet === "hoch" && !E.ruhig;
-    ENG.renderer.deko = E.qualitaet === "hoch";
-    ENG.renderer.licht = E.qualitaet === "hoch";
+    if (STUFEN.indexOf(E.qualitaet) < 0) E.qualitaet = "hoch";
+    var hoch = E.qualitaet === "hoch", ab = E.qualitaet !== "niedrig";
+    ENG.renderer.fx = ab && !E.ruhig;
+    ENG.renderer.deko = ab;
+    ENG.renderer.licht = ab;
+    ENG.renderer.schlagschatten = hoch;
+    ENG.renderer.nachbearbeitung = hoch;
     ENG.renderer.kruemmungAn = false;
     ENG.audio.setStumm(E.stumm);
     ENG.audio.sprechlaute = !!E.sprechlaute;
@@ -52,19 +58,21 @@ GAME.einstellungen = (function () {
     document.body.classList.toggle("ruhig", !!E.ruhig);
     if (GAME.ui && GAME.ui.groesseAnpassen) GAME.ui.groesseAnpassen();
   };
-  E.renderSkala = function () { return E.qualitaet === "hoch" ? 1 : 0.75; };
+  var STUFEN = ["hoch", "mittel", "niedrig"];
+  E.STUFEN = STUFEN;
+  E.renderSkala = function () { return E.qualitaet === "niedrig" ? 0.75 : 1; };
 
-  // Läuft das Spiel dauerhaft zu langsam, einmalig auf „Niedrig“ schalten
-  var langsam = 0, geprueft = false;
+  // Läuft das Spiel dauerhaft zu langsam, eine Stufe tiefer schalten (Hoch → Mittel → Niedrig)
+  var langsam = 0;
   E.leistungPruefen = function (dt) {
-    if (geprueft || E.qualitaet !== "hoch" || GAME.szenen.aktiv !== GAME.Spielszene) return;
+    if (E.qualitaet === "niedrig" || GAME.szenen.aktiv !== GAME.Spielszene) return;
     var fps = ENG.loop.fps || 60;
     langsam = fps < 28 ? langsam + dt : Math.max(0, langsam - dt * 2);
     if (langsam > 6) {
-      geprueft = true;
-      E.qualitaet = "niedrig";
+      langsam = 0;
+      E.qualitaet = STUFEN[STUFEN.indexOf(E.qualitaet) + 1];
       E.anwenden(); E.speichern();
-      GAME.ui.einblenden(DATA.texte.pause.autoNiedrig, 4);
+      GAME.ui.einblenden(E.qualitaet === "mittel" ? DATA.texte.pause.autoMittel : DATA.texte.pause.autoNiedrig, 4);
     }
   };
   return E;
@@ -410,8 +418,11 @@ GAME.ui = (function () {
     U.menueOeffnen({
       titel: p.einstellungen,
       eintraege: [
-        { text: function () { return p.grafik + ": " + (E.qualitaet === "hoch" ? p.hoch : p.niedrig); },
-          umschalten: aendern(function () { E.qualitaet = E.qualitaet === "hoch" ? "niedrig" : "hoch"; }) },
+        { text: function () { return p.grafik + ": " + p[E.qualitaet]; },
+          umschalten: aendern(function (r) {
+            var S = E.STUFEN, k = S.indexOf(E.qualitaet);
+            E.qualitaet = S[(k + (r < 0 ? S.length - 1 : 1)) % S.length];
+          }) },
         { text: function () { return p.ton + ": " + anAus(!E.stumm); },
           umschalten: aendern(function () { E.stumm = !E.stumm; }) },
         { text: function () { return p.sprechlaute + ": " + anAus(E.sprechlaute); },

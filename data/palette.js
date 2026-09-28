@@ -58,6 +58,8 @@ DATA.palette = {
   tageslicht:    "#fff1d6",   // Licht, das durchs Fenster fällt
   fensterglanz:  "#ffd48a",   // Fenster, hinter denen abends Licht brennt
   rueckstrahl:   "#e9c9a0",   // warmer Widerschein vom Boden in den Schatten
+  pollen:        "#fff3c4",   // schwebende Pollen im Sonnenlicht
+  staub:         "#fbeedd",   // Staubkörnchen in Innenräumen
   brille:        "#4d4a52",
   backstein:     "#c97d62",
   putz_salbei:   "#cfd9c0",
@@ -132,10 +134,27 @@ DATA.palette = {
    wolken    = Wolkenschatten, die über die Welt ziehen (0 = keine … 1 = viele)
    fenster   = Fenster leuchten von innen (0 = Tag, Glanzstrich … 1 = warmes Licht)
    fenster_licht = Farbe der leuchtenden Fenster
-   rueckstrahl, rueckstrahl_staerke = warmer Widerschein vom Boden in den Schatten */
+   rueckstrahl, rueckstrahl_staerke = warmer Widerschein vom Boden in den Schatten
+   schlagschatten  = Stärke der geworfenen Schatten (0 = aus … 1 = voll)
+   pollen, pollen_farbe = schwebende Pollen/Staubkörnchen (0 = keine … 1 = viele)
+   sonnen_richtung = woher die Sonne scheint [x, y, z] (x < 0: von links/Westen,
+                     z > 0: von vorn/Süden, y = Höhe)                           */
 DATA.lichtStandard = {
   lampen: 0.4, lichthof: 0.3, wolken: 0.35, fenster: 0, fenster_licht: "fensterglanz",
-  rueckstrahl: "rueckstrahl", rueckstrahl_staerke: 0.4
+  rueckstrahl: "rueckstrahl", rueckstrahl_staerke: 0.4,
+  schlagschatten: 1, sonnen_richtung: [-0.5, 0.78, 0.45], pollen: 0.5, pollen_farbe: "pollen"
+};
+
+/* Bildstil der Nachbearbeitung (nur bei Grafik „Hoch“)
+   wackeln      = Linien wirken freihand gezeichnet (0 = aus, 1 = normal, 2 = stark)
+   pigmentrand  = an Farbkanten sammelt sich dunklere Farbe (0 = aus … 2)
+   papierrand   = Bildrand läuft ausgefranst ins Papier aus (0 = aus … 1)
+   papierfaser  = Papierstruktur im Bild (0 = aus … 2)
+   saettigung   = Farbkraft (1 = unverändert)
+   lichter_ton / schatten_ton = Farbstich heller bzw. dunkler Stellen [r, g, b] (1 = neutral) */
+DATA.bildStil = {
+  wackeln: 1, pigmentrand: 1.3, papierrand: 1, papierfaser: 1, saettigung: 1.08,
+  lichter_ton: [1.03, 1.0, 0.95], schatten_ton: [0.94, 0.96, 1.04]
 };
 
 DATA.stimmungen = {
@@ -183,16 +202,16 @@ DATA.stimmungen = {
   innen_archiv: {
     himmel_oben: "#e8dcc4", horizont: "#e8dcc4", dunst: "#e4d7bf",
     sonne: "#fbefd9", schatten: "#b9a9c2", tusche: "tusche", kruemmung: 0,
-    lampen: 1.3, lichthof: 0.35, wolken: 0
+    lampen: 1.3, lichthof: 0.35, wolken: 0, pollen: 0.35, pollen_farbe: "staub"
   },
   innen_warm: {
     himmel_oben: "#efe2cc", horizont: "#efe2cc", dunst: "#ebdfc9",
     sonne: "#fff3e0", schatten: "#c2b4c8", tusche: "tusche", kruemmung: 0,
-    lampen: 1.3, lichthof: 0.35, wolken: 0
+    lampen: 1.3, lichthof: 0.35, wolken: 0, pollen: 0.35, pollen_farbe: "staub"
   },
   innen_kuehl: {
     himmel_oben: "#e3e6e0", horizont: "#e3e6e0", dunst: "#e4e4dc",
     sonne: "#f8f7f0", schatten: "#b3b5cf", tusche: "tusche", kruemmung: 0,
-    lampen: 1.3, lichthof: 0.35, wolken: 0
+    lampen: 1.3, lichthof: 0.35, wolken: 0, pollen: 0.35, pollen_farbe: "staub"
   }
 };

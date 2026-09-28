@@ -50,10 +50,12 @@ kein WebGL nutzen. Dann in den Browser-Einstellungen die
 - Mit Maus oder Finger **ziehen**: laufen wie mit einem Joystick.
 - Runde Knöpfe unten rechts: Notizbuch, Aufgaben, Pause.
 
-**Einstellungen** (Pause → Einstellungen oder im Titelbildschirm): Grafik Hoch/Niedrig,
+**Einstellungen** (Pause → Einstellungen oder im Titelbildschirm): Grafik Hoch/Mittel/Niedrig,
 Ton, Sprechlaute, Schriftgröße (Normal/Groß/Sehr groß), hoher Kontrast, Bewegung reduzieren.
-„Niedrig“ ist für langsame Schul-Laptops gedacht. Läuft das Spiel länger ruckelig,
-schaltet es einmal automatisch auf „Niedrig“.
+- „Hoch“: alles – echte Schlagschatten, Nachbearbeitung (Papier, Pigmentränder, gezeichnete Linien)
+- „Mittel“: ohne Schlagschatten und Nachbearbeitung (runde Schatten wie früher)
+- „Niedrig“: für langsame Schul-Laptops (kleinere Auflösung, ohne Licht, Wolken und Deko)
+Läuft das Spiel länger ruckelig, schaltet es automatisch eine Stufe tiefer.
 
 **Verstecktes Admin-Menü** (zum Testen und Vorführen): auf der Tastatur `admin` tippen
 oder im Titelbildschirm fünfmal schnell aufs Logo tippen. Dort kann man alles freischalten,
@@ -157,6 +159,10 @@ DATA.dialogues.de_lea = {
   (0 = Tag mit Glanzstrich, 1 = warmes Licht hinter den Fenstern),
   `rueckstrahl` + `rueckstrahl_staerke` (warmer Widerschein vom Boden in den Schatten).
 - Lichtfarben: `lampe_warm`, `lampe_schirm`, `tageslicht`, `fensterglanz`.
+- Außerdem pro Ort: `schlagschatten` (0 = aus … 1), `sonnen_richtung` (woher die Sonne
+  scheint) und `pollen` (schwebende Pollen bzw. Staub, Farbe `pollen_farbe`).
+- `DATA.bildStil`: Nachbearbeitung – `wackeln` (Linien wie freihand), `pigmentrand`,
+  `papierrand` (ausgefranster Bildrand), `papierfaser`, `saettigung`, `lichter_ton`, `schatten_ton`.
 
 ### Aussehen der Figuren
 - `data/characters.js`: Jede Figur wird aus Bausteinen zusammengesetzt
@@ -205,4 +211,8 @@ DATA.dialogues.de_lea = {
   Aquarell-Rand, warme Lasur, radieren die Schraffur weg), leuchtende Lampenschirme,
   Lichthöfe, Fenster mit Glanzstrich (abends warm erleuchtet), ziehende
   Wolkenschatten und warmer Widerschein vom Boden in den Schatten
+- Schlagschatten per Schattenkarte aus Sonnensicht (2048², Tiefe in RGBA verpackt),
+  schraffiert und mit unruhigem Rand; Schatten werfen alle Meshes mit Tusche-Kontur
+- Nachbearbeitung in einem Durchgang: leicht wackelnde Linien, Pigmentränder an
+  Farbkanten, Papierfaser, ausfransender Papierrand, Farbabstimmung
 - Farbe der Tusche und des Papiers: `tusche` und `papier` in `data/palette.js`

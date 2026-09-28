@@ -509,6 +509,7 @@ GAME.Welt = (function () {
   };
 
   Welt.prototype.schattenZeichnen = function (kam) {
+    if (ENG.renderer.schattenAktiv()) return;   // echte Schlagschatten ersetzen die runden
     var self = this, hf = function (x, z) { return self.hoeheBei(x, z); };
     for (var i = 0; i < this.statSchatten.length; i++) {
       var s = this.statSchatten[i];
@@ -639,10 +640,11 @@ GAME.Welt = (function () {
   /* Umgebung (Licht, Himmel) aus einer Stimmung in palette.js.
      Fehlende Lichtwerte kommen aus DATA.lichtStandard (ebenfalls palette.js). */
   Welt.umgebung = function (st) {
-    var F = GAME.farbe, L = DATA.lichtStandard || {};
+    var F = GAME.farbe, L = DATA.lichtStandard || {}, B = DATA.bildStil || {};
     function w(n) { return st[n] !== undefined ? st[n] : L[n]; }
+    function zahl(n, s) { return B[n] !== undefined ? B[n] : s; }
     var sonne = F(st.sonne);
-    var r = [-0.25, 0.85, 0.62], l = Math.sqrt(r[0] * r[0] + r[1] * r[1] + r[2] * r[2]);
+    var r = w("sonnen_richtung") || [-0.25, 0.85, 0.62], l = Math.sqrt(r[0] * r[0] + r[1] * r[1] + r[2] * r[2]);
     return {
       oben: F(st.himmel_oben), horizont: F(st.horizont), dunst: F(st.dunst),
       sonne: [sonne[0] * 1.02, sonne[1] * 1.02, sonne[2] * 1.02],
@@ -659,7 +661,15 @@ GAME.Welt = (function () {
       lampen: w("lampen") || 0,
       hof: w("lichthof") || 0,
       fenster: w("fenster") || 0,
-      fensterLicht: F(w("fenster_licht") || "laterne_licht")
+      fensterLicht: F(w("fenster_licht") || "laterne_licht"),
+      schlagschatten: w("schlagschatten") || 0,
+      pollen: w("pollen") || 0, pollenFarbe: F(w("pollen_farbe") || "pollen"),
+      // Nachbearbeitung (DATA.bildStil in palette.js)
+      bild: {
+        wackeln: zahl("wackeln", 1), kante: zahl("pigmentrand", 1.2), rand: zahl("papierrand", 1),
+        faser: zahl("papierfaser", 1), saettigung: zahl("saettigung", 1.06),
+        lichterTon: F(B.lichter_ton || [1, 1, 1]), schattenTon: F(B.schatten_ton || [1, 1, 1])
+      }
     };
   };
 

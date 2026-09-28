@@ -7,6 +7,12 @@
      gemalte Lichtpfützen mit Aquarell-Rand, leuchtende Teile (Muster 6),
      Fenster (Muster 7, Glanzstrich / abends warmes Licht), warmes
      Rücklicht vom Boden, ziehende Wolkenschatten, Lichthöfe um Lampen
+   * Schlagschatten (Schattenkarte aus Sonnensicht, schraffiert, mit
+     unruhigem Rand). Dafür werden die Meshes eines Bildes gesammelt und
+     erst in R.ende gezeichnet: zuerst die Schattenkarte, dann das Bild.
+     Schatten werfen alle Meshes mit Tusche-Kontur (opt.kontur).
+   * Nachbearbeitung: gezeichnete (leicht wackelnde) Linien, Pigmentränder
+     an Farbkanten, Papierfaser, ausfransender Papierrand, Farbabstimmung
    * Starre Knochen: eine ganze Figur = ein Draw-Call
    * Blob-Schatten + Partikel in EINEM gemeinsamen Draw-Call
    * Himmelsverlauf, Debug-Linien
@@ -16,8 +22,9 @@ var ENG = window.ENG = window.ENG || {};
 ENG.renderer = (function () {
   "use strict";
   var MM = ENG.math;
-  var R = { stats: { drawCalls: 0, dreiecke: 0, lichter: 0 }, breite: 1, hoehe: 1, skala: 1, fx: true, licht: true, kruemmungAn: true, kruemmung: 0 };
-  var gl, pHaupt, pKontur, pBlob, pHimmel, pLinie;
+  var R = { stats: { drawCalls: 0, dreiecke: 0, lichter: 0 }, breite: 1, hoehe: 1, skala: 1, fx: true, licht: true,
+            schlagschatten: true, nachbearbeitung: true, kruemmungAn: true, kruemmung: 0 };
+  var gl, pHaupt, pKontur, pBlob, pHimmel, pLinie, pTiefe, pNach;
   var MAX_KNOCHEN = 12;
   var MAX_LICHTER = 8;
   var lichtPos = new Float32Array(4 * MAX_LICHTER), lichtFarbe = new Float32Array(4 * MAX_LICHTER), lichtN = 0;
@@ -33,8 +40,10 @@ ENG.renderer = (function () {
     "attribute vec3 aPos; attribute vec3 aNrm; attribute vec3 aCol; attribute vec2 aUv; attribute vec4 aExtra;",
     "uniform mat4 uViewProj; uniform mat4 uModel; uniform mat4 uBones[" + MAX_KNOCHEN + "];",
     "uniform vec3 uKruemmMitte; uniform float uKruemmung; uniform float uZeit; uniform float uFx;",
+    "uniform mat4 uSchattenMat;",
     "varying vec3 vNrm; varying vec3 vCol; varying vec2 vUv; varying vec3 vWelt;",
     "varying vec4 vSel; varying float vWasser; varying float vGesicht; varying float vLeuchten; varying float vFenster;",
+    "varying vec3 vSchatten;",
     "void main() {",
     "  mat4 bm = uBones[int(aExtra.x + 0.5)];",
     "  vec4 w = uModel * (bm * vec4(aPos, 1.0));",
@@ -53,6 +62,8 @@ ENG.renderer = (function () {
     "  vSel = clamp(1.0 - abs(vec4(1.0, 2.0, 3.0, 4.0) - vec4(sel)), 0.0, 1.0);",
     "  vNrm = (uModel * (bm * vec4(aNrm, 0.0))).xyz;",
     "  vCol = aCol; vUv = aUv; vGesicht = aExtra.z; vWelt = w.xyz;",
+    // Punkt in der Schattenkarte (etwas entlang der Normale versetzt gegen Schattenakne)
+    "  vSchatten = (uSchattenMat * vec4(w.xyz + normalize(vNrm) * 0.045, 1.0)).xyz * 0.5 + 0.5;",
     "  vec2 d = w.xz - uKruemmMitte.xz;",
     "  w.y -= dot(d, d) * uKruemmung;",
     "  gl_Position = uViewProj * w;",
@@ -67,6 +78,9 @@ ENG.renderer = (function () {
     "uniform float uZeit; uniform vec3 uTon; uniform float uPixel; uniform float uSchraffur;",
     "uniform float uFx; uniform vec4 uRueck; uniform float uWolken; uniform float uLampen; uniform vec4 uFensterLicht;",
     "uniform vec4 uLichtPos[" + MAX_LICHTER + "]; uniform vec4 uLichtFarbe[" + MAX_LICHTER + "]; uniform int uLichtN;",
+    "uniform sampler2D uSchattenTex; uniform float uSchattenAn; uniform float uSchattenPixel;",
+    "varying vec3 vSchatten;",
+    "float tiefeLesen(vec2 uv) { return dot(texture2D(uSchattenTex, uv), vec4(1.0, 1.0 / 255.0, 1.0 / 65025.0, 1.0 / 16581375.0)); }",
     "varying vec3 vNrm; varying vec3 vCol; varying vec2 vUv; varying vec3 vWelt;",
     "varying vec4 vSel; varying float vWasser; varying float vGesicht; varying float vLeuchten; varying float vFenster;",
     "void main() {",
@@ -98,6 +112,18 @@ ENG.renderer = (function () {
     "  float ndl = dot(N, uSonnenRichtung);",
     "  float licht = smoothstep(0.02, 0.1, ndl);",
     "  float kern = smoothstep(-0.2, -0.45, ndl);",
+    // Schlagschatten aus der Schattenkarte: klarer Rand wie mit Tusche, aber leicht unruhig
+    "  if (uSchattenAn > 0.0 && licht > 0.0 && vGesicht < 0.5",
+    "      && vSchatten.x > 0.0 && vSchatten.x < 1.0 && vSchatten.y > 0.0 && vSchatten.y < 1.0 && vSchatten.z < 1.0) {",
+    "    vec2 wob = (texture2D(uPapier, vWelt.xz * 0.9 + vWelt.y * 0.37).rg - 0.5) * uSchattenPixel * 3.0;",
+    "    float z = vSchatten.z - 0.0005 - 0.0018 * (1.0 - clamp(ndl, 0.0, 1.0));",
+    "    vec2 uv = vSchatten.xy + wob; float o = uSchattenPixel * 1.25;",
+    "    float sicht = step(z, tiefeLesen(uv)) * 2.0",
+    "      + step(z, tiefeLesen(uv + vec2(o, o))) + step(z, tiefeLesen(uv + vec2(-o, o)))",
+    "      + step(z, tiefeLesen(uv + vec2(o, -o))) + step(z, tiefeLesen(uv + vec2(-o, -o)));",
+    "    sicht = mix(1.0, smoothstep(1.5, 4.5, sicht), uSchattenAn);",
+    "    licht *= sicht;",
+    "  }",
     // Wolkenschatten: große, weiche Flecken ziehen langsam über die Welt
     "  float sonnig = licht;",
     "  if (uWolken > 0.0) {",
@@ -240,6 +266,73 @@ ENG.renderer = (function () {
   ].join("\n");
   var FS_LINIE = FS_PREC + "varying vec3 vCol; void main() { gl_FragColor = vec4(vCol, 1.0); }";
 
+  /* Schattenkarte: Tiefe aus Sicht der Sonne, in RGBA verpackt (WebGL 1) */
+  var VS_TIEFE = [
+    "precision highp float;",
+    "attribute vec3 aPos; attribute vec3 aNrm; attribute vec3 aCol; attribute vec2 aUv; attribute vec4 aExtra;",
+    "uniform mat4 uSchattenMat; uniform mat4 uModel; uniform mat4 uBones[" + MAX_KNOCHEN + "];",
+    "uniform float uZeit; uniform float uFx;",
+    "varying float vTiefe;",
+    "void main() {",
+    "  if (aExtra.z > 0.5 || abs(aExtra.w - 5.0) < 0.5) { gl_Position = vec4(0.0, 0.0, 2.0, 1.0); return; }",
+    "  mat4 bm = uBones[int(aExtra.x + 0.5)];",
+    "  vec4 w = uModel * (bm * vec4(aPos, 1.0));",
+    "  if (aExtra.y > 0.0) {",
+    "    float ph = uZeit * 1.6 + w.x * 0.37 + w.z * 0.23;",
+    "    w.x += sin(ph) * 0.05 * aExtra.y * uFx;",
+    "    w.z += cos(ph * 0.83) * 0.035 * aExtra.y * uFx;",
+    "  }",
+    "  gl_Position = uSchattenMat * w;",
+    "  vTiefe = gl_Position.z * 0.5 + 0.5;",
+    "}"
+  ].join("\n");
+  var FS_TIEFE = FS_PREC + [
+    "varying float vTiefe;",
+    "void main() {",
+    "  vec4 e = fract(vec4(1.0, 255.0, 65025.0, 16581375.0) * vTiefe);",
+    "  e -= e.yzww * vec4(1.0 / 255.0, 1.0 / 255.0, 1.0 / 255.0, 0.0);",
+    "  gl_FragColor = e;",
+    "}"
+  ].join("\n");
+
+  /* Nachbearbeitung: das fertige Bild wie auf Papier gemalt */
+  var VS_NACH = "attribute vec2 aPos; void main() { gl_Position = vec4(aPos, 0.0, 1.0); }";
+  var FS_NACH = FS_PREC + [
+    "uniform sampler2D uBild; uniform sampler2D uPapier;",
+    "uniform vec2 uGroesse; uniform vec2 uTexSkal; uniform float uPixel;",
+    "uniform float uWackeln; uniform float uKante; uniform float uRand; uniform float uFaser; uniform float uSaettigung;",
+    "uniform vec3 uPapierFarbe; uniform vec3 uLichterTon; uniform vec3 uSchattenTon;",
+    "vec3 bild(vec2 p) { return texture2D(uBild, p * uTexSkal).rgb; }",
+    "void main() {",
+    "  vec2 px = gl_FragCoord.xy;",
+    "  vec2 uv = px / uGroesse;",
+    // Gezeichnete Linien: Bild leicht und unregelmäßig verschieben (wie freihand)
+    "  vec2 n = texture2D(uPapier, px / (uPixel * 310.0)).gb - 0.5;",
+    "  vec2 n2 = texture2D(uPapier, px / (uPixel * 97.0) + 0.31).gr - 0.5;",
+    "  vec2 q = uv + (n * 1.6 + n2 * 0.8) * uWackeln * uPixel / uGroesse;",
+    "  vec3 c = bild(q);",
+    // Pigmentränder: an Farbkanten sammelt sich Farbe und wird dunkler
+    "  vec2 d = 1.3 * uPixel / uGroesse;",
+    "  vec3 a = bild(q + vec2(d.x, 0.0)) + bild(q - vec2(d.x, 0.0)) + bild(q + vec2(0.0, d.y)) + bild(q - vec2(0.0, d.y));",
+    "  float kante = length(c - a * 0.25);",
+    "  c *= 1.0 - clamp(kante * uKante, 0.0, 0.28);",
+    // Farbabstimmung: helle Töne etwas wärmer, dunkle etwas kühler, leicht kräftiger
+    "  float hell = dot(c, vec3(0.299, 0.587, 0.114));",
+    "  c = mix(vec3(hell), c, uSaettigung);",
+    "  c *= mix(uSchattenTon, uLichterTon, smoothstep(0.25, 0.85, hell));",
+    // Papierfaser und Körnung (Pigment setzt sich in den Vertiefungen ab)
+    "  float faser = texture2D(uPapier, px / (uPixel * 180.0) * vec2(1.0, 0.33)).r;",
+    "  float korn = texture2D(uPapier, px / (uPixel * 64.0)).r;",
+    "  c *= 1.0 - ((faser - 0.5) * 0.06 + (korn - 0.5) * 0.05) * uFaser * (1.2 - hell);",
+    // Ausfransender Papierrand: zum Bildrand hin läuft die Farbe ins Papier aus
+    "  vec2 r = abs(uv - 0.5) * 2.0;",
+    "  float rn = texture2D(uPapier, uv * vec2(1.7, 1.3) + 0.5).g;",
+    "  float rand = smoothstep(0.9, 1.03, max(r.x, r.y) + (rn - 0.5) * 0.06 + dot(r, r) * 0.012);",
+    "  c = mix(c, uPapierFarbe, rand * uRand);",
+    "  gl_FragColor = vec4(clamp(c, 0.0, 1.0), 1.0);",
+    "}"
+  ].join("\n");
+
   // ---------------- dynamische Buffer ----------------
   var BLOB_MAX = 3000;                          // Vierecke
   var blobDaten = new Float32Array(BLOB_MAX * 4 * 9);
@@ -256,6 +349,8 @@ ENG.renderer = (function () {
     pBlob = ENG.gl.program(VS_BLOB, FS_BLOB, ["aPos", "aUv", "aCol"]);
     pHimmel = ENG.gl.program(VS_HIMMEL, FS_HIMMEL, ["aPos"]);
     pLinie = ENG.gl.program(VS_LINIE, FS_LINIE, ["aPos", "aCol"]);
+    pTiefe = ENG.gl.program(VS_TIEFE, FS_TIEFE, ["aPos", "aNrm", "aCol", "aUv", "aExtra"]);
+    pNach = ENG.gl.program(VS_NACH, FS_NACH, ["aPos"]);
     for (var k = 0; k < MAX_KNOCHEN; k++) MM.m4identity(einheitsKnochen.subarray(k * 16, k * 16 + 16));
     var idx = new Uint16Array(BLOB_MAX * 6);
     for (var i = 0; i < BLOB_MAX; i++) {
@@ -307,7 +402,83 @@ ENG.renderer = (function () {
     gl.enable(gl.DEPTH_TEST);
     gl.depthMask(true);
     hauptVorbereiten();
+    // Schlagschatten: Meshes sammeln, Schattenkarte in R.ende
+    schatten.staerke = R.schlagschatten ? (umg.schlagschatten || 0) : 0;
+    sammeln = schatten.staerke > 0;
+    liste.length = 0;
+    if (sammeln) schattenMatrix();
   };
+
+  // ---------------- Schattenkarte ----------------
+  var schatten = { fbo: null, tex: null, rb: null, groesse: 2048, staerke: 0, view: MM.m4(), proj: MM.m4(), mat: MM.m4(), halb: 20 };
+  var sammeln = false, liste = [], modellVorrat = [];
+  R.schattenAktiv = function () { return sammeln; };
+
+  function schattenEinrichten() {
+    var max = gl.getParameter(gl.MAX_TEXTURE_SIZE) || 2048;
+    schatten.groesse = Math.min(2048, max);
+    schatten.tex = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, schatten.tex);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, schatten.groesse, schatten.groesse, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    schatten.rb = gl.createRenderbuffer();
+    gl.bindRenderbuffer(gl.RENDERBUFFER, schatten.rb);
+    gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, schatten.groesse, schatten.groesse);
+    schatten.fbo = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, schatten.fbo);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, schatten.tex, 0);
+    gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, schatten.rb);
+    var ok = gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE;
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    if (!ok) R.schlagschatten = false;
+    return ok;
+  }
+
+  // Blick der Sonne auf den Bereich um das Kameraziel (orthografisch)
+  function schattenMatrix() {
+    var L = umg.sonnenRichtung, z = kam.ziel;
+    var h = schatten.halb = Math.max(12, (kam.abstand || 15) * 1.25 + 4);
+    var auge = [z[0] + L[0] * 70, z[1] + L[1] * 70, z[2] + L[2] * 70];
+    MM.m4lookAt(schatten.view, auge, z, [0, 1, 0]);
+    var P = schatten.proj, nah = 1, fern = 150;
+    for (var i = 0; i < 16; i++) P[i] = 0;
+    P[0] = 1 / h; P[5] = 1 / h; P[10] = -2 / (fern - nah); P[14] = -(fern + nah) / (fern - nah); P[15] = 1;
+    MM.m4mul(schatten.mat, P, schatten.view);
+    // An Texel-Raster ausrichten, damit die Schatten beim Laufen nicht flimmern
+    var M = schatten.mat, halbeTex = schatten.groesse / 2;
+    var ox = M[12] * halbeTex, oy = M[13] * halbeTex;
+    P[12] = (Math.round(ox) - ox) / halbeTex; P[13] = (Math.round(oy) - oy) / halbeTex;
+    MM.m4mul(schatten.mat, P, schatten.view);
+  }
+
+  function schattenZeichnen() {
+    if (!schatten.fbo && !schattenEinrichten()) return false;
+    gl.bindFramebuffer(gl.FRAMEBUFFER, schatten.fbo);
+    gl.viewport(0, 0, schatten.groesse, schatten.groesse);
+    gl.clearColor(1, 1, 1, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    ENG.gl.use(pTiefe);
+    var u = pTiefe.u, einheit = false;
+    gl.uniformMatrix4fv(u.uSchattenMat, false, schatten.mat);
+    gl.uniform1f(u.uZeit, zeit);
+    gl.uniform1f(u.uFx, R.fx ? 1 : 0);
+    gl.cullFace(gl.FRONT);           // Rückseiten zeichnen: weniger Schattenakne
+    for (var i = 0; i < liste.length; i++) {
+      var e = liste[i];
+      if (!e.opt || !e.opt.kontur) continue;
+      gl.uniformMatrix4fv(u.uModel, false, e.model || EINHEIT);
+      if (e.opt.knochen) { gl.uniformMatrix4fv(u.uBones, false, e.opt.knochen); einheit = false; }
+      else if (!einheit) { gl.uniformMatrix4fv(u.uBones, false, einheitsKnochen); einheit = true; }
+      zeichneTeile(e.mesh);
+    }
+    gl.cullFace(gl.BACK);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.viewport(0, 0, R.breite, R.hoehe);
+    return true;
+  }
 
   function hauptVorbereiten() {
     ENG.gl.use(pHaupt);
@@ -335,6 +506,7 @@ ENG.renderer = (function () {
     gl.uniform4f(u.uFensterLicht, fl[0], fl[1], fl[2], umg.fenster || 0);
     gl.uniform1i(u.uLichtN, 0);
     lichtN = 0;
+    gl.uniform1f(u.uSchattenAn, 0);
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, ENG.textures.detail);
     gl.uniform1i(u.uDetail, 0);
@@ -386,6 +558,20 @@ ENG.renderer = (function () {
   }
 
   R.mesh = function (mesh, model, opt) {
+    if (sammeln) {
+      // für später merken (die Schattenkarte muss vor dem Bild fertig sein)
+      var m = null;
+      if (model) {
+        m = modellVorrat[liste.length] || (modellVorrat[liste.length] = new Float32Array(16));
+        m.set(model);
+      }
+      liste.push({ mesh: mesh, model: m, opt: opt });
+      return;
+    }
+    meshSofort(mesh, model, opt);
+  };
+
+  function meshSofort(mesh, model, opt) {
     var u = pHaupt.u;
     gl.uniformMatrix4fv(u.uModel, false, model || EINHEIT);
     if (opt && opt.knochen) {
@@ -417,7 +603,7 @@ ENG.renderer = (function () {
       gl.cullFace(gl.BACK);
       ENG.gl.use(pHaupt);
     }
-  };
+  }
 
   // Ist eine Box sichtbar? (berücksichtigt die Weltkrümmung)
   R.sichtbar = function (min, max) {
@@ -471,6 +657,7 @@ ENG.renderer = (function () {
      damit der Schatten sich an Hügel anschmiegt.                      */
   R.schatten = function (x, z, radius, staerke, hoehe, yFest) {
     var h0, h1, h2, h3;
+    if (sammeln) staerke *= 0.55;   // mit Schlagschatten nur noch ein leichter Kontaktschatten
     if (yFest !== undefined) { h0 = h1 = h2 = h3 = yFest; }
     else {
       h0 = hoehe(x - radius, z - radius); h1 = hoehe(x + radius, z - radius);
@@ -559,6 +746,25 @@ ENG.renderer = (function () {
 
   // ---------------- Abschluss: Schatten, Partikel, Linien ----------------
   R.ende = function () {
+    // Gesammelte Meshes: erst die Schattenkarte, dann das eigentliche Bild
+    if (sammeln) {
+      sammeln = false;
+      var mitSchatten = schattenZeichnen();
+      ENG.gl.use(pHaupt);
+      var u = pHaupt.u;
+      if (mitSchatten) {
+        gl.uniformMatrix4fv(u.uSchattenMat, false, schatten.mat);
+        gl.uniform1f(u.uSchattenAn, schatten.staerke);
+        gl.uniform1f(u.uSchattenPixel, 1 / schatten.groesse);
+        gl.activeTexture(gl.TEXTURE3);
+        gl.bindTexture(gl.TEXTURE_2D, schatten.tex);
+        gl.uniform1i(u.uSchattenTex, 3);
+        gl.activeTexture(gl.TEXTURE0);
+      }
+      for (var q = 0; q < liste.length; q++) meshSofort(liste[q].mesh, liste[q].model, liste[q].opt);
+      liste.length = 0;
+      gl.uniform1f(u.uSchattenAn, 0);
+    }
     // Partikel an die Schatten anhängen (Billboards)
     if (blobPart.length) {
       var v = kam.view;
@@ -615,7 +821,52 @@ ENG.renderer = (function () {
       gl.enable(gl.DEPTH_TEST);
       R.stats.drawCalls++;
     }
+    if (R.nachbearbeitung && umg.bild) nachbearbeiten(umg.bild);
   };
+
+  // ---------------- Nachbearbeitung ----------------
+  var nachTex = null, nachB = 0, nachH = 0;
+  function nachbearbeiten(b) {
+    var w = R.breite, h = R.hoehe;
+    gl.activeTexture(gl.TEXTURE0);
+    if (!nachTex) {
+      nachTex = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, nachTex);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    } else gl.bindTexture(gl.TEXTURE_2D, nachTex);
+    // fertiges Bild (mit Kantenglättung) in eine Textur kopieren
+    if (nachB !== w || nachH !== h) { gl.copyTexImage2D(gl.TEXTURE_2D, 0, gl.RGB, 0, 0, w, h, 0); nachB = w; nachH = h; }
+    else gl.copyTexSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 0, 0, w, h);
+    ENG.gl.use(pNach);
+    var u = pNach.u;
+    gl.uniform1i(u.uBild, 0);
+    gl.activeTexture(gl.TEXTURE1);
+    gl.bindTexture(gl.TEXTURE_2D, ENG.textures.papier);
+    gl.uniform1i(u.uPapier, 1);
+    gl.activeTexture(gl.TEXTURE0);
+    gl.uniform2f(u.uGroesse, w, h);
+    gl.uniform2f(u.uTexSkal, 1, 1);
+    gl.uniform1f(u.uPixel, R.pixel || 1);
+    gl.uniform1f(u.uWackeln, b.wackeln);
+    gl.uniform1f(u.uKante, b.kante);
+    gl.uniform1f(u.uRand, b.rand);
+    gl.uniform1f(u.uFaser, b.faser);
+    gl.uniform1f(u.uSaettigung, b.saettigung);
+    gl.uniform3fv(u.uPapierFarbe, umg.papier);
+    gl.uniform3fv(u.uLichterTon, b.lichterTon);
+    gl.uniform3fv(u.uSchattenTon, b.schattenTon);
+    gl.disable(gl.DEPTH_TEST);
+    gl.depthMask(false);
+    gl.bindBuffer(gl.ARRAY_BUFFER, himmelVbo);
+    gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    R.stats.drawCalls++;
+    gl.enable(gl.DEPTH_TEST);
+    gl.depthMask(true);
+  }
 
   return R;
 })();

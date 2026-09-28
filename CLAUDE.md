@@ -29,6 +29,8 @@ Prompt abzuweichen. **Nichts darf nach Animal Crossing oder einem anderen besteh
 - Zwei Lichtstufen, Schraffur im Schatten, Kreuzschraffur im Kernschatten, schraffierte Bodenschatten
 - Aquarell-Flecken und Papierkorn (Textur `ENG.textures.papier`), gezeichnete Wasserwellen
 - Figuren: ca. 3 Kopflängen, Strichaugen mit Brauen und kleiner Nase, **keine** Glanzpunkt-Augen, **keine** rosa Wangen
+- Schlagschatten (Schattenkarte) schraffiert statt dunkel; Nachbearbeitung: wackelnde Linien,
+  Pigmentränder, Papierfaser, ausfransender Papierrand (nur Grafik „Hoch“)
 - **Keine** gekrümmte Welt
 - Kamera: frontal von Süden, 46° Neigung (der User wollte ausdrücklich diesen Winkel, nicht diagonal)
 - Oberfläche im Skizzenbuch-Stil (Papierkarten, krakelige Tusche-Ränder, Handschrift-Überschriften)
@@ -92,6 +94,11 @@ Prompt abzuweichen. **Nichts darf nach Animal Crossing oder einem anderen besteh
   automatisch bei farbe "fenster"), Lichthöfe (`R.lichthof`), Wolkenschatten (Papier-Textur Kanal B),
   Rücklicht; Werte je Stimmung + `DATA.lichtStandard` (palette.js). Neue Prefab `stehlampe`,
   Schreibtischlampe. Bei „Niedrig“ keine Punktlichter/Wolken (`ENG.renderer.licht`).
+- **Grafik-Ausbau (2026-09-28, wartet auf OK des Users):** Schlagschatten per Schattenkarte
+  (`R.mesh` sammelt bei aktiven Schatten, `R.ende` zeichnet Schattenkarte + Bild; runde Schatten dann nur
+  als Kontaktschatten), Nachbearbeitung (`nachbearbeiten`, Bild per copyTexSubImage2D, `DATA.bildStil`),
+  Sonne kommt von links vorn (`sonnen_richtung`), Pollen/Staub (`dioramaHilfen.schweben`).
+  Grafikstufen Hoch/Mittel/Niedrig, Auto-Absenkung stufenweise.
 - **Offen:** Test auf echtem iPad/Windows-Schul-Laptop, Zahlen verifizieren, Credits-Namen eintragen.
 
 ## Gestaltungsregeln für Karten (aus Erfahrung)

@@ -413,6 +413,7 @@ GAME.Spielszene = (function () {
     GAME.ui.hinweis(GAME.flags.hat("intro_fertig") ? GAME.quests.hinweis(Z.welt.map.land || null) : "");
 
     Z.kamera.folgen(kim.x, kim.y, kim.z, sp.vx, sp.vz, dt, GAME.einstellungen.ruhig);
+    GAME.dioramaHilfen.schweben(Z.welt, Z.kamera, dt);
     ENG.partikel.update(dt);
   };
 
@@ -552,6 +553,21 @@ GAME.dioramaHilfen = (function () {
     ENG.partikel.zeichnen();
     R.ende();
   };
+  // Pollen (draußen) bzw. Staub (drinnen) schweben langsam im Licht
+  var schwebeZeit = 0;
+  H.schweben = function (welt, kamera, dt) {
+    var st = welt.stimmung, menge = st.pollen || 0;
+    if (menge <= 0 || !ENG.renderer.fx) return;
+    schwebeZeit -= dt * menge;
+    while (schwebeZeit < 0) {
+      schwebeZeit += 0.09;
+      var x = kamera.ziel[0] + (Math.random() - 0.5) * 22, z = kamera.ziel[2] + (Math.random() - 0.5) * 15;
+      ENG.partikel.neu({ x: x, y: welt.hoeheBei(x, z) + 0.3 + Math.random() * 2.2, z: z,
+        vx: (Math.random() - 0.5) * 0.5, vy: 0.04 + Math.random() * 0.12, vz: (Math.random() - 0.5) * 0.5,
+        leben: 3.5 + Math.random() * 3, groesse: 0.045 + Math.random() * 0.04,
+        farbe: st.pollenFarbe, alpha: 0.55 + Math.random() * 0.3 });
+    }
+  };
   H.KEIN_SPIELER = { x: -999, z: -999 };
   return H;
 })();
@@ -587,6 +603,7 @@ GAME.Titelszene = (function () {
     T.kamera.drehung = GAME.einstellungen.ruhig ? 0.35 : T.zeit * 0.05;
     T.npcs.forEach(function (n) { if (n.sichtbar()) n.update(dt, T.welt, H.KEIN_SPIELER); });
     H.spritzen(T.spritzer, dt);
+    H.schweben(T.welt, T.kamera, dt);
     ENG.partikel.update(dt);
   };
 
@@ -673,6 +690,7 @@ GAME.Epilogszene = (function () {
     E.kamera.drehung = GAME.einstellungen.ruhig ? 0 : Math.sin(E.zeit * 0.12) * (DATA.epilog.kamera.schwenk || 0);
     sichtbare().forEach(function (n) { n.update(dt, E.welt, H.KEIN_SPIELER); });
     H.spritzen(E.spritzer, dt);
+    H.schweben(E.welt, E.kamera, dt);
     ENG.partikel.update(dt);
     if (!E.fertig && !GAME.ui.blockiert() && E.zeit > 0.6 && (I.gedrueckt("ok") || I.klick)) E.weiter();
     I.klick = null;
