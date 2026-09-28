@@ -9,7 +9,7 @@
 var GAME = window.GAME = window.GAME || {};
 
 /* ---------------- Einstellungen (optional in localStorage) ----------------
-   qualitaet   "hoch" | "niedrig" (Renderskala 0,75, ohne Zusatzeffekte und Deko)
+   qualitaet   "hoch" | "niedrig" (Renderskala 0,75, ohne Zusatzeffekte, Lampenlicht, Wolken und Deko)
    stumm       alle Töne aus
    sprechlaute Silben-Töne beim Sprechen
    schrift     "normal" | "gross" | "sehrgross"
@@ -41,6 +41,7 @@ GAME.einstellungen = (function () {
   E.anwenden = function () {
     ENG.renderer.fx = E.qualitaet === "hoch" && !E.ruhig;
     ENG.renderer.deko = E.qualitaet === "hoch";
+    ENG.renderer.licht = E.qualitaet === "hoch";
     ENG.renderer.kruemmungAn = false;
     ENG.audio.setStumm(E.stumm);
     ENG.audio.sprechlaute = !!E.sprechlaute;

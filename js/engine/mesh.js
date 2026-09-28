@@ -6,7 +6,8 @@
    (wenige Draw-Calls). Eckpunkt-Format (15 Floats):
      Position(3) Normale(3) Farbe(3) UV(2) Extra(4)
      Extra = [Knochen, Wind, Gesicht (0/1 Augen/2 Mund), Muster]
-     Muster: 0 keins, 1 Gras, 2 Pflaster, 3 Holz, 4 Kopfstein, 5 Wasser
+     Muster: 0 keins, 1 Gras, 2 Pflaster, 3 Holz, 4 Kopfstein, 5 Wasser,
+             6 leuchtend (Lampe), 7 Fenster
    ===================================================================== */
 var ENG = window.ENG = window.ENG || {};
 
@@ -16,7 +17,7 @@ ENG.mesh = (function () {
   var M = {};
   var cache = {};
   M.STRIDE = 15;
-  M.MUSTER = { gras: 1, pflaster: 2, holz: 3, kopfstein: 4, wasser: 5 };
+  M.MUSTER = { gras: 1, pflaster: 2, holz: 3, kopfstein: 4, wasser: 5, leuchten: 6, fenster: 7 };
 
   function geo() { return { p: [], n: [], uv: [], i: [] }; }
   function r3(v) { return Math.round(v * 1000) / 1000; }

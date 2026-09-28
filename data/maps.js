@@ -527,7 +527,8 @@ DATA.maps = {
       { p: "kindertisch", x: 8, y: 5.2 },
       { p: "pflanze", x: 10, y: 6.5, id: "kita_pflanze" },
       { p: "tisch", x: 2.2, y: 6.4, id: "kita_tisch" },
-      { p: "regal", x: 10.25, y: 2.5, rot: -90 }
+      { p: "regal", x: 10.25, y: 2.5, rot: -90 },
+      { p: "stehlampe", x: 0.9, y: 1.3 }
     ],
     spawns: {
       eingang: { x: 5.5, y: 6.6, blick: 180 }
@@ -772,7 +773,8 @@ DATA.maps = {
       { p: "stuhlreihe", x: 5.5, y: 5.6, rot: 180, id: "amt_stuehle" },
       { p: "spielteppich", x: 2.2, y: 5.2 },
       { p: "pflanze", x: 10.2, y: 6.6 },
-      { p: "pflanze", x: 0.9, y: 2.2 }
+      { p: "pflanze", x: 0.9, y: 2.2 },
+      { p: "stehlampe", x: 10.2, y: 1.2 }
     ],
     spawns: {
       eingang: { x: 5.5, y: 6.6, blick: 180 }
@@ -1114,7 +1116,8 @@ DATA.maps = {
       { p: "pflanze", x: 1, y: 1.5 },
       { p: "pflanze", x: 10.2, y: 6.5 },
       { p: "plakat", x: 3.5, y: 0.55 },
-      { p: "teppich", x: 2.3, y: 6 }
+      { p: "teppich", x: 2.3, y: 6 },
+      { p: "stehlampe", x: 1, y: 4.3 }
     ],
     spawns: {
       eingang: { x: 5.5, y: 6.6, blick: 180 },
@@ -1215,7 +1218,8 @@ DATA.maps = {
       { p: "stuhl", x: 6.5, y: 4.6 },
       { p: "pflanze", x: 10.2, y: 6.5 },
       { p: "plakat", x: 5.5, y: 0.55 },
-      { p: "pflanze", x: 0.9, y: 6.5 }
+      { p: "pflanze", x: 0.9, y: 6.5 },
+      { p: "stehlampe", x: 10.2, y: 2.6 }
     ],
     spawns: {
       aufzug: { x: 9, y: 1.9, blick: 0 }
@@ -1368,7 +1372,8 @@ DATA.maps = {
       { p: "schreibtisch", x: 6.5, y: 5, id: "bxl_tisch" },
       { p: "aktenstapel", x: 2.6, y: 7.4 },
       { p: "aktenstapel", x: 11, y: 7 },
-      { p: "pflanze", x: 12, y: 8.2 }
+      { p: "pflanze", x: 12, y: 8.2 },
+      { p: "stehlampe", x: 1.1, y: 7.7 }
     ],
     spawns: {
       eingang: { x: 6.5, y: 7.6, blick: 180 }

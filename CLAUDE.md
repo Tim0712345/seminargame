@@ -87,6 +87,11 @@ Prompt abzuweichen. **Nichts darf nach Animal Crossing oder einem anderen besteh
     automatische Absenkung auf „Niedrig“ bei < 28 FPS; Deko nur bei „Hoch“; Sichtfeld im Hochformat breiter
   - Speichern zusätzlich bei pagehide/visibilitychange und alle 15 s
   - Debug-Kartenprüfung testet jetzt auch, ob alle NPCs/Objekte ansprechbar sind
+- **Licht (2026-09-28, wartet auf OK des Users):** Punktlichter (max. 8, `R.lichter`, Auswahl in
+  `Welt.lichterSetzen`), Prefab-`licht` / Karten-`lichter`, Teil-`leuchten` (Muster 6), Fenster (Muster 7,
+  automatisch bei farbe "fenster"), Lichthöfe (`R.lichthof`), Wolkenschatten (Papier-Textur Kanal B),
+  Rücklicht; Werte je Stimmung + `DATA.lichtStandard` (palette.js). Neue Prefab `stehlampe`,
+  Schreibtischlampe. Bei „Niedrig“ keine Punktlichter/Wolken (`ENG.renderer.licht`).
 - **Offen:** Test auf echtem iPad/Windows-Schul-Laptop, Zahlen verifizieren, Credits-Namen eintragen.
 
 ## Gestaltungsregeln für Karten (aus Erfahrung)

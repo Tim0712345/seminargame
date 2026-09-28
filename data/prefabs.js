@@ -16,6 +16,9 @@
      rot:[x,y,z] in Grad · farbe (Name aus palette.js)
      textur: "gras" | "pflaster" | "holz" | "kopfstein"
      wind: 0…1 (wiegt sich im Wind, z. B. Baumkronen)
+     leuchten: true (leuchtet selbst, z. B. Lampenschirm – ohne Schatten)
+     Teile mit farbe "fenster" werden automatisch zu Fensterscheiben
+     (Glanzstrich, abends warmes Licht); fenster: false schaltet das ab.
 
    Pro Prefab:
      kollision: { kreis: r }  oder  { box: [breite, tiefe] }  oder
@@ -25,6 +28,12 @@
      sitz, sitzHoehe: Sitzpunkt für NPCs (Bänke, Stühle)
      hoehe:     wie hoch die „E“-Blase über dem Objekt schwebt
      spritzer:  Höhe, aus der Wassertropfen spritzen (Brunnen)
+     licht:     Lichtquelle (oder Liste davon):
+                { pos: [x, y, z], farbe, radius, staerke, hof, art }
+                radius = wie weit das Licht reicht, staerke = 0…1,
+                hof = Größe des gemalten Scheins um die Lampe (0 = keiner),
+                art: "lampe" (hängt von „lampen“ der Stimmung ab, Standard)
+                     oder "tag" (Tageslicht, z. B. durchs Fenster)
    ===================================================================== */
 var DATA = window.DATA = window.DATA || {};
 
@@ -125,12 +134,13 @@ DATA.prefabs = {
     teile: [
       { form: "zylinder", r: 0.14, rOben: 0.1, h: 0.25, pos: [0, 0.125, 0], farbe: "metall_dunkel" },
       { form: "zylinder", r: 0.05, h: 2.2, pos: [0, 1.3, 0], farbe: "metall_dunkel" },
-      { form: "box", groesse: [0.3, 0.36, 0.3], rund: 0.06, pos: [0, 2.55, 0], farbe: "laterne_licht" },
+      { form: "box", groesse: [0.3, 0.36, 0.3], rund: 0.06, pos: [0, 2.55, 0], farbe: "laterne_licht", leuchten: true },
       { form: "kegel", r: 0.26, h: 0.2, pos: [0, 2.83, 0], farbe: "metall_dunkel" },
       { form: "kugel", r: 0.05, pos: [0, 2.96, 0], farbe: "metall_dunkel" }
     ],
     kollision: { kreis: 0.16 },
-    schatten: 0.35
+    schatten: 0.35,
+    licht: { pos: [0, 2.45, 0], farbe: "lampe_warm", radius: 4.6, staerke: 1, hof: 1.4 }
   },
 
   zaun: {
@@ -560,10 +570,29 @@ DATA.prefabs = {
       { form: "box", groesse: [0.62, 0.37, 0.01], rund: 0.01, pos: [0, 1.08, -0.18], farbe: "glas" },
       { form: "box", groesse: [0.08, 0.12, 0.06], rund: 0.01, pos: [0, 0.83, -0.2], farbe: "anthrazit" },
       { form: "box", groesse: [0.45, 0.02, 0.15], rund: 0.005, pos: [0, 0.79, 0.12], farbe: "grau" },
-      { form: "zylinder", r: 0.05, h: 0.12, pos: [0.55, 0.83, 0.15], farbe: "koralle" }
+      { form: "zylinder", r: 0.05, h: 0.12, pos: [0.55, 0.83, 0.15], farbe: "koralle" },
+      // Schreibtischlampe
+      { form: "zylinder", r: 0.08, h: 0.03, pos: [-0.6, 0.79, -0.2], farbe: "anthrazit" },
+      { form: "zylinder", r: 0.014, h: 0.3, pos: [-0.6, 0.94, -0.2], farbe: "anthrazit" },
+      { form: "zylinder", r: 0.13, rOben: 0.06, h: 0.13, pos: [-0.6, 1.14, -0.2], farbe: "lampe_schirm", leuchten: true }
     ],
     kollision: { box: [1.6, 0.8] },
-    schatten: 0.7
+    schatten: 0.7,
+    licht: { pos: [-0.55, 1.05, -0.05], farbe: "lampe_warm", radius: 2.5, staerke: 1, hof: 0.6 }
+  },
+
+  // Stehlampe (Innenräume)
+  stehlampe: {
+    teile: [
+      { form: "zylinder", r: 0.18, rOben: 0.14, h: 0.05, pos: [0, 0.025, 0], farbe: "metall_dunkel" },
+      { form: "zylinder", r: 0.025, h: 1.45, pos: [0, 0.75, 0], farbe: "metall_dunkel" },
+      { form: "zylinder", r: 0.25, rOben: 0.16, h: 0.32, pos: [0, 1.58, 0], farbe: "lampe_schirm", leuchten: true },
+      { form: "kugel", r: 0.035, pos: [0, 1.76, 0], farbe: "metall_dunkel" }
+    ],
+    kollision: { kreis: 0.2 },
+    schatten: 0.25,
+    hoehe: 2,
+    licht: { pos: [0, 1.45, 0], farbe: "lampe_warm", radius: 3.6, staerke: 0.9, hof: 0.9 }
   },
 
   // Bürostuhl
@@ -602,7 +631,8 @@ DATA.prefabs = {
       { form: "box", groesse: [0.07, 1, 0.04], rund: 0.01, pos: [0, 1.3, 0.02], farbe: "weiss" },
       { form: "box", groesse: [1.35, 0.07, 0.18], rund: 0.02, pos: [0, 0.78, 0.06], farbe: "weiss" }
     ],
-    schatten: 0
+    schatten: 0,
+    licht: { pos: [0, 0.5, 1.5], farbe: "tageslicht", radius: 3.2, staerke: 0.9, art: "tag" }
   },
 
   // Teppich

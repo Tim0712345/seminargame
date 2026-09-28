@@ -5,6 +5,8 @@
    * Höhen: jede Ecke ist der Mittelwert der angrenzenden Kacheln → weiche Hügel
    * Wasser mit Seegrund und bewegter Oberfläche, Holzstege
    * Objekte aus prefabs.js, Kollision, Schatten, Deko (Grasbüschel, Blumen)
+   * Lichtquellen aus Prefabs (licht) und Karten (lichter), je Bild die
+     nächsten an der Kamera
    ===================================================================== */
 var GAME = window.GAME = window.GAME || {};
 
@@ -47,6 +49,7 @@ GAME.Welt = (function () {
 
     this.chunks = [];
     this.statSchatten = [];
+    this.lichtQuellen = [];
     this.interaktionen = [];
     this.objekte = {};
     this.belegt = new Uint8Array(w * h);
@@ -173,6 +176,10 @@ GAME.Welt = (function () {
         self.koll.rechteck(wx + k[0] * c + k[1] * sn, wz - k[0] * sn + k[1] * c, k[2] / 2, k[3] / 2, o.rot || 0, { objekt: o });
       });
       if (pf.schatten) self.statSchatten.push({ x: wx, z: wz, r: pf.schatten });
+      if (pf.licht) [].concat(pf.licht).forEach(function (l) {
+        var p = l.pos || [0, 1, 0];
+        self.lichtHinzufuegen(l, wx + p[0] * c + p[2] * sn, wy + p[1], wz - p[0] * sn + p[2] * c);
+      });
       var eintrag = { id: o.id, x: wx, y: wy, z: wz, rot: rr, objekt: o, prefab: pf };
       if (o.id) self.objekte[o.id] = eintrag;
       if (o.tuer && pf.tuer) {
@@ -193,6 +200,13 @@ GAME.Welt = (function () {
       for (var tz = Math.floor(wz - rad); tz <= Math.floor(wz + rad); tz++)
         for (var tx = Math.floor(wx - rad); tx <= Math.floor(wx + rad); tx++)
           if (tx >= 0 && tz >= 0 && tx < w && tz < h) self.belegt[tx + tz * w] = 1;
+    });
+
+    // Lichter, die direkt in der Karte stehen (ohne sichtbare Lampe)
+    (this.map.lichter || []).forEach(function (l) {
+      if (l.wenn && !GAME.flags.pruefen(l.wenn)) return;
+      var lx = l.x + 0.5, lz = l.y + 0.5;
+      self.lichtHinzufuegen(l, lx, self.hoeheBei(lx, lz) + (l.h === undefined ? 1.5 : l.h), lz);
     });
 
     // Wände (zu langen Stücken zusammengefasst, damit keine Fugen-Konturen entstehen)
@@ -221,6 +235,15 @@ GAME.Welt = (function () {
     var kx = this.map.kamera && this.map.kamera.x !== undefined ? this.map.kamera.x : w / 2;
     var kz = this.map.kamera && this.map.kamera.z !== undefined ? this.map.kamera.z : h / 2 - 0.4;
     this.kameraGrenzen = this.map.innen ? [kx, kz, kx, kz] : [5, 4, w - 5, h - 2];
+  };
+
+  /* Lichtquelle anlegen. l: { farbe, radius, staerke, art: "lampe" | "tag", hof } */
+  Welt.prototype.lichtHinzufuegen = function (l, x, y, z) {
+    this.lichtQuellen.push({
+      x: x, y: y, z: z, radius: l.radius || 4, staerke: l.staerke === undefined ? 1 : l.staerke,
+      grund: GAME.farbe(l.farbe || "laterne_licht"), lampe: l.art !== "tag", hof: l.hof || 0,
+      farbe: [0, 0, 0], d: 0
+    });
   };
 
   function kolRadius(pf) {
@@ -445,8 +468,35 @@ GAME.Welt = (function () {
   };
 
   // ---------------- Zeichnen ----------------
+  // Die nächsten Lichtquellen an der Kamera auswählen und an den Renderer geben
+  var auswahl = [];
+  function naeher(a, b) { return a.d - b.d; }
+  Welt.prototype.lichterSetzen = function (kam) {
+    var R = ENG.renderer, st = this.stimmung, cx = kam.ziel[0], cz = kam.ziel[2];
+    auswahl.length = 0;
+    if (R.licht) {
+      for (var i = 0; i < this.lichtQuellen.length; i++) {
+        var l = this.lichtQuellen[i], s = l.staerke * (l.lampe ? st.lampen : 1);
+        var dx = l.x - cx, dz = l.z - cz, weit = 24 + l.radius;
+        if (s <= 0.01 || dx * dx + dz * dz > weit * weit) continue;
+        l.d = dx * dx + dz * dz;
+        l.farbe[0] = l.grund[0] * s; l.farbe[1] = l.grund[1] * s; l.farbe[2] = l.grund[2] * s;
+        auswahl.push(l);
+      }
+      auswahl.sort(naeher);
+      if (auswahl.length > R.MAX_LICHTER) auswahl.length = R.MAX_LICHTER;
+      // Lichthöfe um die Lampen (gemalter Schein)
+      for (i = 0; i < auswahl.length; i++) {
+        var q = auswahl[i];
+        if (q.hof && q.lampe) R.lichthof(q.x, q.y, q.z, q.hof, q.grund, st.hof * Math.min(1, q.staerke));
+      }
+    }
+    R.lichter(auswahl);
+  };
+
   Welt.prototype.zeichnen = function (kam) {
     var R = ENG.renderer;
+    this.lichterSetzen(kam);
     if (this.meer) R.mesh(this.meer);
     for (var i = 0; i < this.chunks.length; i++) {
       var c = this.chunks[i];
@@ -577,15 +627,20 @@ GAME.Welt = (function () {
         m: tmpC,
         farbe: GAME.farbe(t.farbe || "grau"),
         wind: t.wind || 0,
-        muster: t.textur ? (ENG.mesh.MUSTER[t.textur] || 0) : 0,
+        // leuchtende Teile (Lampen) und Fensterscheiben bekommen eigene Muster-Nummern für den Shader
+        muster: t.leuchten ? ENG.mesh.MUSTER.leuchten
+          : (t.farbe === "fenster" && t.fenster !== false) ? ENG.mesh.MUSTER.fenster
+          : t.textur ? (ENG.mesh.MUSTER[t.textur] || 0) : 0,
         texSkal: 0.6
       });
     }
   };
 
-  /* Umgebung (Licht, Himmel) aus einer Stimmung in palette.js */
+  /* Umgebung (Licht, Himmel) aus einer Stimmung in palette.js.
+     Fehlende Lichtwerte kommen aus DATA.lichtStandard (ebenfalls palette.js). */
   Welt.umgebung = function (st) {
-    var F = GAME.farbe;
+    var F = GAME.farbe, L = DATA.lichtStandard || {};
+    function w(n) { return st[n] !== undefined ? st[n] : L[n]; }
     var sonne = F(st.sonne);
     var r = [-0.25, 0.85, 0.62], l = Math.sqrt(r[0] * r[0] + r[1] * r[1] + r[2] * r[2]);
     return {
@@ -597,7 +652,14 @@ GAME.Welt = (function () {
       kruemmung: st.kruemmung || 0,
       schattenFarbe: [0.3, 0.27, 0.45],
       tusche: F(st.tusche || "tusche"),
-      papier: F(st.papier || "papier")
+      papier: F(st.papier || "papier"),
+      // Licht
+      rueck: F(w("rueckstrahl") || st.schatten), rueckStaerke: w("rueckstrahl_staerke") || 0,
+      wolken: w("wolken") || 0,
+      lampen: w("lampen") || 0,
+      hof: w("lichthof") || 0,
+      fenster: w("fenster") || 0,
+      fensterLicht: F(w("fenster_licht") || "laterne_licht")
     };
   };
 

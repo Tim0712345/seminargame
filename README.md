@@ -151,6 +151,12 @@ DATA.dialogues.de_lea = {
   die Namen (z. B. `"salbei"`). Eine Farbe hier zu ändern, ändert sie überall.
 - Unter `DATA.stimmungen` stehen Himmel, Sonnenlicht, Schattenfarbe und
   Tuschefarbe pro Ort.
+- Licht pro Ort (ebenfalls in `DATA.stimmungen`, fehlende Werte aus `DATA.lichtStandard`):
+  `lampen` (wie hell Laternen/Lampen leuchten, 0 = aus, 1 = Abend), `lichthof`
+  (Schein um die Lampen), `wolken` (ziehende Wolkenschatten), `fenster`
+  (0 = Tag mit Glanzstrich, 1 = warmes Licht hinter den Fenstern),
+  `rueckstrahl` + `rueckstrahl_staerke` (warmer Widerschein vom Boden in den Schatten).
+- Lichtfarben: `lampe_warm`, `lampe_schirm`, `tageslicht`, `fensterglanz`.
 
 ### Aussehen der Figuren
 - `data/characters.js`: Jede Figur wird aus Bausteinen zusammengesetzt
@@ -177,6 +183,13 @@ DATA.dialogues.de_lea = {
 - `data/prefabs.js`: Ein Prefab besteht aus Grundformen (Kugel, Box,
   Zylinder, Kegel, Kapsel, Torus) mit Position, Größe, Farbe und optional
   Muster (Holz, Pflaster …) oder Wind (für Blätter).
+- Lichtquellen: `licht: { pos: [x, y, z], farbe: "lampe_warm", radius: 4, staerke: 1, hof: 1 }`
+  am Prefab (so haben Laterne, Stehlampe, Schreibtisch und Innenfenster ihr Licht).
+  Ein Teil mit `leuchten: true` leuchtet selbst (Lampenschirm, Laternenglas).
+  In einer Karte gehen auch Lichter ohne sichtbare Lampe:
+  `lichter: [{ x: 5, y: 3, h: 1.5, farbe: "tageslicht", radius: 3, staerke: 0.8, art: "tag" }]`.
+  Pro Bild werden die 8 Lichter nächst der Kamera benutzt; bei „Niedrig“ sind sie aus.
+  Im Debug-Modus zeigt **G** die Reichweite als gelbe Kreise.
 
 ## Technik in Kürze
 
@@ -188,4 +201,8 @@ DATA.dialogues.de_lea = {
 - Eigener Zeichenstil „Tusche & Aquarell“: Tusche-Konturen um alle Formen
   (Inverted Hull), zwei Lichtstufen mit Schraffur im Schatten, schraffierte
   Bodenschatten, Aquarell-Flecken, Papierkorn und gezeichnete Wasserwellen
+- Licht: bis zu 8 Punktlichter als gemalte Lichtpfützen (zwei Stufen, unruhiger
+  Aquarell-Rand, warme Lasur, radieren die Schraffur weg), leuchtende Lampenschirme,
+  Lichthöfe, Fenster mit Glanzstrich (abends warm erleuchtet), ziehende
+  Wolkenschatten und warmer Widerschein vom Boden in den Schatten
 - Farbe der Tusche und des Papiers: `tusche` und `papier` in `data/palette.js`

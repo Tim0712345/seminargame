@@ -3,6 +3,10 @@
    ---------------------------------------------------------------------
    * Toon-Shader (3 weiche Lichtstufen, warme Sonne, kühle Schatten,
      Dunst, Wind, Wasserwellen, Gesichter, Weltkrümmung)
+   * Licht: bis zu 8 Punktlichter (Laternen, Lampen, Fensterlicht) als
+     gemalte Lichtpfützen mit Aquarell-Rand, leuchtende Teile (Muster 6),
+     Fenster (Muster 7, Glanzstrich / abends warmes Licht), warmes
+     Rücklicht vom Boden, ziehende Wolkenschatten, Lichthöfe um Lampen
    * Starre Knochen: eine ganze Figur = ein Draw-Call
    * Blob-Schatten + Partikel in EINEM gemeinsamen Draw-Call
    * Himmelsverlauf, Debug-Linien
@@ -12,9 +16,11 @@ var ENG = window.ENG = window.ENG || {};
 ENG.renderer = (function () {
   "use strict";
   var MM = ENG.math;
-  var R = { stats: { drawCalls: 0, dreiecke: 0 }, breite: 1, hoehe: 1, skala: 1, fx: true, kruemmungAn: true, kruemmung: 0 };
+  var R = { stats: { drawCalls: 0, dreiecke: 0, lichter: 0 }, breite: 1, hoehe: 1, skala: 1, fx: true, licht: true, kruemmungAn: true, kruemmung: 0 };
   var gl, pHaupt, pKontur, pBlob, pHimmel, pLinie;
   var MAX_KNOCHEN = 12;
+  var MAX_LICHTER = 8;
+  var lichtPos = new Float32Array(4 * MAX_LICHTER), lichtFarbe = new Float32Array(4 * MAX_LICHTER), lichtN = 0;
   var einheitsKnochen = new Float32Array(16 * MAX_KNOCHEN);
   var knochenSindEinheit = false, konturKnochenEinheit = false;
   var kam = null, umg = null, zeit = 0;
@@ -28,7 +34,7 @@ ENG.renderer = (function () {
     "uniform mat4 uViewProj; uniform mat4 uModel; uniform mat4 uBones[" + MAX_KNOCHEN + "];",
     "uniform vec3 uKruemmMitte; uniform float uKruemmung; uniform float uZeit; uniform float uFx;",
     "varying vec3 vNrm; varying vec3 vCol; varying vec2 vUv; varying vec3 vWelt;",
-    "varying vec4 vSel; varying float vWasser; varying float vGesicht;",
+    "varying vec4 vSel; varying float vWasser; varying float vGesicht; varying float vLeuchten; varying float vFenster;",
     "void main() {",
     "  mat4 bm = uBones[int(aExtra.x + 0.5)];",
     "  vec4 w = uModel * (bm * vec4(aPos, 1.0));",
@@ -38,7 +44,9 @@ ENG.renderer = (function () {
     "    w.z += cos(ph * 0.83) * 0.035 * aExtra.y * uFx;",
     "  }",
     "  float sel = aExtra.w;",
-    "  vWasser = step(4.5, sel);",
+    "  vWasser = step(4.5, sel) * step(sel, 5.5);",
+    "  vLeuchten = step(5.5, sel) * step(sel, 6.5);",
+    "  vFenster = step(6.5, sel);",
     "  if (vWasser > 0.5) {",
     "    w.y += (sin(uZeit * 1.3 + w.x * 0.9) + cos(uZeit * 1.1 + w.z * 1.2)) * 0.03 * uFx;",
     "  }",
@@ -57,8 +65,10 @@ ENG.renderer = (function () {
     "uniform vec3 uSonnenRichtung; uniform vec3 uSonne; uniform vec3 uSchatten; uniform vec3 uTusche;",
     "uniform vec3 uDunst; uniform vec2 uDunstWeite; uniform vec3 uKamPos;",
     "uniform float uZeit; uniform vec3 uTon; uniform float uPixel; uniform float uSchraffur;",
+    "uniform float uFx; uniform vec4 uRueck; uniform float uWolken; uniform float uLampen; uniform vec4 uFensterLicht;",
+    "uniform vec4 uLichtPos[" + MAX_LICHTER + "]; uniform vec4 uLichtFarbe[" + MAX_LICHTER + "]; uniform int uLichtN;",
     "varying vec3 vNrm; varying vec3 vCol; varying vec2 vUv; varying vec3 vWelt;",
-    "varying vec4 vSel; varying float vWasser; varying float vGesicht;",
+    "varying vec4 vSel; varying float vWasser; varying float vGesicht; varying float vLeuchten; varying float vFenster;",
     "void main() {",
     "  vec3 basis = vCol;",
     // Oberflächenmuster, dezent
@@ -83,29 +93,71 @@ ENG.renderer = (function () {
     "    if (f.a < 0.04) discard;",
     "    basis = mix(basis, f.rgb, f.a);",
     "  }",
-    // Licht: zwei klare Stufen
+    // Sonne: zwei klare Stufen
     "  vec3 N = normalize(vNrm);",
     "  float ndl = dot(N, uSonnenRichtung);",
     "  float licht = smoothstep(0.02, 0.1, ndl);",
     "  float kern = smoothstep(-0.2, -0.45, ndl);",
-    "  vec3 col = mix(basis * uSchatten, basis * uSonne, licht);",
-    // Schraffur im Schatten (diagonal), Kreuzschraffur im Kernschatten
+    // Wolkenschatten: große, weiche Flecken ziehen langsam über die Welt
+    "  float sonnig = licht;",
+    "  if (uWolken > 0.0) {",
+    "    float wo = texture2D(uPapier, vWelt.xz * 0.017 + vec2(0.011, 0.004) * uZeit * uFx).b;",
+    "    sonnig *= 1.0 - smoothstep(0.45, 0.62, wo) * uWolken;",
+    "  }",
+    // Rücklicht: was nach unten oder zur Seite zeigt, fängt warmes Licht vom Boden
+    "  vec3 schattenTon = mix(uSchatten, uRueck.rgb, clamp(0.5 - N.y * 0.5, 0.0, 1.0) * uRueck.a);",
+    "  vec3 col = mix(basis * schattenTon, basis * uSonne, sonnig);",
+    // Punktlichter: gemalte Lichtpfützen in zwei Stufen mit unruhigem Aquarell-Rand
+    "  vec3 lsum = vec3(0.0);",
+    "  if (uLichtN > 0) {",
+    "    float rauh = texture2D(uPapier, vWelt.xz * 0.19 + vec2(vWelt.y * 0.11, 0.0)).g - 0.5;",
+    "    for (int i = 0; i < " + MAX_LICHTER + "; i++) {",
+    "      if (i >= uLichtN) break;",
+    "      vec3 L = uLichtPos[i].xyz - vWelt;",
+    "      float d = length(L);",
+    "      float a = clamp(1.0 - d / uLichtPos[i].w, 0.0, 1.0);",
+    "      float nl = clamp(dot(N, L / max(d, 0.001)) * 0.6 + 0.4, 0.0, 1.0);",
+    "      float w = a * a * nl * (1.0 + rauh * 0.9 + (fleck - 0.5) * 0.5);",
+    "      float stufe = smoothstep(0.035, 0.08, w) * 0.55 + smoothstep(0.26, 0.33, w) * 0.45;",
+    "      lsum += uLichtFarbe[i].rgb * stufe;",
+    "    }",
+    "    lsum *= 1.0 - sonnig * 0.55;",
+    "    col = 1.0 - (1.0 - col) * (1.0 - min(basis * lsum, vec3(1.0)));",   // aufhellen, aber nie grell weiß
+    // warme Lasur in der Lichtfarbe – so sieht man das Licht auch auf hellem Grund
+    "    float lmax = max(lsum.r, max(lsum.g, lsum.b));",
+    "    col *= mix(vec3(1.0), lsum / max(lmax, 0.001), clamp(lmax * 1.6, 0.0, 1.0) * 0.4);",
+    "  }",
+    "  float erhellt = clamp(max(lsum.r, max(lsum.g, lsum.b)) * 1.4, 0.0, 1.0);",
+    // Schraffur im Schatten (diagonal), Kreuzschraffur im Kernschatten – Licht radiert sie weg
     "  vec2 fc = gl_FragCoord.xy / uPixel;",
     "  float s1 = smoothstep(0.16, 0.06, abs(fract((fc.x + fc.y) / 6.0) - 0.5));",
     "  float s2 = smoothstep(0.14, 0.05, abs(fract((fc.x - fc.y) / 6.0) - 0.5));",
-    "  float schraffur = (s1 * (1.0 - licht) * 0.3 + s2 * kern * 0.26) * uSchraffur;",
+    "  float schraffur = (s1 * (1.0 - licht) * 0.3 + s2 * kern * 0.26) * uSchraffur * (1.0 - erhellt * 0.85);",
     "  if (vGesicht > 0.5) schraffur *= 0.3;",
     // Pigment sammelt sich am Rand (Aquarell-Kante)
     "  vec3 V = normalize(uKamPos - vWelt);",
     "  float rand = pow(1.0 - max(dot(N, V), 0.0), 2.5);",
     "  col *= 1.0 - rand * 0.16;",
+    // Fenster: Glanzstrich wie mit Deckweiß – abends warmes Licht von innen
+    "  if (vFenster > 0.5) {",
+    "    float gs = fract((vWelt.x + vWelt.y * 0.8 + vWelt.z * 0.35) * 1.25);",
+    "    float glanz = smoothstep(0.09, 0.05, abs(gs - 0.5)) * 0.55 + smoothstep(0.03, 0.012, abs(gs - 0.68)) * 0.4;",
+    "    col = mix(col, vec3(1.0), glanz * (1.0 - uFensterLicht.a) * 0.7);",
+    "    col = mix(col, uFensterLicht.rgb * (0.92 + fleck * 0.16), uFensterLicht.a);",
+    "    schraffur *= 1.0 - uFensterLicht.a;",
+    "  }",
+    // Leuchtende Teile (Lampenschirm, Laternenglas): kein Schatten, keine Schraffur
+    "  if (vLeuchten > 0.5) {",
+    "    col = mix(basis, vec3(1.0, 0.96, 0.84), 0.3 * uLampen) * (0.96 + 0.14 * uLampen);",
+    "    schraffur = 0.0;",
+    "  }",
     "  col = mix(col, uTusche, max(schraffur, linie));",
     // Papierkorn
     "  float korn = texture2D(uPapier, gl_FragCoord.xy / (256.0 * uPixel)).r;",
     "  col *= 0.95 + korn * 0.08;",
     "  float dist = length(vWelt - uKamPos);",
     "  col = mix(col, uDunst, smoothstep(uDunstWeite.x, uDunstWeite.y, dist));",
-    "  gl_FragColor = vec4(col * uTon, 1.0);",
+    "  gl_FragColor = vec4(min(col * uTon, vec3(1.0)), 1.0);",
     "}"
   ].join("\n");
 
@@ -118,7 +170,7 @@ ENG.renderer = (function () {
     "uniform vec3 uKruemmMitte; uniform float uKruemmung; uniform float uZeit; uniform float uFx;",
     "uniform vec3 uKamPos; uniform float uBreite;",
     "void main() {",
-    "  if (aExtra.z > 0.5 || aExtra.w > 4.5) { gl_Position = vec4(0.0, 0.0, 2.0, 1.0); return; }",
+    "  if (aExtra.z > 0.5 || abs(aExtra.w - 5.0) < 0.5) { gl_Position = vec4(0.0, 0.0, 2.0, 1.0); return; }",
     "  mat4 bm = uBones[int(aExtra.x + 0.5)];",
     "  vec4 w = uModel * (bm * vec4(aPos, 1.0));",
     "  if (aExtra.y > 0.0) {",
@@ -275,6 +327,14 @@ ENG.renderer = (function () {
     gl.uniform3fv(u.uTusche, umg.tusche);
     gl.uniform1f(u.uPixel, R.pixel || 1);
     gl.uniform1f(u.uSchraffur, 1);
+    var rk = umg.rueck || umg.schatten;
+    gl.uniform4f(u.uRueck, rk[0], rk[1], rk[2], umg.rueckStaerke || 0);
+    gl.uniform1f(u.uWolken, R.licht ? (umg.wolken || 0) : 0);
+    gl.uniform1f(u.uLampen, umg.lampen || 0);
+    var fl = umg.fensterLicht || [1, 1, 1];
+    gl.uniform4f(u.uFensterLicht, fl[0], fl[1], fl[2], umg.fenster || 0);
+    gl.uniform1i(u.uLichtN, 0);
+    lichtN = 0;
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, ENG.textures.detail);
     gl.uniform1i(u.uDetail, 0);
@@ -369,6 +429,33 @@ ENG.renderer = (function () {
     return MM.boxVisible(kam.ebenen, min[0], min[1] - fall, min[2], max[0], max[1], max[2]);
   };
 
+  // ---------------- Punktlichter ----------------
+  /* Lichter für dieses Bild setzen (nach R.beginn, vor den Meshes).
+     liste: [{ x, y, z, radius, farbe: [r,g,b] (schon mit Stärke) }, …]
+     Es zählen nur die ersten MAX_LICHTER Einträge. Bei „Niedrig“ aus.   */
+  R.MAX_LICHTER = MAX_LICHTER;
+  R.lichter = function (liste) {
+    lichtN = R.licht ? Math.min(liste.length, MAX_LICHTER) : 0;
+    for (var i = 0; i < lichtN; i++) {
+      var l = liste[i];
+      lichtPos[i * 4] = l.x; lichtPos[i * 4 + 1] = l.y; lichtPos[i * 4 + 2] = l.z; lichtPos[i * 4 + 3] = l.radius;
+      lichtFarbe[i * 4] = l.farbe[0]; lichtFarbe[i * 4 + 1] = l.farbe[1]; lichtFarbe[i * 4 + 2] = l.farbe[2]; lichtFarbe[i * 4 + 3] = 1;
+    }
+    ENG.gl.use(pHaupt);
+    if (lichtN) {
+      gl.uniform4fv(pHaupt.u.uLichtPos, lichtPos);
+      gl.uniform4fv(pHaupt.u.uLichtFarbe, lichtFarbe);
+    }
+    gl.uniform1i(pHaupt.u.uLichtN, lichtN);
+    R.stats.lichter = lichtN;
+  };
+
+  // Weicher Lichthof um eine Lampe (gemalter Schein, als Billboard)
+  R.lichthof = function (x, y, z, groesse, farbe, alpha) {
+    if (!R.licht || alpha <= 0.004) return;
+    blobPart.push(x, y, z, groesse, farbe[0], farbe[1], farbe[2], alpha);
+  };
+
   // ---------------- Blob-Schatten ----------------
   function viereck(ax, ay, az, bx, by, bz, cx, cy, cz, dx, dy, dz, r, g, b, a) {
     if (blobN >= BLOB_MAX) return;
@@ -452,6 +539,7 @@ ENG.renderer = (function () {
     gl.clearColor(pap[0], pap[1], pap[2], 1);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     hauptVorbereiten();
+    gl.uniform1f(pHaupt.u.uWolken, 0);   // keine Wolkenschatten im Portrait
     var model = MM.m4compose(MM.m4(), 0, 0, 0, 0, drehung === undefined ? 0.35 : drehung, 0, g, g, g);
     var ge = figur.gesicht();
     R.mesh(figur.mesh, model, { knochen: figur.knochen, augen: ge.augen, mund: ge.mund, kontur: 0.0045 });
