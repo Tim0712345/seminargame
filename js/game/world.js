@@ -452,7 +452,7 @@ GAME.Welt = (function () {
       var c = this.chunks[i];
       if (R.sichtbar(c.min, c.max)) R.mesh(c, null, { kontur: Welt.KONTUR });
     }
-    for (i = 0; i < this.dekoChunks.length; i++) {
+    for (i = 0; R.deko !== false && i < this.dekoChunks.length; i++) {
       var d = this.dekoChunks[i];
       if (R.sichtbar(d.min, d.max)) R.mesh(d);
     }

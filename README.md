@@ -39,12 +39,25 @@ kein WebGL nutzen. Dann in den Browser-Einstellungen die
 | W A S D oder Pfeiltasten | laufen (8 Richtungen) |
 | E oder Leertaste | sprechen, untersuchen, weiter |
 | Enter | Auswahl bestätigen |
-| Esc | Pause und Einstellungen |
+| Esc | Pause – im Gespräch: Gespräch beenden |
 | N | Notizbuch (Reiter mit ← →) |
 | Q | Aufgaben |
 
-Im Pausemenü lässt sich die **Grafik** (Hoch/Niedrig) umschalten.
-„Niedrig“ ist für langsame Schul-Laptops gedacht.
+**Maus und Touch (z. B. iPad):**
+- Auf den Boden klicken/tippen: Kim läuft dorthin (auch um Häuser herum).
+- Auf eine Person oder ein Schild klicken/tippen: Kim geht hin und spricht sie an.
+- Im Gespräch irgendwo hinklicken: weiter. Antworten direkt anklicken. ✕ beendet das Gespräch.
+- Mit Maus oder Finger **ziehen**: laufen wie mit einem Joystick.
+- Runde Knöpfe unten rechts: Notizbuch, Aufgaben, Pause.
+
+**Einstellungen** (Pause → Einstellungen oder im Titelbildschirm): Grafik Hoch/Niedrig,
+Ton, Sprechlaute, Schriftgröße (Normal/Groß/Sehr groß), hoher Kontrast, Bewegung reduzieren.
+„Niedrig“ ist für langsame Schul-Laptops gedacht. Läuft das Spiel länger ruckelig,
+schaltet es einmal automatisch auf „Niedrig“.
+
+**Verstecktes Admin-Menü** (zum Testen und Vorführen): auf der Tastatur `admin` tippen
+oder im Titelbildschirm fünfmal schnell aufs Logo tippen. Dort kann man alles freischalten,
+direkt zum Finale springen, den Epilog ansehen, zu jeder Karte reisen oder den Spielstand löschen.
 
 ## Debug-Modus (für die Entwicklung)
 
@@ -150,6 +163,9 @@ DATA.dialogues.de_lea = {
   Feld. Welche Bodenart ein Zeichen bedeutet, steht in `legende`.
 - `hoehe`: eine Ziffer pro Feld (0–9). Nebeneinanderliegende Felder sollten
   sich höchstens um 1 unterscheiden, sonst wird der Hang zu steil zum Laufen.
+- Flaggen und Wahrzeichen sind normale Prefabs: `flagge_de`, `flagge_se`, `flagge_ee`, `flagge_lu`,
+  `flagge_be`, `flagge_eu`, `wimpel_de` …, `dalapferd`, `mittsommerstange`, `fachwerkhaus`,
+  `litfasssaeule`, `stadtturm`, `windmuehle`, `festung`, `goldsaeule`, `atomskulptur`, `waffelstand`.
 - `objekte`: `{ p: "baum_rund", x: 5, y: 13, rot: 90 }` stellt einen Baum auf
   Spalte 5, Zeile 13, um 90° gedreht. Die Namen stehen in `data/prefabs.js`.
   Mit `wenn: "alle_beweise"` gibt es ein Objekt nur unter dieser Bedingung

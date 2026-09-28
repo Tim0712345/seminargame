@@ -71,4 +71,10 @@ korrigieren, `verifiziert: true` setzen und hier „ja“ eintragen.
   ungeprüfte als „noch nicht geprüft“. Sobald alle Werte `verifiziert: true` haben,
   verschwindet der Hinweis.
 
+- **Lohnbezug ohne Zahlen:** Die Notizen „Teilzeit und Stundenlohn“ und „Elternzeit und Lohn“
+  enthalten bewusst keine Zahlen. Als Beleg eignen sich die Erklärungen von Destatis zum
+  Gender Pay Gap (Teilzeit/geringfügige Beschäftigung als Faktor) und Studien zur
+  „Child Penalty“ (z. B. Kleven, Landais u. a.). Bitte eine Quelle auswählen und in
+  `facts.js` bei der Notiz eintragen.
+
 *(Diese Liste wird in jeder Phase ergänzt, sobald neue Zahlen dazukommen.)*

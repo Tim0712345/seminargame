@@ -59,7 +59,7 @@ GAME.minispiel = (function () {
   function beenden(ergebnis) {
     var def = DATA.minispiele[M.aktiv];
     if (def.setFlag) GAME.flags.setzen(def.setFlag);
-    if (def.addNote) GAME.quests.notiz(def.addNote);
+    if (def.addNote && GAME.quests.notiz(def.addNote)) ENG.audio.notiz();
     M.aktiv = null;
     zustand = null;
     el.classList.add("versteckt");
@@ -242,6 +242,7 @@ GAME.minispiel = (function () {
       return;
     }
     z.geprueft = true;
+    if (z.wahl.every(function (w, i) { return w === i; })) ENG.audio.richtig(); else ENG.audio.falsch();
     zuordnenMalen();
   }
 
@@ -321,6 +322,7 @@ GAME.minispiel = (function () {
   function waehlen() {
     var z = zustand, def = z.def, o = def.runden[z.runde].optionen[z.wahl];
     z.wert = Math.max(0, Math.min(100, z.wert + o.punkte));
+    if (o.punkte > 0) ENG.audio.richtig(); else ENG.audio.falsch();
     z.reaktion = o.reaktion;
     z.runde++;
     z.wahl = 0;
@@ -534,6 +536,7 @@ GAME.minispiel = (function () {
       z.antwort = { art: "falsch", text: fr.falsch + " " + fr.tipp };
     }
     z.phase = "antwort";
+    if (ok) ENG.audio.richtig(); else ENG.audio.falsch();
     duellMalen();
   }
 

@@ -752,3 +752,31 @@ body.im-gespraech #knoepfe { display: none; }
   transform: rotate(-2deg);
 }
 .blase.ausgang::after { background: #fdf3d8; border-color: #8a5a2b; }
+
+/* ---------- Barrierefreiheit ---------- */
+html.schrift-gross { --schriftgroesse: 21px; }
+html.schrift-sehrgross { --schriftgroesse: 24px; }
+@media (max-width: 600px) {
+  html.schrift-gross { --schriftgroesse: 18px; }
+  html.schrift-sehrgross { --schriftgroesse: 20px; }
+}
+/* Hoher Kontrast: klare, dunkle Schrift auf hellem, deckendem Papier */
+body.kontrast { --tusche-hell: #2e2934; --papier: #ffffff; --ocker-hell: rgba(255, 196, 64, 0.85); }
+body.kontrast .karte, body.kontrast .buch-karte, body.kontrast .blase, body.kontrast .plakette,
+body.kontrast .hud-hinweis, body.kontrast .einblendung-karte, body.kontrast .rund-knopf { background: #ffffff; border-color: #000; color: #000; }
+body.kontrast .karte::before { border-color: #000; }
+body.kontrast .dialog-option, body.kontrast .knopf, body.kontrast .zuordnen-zeile, body.kontrast .massnahme { border-color: #000; color: #000; }
+body.kontrast .dialog-option.gewaehlt, body.kontrast .knopf.gewaehlt { background: #ffd35c; }
+body.kontrast .fakt { background: #ffe38a !important; }
+body.kontrast #menue-schicht, body.kontrast #buch, body.kontrast #minispiel:not(.unten) { background: rgba(0, 0, 0, 0.45); }
+/* Bewegung reduzieren: keine Plopp-, Wipp- und Wackel-Animationen */
+body.ruhig *, body.ruhig *::before, body.ruhig *::after { animation: none !important; transition: none !important; }
+@media (max-width: 600px) {
+  #hud { left: 10px; right: 10px; top: 10px; }
+  .hud-beweise { gap: 4px; }
+  .beweis-slot { width: 32px; height: 32px; }
+  .beweis-slot svg { width: 22px; height: 22px; }
+  .plakette { font-size: 0.9em; padding: 3px 10px 4px; }
+  .hud-hinweis { max-width: 46vw; }
+  .rund-knopf { width: 44px; height: 44px; }
+}

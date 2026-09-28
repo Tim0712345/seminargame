@@ -185,7 +185,10 @@ GAME.dialog = (function () {
 
   function notiz(id) {
     (Array.isArray(id) ? id : [id]).forEach(function (n) {
-      if (GAME.quests.notiz(n)) GAME.ui.einblenden(DATA.texte.notizNeu + " " + ((DATA.notes[n] || {}).titel || n), 2.2);
+      if (GAME.quests.notiz(n)) {
+        GAME.ui.einblenden(DATA.texte.notizNeu + " " + ((DATA.notes[n] || {}).titel || n), 2.2);
+        ENG.audio.notiz();
+      }
     });
   }
 
@@ -206,6 +209,7 @@ GAME.dialog = (function () {
             if (kontext.kim) { kontext.kim.jubeln(); kontext.kim.emotion = "froehlich"; }
             if (kontext.beweisZeigen) kontext.beweisZeigen(wert);
             GAME.ui.einblenden(DATA.texte.beweisNeu + " " + (land ? land.beweis.name : wert), 3);
+            ENG.audio.fanfare();
           }
           break;
         case "emote": emote(wert, false); break;
@@ -239,6 +243,7 @@ GAME.dialog = (function () {
   function waehlen() {
     var o = optionen[wahl];
     if (!o) return;
+    ENG.audio.klick();
     if (o.setFlag) GAME.flags.setzen(o.setFlag);
     if (o.addNote) notiz(o.addNote);
     if (o.aktion) aktionen(o.aktion);
@@ -299,7 +304,12 @@ GAME.dialog = (function () {
     if (!D.aktiv) return;
     var I = ENG.input;
     if (gezeigt < gesamt) {
+      var vorher = Math.floor(gezeigt);
       gezeigt = Math.min(gesamt, gezeigt + dt * tippGeschw);
+      if (sprecher && Math.floor(gezeigt) > vorher) {
+        var st = (sprecher.def && sprecher.def.stimme) || {};
+        ENG.audio.silbe(st.tonhoehe || 1);
+      }
       textMalen();
       if (gezeigt >= gesamt) fertigGetippt();
     }

@@ -63,7 +63,11 @@ ENG.Kamera = (function () {
     this.pos[1] = this.ziel[1] + sp * this.abstand;
     this.pos[2] = this.ziel[2] + Math.cos(this.drehung) * cp * this.abstand;
     MM.m4lookAt(this.view, this.pos, this.ziel, [0, 1, 0]);
-    MM.m4perspective(this.proj, this.sichtfeld, seitenverhaeltnis, this.nah, this.fern);
+    // Schmale Bildschirme (Hochformat, Handy): Sichtfeld so weiten, dass
+    // seitlich ungefähr so viel zu sehen ist wie im Querformat
+    var fov = this.sichtfeld;
+    if (seitenverhaeltnis < 1.4) fov = Math.min(62 * MM.DEG, 2 * Math.atan(Math.tan(fov / 2) * 1.4 / seitenverhaeltnis));
+    MM.m4perspective(this.proj, fov, seitenverhaeltnis, this.nah, this.fern);
     MM.m4mul(this.viewProj, this.proj, this.view);
     MM.m4invert(this.invViewProj, this.viewProj);
     MM.frustum(this.ebenen, this.viewProj);

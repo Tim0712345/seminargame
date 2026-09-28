@@ -51,14 +51,24 @@ DATA.texte = {
   pause: {
     titel: "Pause",
     weiter: "Weiterspielen",
+    einstellungen: "Einstellungen",
     grafik: "Grafik",
     hoch: "Hoch",
     niedrig: "Niedrig",
     an: "An",
     aus: "Aus",
+    ton: "Ton",
+    sprechlaute: "Sprechlaute",
+    schrift: "Schriftgröße",
+    schriftStufen: ["Normal", "Groß", "Sehr groß"],
+    kontrast: "Hoher Kontrast",
+    ruhig: "Bewegung reduzieren",
+    zurueck: "Zurück",
     steuerung: "Steuerung anzeigen",
     titelbildschirm: "Zum Titelbildschirm",
-    hinweisNeuladen: "Das Spiel speichert automatisch. Die Kantenglättung ändert sich erst nach dem Neuladen."
+    autosave: "Das Spiel speichert automatisch.",
+    autoNiedrig: "Das Spiel lief ruckelig – die Grafik ist jetzt auf „Niedrig“ gestellt (änderbar unter Pause → Einstellungen).",
+    hinweisNeuladen: "← → oder Enter ändert einen Wert. Die Kantenglättung ändert sich erst nach dem Neuladen."
   },
 
   hudTaste: "E",
@@ -99,6 +109,7 @@ DATA.texte = {
   titel: {
     neu: "Neues Spiel",
     weiter: "Weiterspielen",
+    einstellungen: "Einstellungen",
     steuerung: "Steuerung",
     credits: "Credits",
     neuFrage: "Neues Spiel beginnen?",

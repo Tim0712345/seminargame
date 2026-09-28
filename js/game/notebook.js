@@ -128,8 +128,8 @@ GAME.buch = (function () {
     if (!B.offen) return;
     if (B.offen === "notizbuch") {
       var n = DATA.texte.notizbuch.reiter.length;
-      if (I.gedrueckt("links")) { B.reiter = (B.reiter + n - 1) % n; malen(); }
-      if (I.gedrueckt("rechts")) { B.reiter = (B.reiter + 1) % n; malen(); }
+      if (I.gedrueckt("links")) { B.reiter = (B.reiter + n - 1) % n; malen(); ENG.audio.klick(); }
+      if (I.gedrueckt("rechts")) { B.reiter = (B.reiter + 1) % n; malen(); ENG.audio.klick(); }
     }
     if (el.seite) {
       if (I.gehalten("hoch")) el.seite.scrollTop -= 12;

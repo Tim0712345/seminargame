@@ -72,8 +72,22 @@ Prompt abzuweichen. **Nichts darf nach Animal Crossing oder einem anderen besteh
   - `GAME.speicher` (quests.js): Autosave in einem Slot, Weiterspielen, Neues Spiel mit Rückfrage
   - Dialog-Aktionen `reise:karte,spawn`, `epilog`, `reflexion`; Platzhalter auch in Antwortoptionen
   - Innenraum-Kamera pro Karte: `kamera: { x, z, abstand }`; Türen mit `wenn`/`gesperrt`
-- **Als Nächstes – Phase 5:** Sound (Sprechlaute), Partikel, Touch-Joystick, Barrierefreiheit
-  (Schriftgröße, Kontrast, Bewegung reduzieren), Performance auf schwacher Hardware, Bugfixes.
+- **Feedback-Runde + Phase 5 (2026-09-28):**
+  - Klick/Tippen: `ENG.input.zeigerInit` (Tippen → `I.klick`, Ziehen → Joystick), `Spieler.laufZiel` mit
+    A*-Wegsuche `Welt.weg()`; Klick auf NPC/Objekt → hinlaufen + ansprechen; Klick im Dialog = weiter,
+    Antworten nur per direktem Klick; ✕/Esc beendet Gespräch (`abbrechbar: false` beim Intro)
+  - Runde HUD-Knöpfe (Notizbuch/Aufgaben/Pause), Joystick-Anzeige, Fokus-Schutz für Buttons
+  - Zuordnen-Spiel mit Ziehen & Ablegen (auch antippen → Stand antippen), Fahrstuhl listet nur andere Etagen
+  - Lohnbezug gestärkt (Notizen `teilzeit_lohn`, `elternzeit_lohn`), HUD zeigt GPG des Landes (`map.fakt`/`countries.fakt`)
+  - Flaggen, Wimpel, Wahrzeichen (siehe README), neues Familienamt + `amtsschild`, Wege dunkler + Kiesel,
+    schwebende Ausgangsschilder, Türblasen mit Gebäudenamen
+  - Verstecktes Admin-Menü `GAME.admin` (debug.js): „admin“ tippen oder 5× aufs Titel-Logo
+  - Audio (`js/engine/audio.js`): Sprechlaute je Figur (`stimme.tonhoehe`), Klick, Notiz, Fanfare, Tür, richtig/falsch
+  - Einstellungen: Grafik, Ton, Sprechlaute, Schriftgröße, hoher Kontrast, Bewegung reduzieren (auch im Titel);
+    automatische Absenkung auf „Niedrig“ bei < 28 FPS; Deko nur bei „Hoch“; Sichtfeld im Hochformat breiter
+  - Speichern zusätzlich bei pagehide/visibilitychange und alle 15 s
+  - Debug-Kartenprüfung testet jetzt auch, ob alle NPCs/Objekte ansprechbar sind
+- **Offen:** Test auf echtem iPad/Windows-Schul-Laptop, Zahlen verifizieren, Credits-Namen eintragen.
 
 ## Gestaltungsregeln für Karten (aus Erfahrung)
 - **Türen müssen nach Süden (zur Kamera) zeigen**, sonst sieht man sie nicht. Gebäude deshalb nördlich von Wegen platzieren.

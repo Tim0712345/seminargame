@@ -131,6 +131,7 @@ GAME.Spielszene = (function () {
     if (!DATA.maps[ziel]) { console.warn("Ziel-Karte fehlt: " + ziel); return; }
     wechsel = { ziel: ziel, spawn: spawn, t: 0, geladen: false };
     GAME.ui.abblenden(true);
+    ENG.audio.tuer();
   };
 
   // ---------------- Test-Fundstück (nur Test-Insel) ----------------
@@ -411,7 +412,7 @@ GAME.Spielszene = (function () {
     // HUD-Hinweis zur aktuellen Aufgabe
     GAME.ui.hinweis(GAME.flags.hat("intro_fertig") ? GAME.quests.hinweis(Z.welt.map.land || null) : "");
 
-    Z.kamera.folgen(kim.x, kim.y, kim.z, sp.vx, sp.vz, dt, false);
+    Z.kamera.folgen(kim.x, kim.y, kim.z, sp.vx, sp.vz, dt, GAME.einstellungen.ruhig);
     ENG.partikel.update(dt);
   };
 
@@ -583,7 +584,7 @@ GAME.Titelszene = (function () {
 
   T.update = function (dt) {
     T.zeit += dt;
-    T.kamera.drehung = T.zeit * 0.05;
+    T.kamera.drehung = GAME.einstellungen.ruhig ? 0.35 : T.zeit * 0.05;
     T.npcs.forEach(function (n) { if (n.sichtbar()) n.update(dt, T.welt, H.KEIN_SPIELER); });
     H.spritzen(T.spritzer, dt);
     ENG.partikel.update(dt);
@@ -669,7 +670,7 @@ GAME.Epilogszene = (function () {
   E.update = function (dt) {
     var I = ENG.input;
     E.zeit += dt;
-    E.kamera.drehung = Math.sin(E.zeit * 0.12) * (DATA.epilog.kamera.schwenk || 0);
+    E.kamera.drehung = GAME.einstellungen.ruhig ? 0 : Math.sin(E.zeit * 0.12) * (DATA.epilog.kamera.schwenk || 0);
     sichtbare().forEach(function (n) { n.update(dt, E.welt, H.KEIN_SPIELER); });
     H.spritzen(E.spritzer, dt);
     ENG.partikel.update(dt);

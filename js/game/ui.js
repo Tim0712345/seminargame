@@ -8,32 +8,64 @@
    ===================================================================== */
 var GAME = window.GAME = window.GAME || {};
 
-/* ---------------- Einstellungen (optional in localStorage) ---------------- */
+/* ---------------- Einstellungen (optional in localStorage) ----------------
+   qualitaet   "hoch" | "niedrig" (Renderskala 0,75, ohne Zusatzeffekte und Deko)
+   stumm       alle Töne aus
+   sprechlaute Silben-Töne beim Sprechen
+   schrift     "normal" | "gross" | "sehrgross"
+   kontrast    hoher Kontrast der Oberfläche
+   ruhig       Bewegung reduzieren (keine Wackel-/Schwenkbewegungen, Animationen aus) */
 GAME.einstellungen = (function () {
   "use strict";
   var SCHLUESSEL = "dieLuecke.einstellungen";
-  var E = { qualitaet: "hoch", kruemmung: true, stumm: false };
+  var FELDER = ["qualitaet", "kruemmung", "stumm", "sprechlaute", "schrift", "kontrast", "ruhig"];
+  var E = { qualitaet: "hoch", kruemmung: false, stumm: false, sprechlaute: true, schrift: "normal", kontrast: false, ruhig: false };
   E.laden = function () {
     try {
       var s = window.localStorage.getItem(SCHLUESSEL);
       if (s) {
         var d = JSON.parse(s);
-        for (var k in d) if (Object.prototype.hasOwnProperty.call(d, k) && k in E && typeof E[k] !== "function") E[k] = d[k];
+        FELDER.forEach(function (k) { if (Object.prototype.hasOwnProperty.call(d, k)) E[k] = d[k]; });
       }
     } catch (e) { /* ohne Speicher geht es auch */ }
+    // Barrierefreiheit: „Bewegung reduzieren“ des Systems übernehmen
+    try { if (!s && window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) E.ruhig = true; } catch (e2) { /* egal */ }
   };
   E.speichern = function () {
     try {
-      window.localStorage.setItem(SCHLUESSEL, JSON.stringify({ qualitaet: E.qualitaet, kruemmung: E.kruemmung, stumm: E.stumm }));
+      var d = {};
+      FELDER.forEach(function (k) { d[k] = E[k]; });
+      window.localStorage.setItem(SCHLUESSEL, JSON.stringify(d));
     } catch (e) { /* ignorieren */ }
   };
   E.anwenden = function () {
-    ENG.renderer.fx = E.qualitaet === "hoch";
-    ENG.renderer.kruemmungAn = !!E.kruemmung;
+    ENG.renderer.fx = E.qualitaet === "hoch" && !E.ruhig;
+    ENG.renderer.deko = E.qualitaet === "hoch";
+    ENG.renderer.kruemmungAn = false;
     ENG.audio.setStumm(E.stumm);
+    ENG.audio.sprechlaute = !!E.sprechlaute;
+    var html = document.documentElement;
+    html.classList.toggle("schrift-gross", E.schrift === "gross");
+    html.classList.toggle("schrift-sehrgross", E.schrift === "sehrgross");
+    document.body.classList.toggle("kontrast", !!E.kontrast);
+    document.body.classList.toggle("ruhig", !!E.ruhig);
     if (GAME.ui && GAME.ui.groesseAnpassen) GAME.ui.groesseAnpassen();
   };
   E.renderSkala = function () { return E.qualitaet === "hoch" ? 1 : 0.75; };
+
+  // Läuft das Spiel dauerhaft zu langsam, einmalig auf „Niedrig“ schalten
+  var langsam = 0, geprueft = false;
+  E.leistungPruefen = function (dt) {
+    if (geprueft || E.qualitaet !== "hoch" || GAME.szenen.aktiv !== GAME.Spielszene) return;
+    var fps = ENG.loop.fps || 60;
+    langsam = fps < 28 ? langsam + dt : Math.max(0, langsam - dt * 2);
+    if (langsam > 6) {
+      geprueft = true;
+      E.qualitaet = "niedrig";
+      E.anwenden(); E.speichern();
+      GAME.ui.einblenden(DATA.texte.pause.autoNiedrig, 4);
+    }
+  };
   return E;
 })();
 
@@ -288,7 +320,7 @@ GAME.ui = (function () {
     var e = (menue.opt.eintraege || [])[menue.wahl];
     if (!e) return;
     if (e.umschalten) { e.umschalten(richtung || 1); U.menueMalen(); }
-    else if (e.aktion) e.aktion();
+    else if (e.aktion) { ENG.audio.klick(); e.aktion(); }
   }
 
   U.menueSchliessen = function (still) {
@@ -315,8 +347,8 @@ GAME.ui = (function () {
     }
     if (menue) {
       var n = (menue.opt.eintraege || []).length;
-      if (I.gedrueckt("hoch") && n) { menue.wahl = (menue.wahl + n - 1) % n; U.menueMalen(); }
-      if (I.gedrueckt("runter") && n) { menue.wahl = (menue.wahl + 1) % n; U.menueMalen(); }
+      if (I.gedrueckt("hoch") && n) { menue.wahl = (menue.wahl + n - 1) % n; U.menueMalen(); ENG.audio.klick(); }
+      if (I.gedrueckt("runter") && n) { menue.wahl = (menue.wahl + 1) % n; U.menueMalen(); ENG.audio.klick(); }
       if (I.gedrueckt("links") && n) eintragAusloesen(-1);
       if (I.gedrueckt("rechts") && n) eintragAusloesen(1);
       if (I.gedrueckt("ok")) { if (n) eintragAusloesen(1); else if (menue.opt.schliessbar !== false) U.menueSchliessen(); }
@@ -351,24 +383,50 @@ GAME.ui = (function () {
 
   // ---------------- Pausemenü ----------------
   U.pauseOeffnen = function () {
-    var p = DATA.texte.pause, E = GAME.einstellungen;
+    var p = DATA.texte.pause;
     U.menueOeffnen({
       titel: p.titel,
       eintraege: [
         { text: p.weiter, aktion: function () { U.menueSchliessen(); } },
-        { text: function () { return p.grafik + ": " + (E.qualitaet === "hoch" ? p.hoch : p.niedrig); },
-          umschalten: function () { E.qualitaet = E.qualitaet === "hoch" ? "niedrig" : "hoch"; E.anwenden(); E.speichern(); } },
-        { text: p.steuerung, aktion: function () { U.steuerungZeigen(); } },
+        { text: p.einstellungen, aktion: function () { U.einstellungenZeigen(U.pauseOeffnen); } },
+        { text: p.steuerung, aktion: function () { U.steuerungZeigen(U.pauseOeffnen); } },
         { text: p.titelbildschirm, aktion: function () {
           U.menueSchliessen(true);
           GAME.Spielszene.speichern();
           GAME.szenen.titelStarten();
         } }
       ],
-      fussnote: p.hinweisNeuladen
+      fussnote: p.autosave
     });
   };
 
+  // ---------------- Einstellungen ----------------
+  U.einstellungenZeigen = function (zurueck) {
+    var p = DATA.texte.pause, E = GAME.einstellungen;
+    function anAus(w) { return w ? p.an : p.aus; }
+    function aendern(fn) { return function (r) { fn(r); E.anwenden(); E.speichern(); ENG.audio.klick(); }; }
+    var SCHRIFT = ["normal", "gross", "sehrgross"];
+    U.menueOeffnen({
+      titel: p.einstellungen,
+      eintraege: [
+        { text: function () { return p.grafik + ": " + (E.qualitaet === "hoch" ? p.hoch : p.niedrig); },
+          umschalten: aendern(function () { E.qualitaet = E.qualitaet === "hoch" ? "niedrig" : "hoch"; }) },
+        { text: function () { return p.ton + ": " + anAus(!E.stumm); },
+          umschalten: aendern(function () { E.stumm = !E.stumm; }) },
+        { text: function () { return p.sprechlaute + ": " + anAus(E.sprechlaute); },
+          umschalten: aendern(function () { E.sprechlaute = !E.sprechlaute; }) },
+        { text: function () { return p.schrift + ": " + p.schriftStufen[SCHRIFT.indexOf(E.schrift) < 0 ? 0 : SCHRIFT.indexOf(E.schrift)]; },
+          umschalten: aendern(function (r) { var k = SCHRIFT.indexOf(E.schrift); E.schrift = SCHRIFT[(k + (r < 0 ? 2 : 1)) % 3]; }) },
+        { text: function () { return p.kontrast + ": " + anAus(E.kontrast); },
+          umschalten: aendern(function () { E.kontrast = !E.kontrast; }) },
+        { text: function () { return p.ruhig + ": " + anAus(E.ruhig); },
+          umschalten: aendern(function () { E.ruhig = !E.ruhig; }) },
+        { text: p.zurueck, aktion: function () { if (zurueck) zurueck(); else U.menueSchliessen(); } }
+      ],
+      fussnote: p.hinweisNeuladen,
+      beimSchliessen: zurueck
+    });
+  };
 
   // ====================================================================
   //  Titelbildschirm
@@ -469,6 +527,7 @@ GAME.ui = (function () {
     logo.setAttribute("aria-label", DATA.texte.spielTitel + " – " + DATA.texte.untertitel);
     var ein = [{ text: T.neu, aktion: U.neuesSpiel }];
     if (GAME.speicher.vorhanden()) ein.unshift({ text: T.weiter, aktion: U.weiterspielen });
+    ein.push({ text: T.einstellungen, aktion: function () { U.einstellungenZeigen(U.titelZeigen); } });
     ein.push({ text: T.steuerung, aktion: function () { U.steuerungZeigen(U.titelZeigen); } });
     ein.push({ text: T.credits, aktion: U.creditsZeigen });
     U.menueOeffnen({ klasse: "titel-menue", inhalt: logo, eintraege: ein, schliessbar: false, hell: true, fussnote: T.fuss });

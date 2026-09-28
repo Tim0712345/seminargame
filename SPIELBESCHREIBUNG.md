@@ -45,12 +45,20 @@
   - Tusche-Konturen, Schraffur statt weicher Schatten, Aquarell-Flecken
   - schlanke Figuren mit Strichaugen
   - Menüs im Skizzenbuch-Stil
+- Jedes Land erkennbar: Flaggen, Wimpelketten und Wahrzeichen (Fachwerk und Litfaßsäule,
+  Dalapferd und Mittsommerstange, Stadtturm und Windmühle, Festung und goldene Säule,
+  Jugendstil und Atom-Skulptur in Brüssel); im HUD steht der Gender Pay Gap jedes Landes
 - Vielfalt der Figuren (Alter, Hauttöne, Rollstuhl, Gehstock)
 - Keine Stereotype, keine Schuldzuweisungen
 
-## 7. Technik
+## 7. Barrierefreiheit
+- Spielbar mit Tastatur, Maus oder Touch (Tippen zum Hinlaufen, Ziehen als Joystick)
+- Schriftgröße, hoher Kontrast, „Bewegung reduzieren“, Ton und Sprechlaute abschaltbar
+- Grafikstufe „Niedrig“ für langsame Rechner (schaltet sich bei Ruckeln automatisch ein)
+
+## 8. Technik
 - Eigene kleine WebGL-Engine, läuft offline im Browser
 - Alle Modelle und Texturen im Code erzeugt, keine fremden Dateien
 
-## 8. Quellen und KI-Einsatz
+## 9. Quellen und KI-Einsatz
 - Siehe `QUELLEN.md` und `KI-DOKUMENTATION.md`

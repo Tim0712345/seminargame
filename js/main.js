@@ -38,13 +38,13 @@
     }
 
     // Audio darf erst nach einer Taste starten
-    window.addEventListener("keydown", function einmal() {
-      ENG.audio.starten();
-      window.removeEventListener("keydown", einmal);
-    });
+    function audioStart() { ENG.audio.starten(); }
+    window.addEventListener("keydown", audioStart);
+    window.addEventListener("pointerdown", audioStart);
 
     ENG.loop.start(function (dt, t) {
       GAME.ui.update();
+      GAME.einstellungen.leistungPruefen(dt);
       GAME.szenen.update(dt, t);
       GAME.szenen.zeichnen(t);
       GAME.debug.update();
