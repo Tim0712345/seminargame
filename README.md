@@ -1,5 +1,8 @@
 # Die Lücke – Ein europäischer Fall
 
+> **Neu:** Das Nachfolge-Spiel **„Funkloch – Stimmen aus Europa“** liegt im Ordner
+> [`funkloch/`](funkloch/README.md) (Start: `funkloch/index.html`). Dieses alte Spiel bleibt unverändert erhalten.
+
 Ein kleines, gemütliches 3D-Spiel über den Gender Pay Gap in Europa.
 Beitrag zum „Europäischen Wettbewerb“.
 

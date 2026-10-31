@@ -1,5 +1,9 @@
 # Projekt-Notiz für Claude Code – „Die Lücke – Ein europäischer Fall“
 
+> **Achtung, zwei Spiele im Repo:** Das neue Spiel **„Funkloch – Stimmen aus Europa“** liegt im
+> Ordner `funkloch/` und hat eine eigene `funkloch/CLAUDE.md` (Canvas 2D, Riso-Zine-Stil).
+> Alles unten gilt nur für das alte Spiel „Die Lücke“ im Hauptordner, das unverändert bleibt.
+
 3D-Lernspiel über den Gender Pay Gap in Europa, Beitrag zum „Europäischen Wettbewerb“
 (Oberstufe, Jury). Spielsprache: **nur Deutsch**. Zielgruppe 16–20 Jahre, Spielzeit 15–25 Minuten.
 Alle Antworten an den User auf Deutsch.
