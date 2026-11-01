@@ -178,7 +178,7 @@ DATA.zeilen = {
         anliegen: {
           durchsetzung: "Sanktionen sind Sache der Mitgliedstaaten. Lassen Sie jedem Land die Höhe.",
           bewertung: "Ein Raster für alle Berufe in ganz Europa? Unsere Tarifverträge kennen ihre Berufe besser.",
-          bericht: "Öffentliche Pranger schaden kleinen Betrieben zu Hause. Der Bericht gehört zur Behörde."
+          bericht: "Ein Bericht für jeden kleinen Betrieb? Das schadet den Betrieben zu Hause. Fangen Sie bei den großen an."
         } },
       FU: {
         begruessung: "Sofia Andreou, unabhängig. Ich war Krankenschwester. Nachtschichten im Parlament sind ruhiger. Meistens.",

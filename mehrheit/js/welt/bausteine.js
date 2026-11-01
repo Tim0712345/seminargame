@@ -351,6 +351,86 @@ WELT.bausteine = (function () {
   };
 
   /* =====================================================================
+     Weitere Einrichtung, damit die Räume bewohnt wirken
+     (Wunsch des Users, 1. November 2026: „Räume leer/steril“)
+     ===================================================================== */
+  /* --- Teppich (flach, liegt auf dem Boden) --- */
+  W.teppich = function (B, e) {
+    var g = e.groesse || [2, 1.4];
+    B.teil(Geo.box(g[0], 0.01, g[1], 0.004, 1), WELT.material("teppich", { farbe: e.farbe || "#8a7058" }), mal(mat(e.pos, e.dreh), M.trs(M.m4(), [0, 0.006, 0])), { kein_ao: true });
+    B.teil(Geo.box(g[0] - 0.12, 0.012, g[1] - 0.12, 0.004, 1), WELT.material("teppich", { farbe: e.innen || "#a68b6e" }), mal(mat(e.pos, e.dreh), M.trs(M.m4(), [0, 0.008, 0])), { kein_ao: true });
+  };
+
+  /* --- Garderobe mit Mantel und Schal --- */
+  W.garderobe = function (B, e) {
+    var b = mat(e.pos, e.dreh);
+    B.teil(Geo.zylinder(0.2, 0.02, 24, true), "aluminium", mal(b, M.trs(M.m4(), [0, 0.01, 0])));
+    B.teil(Geo.zylinder(0.016, 1.72, 10, false), "aluminium", mal(b, M.trs(M.m4(), [0, 0.02, 0])));
+    for (var i = 0; i < 4; i++) {
+      var w = i * Math.PI / 2;
+      B.teil(Geo.rohr([[0, 1.64, 0], [Math.cos(w) * 0.1, 1.7, Math.sin(w) * 0.1], [Math.cos(w) * 0.12, 1.75, Math.sin(w) * 0.12]], 0.007, 6), "aluminium", b, { kein_ao: true });
+    }
+    var farben = e.mantel || ["#3a4150", "#7a5a3c"];
+    farben.forEach(function (f, k) {
+      var w = k * 2.2 + 0.4, mant = Geo.drehkoerper([[0.03, 0.0], [0.13, -0.06], [0.16, -0.35], [0.19, -0.85], [0.17, -0.9], [0, -0.9]], 20, {});
+      Geo.verformen(mant, function (q) { return [q[0], q[1], q[2] * 0.55]; });
+      B.teil(mant, WELT.material("stoff", { farbe: f, strukturSkala: 20 }), mal(b, M.trs(M.m4(), [Math.cos(w) * 0.17, 1.72, Math.sin(w) * 0.17], -w / GR + 90)));
+    });
+    if (e.schal) B.teil(Geo.rohr([[0.1, 1.7, 0.05], [0.13, 1.45, 0.08], [0.12, 1.2, 0.07]], 0.03, 8), WELT.material("stoff", { farbe: e.schal, strukturSkala: 26 }), b, { kein_ao: true });
+  };
+
+  /* --- Bild an der Wand: ruhige, abstrakte Komposition im Rahmen --- */
+  W.bild = function (B, e) {
+    var b = mat(e.pos, e.dreh), g = e.groesse || [0.9, 0.62];
+    B.teil(Geo.box(g[0], g[1], 0.03, 0.006, 1), WELT.material("lack", { farbe: e.rahmen || "#2a2b2e", rauheit: 0.4 }), mal(b, M.trs(M.m4(), [0, 0, 0.015])));
+    B.teil(Geo.box(g[0] - 0.08, g[1] - 0.08, 0.01, 0.002, 0), WELT.material("papier", { farbe: "#f3efe6" }), mal(b, M.trs(M.m4(), [0, 0, 0.032])), { kein_ao: true });
+    var r = M.zufall(e.saat || 5), farben = e.farben || ["#c7684a", "#2f5f73", "#d9b25a", "#8aa38c"];
+    for (var i = 0; i < 4; i++) {
+      var w = (0.15 + r() * 0.3) * g[0], h = (0.2 + r() * 0.45) * g[1];
+      var x = (r() - 0.5) * (g[0] - 0.12 - w), y = (r() - 0.5) * (g[1] - 0.12 - h);
+      B.teil(Geo.box(w, h, 0.004, 0.001, 0), WELT.material("lack", { farbe: farben[i % farben.length], rauheit: 0.8, klarlack: 0 }), mal(b, M.trs(M.m4(), [x, y, 0.038 + i * 0.001])), { kein_ao: true, schatten: false });
+    }
+  };
+
+  /* --- Papierkorb mit ein paar zerknüllten Blättern --- */
+  W.papierkorb = function (B, e) {
+    var b = mat(e.pos, e.dreh);
+    B.teil(Geo.drehkoerper([[0, 0], [0.11, 0], [0.135, 0.3], [0.13, 0.3], [0.105, 0.006], [0, 0.006]], 28, {}), WELT.material("lack", { farbe: e.farbe || "#3a3d42", rauheit: 0.45, doppelseitig: true }), b);
+    var r = M.zufall(9);
+    for (var i = 0; i < 4; i++) B.teil(Geo.kugel(0.035 + r() * 0.015, 8, 5), "papier", mal(b, M.trs(M.m4(), [(r() - 0.5) * 0.1, 0.24 + r() * 0.05, (r() - 0.5) * 0.1])), { kein_ao: true });
+  };
+
+  /* --- Sideboard mit Thermoskanne, Tassen und Büchern --- */
+  W.sideboard = function (B, e, sz) {
+    var b = mat(e.pos, e.dreh), l = e.laenge || 1.4;
+    B.teil(Geo.box(l, 0.68, 0.45, 0.012, 2), "eiche_matt", mal(b, M.trs(M.m4(), [0, 0.36, 0])));
+    B.teil(Geo.box(l + 0.02, 0.03, 0.47, 0.008, 2), "eiche", mal(b, M.trs(M.m4(), [0, 0.715, 0])));
+    for (var i = 0; i < 3; i++) B.teil(Geo.box(0.012, 0.6, 0.004, 0.002, 0), "aluminium", mal(b, M.trs(M.m4(), [-l / 2 + (i + 1) * l / 4, 0.36, 0.226])), { kein_ao: true });
+    B.teil(Geo.drehkoerper([[0, 0], [0.055, 0], [0.058, 0.2], [0.04, 0.23], [0.02, 0.26], [0, 0.26]], 24, {}), WELT.material("lack", { farbe: e.kanne || "#9a2f2a", rauheit: 0.25, klarlack: 0.8 }), mal(b, M.trs(M.m4(), [-l / 2 + 0.2, 0.73, 0])));
+    [0.42, 0.55, 0.68].forEach(function (x, k) { W.becher(B, { pos: M.punktMal(b, [-l / 2 + x, 0.73, -0.06 + k * 0.05]), dreh: k * 50 }, null); });
+    var buecher = ["#5a6e8a", "#a8553a", "#d6c49a", "#3f5a4a", "#7a6a8a"];
+    buecher.forEach(function (f, k) { B.teil(Geo.box(0.035, 0.22 + (k % 2) * 0.03, 0.17, 0.003, 1), WELT.material("lack", { farbe: f, rauheit: 0.6 }), mal(b, M.trs(M.m4(), [l / 2 - 0.3 + k * 0.04, 0.84 + (k % 2) * 0.015, -0.05])), { kein_ao: true }); });
+  };
+
+  /* --- Stehlampe mit warmem Licht --- */
+  W.stehlampe = function (B, e) {
+    var b = mat(e.pos, e.dreh);
+    B.teil(Geo.zylinder(0.16, 0.025, 24, true), "aluminium", b);
+    B.teil(Geo.zylinder(0.012, 1.45, 8, false), "aluminium", mal(b, M.trs(M.m4(), [0, 0.02, 0])));
+    B.teil(Geo.drehkoerper([[0.1, 0.0], [0.19, -0.02], [0.2, -0.24], [0.19, -0.25]], 32, {}), WELT.material("milchglas", { glas: false, emission: e.an ? 2.2 : 0, emissionFarbe: "#ffd9a8", rauheit: 0.6, doppelseitig: true }), mal(b, M.trs(M.m4(), [0, 1.72, 0])), { schatten: false });
+    if (e.an) B.licht({ pos: M.punktMal(b, [0, 1.55, 0]), kelvin: 2900, staerke: e.staerke || 1.4, reichweite: 3.2 });
+  };
+
+  /* --- Wanduhr --- */
+  W.wanduhr = function (B, e) {
+    var b = mat(e.pos, e.dreh), auf = mal(b, (function () { var q = M.m4(); q[5] = 0; q[6] = 1; q[9] = -1; q[10] = 0; return q; })());
+    B.teil(Geo.zylinder(0.16, 0.03, 32, true), WELT.material("lack", { farbe: "#26282c", rauheit: 0.3 }), auf);
+    B.teil(Geo.zylinder(0.145, 0.032, 32, true), WELT.material("papier", { farbe: "#f4f1ea" }), auf, { kein_ao: true });
+    B.teil(Geo.box(0.012, 0.09, 0.004, 0.002, 0), WELT.material("lack", { farbe: "#1b1c1f" }), mal(b, mal(M.trs(M.m4(), [0, 0.03, 0.035]), M.trs(M.m4(), [0, 0, 0], 0))), { kein_ao: true });
+    B.teil(Geo.box(0.01, 0.12, 0.004, 0.002, 0), WELT.material("lack", { farbe: "#1b1c1f" }), mal(b, M.trs(M.m4(), [0.04, -0.02, 0.036])), { kein_ao: true });
+  };
+
+  /* =====================================================================
      Büro-Raum mit Fensterwand und Stadt dahinter
      ===================================================================== */
   W.bueroRaum = function (B, d, sz) {
@@ -643,13 +723,24 @@ WELT.bausteine = (function () {
   W.inst = inst;
 
   /* weiße Modellfiguren als Instanzen */
+  /* Menschenmengen als schlichte Modellfiguren: Kleidung in gedeckten Farben, Kopf und Hände
+     in natürlichen Hauttönen (zwei Instanz-Puffer, zufällig, aber immer gleich) */
+  var KLEIDUNG_MENGE = ["#2f3a48", "#3d4452", "#5a4a3c", "#6b6f76", "#7a3f3a", "#2e4a44", "#8c8574", "#454a52", "#b9b2a4", "#1f2329", "#4b3f55", "#6d5a3a"];
   W.modellFiguren = function (B, plaetze, sitzend, kugel) {
     if (!plaetze.length) return null;
-    var o = B.objekt(WELT.figuren.modellFigur(sitzend), WELT.material("modellharz", { farbe: "#f2f0ea", rauheit: 0.5 }), M.m4(), { instanzen: plaetze.length, instFarbe: true });
-    plaetze.forEach(function (p, i) { inst(o, i, p.pos, p.dreh, p.farbe || [1, 1, 1], 0, [p.skala || 1, p.skala || 1, p.skala || 1]); });
-    MOTOR.netzInstanzen(o.netz, plaetze.length);
-    o.festeKugel = true; o.kugelWelt = kugel;
-    return o;
+    var r = M.zufall(plaetze.length * 7 + 3);
+    var koerper = B.objekt(WELT.figuren.modellFigur(sitzend, "koerper"), WELT.material("stoff", { farbe: "#ffffff", strukturSkala: 18 }), M.m4(), { instanzen: plaetze.length, instFarbe: true });
+    var haut = B.objekt(WELT.figuren.modellFigur(sitzend, "haut"), WELT.material("haut", { farbe: "#ffffff" }), M.m4(), { instanzen: plaetze.length, instFarbe: true });
+    plaetze.forEach(function (p, i) {
+      var sk = [p.skala || 1, p.skala || 1, p.skala || 1];
+      var kl = M.farbe(p.kleidung || KLEIDUNG_MENGE[Math.floor(r() * KLEIDUNG_MENGE.length)]);
+      var hf = M.farbe(DATA.figuren.hauttoene[Math.floor(r() * DATA.figuren.hauttoene.length)]);
+      inst(koerper, i, p.pos, p.dreh, kl, 0, sk);
+      inst(haut, i, p.pos, p.dreh, hf, 0, sk);
+    });
+    MOTOR.netzInstanzen(koerper.netz, plaetze.length); MOTOR.netzInstanzen(haut.netz, plaetze.length);
+    koerper.festeKugel = true; koerper.kugelWelt = kugel; haut.festeKugel = true; haut.kugelWelt = kugel;
+    return koerper;
   };
 
   /* Flaggen als Stoff (Europaflagge und Flaggen von Mitgliedstaaten) */
@@ -808,6 +899,10 @@ WELT.bausteine = (function () {
     W.pflanze(B, { pos: [x1 - 0.55, y, -3.5], saat: Math.floor(x0 * 7 + y * 3 + 40) });
     // Fraktionsfarbe als lackierter Akzent an der Wand
     B.teil(Geo.box(1.4, 0.06, 0.02, 0.01, 1), WELT.material("lack", { farbe: farbe, rauheit: 0.3, klarlack: 0.8 }), M.trs(M.m4(), [xm, y + 2.5, -3.97]), { kein_ao: true });
+    // bewohnt: Teppich, Bild, Besucherstuhl
+    W.teppich(B, { pos: [xm - 0.3, y, -2.1], groesse: [2.6, 1.8], farbe: "#6f6458", innen: "#8c8070" });
+    W.bild(B, { pos: [xm + 0.9, y + 1.6, -3.97], dreh: 0, groesse: [0.8, 0.55], saat: Math.floor(x0 * 3 + y * 7 + 20), farben: [farbe, "#d9cdb4", "#3f4650", "#b08a5a"] });
+    W.stuhl(B, { pos: [xm - 0.2, y, -1.55], dreh: 160 });
   }
 
   /* =====================================================================
@@ -929,6 +1024,7 @@ WELT.bausteine = (function () {
     B.teil(Geo.zylinder(0.4, 0.01, 40, true), WELT.material("milchglas", { glas: false, emission: 9, emissionFarbe: "#ffd7a0" }), M.trs(M.m4(), [0, 2.235, 0]), { schatten: false, kein_ao: true });
     // Vier-Spalten-Tabelle als großes Papier
     var tw = MOTOR.texturen.leinwand(1600, 800);
+    var tc = tw.getContext("2d"); tc.fillStyle = "#fbfaf6"; tc.fillRect(0, 0, 1600, 800);   // leeres Blatt, bis die Tabelle steht
     var tt = MOTOR.gl.textur({ quelle: tw, mip: true, aniso: 16, drehen: true });
     var bl = Geo.ebene(1.3, 0.65, 8, 4);
     var bo = B.objekt(bl, "papier", M.trs(M.m4(), [-0.25, 0.768, 0.12], 0), { statisch: true, farbTex: tt });
@@ -952,6 +1048,16 @@ WELT.bausteine = (function () {
       sz.trilogBecher.push(teile);
     });
     wasser(B, [-2.0, 0.765, -0.3]); wasser(B, [0.4, 0.765, 0.45]);
+    // bewohnt: Akten, Sideboard mit Kaffee, Garderobe, Uhr, Bild, zwei warme Wandleuchten
+    [[-1.3, 0.765, -0.2, 12], [1.25, 0.765, 0.15, -8], [2.15, 0.765, -0.25, 30]].forEach(function (p) { W.aktenstapel(B, { pos: [p[0], p[1], p[2]], dreh: p[3] }); });
+    W.sideboard(B, { pos: [2.6, 0, -hz + 0.25], dreh: 0, laenge: 1.8, kanne: "#2f3a48" }, sz);
+    W.garderobe(B, { pos: [hx - 0.45, 0, -hz + 0.5], dreh: 0, mantel: ["#2e3138", "#6a5240", "#3d4b5c"], schal: "#a8443a" });
+    W.wanduhr(B, { pos: [0.6, 2.35, -hz + 0.02], dreh: 0 });
+    W.bild(B, { pos: [hx - 0.02, 1.6, 0.6], dreh: -90, groesse: [1.2, 0.8], saat: 12, farben: ["#2f5f73", "#c99a4a", "#7a8f7c", "#b85a42"] });
+    [[-3.6, -1], [3.6, -1]].forEach(function (p) {
+      B.teil(Geo.box(0.32, 0.18, 0.06, 0.02, 2), WELT.material("milchglas", { glas: false, emission: 2.4, emissionFarbe: "#ffcf96", rauheit: 0.5 }), M.trs(M.m4(), [p[0], 2.2, -hz + 0.04]), { schatten: false, kein_ao: true });
+      B.licht({ pos: [p[0], 2.1, -hz + 0.35], kelvin: 2800, staerke: 1.6, reichweite: 4.5 });
+    });
     B.objekt(Geo.kugel(200, 24, 12), WELT.material("himmel", { doppelseitig: true }), M.m4(), { statisch: true, schatten: false, immerZeichnen: true });
   };
 

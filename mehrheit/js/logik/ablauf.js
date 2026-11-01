@@ -88,6 +88,7 @@ LOGIK.ablauf = (function () {
     if (LOGIK.gespraech.aktiv) LOGIK.gespraech.beenden(true);
     ANSICHT.blende(true, function () {
       LOGIK.stand.kapitel = nr; speichern();
+      ANSICHT.aufgabe.schritt = "start";
       START[nr].laden();
       ANSICHT.blende(false);
       hud(nr <= 7);
@@ -123,13 +124,18 @@ LOGIK.ablauf = (function () {
               A.kamera.fahreZu(DATA.kameras.buero.dokument, 2.0); A.ansicht = "dokument";
               var vorher = JSON.stringify(LOGIK.stand.entwurf);
               ANSICHT.editor.oeffnen("probe", 0);
-              folge([Z().kapitel1.probe]);
+              ANSICHT.fraktionsleiste.zeigen(true);
+              ANSICHT.aufgabe.setzen("probe");
+              folge([Z().kapitel1.probe], function () {
+                ANSICHT.fuehrung.zeige("probe", "#editor .ed-optionen", function () { ANSICHT.fuehrung.zeige("mehrheitProbe", "#fraktionsleiste"); });
+              });
               ANSICHT.editor.beiWahl = function () {
                 ANSICHT.editor.beiWahl = null;
                 setTimeout(function () {
                   folge([Z().kapitel1.probeDanach], function () {
                     LOGIK.stand.entwurf = JSON.parse(vorher);
-                    ANSICHT.editor.schliessen();
+                    ANSICHT.editor.schliessen(); ANSICHT.fraktionsleiste.zeigen(false);
+                    ANSICHT.aufgabe.setzen("fertig");
                     ANSICHT.editor.nachAenderung();
                     if (A.szene.dokument) ANSICHT.editor.seiteSetzen(A.szene.dokument, false);
                     A.kamera.fahreZu(DATA.kameras.buero.totale, 2.0); A.ansicht = "totale";
@@ -172,11 +178,13 @@ LOGIK.ablauf = (function () {
       return;
     }
     var opts = Q.map(function (q) { var p = DATA.figuren.personen[q.an]; return { text: q.frage, unter: p.name, aus: st.gefragt.indexOf(q.id) >= 0 }; });
+    ANSICHT.aufgabe.setzen("fragen");
+    setTimeout(function () { ANSICHT.fuehrung.zeige("fragen", "#wahl"); }, 60);
     ANSICHT.wahl(DATA.texte.anhoerung.titel, null, opts, function (i) {
       var q = Q[i];
       st.gefragt.push(q.id);
       if (q.flag) st.flags[q.flag] = true;
-      folge(q.antwort, function () { ANSICHT.dossier.neu(q.karte); speichern(); fragen(); });
+      folge(q.antwort, function () { ANSICHT.dossier.neu(q.karte); speichern(); fragen(); ANSICHT.fuehrung.zeige("dossier", "#knopfDossier"); });
     }, { zusatz: (max - st.gefragt.length) + " " + DATA.texte.anhoerung.uebrig, spalten: true });
   }
 
@@ -193,6 +201,13 @@ LOGIK.ablauf = (function () {
         ANSICHT.fraktionsleiste.zeigen(true); ANSICHT.wirkung.zeigen(true);
         ANSICHT.editor.oeffnen("entwurf", 0, einreichen);
         ANSICHT.editor.nachAenderung();
+        setTimeout(function () {
+          ANSICHT.fuehrung.zeige("mehrheit", "#fraktionsleiste", function () {
+            ANSICHT.fuehrung.zeige("artikel", "#editor .ed-optionen", function () {
+              ANSICHT.fuehrung.zeige("wirkung", "#edWirkung", function () { ANSICHT.fuehrung.zeige("einreichen", "#edEinreichen"); });
+            });
+          });
+        }, MOTOR.bewegungReduziert ? 100 : 2300);
       });
     }
   };
@@ -230,15 +245,18 @@ LOGIK.ablauf = (function () {
     A.ansicht = "gebaeude";
     var sz = A.szene;
     for (var id in sz.raumGlas) sz.raumGlas[id].forEach(function (o) { o.sichtbar = true; });
+    if (sz.raumLicht) sz.raumLicht.aktuell = 0;
     A.kamera.fahreZu(gebaeudeKamera(A.gebDreh), 1.8);
-    ANSICHT.fraktionsleiste.zeigen(false);
+    ANSICHT.fraktionsleiste.zeigen(true);
     ANSICHT.menues.hudAktualisieren();
+    ANSICHT.aufgabe.setzen("uebersicht");
     if (LOGIK.stand.termineUebrig <= 0) {
       ANSICHT.menues.flurVerbergen();
       folge([Z().flure.keineTermine], function () { A.kapitel(5); });
       return;
     }
     ANSICHT.menues.flurZeigen(sz.hotspots, flurZiel);
+    setTimeout(function () { ANSICHT.fuehrung.zeige("buero", "#hotspots .hotspot.buero"); }, MOTOR.bewegungReduziert ? 100 : 1900);
   }
   function terminVerbrauchen() {
     LOGIK.stand.termineUebrig--;
@@ -279,6 +297,7 @@ LOGIK.ablauf = (function () {
   function raumKamera(raumId, personId) {
     if (A.ohne3D) return;
     var sz = A.szene, rp = sz.raumPos[raumId], G = DATA.kameras.gebaeude.raum;
+    if (sz.raumLicht) { sz.raumLicht.pos = [rp.x, rp.y + 2.4, -0.6]; sz.raumLicht.aktuell = DATA.szenen.gebaeude.raumLicht || 6; }
     (sz.raumGlas[raumId] || []).forEach(function (o) { o.sichtbar = false; });
     var ziel = personId && sz.figuren[personId] ? sz.figuren[personId].kopfWelt.slice() : [rp.x, rp.y + 1.2, -1.2];
     A.kamera.fahreZu({ pos: [rp.x - 0.4, rp.y + G.hoehe, 1.6 + G.abstand * 0.4], ziel: ziel, mm: G.mm, blende: G.blende }, MOTOR.bewegungReduziert ? 0.01 : 1.6);
@@ -341,6 +360,8 @@ LOGIK.ablauf = (function () {
     }
     function vertrauen(d) { st.vertrauen[f.id] = M.klemme((st.vertrauen[f.id] || 0) + d, DATA.spielwerte.vertrauen_min, DATA.spielwerte.vertrauen_max); }
     ANSICHT.fraktionsleiste.zeigen(true);
+    ANSICHT.aufgabe.setzen("gespraech");
+    setTimeout(function () { ANSICHT.fuehrung.zeige("verhandeln", "#wahl"); }, 60);
     ANSICHT.wahl(DATA.figuren.personen[person].name, DATA.texte.flure.wasTun, opts, function (i, o) {
       if (o.art === "karte") {
         ANSICHT.menues.karteWaehlen(function (kid) {
@@ -438,7 +459,11 @@ LOGIK.ablauf = (function () {
       if (st.wunschzettel.length) saetze.push(Z().trilog.wunsch);
       if (st.dossier.indexOf("karin_vorlagen") >= 0) saetze.push(Z().trilog.karin);
       saetze.push({ sprecher: "hinweis", text: Z().trilog.erklaerung });
-      folge(saetze, function () { st.wunschzettel = []; ANSICHT.menues.trilogTabelle(A.trilog, trilogWahl, trilogAbschluss); trilogBlatt(); });
+      folge(saetze, function () {
+        st.wunschzettel = []; ANSICHT.menues.trilogTabelle(A.trilog, trilogWahl, trilogAbschluss); trilogBlatt();
+        ANSICHT.aufgabe.setzen("tabelle");
+        setTimeout(function () { ANSICHT.fuehrung.zeige("trilog", "#trilogTabelle table"); }, 60);
+      });
     }
   };
   function trilogKamera(w) {
@@ -472,6 +497,7 @@ LOGIK.ablauf = (function () {
       }, [DATA.texte.trilog.praezisieren, DATA.texte.trilog.nichtPraezisieren]);
     }
     trilogBlatt();
+    ANSICHT.aufgabe.aktualisieren();
     return true;
   }
   A.trilogBruecke = function (id) {
@@ -530,6 +556,8 @@ LOGIK.ablauf = (function () {
       function plus(w) { for (var f in w) bonus[f] = (bonus[f] || 0) + w[f]; }
       folge([P.start, P.saaldiener], function () {
         setzeKamera(DATA.kameras.plenum.rede);
+        ANSICHT.aufgabe.setzen("rede");
+        setTimeout(function () { ANSICHT.fuehrung.zeige("rede", "#wahl"); }, 60);
         ANSICHT.wahl(DATA.texte.plenum.einstieg, null, P.einstieg.map(function (o) { return { text: o.kurz, unter: o.text }; }), function (i) {
           plus(P.einstieg[i].wirkt);
           folge([{ sprecher: "sam", text: P.einstieg[i].text, geste: "hand_heben" }], function () {
@@ -554,6 +582,7 @@ LOGIK.ablauf = (function () {
     }
   };
   function plenumAbstimmung(bonus) {
+    ANSICHT.aufgabe.setzen("abstimmung");
     var e = LOGIK.entwurf(); e.__bonus = bonus;
     var erg = LOGIK.mehrheit.plenum(e);
     var P = Z().plenum;

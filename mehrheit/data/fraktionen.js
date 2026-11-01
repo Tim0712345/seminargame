@@ -38,7 +38,7 @@ DATA.fraktionen = [
     anliegen: {
       auskunft: { zugestaendnis: { schraube: "auskunft_umfang", option: "durchschnitt_info" } },
       bericht: { zugestaendnis: { schraube: "schwelle", option: "gestaffelt" } },
-      durchsetzung: { zugestaendnis: { schraube: "verbandsklage", option: "ja" } }
+      durchsetzung: { zugestaendnis: { schraube: "beweislast", option: "verbaende" } }
     } },
 
   { id: "BRUECKE", name: "Brücke", kurz: "Brücke", richtung: "kleine Gruppe junger Abgeordneter, vermittelt",
@@ -52,18 +52,18 @@ DATA.fraktionen = [
     kartenArt: { stimme: 0, beleg: 1, einwand: 1 },
     anliegen: {
       bericht: { zugestaendnis: { schraube: "schwelle", option: "gross" } },
-      bewertung: { zugestaendnis: { schraube: "werkzeuge", option: "ja" } },
+      bewertung: { zugestaendnis: { schraube: "kriterien", option: "neutral" } },
       vorher: { zugestaendnis: { schraube: "vorher_info", option: "nachfrage" } }
     } },
 
   { id: "EVM", name: "Europäische Volksmitte", kurz: "EVM", richtung: "bürgerlich-konservativ",
     farbe: "#3a6fd1", muster: "karo", sitzeAusschuss: 15, sitzePlenum: 30,
-    startVertrauen: 0, schwelle: 3.5, geschlossenheit: 0.7, kernanliegen: ["bericht", "folgen"], person: "maria", sitzordnung: 5, lager: "rechts",
+    startVertrauen: 0, schwelle: 5.5, geschlossenheit: 0.7, kernanliegen: ["bericht", "folgen"], person: "maria", sitzordnung: 5, lager: "rechts",
     kartenArt: { stimme: 0.5, beleg: 1, einwand: 1 },
     anliegen: {
       folgen: { zugestaendnis: { schraube: "massnahme", option: "bewertung" } },
       bericht: { zugestaendnis: { schraube: "schwelle", option: "gestaffelt" }, versprechen: "frist_lang" },
-      bewertung: { zugestaendnis: { schraube: "werkzeuge", option: "ja" } }
+      bewertung: { zugestaendnis: { schraube: "kriterien", option: "neutral" } }
     } },
 
   { id: "BSN", name: "Bund Souveräner Nationen", kurz: "BSN", richtung: "EU-skeptisch",
@@ -71,9 +71,9 @@ DATA.fraktionen = [
     startVertrauen: -1, schwelle: 4, geschlossenheit: 0.8, kernanliegen: ["durchsetzung"], person: "jaroslav", sitzordnung: 6, lager: "rechts",
     kartenArt: { stimme: 0, beleg: 0.5, einwand: 1 },
     anliegen: {
-      durchsetzung: { zugestaendnis: { schraube: "sanktionen", option: "entschaedigung" }, versprechen: "frist_lang" },
+      durchsetzung: { zugestaendnis: { schraube: "beweislast", option: "indizien" }, versprechen: "frist_lang" },
       bewertung: { zugestaendnis: { schraube: "kriterien", option: "neutral" } },
-      bericht: { zugestaendnis: { schraube: "empfaenger", option: "behoerde" } }
+      bericht: { zugestaendnis: { schraube: "schwelle", option: "gross" } }
     } },
 
   { id: "FU", name: "Fraktionslose und Unabhängige", kurz: "FU", richtung: "keine Fraktion, sehr gemischt",
@@ -82,7 +82,7 @@ DATA.fraktionen = [
     kartenArt: { stimme: 1, beleg: 0.5, einwand: 0.5 },
     anliegen: {
       vorher: { zugestaendnis: { schraube: "vorher_info", option: "vorgespraech" } },
-      auskunft: { zugestaendnis: { schraube: "verschwiegenheit", option: "verboten" } },
-      durchsetzung: { zugestaendnis: { schraube: "verbandsklage", option: "ja" } }
+      auskunft: { zugestaendnis: { schraube: "auskunft_umfang", option: "durchschnitt" } },
+      durchsetzung: { zugestaendnis: { schraube: "beweislast", option: "verbaende" } }
     } }
 ];

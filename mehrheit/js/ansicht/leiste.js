@@ -126,46 +126,70 @@ ANSICHT.MUSTER_SVG = function (muster, farbe) {
   return '<svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true" class="muster">' + (p[muster] || p.voll) + "</svg>";
 };
 
-/* Fraktionsleiste: Farbe, Muster, erwartete Stimmen, Vertrauen */
+/* Mehrheitsanzeige oben in der Mitte: groß und einfach („Dir fehlen 3 Stimmen“).
+   Die Einzelheiten je Fraktion (Muster, Balken, Vertrauen) erst auf Antippen. */
 ANSICHT.fraktionsleiste = (function () {
-  var F = {};
+  var F = { offen: false, letzt: null, vorschau: null };
+  function T() { return DATA.texte.mehrheit; }
+  function n(t, z) { return t.replace("{n}", z); }
   F.zeigen = function (an) { document.getElementById("fraktionsleiste").classList.toggle("versteckt", !an); if (an) F.aktualisieren(); };
   F.aktualisieren = function (erg, vorschau) {
     var el = document.getElementById("fraktionsleiste");
     if (!el || el.classList.contains("versteckt")) return;
-    erg = erg || LOGIK.mehrheit.ausschuss(LOGIK.entwurf());
-    var html = '<div class="fl-kopf"><span>' + DATA.texte.leisten.fraktionen + '</span><strong class="' + (erg.mehrheit ? "ja" : "nein") + '">' +
-      erg.ja + " : " + erg.nein + " : " + erg.enthaltung + " – " + (erg.mehrheit ? DATA.texte.halbrund.mehrheit : DATA.texte.halbrund.keineMehrheit) + "</strong></div><ul>";
-    DATA.fraktionen.slice().sort(function (a, b) { return a.sitzordnung - b.sitzordnung; }).forEach(function (f) {
-      var e = erg.fraktionen[f.id], n = f.sitzeAusschuss, v = LOGIK.stand.vertrauen[f.id] || 0;
-      var vw = vorschau && vorschau.fraktionen[f.id] ? vorschau.fraktionen[f.id].ja - e.ja : 0;
-      html += '<li title="' + f.name + '">' + ANSICHT.MUSTER_SVG(f.muster, f.farbe) + '<span class="fl-name">' + f.kurz + "</span>" +
-        '<span class="fl-balken" aria-label="' + e.ja + " Ja, " + e.nein + " Nein, " + e.enthaltung + ' Enthaltung">' +
-        '<i class="ja" style="width:' + (e.ja / n * 100) + '%"></i><i class="enth" style="width:' + (e.enthaltung / n * 100) + '%"></i><i class="nein" style="width:' + (e.nein / n * 100) + '%"></i></span>' +
-        '<span class="fl-zahl">' + e.ja + "/" + n + (vw ? ' <em class="' + (vw > 0 ? "plus" : "minus") + '">' + (vw > 0 ? "+" : "") + vw + "</em>" : "") + "</span>" +
-        (f.immerJa ? "" : '<span class="fl-vertrauen" title="' + DATA.texte.leisten.vertrauen + '">' + (v > 0 ? "▲".repeat(v) : (v < 0 ? "▼".repeat(-v) : "·")) + "</span>") + "</li>";
-    });
-    el.innerHTML = html + "</ul>";
+    var plenum = LOGIK.ablauf.modus === "trilog" || LOGIK.ablauf.modus === "plenum";
+    erg = erg || (plenum ? LOGIK.mehrheit.plenum(LOGIK.entwurf()) : LOGIK.mehrheit.ausschuss(LOGIK.entwurf()));
+    F.letzt = erg; F.vorschau = vorschau || null;
+    var feld = plenum ? "sitzePlenum" : "sitzeAusschuss", sitze = erg.ja + erg.nein + erg.enthaltung;
+    function satz(e) {
+      if (e.mehrheit) { var v = e.ja - e.nein; return v === 1 ? T().erreichtEins : n(T().erreicht, v); }
+      var f = Math.floor((e.nein - e.ja) / 2) + 1; return f === 1 ? T().fehltEine : n(T().fehlen, f);
+    }
+    var h = '<button type="button" class="mh-knopf" id="mhKnopf" aria-expanded="' + F.offen + '">' +
+      '<span class="mh-ort">' + (plenum ? T().plenum : T().ausschuss) + "</span>" +
+      '<span class="mh-zahlen"><b class="ja">' + erg.ja + " " + T().ja + '</b> · <b class="nein">' + erg.nein + " " + T().nein + "</b>" + (erg.enthaltung ? ' · <span class="enth">' + erg.enthaltung + " " + T().enthaltung + "</span>" : "") + "</span>" +
+      '<span class="mh-balken" aria-hidden="true"><i class="ja" style="width:' + (erg.ja / sitze * 100) + '%"></i><i class="enth" style="width:' + (erg.enthaltung / sitze * 100) + '%"></i><i class="nein" style="width:' + (erg.nein / sitze * 100) + '%"></i><u></u></span>' +
+      '<span class="mh-satz ' + (erg.mehrheit ? "ja" : "nein") + '">' + satz(erg) + "</span>" +
+      (vorschau ? '<span class="mh-vorschau">' + T().mitAenderung + " <b>" + vorschau.ja + " " + T().ja + " · " + vorschau.nein + " " + T().nein + "</b> – " + satz(vorschau) + "</span>" : "") +
+      '<span class="mh-mehr">' + (F.offen ? T().weniger : T().details) + " " + (F.offen ? "▴" : "▾") + "</span></button>";
+    if (F.offen) {
+      h += '<p class="klein mh-regel">' + T().regel + '</p><ul class="mh-liste">';
+      DATA.fraktionen.slice().sort(function (a, b) { return a.sitzordnung - b.sitzordnung; }).forEach(function (f) {
+        var e = erg.fraktionen[f.id], z = f[feld], v = LOGIK.stand.vertrauen[f.id] || 0;
+        var vw = vorschau && vorschau.fraktionen[f.id] ? vorschau.fraktionen[f.id].ja - e.ja : 0;
+        h += '<li title="' + f.name + '">' + ANSICHT.MUSTER_SVG(f.muster, f.farbe) + '<span class="fl-name">' + f.name + "</span>" +
+          '<span class="fl-balken" aria-label="' + e.ja + " Ja, " + e.nein + " Nein, " + e.enthaltung + ' Enthaltung">' +
+          '<i class="ja" style="width:' + (e.ja / z * 100) + '%"></i><i class="enth" style="width:' + (e.enthaltung / z * 100) + '%"></i><i class="nein" style="width:' + (e.nein / z * 100) + '%"></i></span>' +
+          '<span class="fl-zahl">' + e.ja + "/" + z + (vw ? ' <em class="' + (vw > 0 ? "plus" : "minus") + '">' + (vw > 0 ? "+" : "") + vw + "</em>" : "") + "</span>" +
+          (f.immerJa ? '<span class="fl-vertrauen"></span>' : '<span class="fl-vertrauen" title="' + DATA.texte.leisten.vertrauen + '">' + (v > 0 ? "▲".repeat(v) : (v < 0 ? "▼".repeat(-v) : "·")) + "</span>") + "</li>";
+      });
+      h += "</ul>";
+    }
+    el.innerHTML = h;
+    var k = document.getElementById("mhKnopf");
+    k.addEventListener("click", function () { F.offen = !F.offen; F.aktualisieren(F.letzt, F.vorschau); });
+    ANSICHT.hover(k);
     ANSICHT.halbrundText(LOGIK.mehrheit.alsText(erg));
+    if (ANSICHT.aufgabe) ANSICHT.aufgabe.aktualisieren();
   };
   return F;
 })();
 
-/* Wirkungsanzeige (qualitativ!) – vier Achsen, fünf Stufen, dazu eine graue Leiste */
+/* Wirkungsanzeige (qualitativ!) – vier Achsen, fünf Stufen, dazu eine graue Leiste.
+   Steht im Entwurfsfeld (#edWirkung), nicht mehr als eigenes Fenster. */
 ANSICHT.wirkung = (function () {
   var W = {};
-  W.zeigen = function (an) { document.getElementById("wirkung").classList.toggle("versteckt", !an); if (an) W.aktualisieren(); };
+  W.zeigen = function () { document.getElementById("wirkung").classList.add("versteckt"); };
   W.aktualisieren = function () {
-    var el = document.getElementById("wirkung");
-    if (!el || el.classList.contains("versteckt")) return;
+    var el = document.getElementById("edWirkung");
+    if (!el) return;
     var T = DATA.texte.wirkung, w = LOGIK.mehrheit.wirkung(LOGIK.entwurf());
-    var html = '<div class="wk-titel">' + T.titel + '</div><div class="wk-unter">' + T.untertitel + "</div>";
+    var html = '<div class="wk-titel">' + DATA.texte.editor.wirkungTitel + '</div><div class="wk-unter">' + T.untertitel + "</div>";
     ["wissen", "durchsetzung", "aufwand", "recht"].forEach(function (a) {
       html += '<div class="wk-achse' + (a === "aufwand" ? " aufwand" : "") + '"><span>' + T.achsen[a] + '</span><span class="wk-kaesten" role="img" aria-label="' + T.achsen[a] + ": " + w[a] + " / 5\">";
       for (var i = 1; i <= 5; i++) html += '<i class="' + (i <= w[a] ? "an" : "") + '"></i>';
       html += "</span></div>";
     });
-    html += '<button class="wk-achse grau knopf" id="wkGrau"><span>' + T.grau + '</span><span class="wk-kaesten">' + "<i class='an'></i>".repeat(5) + "</span></button>";
+    html += '<button type="button" class="wk-achse grau knopf" id="wkGrau"><span>' + T.grau + '</span><span class="wk-kaesten">' + "<i class='an'></i>".repeat(5) + "</span></button>";
     el.innerHTML = html;
     var g = document.getElementById("wkGrau");
     g.addEventListener("click", function () { LOGIK.gespraech.folge([{ sprecher: "mateusz", text: T.grauErklaerung[0] }, { sprecher: "mateusz", text: T.grauErklaerung[1] }]); });

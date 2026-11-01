@@ -42,6 +42,48 @@ DATA.texte = {
 
   /* Fraktionsleiste und Wirkungsanzeige (Abschnitt 5.6) */
   leisten: { fraktionen: "Ausschuss – erwartete Stimmen", vertrauen: "Vertrauen" },
+
+  /* Große Mehrheitsanzeige (oben in der Mitte) */
+  mehrheit: {
+    ausschuss: "Ausschuss", plenum: "Plenum", ja: "Ja", nein: "Nein", enthaltung: "Enthaltung",
+    erreicht: "Mehrheit – {n} Stimmen Vorsprung", erreichtEins: "Mehrheit – eine Stimme Vorsprung",
+    fehlen: "Dir fehlen {n} Stimmen", fehltEine: "Dir fehlt eine Stimme",
+    mitAenderung: "Mit dieser Änderung:", details: "Wer stimmt wie?", weniger: "Weniger zeigen",
+    regel: "Gewonnen ist, wenn mehr Ja als Nein kommen."
+  },
+
+  /* Aufgabenkarte oben links: Ziel des Kapitels und nächster Schritt */
+  aufgaben: {
+    titel: "Deine Aufgabe", ziel: "Ziel", jetzt: "Jetzt",
+    k1: { ziel: "Lerne deinen Auftrag kennen.", schritte: { start: "Hör Mira zu.", probe: "Probier es aus: Wähle im Gesetz eine andere Option.", fertig: "Der erste Tag ist geschafft." } },
+    k2: { ziel: "Sammle Argumente für dein Gesetz.", schritte: { start: "Hör dem Ökonomen zu.", fragen: "Stell den Gästen deine Fragen. Jede Antwort wird eine Karte in deinem Dossier." },
+          fortschritt: "Fragen: {n} von {max}" },
+    k3: { ziel: "Schreib ein Gesetz, für das im Ausschuss mehr Ja als Nein kommen.", schritte: { start: "Hör Mira und dem Juristischen Dienst zu.", artikel: "Entscheide in jedem Artikel eine Frage. Behalte die Mehrheit oben im Blick.", einreichen: "Fertig? Dann reich den Entwurf ein." },
+          fortschritt: "Artikel {n} von {max}" },
+    k4: { ziel: "Gewinne Stimmen, bevor der Ausschuss abstimmt.", schritte: { start: "Hör Mira zu.", uebersicht: "Wähle ein Büro, die Bibliothek oder die Cafeteria.", gespraech: "Verhandle: Karte vorlegen, etwas anbieten oder etwas versprechen." },
+          fortschritt: "Termine übrig: {n} von {max}" },
+    k5: { ziel: "Der Ausschuss stimmt ab.", schritte: { start: "Schau zu, wie abgestimmt wird." } },
+    k6: { ziel: "Einige dich mit Rat und Kommission auf einen gemeinsamen Text.", schritte: { start: "Hör zu, was Rat und Kommission wollen.", tabelle: "Entscheide bei jedem Streitpunkt: halten, Mittelweg oder dem Rat nachgeben." },
+          fortschritt: "Der Rat gibt noch bei {n} Punkten nach" },
+    k7: { ziel: "Überzeuge das Plenum.", schritte: { start: "Gleich hältst du deine Rede.", rede: "Wähle Einstieg, Kernpunkt und Schluss deiner Rede.", abstimmung: "Das Plenum stimmt ab." } }
+  },
+
+  /* Mira erklärt jeden neuen Bildschirm einmal (Hervorhebung + ein Satz) */
+  fuehrung: {
+    verstanden: "Verstanden",
+    probe: "Hier entscheidest du. Tipp eine Option an – auf dem Blatt siehst du sofort, was sich ändert.",
+    mehrheitProbe: "Und hier oben siehst du, wie der Ausschuss gerade abstimmen würde.",
+    fragen: "Du kannst nicht alle fragen. Jede Antwort landet als Karte in deinem Dossier – die brauchst du später zum Verhandeln.",
+    dossier: "Hier liegt dein Dossier. Tipp es an, wann immer du deine Karten sehen willst.",
+    mehrheit: "Das Wichtigste: Du brauchst mehr Ja als Nein. Tipp hier, um zu sehen, welche Fraktion wie denkt.",
+    artikel: "Sieben Artikel, in jedem eine Entscheidung. Neben jeder Option steht, wer sie mag und wer nicht.",
+    wirkung: "Das zeigt, was dein Gesetz bewirkt. Mehr ist nicht immer besser – achte auf Aufwand und Rechtssicherheit.",
+    einreichen: "Wenn du fertig bist, reichst du hier ein. Danach änderst du den Text nur noch durch Verhandlungen.",
+    buero: "Tipp ein Büro an, um mit der Fraktion zu reden. Jeder Besuch kostet einen Termin – du hast nur wenige.",
+    verhandeln: "Eine passende Karte schafft Vertrauen. Ein Zugeständnis ändert deinen Text. Ein Versprechen musst du im Trilog halten.",
+    trilog: "Links steht, was du willst und was der Rat will. Der Rat gibt nur bei wenigen Punkten nach – such dir aus, wo du hart bleibst.",
+    rede: "Deine Rede kann Unentschlossene überzeugen. Wähle, was zu deinem Gesetz passt."
+  },
   wirkung: {
     titel: "Wirkung",
     untertitel: "Einschätzung im Spiel – vereinfacht, keine Prognose",
@@ -61,7 +103,9 @@ DATA.texte = {
     wunschErklaerung: "Zwei Vorschläge, die viele gut finden. Gehören sie in dieses Gesetz?",
     wunschRein: "In den Entwurf aufnehmen", wunschRaus: "Wieder herausnehmen",
     einreichen: "Entwurf einreichen", einreichenFrage: "Danach kannst du den Text nur noch über Verhandlungen und im Trilog ändern. Jetzt einreichen?",
-    probeHinweis: "Nur eine Probe: Wähle eine Begründung und schau auf das Glasmodell."
+    probeHinweis: "Nur eine Probe: Wähle eine Option und schau auf die Mehrheit oben.",
+    artikelVon: "Artikel {n} von {max}", zurueck: "Zurück", weiter: "Nächster Artikel", extras: "Extra",
+    keiner: "niemand", wirkungTitel: "Was bewirkt dein Gesetz?"
   },
 
   /* Kapitel 2 */
@@ -77,7 +121,8 @@ DATA.texte = {
 
   /* Kapitel 6 */
   trilog: {
-    titel: "Vier-Spalten-Tabelle", spalten: ["Artikel", "Kommission", "Parlament", "Rat", "Kompromiss"],
+    titel: "Der Trilog", spalten: ["Streitpunkt", "Du (Parlament)", "Rat", "Deine Entscheidung"],
+    einig: "Schon einig:", einigPunkte: "Punkte",
     budget: "Spielraum des Rates:", halten: "Parlament halten", uebernehmen: "Rat übernehmen", mittelweg: "Mittelweg", bruecke: "Tiago fragen",
     brueckeText: "Ein Kompromisstext der Kommission.", abschliessen: "Kompromiss abschließen", nochOffen: "Es sind noch Zeilen offen.",
     praezisieren: "Formulierung präzisieren", nichtPraezisieren: "So lassen"

@@ -119,8 +119,8 @@ DATA.stil = {
     anhoerung: {
       name: "Kapitel 2 – helles Saallicht von oben, warme Spots auf die Gäste",
       sonne: { richtung: [0.18, 1.0, 0.32], kelvin: 5200, staerke: 3.0, winkel: 9 },
-      himmel: { oben: "#d9dde3", horizont: "#e8e4dc", unten: "#7a7670", sonnenglanz: 0.2, staerke: 1.2 },
-      umgebung: 1.5,
+      himmel: { oben: "#d9dde3", horizont: "#e8e4dc", unten: "#7a7670", sonnenglanz: 0.2, staerke: 1.4 },
+      umgebung: 1.9,
       nebel: { dichte: 0.008, farbe: "#d8d4cc", streuung: 0.3, strahlen: 0.0, reichweite: 12, dunst: 0.4 },
       belichtung: 1.1,
       farbe: { temperatur: 0.03, saettigung: 0.95, kontrast: 1.06, schatten: "#2e3446", lichter: "#fff0dc", toenung: 0.25, schwarz: 0.01 },
@@ -130,9 +130,9 @@ DATA.stil = {
       name: "Kapitel 5 – Kunstlicht, leicht kühl; Sitzlampen leuchten in Fraktionsfarben",
       sonne: { richtung: [0.1, 1.0, 0.25], kelvin: 6500, staerke: 2.2, winkel: 9 },
       himmel: { oben: "#c8d0dc", horizont: "#d0d4d8", unten: "#5a5e66", sonnenglanz: 0.2, staerke: 0.9 },
-      umgebung: 1.1,
-      nebel: { dichte: 0.01, farbe: "#b8c2d0", streuung: 0.3, strahlen: 0.0, reichweite: 12, dunst: 0.4 },
-      belichtung: 0.95,
+      umgebung: 1.5,
+      nebel: { dichte: 0.01, farbe: "#b8c2d0", streuung: 0.3, strahlen: 0.0, reichweite: 12, dunst: 0.3 },
+      belichtung: 1.05,
       farbe: { temperatur: -0.08, saettigung: 0.9, kontrast: 1.12, schatten: "#1e2638", lichter: "#e8f0ff", toenung: 0.3, schwarz: 0.012 },
       bloom: 0.07, vignette: 0.38, korn: 0.03
     },
@@ -150,7 +150,7 @@ DATA.stil = {
       name: "Kapitel 6 – Nacht, nur eine warme Pendelleuchte über dem Tisch",
       sonne: { richtung: [0.06, 1.0, 0.04], kelvin: 2700, staerke: 7.0, winkel: 7, kegel: [0, 0, 1.7, 3.4] },
       himmel: { oben: "#0b0f1c", horizont: "#1a2234", unten: "#050608", sonnenglanz: 0.0, staerke: 1.0 },
-      umgebung: 0.75,
+      umgebung: 1.0,
       nebel: { dichte: 0.012, farbe: "#3a3020", streuung: 0.4, strahlen: 0.8, reichweite: 8, dunst: 0.15 },
       belichtung: 1.3,
       farbe: { temperatur: 0.08, saettigung: 0.92, kontrast: 1.15, schatten: "#141a2c", lichter: "#ffd8a8", toenung: 0.45, schwarz: 0.014 },
@@ -158,11 +158,11 @@ DATA.stil = {
     },
     plenum: {
       name: "Kapitel 7 – festliches helles Licht durch das Glasdach",
-      sonne: { richtung: [0.28, 0.9, -0.33], kelvin: 5600, staerke: 5.5, winkel: 0.8 },
-      himmel: { oben: "#9cbce6", horizont: "#eef0f2", unten: "#4a4a4c", sonnenglanz: 2.0, staerke: 4.0 },
-      umgebung: 1.5,
-      nebel: { dichte: 0.012, farbe: "#c8d0dc", streuung: 0.35, strahlen: 7, reichweite: 40, dunst: 0.15 },
-      belichtung: 0.95,
+      sonne: { richtung: [0.28, 0.9, -0.33], kelvin: 5400, staerke: 4.6, winkel: 0.8 },
+      himmel: { oben: "#9cbce6", horizont: "#eef0f2", unten: "#4a4a4c", sonnenglanz: 1.6, staerke: 3.0 },
+      umgebung: 1.35,
+      nebel: { dichte: 0.01, farbe: "#c8d0dc", streuung: 0.35, strahlen: 5, reichweite: 40, dunst: 0.08 },
+      belichtung: 0.78,
       farbe: { temperatur: 0.0, saettigung: 0.97, kontrast: 1.08, schatten: "#263048", lichter: "#fff4e4", toenung: 0.25, schwarz: 0.01 },
       bloom: 0.06, vignette: 0.35, korn: 0.03
     },
@@ -179,6 +179,8 @@ DATA.stil = {
   },
 
   /* ---------------- Grafikstufen (Abschnitt 7.5) ----------------
+     tiefe: 0 überall – Tiefenschärfe auf Wunsch des Users abgeschaltet (1. November 2026:
+     „dieser extreme Unscharf-Effekt muss weg“). Wert > 0 schaltet sie wieder ein.
      renderskala: Anteil der Bildschirm-Auflösung (1 = volle Auflösung)
      pixelMax: höchstens so viele Bildpunkte pro CSS-Pixel (scharfe Bildschirme)
      schatten: Größe der Schattenkarte, schattenWeich: 2 = sehr weich, 1 = weich, 0 = gefiltert, -1 = hart
@@ -190,9 +192,9 @@ DATA.stil = {
      teilchen: Anteil der Teilchen (1 = viele)
   */
   grafikstufen: {
-    ultra:   { name: "Ultra",   renderskala: 1.0,  pixelMax: 1.5,  schatten: 4096, schattenWeich: 2,  verdeckung: 2,   spiegel: 2, strahlen: 40, bloomStufen: 6, tiefe: 2,   kanten: "zeitlich", korn: true,  farbsaum: true,  teilchen: 1.0, brechung: true,  umgebungGroesse: 256, texturGroesse: 1024, seitenAufloesung: 1600 },
-    hoch:    { name: "Hoch",    renderskala: 1.0,  pixelMax: 1.25, schatten: 2048, schattenWeich: 1,  verdeckung: 1,   spiegel: 2, strahlen: 24, bloomStufen: 6, tiefe: 1,   kanten: "zeitlich", korn: true,  farbsaum: true,  teilchen: 0.6, brechung: true,  umgebungGroesse: 128, texturGroesse: 512,  seitenAufloesung: 1400 },
-    mittel:  { name: "Mittel",  renderskala: 0.85, pixelMax: 1.0,  schatten: 1024, schattenWeich: 0,  verdeckung: 0.5, spiegel: 1, strahlen: 10, bloomStufen: 5, tiefe: 0.5, kanten: "fxaa",     korn: true,  farbsaum: true,  teilchen: 0.3, brechung: false, umgebungGroesse: 128, texturGroesse: 512,  seitenAufloesung: 1200 },
+    ultra:   { name: "Ultra",   renderskala: 1.0,  pixelMax: 1.5,  schatten: 4096, schattenWeich: 2,  verdeckung: 2,   spiegel: 2, strahlen: 40, bloomStufen: 6, tiefe: 0,   kanten: "zeitlich", korn: true,  farbsaum: true,  teilchen: 1.0, brechung: true,  umgebungGroesse: 256, texturGroesse: 1024, seitenAufloesung: 1600 },
+    hoch:    { name: "Hoch",    renderskala: 1.0,  pixelMax: 1.25, schatten: 2048, schattenWeich: 1,  verdeckung: 1,   spiegel: 2, strahlen: 24, bloomStufen: 6, tiefe: 0,   kanten: "zeitlich", korn: true,  farbsaum: true,  teilchen: 0.6, brechung: true,  umgebungGroesse: 128, texturGroesse: 512,  seitenAufloesung: 1400 },
+    mittel:  { name: "Mittel",  renderskala: 0.85, pixelMax: 1.0,  schatten: 1024, schattenWeich: 0,  verdeckung: 0.5, spiegel: 1, strahlen: 10, bloomStufen: 5, tiefe: 0, kanten: "fxaa",     korn: true,  farbsaum: true,  teilchen: 0.3, brechung: false, umgebungGroesse: 128, texturGroesse: 512,  seitenAufloesung: 1200 },
     niedrig: { name: "Niedrig", renderskala: 0.7,  pixelMax: 1.0,  schatten: 1024, schattenWeich: -1, verdeckung: 0,   spiegel: 0, strahlen: 0,  bloomStufen: 3, tiefe: 0,   kanten: "fxaa",     korn: false, farbsaum: false, teilchen: 0.0, brechung: false, umgebungGroesse: 64,  texturGroesse: 256,  seitenAufloesung: 1024 }
   },
 
@@ -201,13 +203,13 @@ DATA.stil = {
 
   /* ---------------- Oberfläche (Abschnitt 7.10) ---------------- */
   oberflaeche: {
-    akzent: "#00a2ad",                      // Petrol – Fokusrahmen, Hervorhebungen
+    akzent: "#00727a",                      // Petrol – Fokusrahmen, Hervorhebungen, Hauptknöpfe
     schriftUI: 'system-ui, "Segoe UI", -apple-system, "Helvetica Neue", Arial, sans-serif',
     schriftGesetz: 'Georgia, "Times New Roman", serif',
     schriftZahlen: 'ui-monospace, Consolas, monospace',
-    glas: "rgba(250, 250, 248, 0.62)",      // mattiertes Glas
-    glasRand: "rgba(255, 255, 255, 0.75)",
+    glas: "rgba(251, 250, 247, 0.97)",      // ruhiges Papierweiß (fast deckend)
+    glasRand: "rgba(20, 24, 30, 0.08)",
     text: "#1b1d22",
-    rundung: 8
+    rundung: 12
   }
 };

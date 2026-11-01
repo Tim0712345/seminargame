@@ -16,9 +16,6 @@ ANSICHT.editor = (function () {
   function hol(id) { return document.getElementById(id); }
   function T() { return DATA.texte.editor; }
   function opt(sch, id) { return sch.optionen.filter(function (o) { return o.id === id; })[0]; }
-  function frNamen(o, wert) {
-    return DATA.fraktionen.filter(function (f) { return !f.immerJa && o.haltung && (wert > 0 ? o.haltung[f.id] > 0 : o.haltung[f.id] < 0); }).map(function (f) { return f.kurz; }).join(", ") || "–";
-  }
 
   /* ---------- Seite als HTML (gleicher Inhalt wie die Canvas-Seite) ---------- */
   function seiteHtml() {
@@ -40,41 +37,51 @@ ANSICHT.editor = (function () {
     return h;
   }
 
-  /* ---------- Bedienfeld rechts ---------- */
+  /* ---------- Bedienfeld rechts: ein Artikel, eine Frage ---------- */
+  function wer(o, wert) {
+    var l = DATA.fraktionen.filter(function (f) { return !f.immerJa && o.haltung && (wert > 0 ? o.haltung[f.id] > 0 : o.haltung[f.id] < 0); });
+    if (!l.length) return '<span class="eo-keiner">' + T().keiner + "</span>";
+    return l.map(function (f) { return '<span class="eo-fr" style="--fr:' + f.farbe + '">' + f.kurz + "</span>"; }).join(" ");
+  }
   function feld() {
-    var el = hol("editor"), t = T();
-    var html = '<div class="ed-kopf">';
+    var el = hol("editor"), t = T(), max = DATA.artikel.length;
+    var html = "";
     if (E.modus === "entwurf") {
-      html += '<div class="ed-tabs" role="tablist">';
-      DATA.artikel.forEach(function (a, i) { html += '<button class="knopf ed-tab' + (i === E.artikel && !E.wunsch ? " aktiv" : "") + '" data-tab="' + i + '" aria-label="' + LOGIK.text.ersetzen(a.titel, true) + '">' + (i + 1) + "</button>"; });
-      html += '<button class="knopf ed-tab wz' + (E.wunsch ? " aktiv" : "") + '" data-tab="wunsch">' + t.wunschTab + "</button></div>";
+      html += '<div class="ed-kopf"><span class="ed-von">' + (E.wunsch ? t.extras : t.artikelVon.replace("{n}", E.artikel + 1).replace("{max}", max)) + '</span><div class="ed-tabs" role="tablist">';
+      DATA.artikel.forEach(function (a, i) { html += '<button type="button" class="knopf ed-tab' + (i === E.artikel && !E.wunsch ? " aktiv" : "") + '" data-tab="' + i + '" aria-label="' + LOGIK.text.ersetzen(a.titel, true) + '">' + (i + 1) + "</button>"; });
+      html += '<button type="button" class="knopf ed-tab wz' + (E.wunsch ? " aktiv" : "") + '" data-tab="wunsch" aria-label="' + t.wunschTab + '">+</button></div></div>';
     }
-    html += "</div>";
     if (E.wunsch) {
-      html += "<h2>" + t.wunschTitel + '</h2><p class="klein">' + t.wunschErklaerung + "</p>";
+      html += "<h2>" + t.wunschTitel + '</h2><p class="ed-einleitung">' + t.wunschErklaerung + "</p>";
       DATA.wunschzettel.forEach(function (w) {
         var drin = LOGIK.stand.wunschzettel.indexOf(w.id) >= 0;
-        html += '<div class="ed-schraube"><div class="ed-frage">' + w.kurz + "</div><p>" + LOGIK.text.ersetzen(w.text) + '</p><button class="knopf segment" data-wunsch="' + w.id + '" aria-pressed="' + drin + '">' + (drin ? t.wunschRaus : t.wunschRein) + "</button>" +
+        html += '<div class="ed-wunsch"><div class="ed-frage">' + w.kurz + "</div><p>" + LOGIK.text.ersetzen(w.text) + '</p><button type="button" class="knopf segment" data-wunsch="' + w.id + '" aria-pressed="' + drin + '">' + (drin ? t.wunschRaus : t.wunschRein) + "</button>" +
           (drin ? '<aside class="haftnotiz rot"><b>§</b> ' + LOGIK.text.ersetzen(w.jurist) + "</aside>" : "") + "</div>";
       });
     } else {
       var art = DATA.artikel[E.artikel], e = LOGIK.entwurf();
-      html += "<h2>" + LOGIK.text.ersetzen(art.titel) + '</h2><p class="klein">' + LOGIK.text.ersetzen(art.einleitung) + "</p>";
+      html += "<h2>" + LOGIK.text.ersetzen(art.titel) + '</h2><p class="ed-einleitung">' + LOGIK.text.ersetzen(art.einleitung) + "</p>";
       if (DATA.einstellungenAktuell.lesehilfe && art.kurzfassung) html += '<p class="lesehilfe">' + t.lesehilfe + " " + LOGIK.text.ersetzen(art.kurzfassung) + "</p>";
       art.schrauben.forEach(function (s) {
-        html += '<div class="ed-schraube" role="group" aria-label="' + LOGIK.text.ersetzen(s.frage, true) + '"><div class="ed-frage">' + LOGIK.text.ersetzen(s.frage) + '</div><div class="segmente">';
+        html += '<div class="ed-frage" id="edFrage">' + LOGIK.text.ersetzen(s.frage) + '</div><div class="ed-optionen segmente" role="group" aria-label="' + LOGIK.text.ersetzen(s.frage, true) + '">';
         s.optionen.forEach(function (o) {
-          html += '<button class="knopf segment" data-schraube="' + s.id + '" data-option="' + o.id + '" aria-pressed="' + (e[s.id] === o.id) + '">' + LOGIK.text.ersetzen(o.kurz) + (o.id === s.start ? ' <small class="komm">' + t.kommission + "</small>" : "") + "</button>";
+          html += '<button type="button" class="knopf ed-option segment" data-schraube="' + s.id + '" data-option="' + o.id + '" aria-pressed="' + (e[s.id] === o.id) + '">' +
+            '<span class="eo-kopf"><span class="eo-kurz">' + LOGIK.text.ersetzen(o.kurz) + "</span>" + (o.id === s.start ? '<span class="eo-komm">' + t.kommission + "</span>" : "") + "</span>" +
+            '<span class="eo-wer"><span class="eo-label">' + t.moegen + "</span> " + wer(o, 1) + '</span><span class="eo-wer"><span class="eo-label">' + t.ablehnen + "</span> " + wer(o, -1) + "</span></button>";
         });
         html += "</div>";
         var a = opt(s, e[s.id]);
-        html += '<details class="ed-karte"><summary>' + t.dafuerDagegen + "</summary><p><b>" + t.dafuer + "</b> " + LOGIK.text.ersetzen(a.dafuer) + "</p><p><b>" + t.dagegen + "</b> " + LOGIK.text.ersetzen(a.dagegen) + '</p><p class="klein">' + t.moegen + " " + frNamen(a, 1) + " · " + t.ablehnen + " " + frNamen(a, -1) + "</p></details>";
-        html += "</div>";
+        html += '<div class="ed-abwaegung"><p><b>' + t.dafuer + "</b> " + LOGIK.text.ersetzen(a.dafuer) + "</p><p><b>" + t.dagegen + "</b> " + LOGIK.text.ersetzen(a.dagegen) + "</p></div>";
       });
+      if (E.modus === "entwurf") html += '<div id="edWirkung" class="ed-wirkung"></div>';
     }
     html += '<div class="ed-fuss">';
-    if (E.modus === "entwurf") html += '<button class="knopf haupt" id="edEinreichen">' + t.einreichen + "</button>";
-    else if (E.modus === "probe") html += '<p class="klein">' + t.probeHinweis + "</p>";
+    if (E.modus === "entwurf") {
+      var letzt = E.wunsch || E.artikel === max - 1;
+      html += '<div class="reihe ed-nav"><button type="button" class="knopf" id="edZurueck"' + (E.artikel === 0 && !E.wunsch ? " disabled" : "") + ">← " + t.zurueck + "</button>" +
+        (letzt ? "" : '<button type="button" class="knopf" id="edWeiter">' + t.weiter + " →</button>") + "</div>";
+      html += '<button type="button" class="knopf ' + (letzt ? "haupt" : "leise") + '" id="edEinreichen">' + t.einreichen + "</button>";
+    } else if (E.modus === "probe") html += '<p class="klein">' + t.probeHinweis + "</p>";
     html += "</div>";
     el.innerHTML = html;
     Array.prototype.forEach.call(el.querySelectorAll("button"), function (b) { ANSICHT.hover(b); b.style.touchAction = "manipulation"; });
@@ -91,7 +98,12 @@ ANSICHT.editor = (function () {
         E.nachAenderung(); feld();
       });
     });
+    var z = hol("edZurueck"); if (z) z.addEventListener("click", function () { if (E.wunsch) { E.wunsch = false; E.artikelZeigen(max - 1); feld(); } else E.artikelZeigen(E.artikel - 1); });
+    var w = hol("edWeiter"); if (w) w.addEventListener("click", function () { E.artikelZeigen(E.artikel + 1); });
     var ein = hol("edEinreichen"); if (ein) ein.addEventListener("click", function () { if (E.beiEinreichen) E.beiEinreichen(); });
+    ANSICHT.wirkung.aktualisieren();
+    if (E.modus === "entwurf") ANSICHT.aufgabe.setzen(E.wunsch || E.artikel === max - 1 ? "einreichen" : "artikel");
+    el.scrollTop = 0;
   }
 
   /* ---------- Öffnen / Schließen ---------- */

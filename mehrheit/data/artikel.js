@@ -1,6 +1,9 @@
 /* =====================================================================
    data/artikel.js – die sieben Artikel des Gesetzentwurfs (Abschnitt 5.2 und 6)
    ---------------------------------------------------------------------
+   Jeder Artikel hat genau eine Kernentscheidung (Stellschraube) – auf Wunsch des Users
+   (1. November 2026: „weniger Stellschrauben, dafür härtere Abwägungen“). Was früher eigene
+   Stellschrauben waren, steckt jetzt in den Optionen oder im festen Grundtext.
    Jede Stellschraube hat Optionen mit:
      kurz:     Kurzname für Knöpfe (höchstens vier Wörter)
      text:     Wortlaut im Gesetzestext (juristisch, aber verständlich)
@@ -50,37 +53,23 @@ DATA.artikel = [
     einleitung: "Was erfahren Bewerber*innen über das Gehalt, bevor sie einen Vertrag unterschreiben?",
     kurzfassung: "Wer sich bewirbt, soll wissen, was die Stelle ungefähr einbringt.",
     schrauben: [
-      { id: "vorher_info", frage: "Was müssen Arbeitgeber vor dem Vorstellungsgespräch sagen?", start: "vorgespraech",
+      { id: "vorher_info", frage: "Was erfahren Bewerber*innen über das Gehalt – und darf nach dem alten Gehalt gefragt werden?", start: "vorgespraech",
         optionen: [
           { id: "nichts", kurz: "Nichts", streichen: true, text: "",
-            dafuer: "Betriebe entscheiden selbst, wann sie über Geld reden.", dagegen: "Wer nichts weiß, verhandelt schlechter – und oft trifft das Frauen.",
-            haltung: { GZL: -2, ASG: -2, BFW: 0, EVM: -1, BSN: 1, FU: -1 }, wirkung: { wissen: -2, durchsetzung: -1, aufwand: -2, recht: 0 } },
+            dafuer: "Betriebe entscheiden selbst, wann sie über Geld reden.", dagegen: "Wer nichts weiß, verhandelt schlechter. Und wer früher zu wenig verdient hat, nimmt die alte Lücke mit.",
+            haltung: { GZL: -2, ASG: -2, BFW: 1, EVM: -1, BSN: 2, FU: -1 }, wirkung: { wissen: -2, durchsetzung: -1, aufwand: -2, recht: 0 } },
           { id: "nachfrage", kurz: "Auf Nachfrage",
             text: "Bewerberinnen und Bewerber erhalten auf Nachfrage Auskunft über das Einstiegsgehalt oder dessen Spanne.",
             dafuer: "Wenig Aufwand für Betriebe.", dagegen: "Nachfragen kostet im Vorstellungsgespräch Mut.",
-            haltung: { GZL: -1, ASG: -1, BFW: 1, EVM: 0, BSN: 0, FU: 0 }, wirkung: { wissen: 0, durchsetzung: 0, aufwand: -1, recht: 1 } },
+            haltung: { GZL: -1, ASG: -1, BFW: 2, EVM: 1, BSN: 0, FU: 0 }, wirkung: { wissen: 0, durchsetzung: 0, aufwand: -1, recht: 1 } },
           { id: "vorgespraech", kurz: "Vor dem Gespräch", echt: true, vergleich: "rl_stellenanzeige",
-            text: "Bewerberinnen und Bewerber erhalten vor dem Vorstellungsgespräch Informationen über das Einstiegsgehalt oder dessen Spanne.",
-            dafuer: "Alle starten mit demselben Wissen in die Verhandlung.", dagegen: "Betriebe müssen ihre Gehaltsspannen früh festlegen.",
-            haltung: { GZL: 1, ASG: 1, BFW: 0, EVM: 1, BSN: -1, FU: 1 }, wirkung: { wissen: 1, durchsetzung: 0, aufwand: 0, recht: 1 } },
+            text: "Bewerberinnen und Bewerber erhalten vor dem Vorstellungsgespräch Informationen über das Einstiegsgehalt oder dessen Spanne. Nach ihrem bisherigen Entgelt darf nicht gefragt werden.",
+            dafuer: "Alle starten mit demselben Wissen – und niemand nimmt eine alte Lücke in den neuen Job mit.", dagegen: "Betriebe müssen ihre Gehaltsspannen früh festlegen.",
+            haltung: { GZL: 1, ASG: 1, BFW: 0, EVM: 1, BSN: -1, FU: 1 }, wirkung: { wissen: 1, durchsetzung: 1, aufwand: 0, recht: 2 } },
           { id: "anzeige", kurz: "In jeder Stellenanzeige",
-            text: "Jede Stellenanzeige nennt verpflichtend die Gehaltsspanne der ausgeschriebenen Stelle.",
+            text: "Jede Stellenanzeige nennt verpflichtend die Gehaltsspanne der ausgeschriebenen Stelle. Nach dem bisherigen Entgelt darf nicht gefragt werden.",
             dafuer: "Maximale Klarheit, schon bevor man sich bewirbt.", dagegen: "Für kleine Betriebe eine starre Vorgabe, die Verhandlungen erschwert.",
             haltung: { GZL: 2, ASG: 2, BFW: -2, EVM: -1, BSN: -2, FU: 1 }, wirkung: { wissen: 2, durchsetzung: 1, aufwand: 1, recht: 1 } }
-        ] },
-      { id: "vorgehalt", frage: "Darf nach dem bisherigen Gehalt gefragt werden?", start: "freiwillig",
-        optionen: [
-          { id: "erlaubt", kurz: "Ja, erlaubt", streichen: true, text: "",
-            dafuer: "Arbeitgeber können einschätzen, ob die Erwartungen realistisch sind.", dagegen: "Wer früher zu wenig verdient hat, nimmt die alte Lücke in den neuen Job mit.",
-            haltung: { GZL: -2, ASG: -2, BFW: 1, EVM: 0, BSN: 1, FU: -1 }, wirkung: { wissen: -1, durchsetzung: -1, aufwand: -1, recht: 0 } },
-          { id: "freiwillig", kurz: "Nur freiwillig",
-            text: "Nach dem bisherigen Entgelt darf nicht gefragt werden. Bewerberinnen und Bewerber dürfen es von sich aus nennen.",
-            dafuer: "Niemand muss die alte Lücke offenlegen.", dagegen: "Schwer zu kontrollieren, ob wirklich niemand fragt.",
-            haltung: { GZL: 1, ASG: 0, BFW: 1, EVM: 1, BSN: 0, FU: 1 }, wirkung: { wissen: 0, durchsetzung: 0, aufwand: 0, recht: 1 } },
-          { id: "verboten", kurz: "Frage verboten", echt: true, vergleich: "rl_vorgehalt",
-            text: "Arbeitgeber dürfen Bewerberinnen und Bewerber nicht nach ihrem bisherigen Entgelt fragen.",
-            dafuer: "Eine alte Lücke wandert nicht automatisch weiter.", dagegen: "Arbeitgeber verlieren eine Orientierung für das Angebot.",
-            haltung: { GZL: 2, ASG: 2, BFW: -1, EVM: -1, BSN: -1, FU: 1 }, wirkung: { wissen: 1, durchsetzung: 1, aufwand: 0, recht: 1 } }
         ] }
     ]
   },
@@ -97,24 +86,14 @@ DATA.artikel = [
             dafuer: "Betriebe kennen ihre Arbeit am besten.", dagegen: "Ohne gemeinsame Kriterien bleibt ungleiche Bewertung oft unsichtbar.",
             haltung: { GZL: -2, ASG: -1, BFW: 1, EVM: 0, BSN: 2, FU: 0 }, wirkung: { wissen: -1, durchsetzung: -1, aufwand: -2, recht: -1 } },
           { id: "neutral", kurz: "Neutrale Kriterien", echt: true, vergleich: "aeuv_157",
-            text: "Arbeitgeber bewerten Tätigkeiten nach objektiven, geschlechtsneutralen Kriterien: Kompetenzen, Belastungen, Verantwortung und Arbeitsbedingungen.",
+            text: "Arbeitgeber bewerten Tätigkeiten nach objektiven, geschlechtsneutralen Kriterien: Kompetenzen, Belastungen, Verantwortung und Arbeitsbedingungen. Die Mitgliedstaaten stellen dafür kostenlose Werkzeuge bereit.",
             dafuer: "Pflege und Technik werden nach denselben Maßstäben verglichen.", dagegen: "Betriebe brauchen Zeit und Wissen, um ihre Stellen so zu bewerten.",
-            haltung: { GZL: 1, ASG: 1, BFW: 0, EVM: 1, BSN: -1, FU: 1 }, wirkung: { wissen: 1, durchsetzung: 1, aufwand: 1, recht: 2 } },
+            haltung: { GZL: 1, ASG: 1, BFW: 1, EVM: 2, BSN: -1, FU: 1 }, wirkung: { wissen: 1, durchsetzung: 1, aufwand: 0, recht: 2 } },
           { id: "raster", kurz: "EU-weites Raster",
             text: "Die Kommission legt ein einheitliches Bewertungsraster für alle Berufe in der Union fest, das alle Arbeitgeber anwenden.",
             dafuer: "Überall dieselben Maßstäbe, keine Schlupflöcher.", dagegen: "Ein Raster für siebenundzwanzig Arbeitsmärkte passt kaum irgendwo genau.",
             haltung: { GZL: 2, ASG: 1, BFW: -2, EVM: -2, BSN: -2, FU: -1 }, wirkung: { wissen: 2, durchsetzung: 1, aufwand: 2, recht: -1 },
             jurist: "Ein einheitliches Raster für alle Berufe der Union greift tief in Tarifverträge und nationale Zuständigkeiten ein. So formuliert ist es rechtlich angreifbar." }
-        ] },
-      { id: "werkzeuge", frage: "Bekommen Betriebe Hilfe dabei?", start: "nein",
-        optionen: [
-          { id: "nein", kurz: "Keine Hilfe", streichen: true, text: "",
-            dafuer: "Kein zusätzlicher Auftrag an die Staaten.", dagegen: "Kleine Betriebe stehen mit der Bewertung allein da.",
-            haltung: { GZL: -1, ASG: 0, BFW: -1, EVM: -1, BSN: 0, FU: 0 }, wirkung: { wissen: 0, durchsetzung: 0, aufwand: 1, recht: 0 } },
-          { id: "ja", kurz: "Kostenlose Vorlagen", echt: true,
-            text: "Die Mitgliedstaaten stellen kostenlose Werkzeuge und Vorlagen bereit, mit denen Arbeitgeber Tätigkeiten vergleichen können.",
-            dafuer: "Macht die Bewertung auch für kleine Betriebe machbar.", dagegen: "Kostet die Staaten Geld und Zeit.",
-            haltung: { GZL: 1, ASG: 1, BFW: 2, EVM: 2, BSN: 0, FU: 1 }, wirkung: { wissen: 1, durchsetzung: 0, aufwand: -1, recht: 1 } }
         ] }
     ]
   },
@@ -124,6 +103,7 @@ DATA.artikel = [
     id: "auskunft", titel: "Artikel 4 – Auskunftsrecht und Verschwiegenheit",
     einleitung: "Was dürfen Beschäftigte über die Bezahlung in ihrem Betrieb erfahren?",
     kurzfassung: "Beschäftigte sollen erfahren können, ob sie fair bezahlt werden.",
+    grundtext: "Vertragsklauseln, die Beschäftigte daran hindern, ihr eigenes Entgelt offenzulegen, sind unzulässig.",
     schrauben: [
       { id: "auskunft_umfang", frage: "Was dürfen Beschäftigte erfahren?", start: "durchschnitt",
         optionen: [
@@ -143,16 +123,6 @@ DATA.artikel = [
             dafuer: "Mehr Transparenz geht nicht. Ungleiche Bezahlung fällt sofort auf.", dagegen: "Einzelne Gehälter werden für alle sichtbar. Viele empfinden das als Eingriff in die Privatsphäre.",
             haltung: { GZL: 1, ASG: 1, BFW: -2, EVM: -2, BSN: -2, FU: -1 }, wirkung: { wissen: 2, durchsetzung: 1, aufwand: 2, recht: -1 },
             jurist: "Vollständig offene Gehaltslisten berühren den Datenschutz der einzelnen Beschäftigten. So formuliert ist das vor Gericht angreifbar." }
-        ] },
-      { id: "verschwiegenheit", frage: "Dürfen Arbeitsverträge Schweigen über das eigene Gehalt verlangen?", start: "verboten",
-        optionen: [
-          { id: "erlaubt", kurz: "Schweigeklauseln erlaubt", streichen: true, text: "",
-            dafuer: "Betriebe behalten ihre Gehaltspolitik für sich.", dagegen: "Wer nicht darüber reden darf, erfährt nie von einer Lücke.",
-            haltung: { GZL: -2, ASG: -2, BFW: 1, EVM: 0, BSN: 1, FU: -1 }, wirkung: { wissen: -1, durchsetzung: -1, aufwand: -1, recht: 0 } },
-          { id: "verboten", kurz: "Schweigeklauseln verboten", echt: true, vergleich: "rl_auskunft",
-            text: "Vertragsklauseln, die Beschäftigte daran hindern, ihr eigenes Entgelt offenzulegen, sind unzulässig.",
-            dafuer: "Kolleg*innen dürfen über ihr Gehalt sprechen, wenn sie es wollen.", dagegen: "Manche Betriebe fürchten Unruhe im Team.",
-            haltung: { GZL: 2, ASG: 2, BFW: -1, EVM: 0, BSN: -1, FU: 1 }, wirkung: { wissen: 1, durchsetzung: 1, aufwand: 0, recht: 1 } }
         ] }
     ]
   },
@@ -162,6 +132,7 @@ DATA.artikel = [
     id: "bericht", titel: "Artikel 5 – Berichtspflicht der Arbeitgeber",
     einleitung: "Welche Betriebe müssen ihre Entgeltlücke berechnen und berichten – und für wen?",
     kurzfassung: "Größere Betriebe sollen regelmäßig zeigen, wie groß die Lücke bei ihnen ist.",
+    grundtext: "Der Bericht geht an die zuständige Behörde und an die Beschäftigten des Betriebs.",
     schrauben: [
       { id: "schwelle", frage: "Ab welcher Größe müssen Betriebe berichten?", start: "gross",
         optionen: [
@@ -185,21 +156,6 @@ DATA.artikel = [
             dafuer: "Niemand fällt durchs Raster.", dagegen: "In sehr kleinen Betrieben sagen Durchschnitte kaum etwas aus.",
             haltung: { GZL: 2, ASG: 1, BFW: -2, EVM: -2, BSN: -2, FU: -1 }, wirkung: { wissen: 2, durchsetzung: 1, aufwand: 2, recht: -1 },
             jurist: "In Kleinstbetrieben mit wenigen Beschäftigten lassen Durchschnittswerte Rückschlüsse auf einzelne Personen zu. Das ist ein Datenschutzproblem." }
-        ] },
-      { id: "empfaenger", frage: "Wer bekommt den Bericht?", start: "behoerde",
-        optionen: [
-          { id: "behoerde", kurz: "Nur die Behörde",
-            text: "Der Bericht wird der zuständigen nationalen Behörde übermittelt.",
-            dafuer: "Die Daten bleiben vertraulich.", dagegen: "Die Beschäftigten selbst sehen den Bericht nicht.",
-            haltung: { GZL: -1, ASG: -1, BFW: 1, EVM: 0, BSN: 1, FU: 0 }, wirkung: { wissen: 0, durchsetzung: 1, aufwand: 0, recht: 1 } },
-          { id: "beschaeftigte", kurz: "Behörde und Beschäftigte", echt: true, vergleich: "rl_bericht_250",
-            text: "Der Bericht wird der zuständigen Behörde übermittelt und allen Beschäftigten sowie ihrer Vertretung zugänglich gemacht.",
-            dafuer: "Die Menschen, um die es geht, sehen die Zahlen.", dagegen: "Ein schlechter Bericht kann Unruhe im Betrieb auslösen.",
-            haltung: { GZL: 1, ASG: 1, BFW: 0, EVM: 0, BSN: 0, FU: 1 }, wirkung: { wissen: 1, durchsetzung: 1, aufwand: 0, recht: 1 } },
-          { id: "oeffentlich", kurz: "Öffentlich",
-            text: "Der Bericht wird zusätzlich öffentlich auf der Internetseite des Arbeitgebers veröffentlicht.",
-            dafuer: "Öffentlicher Druck wirkt schnell.", dagegen: "Betriebe fürchten um ihren Ruf, auch wenn es gute Gründe für Unterschiede gibt.",
-            haltung: { GZL: 2, ASG: 1, BFW: -2, EVM: -1, BSN: -1, FU: 0 }, wirkung: { wissen: 2, durchsetzung: 1, aufwand: 1, recht: 0 } }
         ] }
     ]
   },
@@ -238,46 +194,24 @@ DATA.artikel = [
     einleitung: "Wie kommen Beschäftigte zu ihrem Recht, wenn sie benachteiligt werden?",
     kurzfassung: "Wer benachteiligt wird, soll sich wirksam wehren können.",
     schrauben: [
-      { id: "beweislast", frage: "Wer muss was beweisen?", start: "indizien",
+      { id: "beweislast", frage: "Wie kommen Benachteiligte zu ihrem Recht?", start: "indizien",
         optionen: [
-          { id: "beschaeftigte", kurz: "Beschäftigte beweisen", streichen: true, text: "",
-            dafuer: "Wie bei anderen Klagen auch.", dagegen: "Beschäftigte kennen die Gehälter der anderen meist gar nicht – der Beweis ist kaum möglich.",
-            haltung: { GZL: -2, ASG: -2, BFW: 0, EVM: 0, BSN: 1, FU: -1 }, wirkung: { wissen: 0, durchsetzung: -2, aufwand: -1, recht: 0 } },
-          { id: "indizien", kurz: "Indizien genügen", echt: true, vergleich: "rl_beweislast",
-            text: "Legen Beschäftigte Tatsachen vor, die eine Entgeltdiskriminierung vermuten lassen, muss der Arbeitgeber beweisen, dass keine Diskriminierung vorliegt.",
-            dafuer: "Fair für beide Seiten: erst Hinweise, dann muss der Betrieb sich erklären.", dagegen: "Betriebe müssen ihre Entscheidungen gut dokumentieren.",
-            haltung: { GZL: 1, ASG: 1, BFW: 0, EVM: 1, BSN: 0, FU: 1 }, wirkung: { wissen: 0, durchsetzung: 1, aufwand: 0, recht: 2 } },
-          { id: "arbeitgeber", kurz: "Immer der Arbeitgeber",
-            text: "In allen Verfahren wegen Entgeltdiskriminierung muss der Arbeitgeber beweisen, dass keine Diskriminierung vorliegt.",
-            dafuer: "Die stärkste Hilfe für Beschäftigte.", dagegen: "Auch haltlose Vorwürfe müssten aufwendig widerlegt werden.",
-            haltung: { GZL: 2, ASG: 2, BFW: -2, EVM: -2, BSN: -1, FU: 0 }, wirkung: { wissen: 0, durchsetzung: 2, aufwand: 1, recht: -1 },
-            jurist: "Eine Beweislast ohne jeden Anhaltspunkt widerspricht allgemeinen Verfahrensgrundsätzen. Das wird vor Gericht schwierig." }
-        ] },
-      { id: "sanktionen", frage: "Welche Folgen hat eine Benachteiligung?", start: "nachzahlung",
-        optionen: [
-          { id: "nachzahlung", kurz: "Nur Nachzahlung",
-            text: "Benachteiligte Beschäftigte haben Anspruch auf Nachzahlung des vorenthaltenen Entgelts.",
-            dafuer: "Klar und überschaubar.", dagegen: "Wer nur nachzahlt, was er ohnehin schuldet, hat wenig Grund, sich zu ändern.",
-            haltung: { GZL: -1, ASG: -1, BFW: 1, EVM: 0, BSN: 1, FU: 0 }, wirkung: { wissen: 0, durchsetzung: 0, aufwand: 0, recht: 1 } },
-          { id: "entschaedigung", kurz: "Entschädigung und Sanktionen", echt: true, vergleich: "rl_beweislast",
-            text: "Benachteiligte erhalten Nachzahlung und Entschädigung. Die Mitgliedstaaten legen wirksame, verhältnismäßige und abschreckende Sanktionen fest.",
-            dafuer: "Abschreckend – und jedes Land passt die Höhe an seine Verhältnisse an.", dagegen: "Die Sanktionen können von Land zu Land sehr verschieden ausfallen.",
-            haltung: { GZL: 1, ASG: 1, BFW: 0, EVM: 1, BSN: 1, FU: 1 }, wirkung: { wissen: 0, durchsetzung: 1, aufwand: 0, recht: 2 } },
-          { id: "mindestbusse", kurz: "EU-weite Mindestbußgelder",
-            text: "Zusätzlich gelten in der ganzen Union einheitliche Mindestbußgelder für Entgeltdiskriminierung.",
-            dafuer: "Überall gleich harte Folgen.", dagegen: "Was in einem Land abschreckt, ist im anderen ein Kleinbetrag – oder ruiniert eine Firma.",
-            haltung: { GZL: 2, ASG: 2, BFW: -1, EVM: -2, BSN: -2, FU: 0 }, wirkung: { wissen: 0, durchsetzung: 2, aufwand: 1, recht: -1 },
-            jurist: "Einheitliche Bußgelder berühren das Strafrecht der Mitgliedstaaten. Hier ist die Zuständigkeit der Union sehr begrenzt." }
-        ] },
-      { id: "verbandsklage", frage: "Dürfen Verbände und Gleichstellungsstellen für Beschäftigte klagen?", start: "nein",
-        optionen: [
-          { id: "nein", kurz: "Nein", streichen: true, text: "",
-            dafuer: "Klagen bleiben Sache der Betroffenen selbst.", dagegen: "Viele trauen sich allein nicht, gegen den eigenen Betrieb zu klagen.",
-            haltung: { GZL: -1, ASG: -2, BFW: 1, EVM: 0, BSN: 1, FU: 0 }, wirkung: { wissen: 0, durchsetzung: -1, aufwand: 0, recht: 0 } },
-          { id: "ja", kurz: "Ja", echt: true,
-            text: "Verbände und Gleichstellungsstellen können Beschäftigte in Verfahren unterstützen oder in ihrem Namen handeln.",
-            dafuer: "Niemand muss allein vor Gericht.", dagegen: "Betriebe fürchten mehr Verfahren.",
-            haltung: { GZL: 2, ASG: 2, BFW: -1, EVM: 0, BSN: -1, FU: 1 }, wirkung: { wissen: 0, durchsetzung: 2, aufwand: 0, recht: 1 } }
+          { id: "beschaeftigte", kurz: "Beschäftigte beweisen alles", streichen: true, text: "",
+            dafuer: "Niemand wird ohne Beweis beschuldigt.", dagegen: "Die Unterlagen über Gehälter hat der Betrieb – nicht die einzelne Person. Kaum jemand gewinnt so einen Fall.",
+            haltung: { GZL: -2, ASG: -2, BFW: 1, EVM: 0, BSN: 2, FU: -1 }, wirkung: { wissen: 0, durchsetzung: -2, aufwand: -1, recht: 0 } },
+          { id: "indizien", kurz: "Indizien genügen",
+            text: "Legen Beschäftigte Tatsachen vor, die eine Entgeltdiskriminierung vermuten lassen, muss der Arbeitgeber beweisen, dass keine Diskriminierung vorliegt. Benachteiligte erhalten Nachzahlung und Entschädigung; die Sanktionen legen die Mitgliedstaaten fest.",
+            dafuer: "Wer begründete Zweifel hat, muss nicht alles allein beweisen. Jedes Land behält Spielraum bei den Strafen.", dagegen: "Wer sich nicht allein vor Gericht traut, bleibt trotzdem allein.",
+            haltung: { GZL: 1, ASG: 0, BFW: 0, EVM: 1, BSN: 1, FU: 1 }, wirkung: { wissen: 0, durchsetzung: 1, aufwand: 0, recht: 2 } },
+          { id: "verbaende", kurz: "Indizien und Verbandsklage", echt: true, vergleich: "rl_beweislast",
+            text: "Legen Beschäftigte Tatsachen vor, die eine Entgeltdiskriminierung vermuten lassen, muss der Arbeitgeber beweisen, dass keine Diskriminierung vorliegt. Benachteiligte erhalten Nachzahlung und Entschädigung. Verbände und Gleichstellungsstellen können sie unterstützen oder in ihrem Namen handeln.",
+            dafuer: "Niemand muss allein gegen den eigenen Betrieb vor Gericht.", dagegen: "Betriebe fürchten mehr Verfahren, auch unbegründete.",
+            haltung: { GZL: 2, ASG: 2, BFW: -1, EVM: 0, BSN: -1, FU: 1 }, wirkung: { wissen: 0, durchsetzung: 2, aufwand: 0, recht: 2 } },
+          { id: "arbeitgeber", kurz: "Arbeitgeber beweist immer",
+            text: "In allen Verfahren wegen Entgeltdiskriminierung muss der Arbeitgeber beweisen, dass keine Diskriminierung vorliegt. In der ganzen Union gelten einheitliche Mindestbußgelder.",
+            dafuer: "Der stärkste Schutz für Beschäftigte.", dagegen: "Betriebe stehen unter Generalverdacht, und die Strafen greifen tief in nationales Recht ein.",
+            haltung: { GZL: 2, ASG: 2, BFW: -2, EVM: -2, BSN: -2, FU: 0 }, wirkung: { wissen: 0, durchsetzung: 2, aufwand: 1, recht: -2 },
+            jurist: "Eine Beweislast ohne jeden Anhaltspunkt und einheitliche Bußgelder berühren Verfahrensrecht und Strafrecht der Mitgliedstaaten. Das wird vor Gericht schwierig." }
         ] }
     ]
   }

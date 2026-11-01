@@ -165,6 +165,7 @@ var MEHRHEIT = (function () {
       erste();
       if (e.key === "Tab") ANSICHT.tastatur = true;
       if (e.target && e.target.tagName === "INPUT") return;
+      if (ANSICHT.fuehrung.taste(e)) { e.preventDefault(); return; }
       // Pfeiltasten wechseln innerhalb einer Gruppe von Knöpfen (Optionen, Antworten, Menü)
       if (/^Arrow/.test(e.key) && e.target && e.target.tagName === "BUTTON" && e.target.closest) {
         var gruppe = e.target.closest(".segmente, .wahl-knoepfe, #leisteAntworten, #titelMenue, .reihe, .kartenreihe, #hotspots");

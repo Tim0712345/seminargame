@@ -224,7 +224,7 @@ var DEBUG = (function () {
       else if (art === "mutig") e[s.id] = s.optionen[n - 1].id;
       else e[s.id] = s.optionen[0].id;
     }); });
-    e.frist = art === "mutig" ? "kurz" : (art === "schlank" ? "lang" : "mittel");
+    // die Umsetzungsfrist kommt im Spiel erst im Trilog dazu (siehe beispielStand)
     return e;
   };
   /* Balance-Prüfung (Abschnitt 11): alle Kombinationen der Optionen bei Vertrauen 0.
@@ -310,6 +310,7 @@ var DEBUG = (function () {
     st.kapitel = kapitel || 1;
     if ((kapitel || 1) >= 4) st.eingereicht = true;
     if ((kapitel || 1) >= 6) st.ergebnis.ausschuss = true;
+    if ((kapitel || 1) >= 7) st.entwurf.frist = art === "mutig" ? "kurz" : (art === "schlank" ? "lang" : "mittel");
     if ((kapitel || 1) >= 8) st.ergebnis.plenum = LOGIK.mehrheit.plenum(LOGIK.entwurf(st), st.vertrauen).mehrheit;
     LOGIK.stand = st;
     return st;

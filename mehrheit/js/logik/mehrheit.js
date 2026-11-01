@@ -41,7 +41,8 @@ LOGIK.mehrheit = (function () {
     return summe + (vertrauen && vertrauen[f.id] !== undefined ? vertrauen[f.id] : (f.startVertrauen || 0));
   };
 
-  /* Wirkungsanzeige: Summe je Achse über alle Stellschrauben → Stufe 1 bis 5 (qualitativ, keine Prognose) */
+  /* Wirkungsanzeige: Summe je Achse über alle Stellschrauben → Stufe 1 bis 5 (qualitativ, keine Prognose)
+     Stufe = wirkung_mitte + Summe / wirkung_teiler, gerundet und auf 1 bis 5 begrenzt (data/spielwerte.js) */
   H.wirkung = function (entwurf) {
     var s = { wissen: 0, durchsetzung: 0, aufwand: 0, recht: 0 };
     DATA.artikel.forEach(function (art) { art.schrauben.forEach(function (sch) {
@@ -51,7 +52,8 @@ LOGIK.mehrheit = (function () {
     s.recht -= (entwurf.__wunsch || []).length * 2;
     s.recht += entwurf.__praezise ? 2 : 0;
     var st = {};
-    for (var a in s) st[a] = Math.max(1, Math.min(5, Math.round(1 + (s[a] + 8) / 5.5)));
+    var W = DATA.spielwerte;
+    for (var a in s) st[a] = Math.max(1, Math.min(5, Math.round(W.wirkung_mitte + s[a] / W.wirkung_teiler)));
     st.roh = s;
     return st;
   };

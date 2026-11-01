@@ -38,5 +38,8 @@ DATA.spielwerte = {
   // Mehrheitsberechnung (js/logik/mehrheit.js)
   gewicht_kernanliegen: 2,
   gewicht_normal: 1,
+  // Wirkungsanzeige: Stufe = wirkung_mitte + Summe der Wirkungen / wirkung_teiler (Spielwert)
+  wirkung_mitte: 3,
+  wirkung_teiler: 3.2,
   mehrheit_steilheit: 1.4          // wie schnell eine Fraktion von Nein zu Ja kippt
 };

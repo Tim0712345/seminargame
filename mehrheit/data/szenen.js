@@ -53,6 +53,14 @@ DATA.szenen = {
       { baustein: "tisch_klein",    pos: [-1.42, 0, 0.62] },
       { baustein: "stuhl",          pos: [-1.92, 0, 0.55], dreh: 75 },
       { baustein: "stuhl",          pos: [0.12, 0, -0.18], dreh: 185 },
+      { baustein: "teppich",        pos: [0.05, 0, -0.55], dreh: 0, groesse: [2.7, 2.0], farbe: "#8a7058", innen: "#a68b6e" },
+      { baustein: "papierkorb",     pos: [1.05, 0, -0.62] },
+      { baustein: "garderobe",      pos: [1.95, 0, 1.95], mantel: ["#3a4150", "#7a5a3c"], schal: "#c25a3c" },
+      { baustein: "sideboard",      pos: [2.15, 0, 0.95], dreh: -90, laenge: 1.1 },
+      { baustein: "stehlampe",      pos: [-2.0, 0, 1.45], an: true, staerke: 1.2 },
+      { baustein: "bild",           pos: [-2.38, 1.55, 1.35], dreh: 90, groesse: [0.95, 0.65], saat: 7 },
+      { baustein: "wanduhr",        pos: [-2.38, 2.42, -0.75], dreh: 90 },
+      { baustein: "pflanze",        pos: [1.95, 0, -2.15], saat: 23 },
       { baustein: "deckenleuchte",  pos: [0.0, 2.9, -0.6], an: false },
       { baustein: "deckenleuchte",  pos: [0.0, 2.9, 1.2], an: false }
     ],
@@ -84,7 +92,11 @@ DATA.szenen = {
     flaggen: ["eu", "frankreich", "italien", "belgien", "irland", "oesterreich", "deutschland"],
     lichter: [
       { pos: [-1.2, 3.6, -2.2], kelvin: 3200, staerke: 3.2, reichweite: 6, richtung: [0, -0.85, -0.52], kegelAussen: 34, kegelInnen: 18 },
-      { pos: [1.2, 3.6, -2.2], kelvin: 3200, staerke: 3.2, reichweite: 6, richtung: [0, -0.85, -0.52], kegelAussen: 34, kegelInnen: 18 }
+      { pos: [1.2, 3.6, -2.2], kelvin: 3200, staerke: 3.2, reichweite: 6, richtung: [0, -0.85, -0.52], kegelAussen: 34, kegelInnen: 18 },
+      // warmes Wandlicht auf die Rückwand (gegen die dunkle Fläche)
+      { pos: [-5.0, 3.9, -5.2], kelvin: 3400, staerke: 3.0, reichweite: 6, richtung: [0, -0.5, -0.86], kegelAussen: 55, kegelInnen: 25 },
+      { pos: [0.0, 3.9, -5.2], kelvin: 3400, staerke: 3.0, reichweite: 6, richtung: [0, -0.5, -0.86], kegelAussen: 55, kegelInnen: 25 },
+      { pos: [5.0, 3.9, -5.2], kelvin: 3400, staerke: 3.0, reichweite: 6, richtung: [0, -0.5, -0.86], kegelAussen: 55, kegelInnen: 25 }
     ]
   },
 
@@ -116,7 +128,8 @@ DATA.szenen = {
       { pos: [-6, 9.6, -1.2], kelvin: 3800, staerke: 7.0, reichweite: 7 },
       { pos: [3, 9.6, -1.2], kelvin: 3800, staerke: 7.0, reichweite: 7 }
     ],
-    besucher: 5
+    besucher: 5,
+    raumLicht: 7      // Helligkeit des Lichts im besuchten Büro (Spielwert der Darstellung)
   },
 
   /* ---------------- Trilog-Raum (Kapitel 6) ---------------- */

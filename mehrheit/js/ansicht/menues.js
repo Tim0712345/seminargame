@@ -129,7 +129,6 @@ ANSICHT.menues = (function () {
     var AN = [[true, TE.an], [false, TE.aus]];
     var stufen = MOTOR.gl.webgl2 && MOTOR.gl.hdr ? ["auto", "ultra", "hoch", "mittel", "niedrig"] : ["niedrig"];
     gruppe(TE.grafik, stufen.map(function (s) { return [s, TE.grafikStufen[s]]; }), function () { return E.grafik; }, function (v) { E.grafik = v; });
-    gruppe(TE.tiefe, AN, function () { return E.tiefe; }, function (v) { E.tiefe = v; });
     gruppe(TE.korn, AN, function () { return E.korn; }, function (v) { E.korn = v; });
     regler(TE.helligkeit, 0.7, 1.3, 0.05, function () { return E.helligkeit; }, function (v) { E.helligkeit = v; });
     gruppe(TE.ton, AN, function () { return E.ton; }, function (v) { E.ton = v; });
@@ -230,10 +229,12 @@ ANSICHT.menues = (function () {
   /* Kopfknöpfe: Kalender, Dossier, Pause */
   Mn.hud = function (an) {
     hol("kopfKnoepfe").classList.toggle("versteckt", !an);
+    ANSICHT.aufgabe.zeigen(an);
     hol("zettelEcke").classList.toggle("versteckt", !(an && LOGIK.stand.flags.zettel));
     if (an) Mn.hudAktualisieren();
   };
   Mn.hudAktualisieren = function () {
+    ANSICHT.aufgabe.aktualisieren();
     var st = LOGIK.stand, k = DATA.texte.kapitel[(st.kapitel || 1) - 1], z = hol("kalenderZeile");
     if (!k || !z) return;
     var text = k.tag ? LOGIK.text.ersetzen(k.tag, true) : "";
@@ -321,7 +322,7 @@ ANSICHT.menues = (function () {
       var text;
       if (h.art === "buero") { var f = DATA.fraktionen.filter(function (x) { return x.id === h.fraktion; })[0]; if (!f || f.immerJa) return; text = ANSICHT.MUSTER_SVG(f.muster, f.farbe) + "<span>" + f.kurz + '<span class="hs-person"> · ' + DATA.figuren.personen[f.person].name + "</span></span>"; }
       else text = "<span>" + (T().flure[h.art] || h.art) + "</span>";
-      var b = knopf(text, function () { aktion(h); }, "hotspot");
+      var b = knopf(text, function () { aktion(h); }, "hotspot " + h.art);
       c.appendChild(b); hotspots.push({ b: b, h: h });
     });
     c.classList.remove("versteckt");
@@ -357,22 +358,23 @@ ANSICHT.menues = (function () {
   Mn.trilogTabelle = function (Tr, wahl, abschluss) {
     var c = hol("trilogTabelle"), t = T().trilog;
     var verbraucht = LOGIK.ablauf.trilogVerbraucht();
-    var h = '<div class="tt-kopf"><h2>' + t.titel + '</h2><span class="tt-budget">' + t.budget + " " + (Tr.budget - verbraucht).toFixed(1).replace(".", ",") + " / " + Tr.budget.toFixed(1).replace(".", ",") + "</span></div>";
+    var h = '<div class="tt-kopf"><h2>' + t.titel + '</h2><span class="tt-budget">' + t.budget + " <b>" + (Tr.budget - verbraucht).toFixed(1).replace(".", ",").replace(",0", "") + "</b> / " + Tr.budget.toFixed(1).replace(".", ",").replace(",0", "") + "</span></div>";
+    var einig = Tr.zeilen.filter(function (z) { return Tr.wahl[z.schraube.id] === "gleich"; });
     h += '<div class="tt-scroll"><table><thead><tr><th>' + t.spalten.join("</th><th>") + "</th></tr></thead><tbody>";
     Tr.zeilen.forEach(function (z) {
-      var id = z.schraube.id, w = Tr.wahl[id], gleich = w === "gleich";
-      h += '<tr class="' + (gleich ? "gleich" : "streit") + '"><th scope="row">' + LOGIK.text.ersetzen(z.artikel.titel).replace(/ – .*/, "") + '<small>' + LOGIK.text.ersetzen(z.schraube.frage) + "</small></th>";
-      h += "<td>" + optKurz(z, z.komm) + "</td><td>" + optKurz(z, z.parl) + "</td><td>" + optKurz(z, z.rat) + "</td><td>";
-      if (gleich) h += '<span class="tt-einig">' + optKurz(z, z.parl) + "</span>";
-      else {
-        h += '<button class="knopf segment" data-id="' + id + '" data-w="parl" aria-pressed="' + (w === "parl") + '">' + t.halten + "</button>";
-        if (z.mw) h += '<button class="knopf segment" data-id="' + id + '" data-w="mitte" aria-pressed="' + (w === "mitte") + '" title="' + LOGIK.text.ersetzen(z.mw.text, true) + '">' + t.mittelweg + ": " + optKurz(z, z.mw.option) + "</button>";
-        else if (Tr.bruecke > 0) h += '<button class="knopf segment bruecke" data-bruecke="' + id + '">' + t.bruecke + "</button>";
-        h += '<button class="knopf segment" data-id="' + id + '" data-w="rat" aria-pressed="' + (w === "rat") + '">' + t.uebernehmen + "</button>";
-      }
+      var id = z.schraube.id, w = Tr.wahl[id];
+      if (w === "gleich") return;
+      h += '<tr><th scope="row">' + LOGIK.text.ersetzen(z.artikel.titel).replace(/ – .*/, "") + '<small>' + LOGIK.text.ersetzen(z.schraube.frage) + "</small></th>";
+      h += '<td class="tt-parl">' + optKurz(z, z.parl) + '</td><td class="tt-rat">' + optKurz(z, z.rat) + '</td><td class="tt-wahl">';
+      h += '<button type="button" class="knopf segment" data-id="' + id + '" data-w="parl" aria-pressed="' + (w === "parl") + '">' + t.halten + "</button>";
+      if (z.mw) h += '<button type="button" class="knopf segment" data-id="' + id + '" data-w="mitte" aria-pressed="' + (w === "mitte") + '" title="' + LOGIK.text.ersetzen(z.mw.text, true) + '">' + t.mittelweg + ": " + optKurz(z, z.mw.option) + "</button>";
+      else if (Tr.bruecke > 0) h += '<button type="button" class="knopf segment bruecke" data-bruecke="' + id + '">' + t.bruecke + "</button>";
+      h += '<button type="button" class="knopf segment" data-id="' + id + '" data-w="rat" aria-pressed="' + (w === "rat") + '">' + t.uebernehmen + "</button>";
       h += "</td></tr>";
     });
-    h += '</tbody></table></div><div class="reihe"><button class="knopf haupt" id="ttFertig">' + t.abschliessen + "</button></div>";
+    h += "</tbody></table>";
+    if (einig.length) h += '<p class="tt-einig klein">' + t.einig + " " + einig.map(function (z) { return LOGIK.text.ersetzen(z.artikel.titel, true).replace(/ – .*/, "") + " (" + LOGIK.text.ersetzen(optKurz(z, z.parl), true) + ")"; }).join(", ") + "</p>";
+    h += '</div><div class="reihe"><button type="button" class="knopf haupt" id="ttFertig">' + t.abschliessen + "</button></div>";
     c.innerHTML = h;
     c.classList.remove("versteckt");
     Array.prototype.forEach.call(c.querySelectorAll("button"), function (b) { ANSICHT.hover(b); });

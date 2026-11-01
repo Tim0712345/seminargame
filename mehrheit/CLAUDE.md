@@ -66,6 +66,18 @@ Spielsprache und alle Antworten an den User: **Deutsch**. Code-Bezeichner und Ko
   und verstecktes Admin-Menü (`DEBUG.admin`, speichert nur nach Bestätigung).
 - Fraktionen haben `lager` ("links"/"rechts") nur für die Balance-Prüfung.
 
+## Rückmeldung des Users und Überarbeitung (1. November 2026) – gilt vor dem Konzept
+- **Keine Tiefenschärfe** (`grafikstufen.*.tiefe = 0`), Kapitelkarten dunkeln nur ab statt weichzuzeichnen.
+- **Figuren: schlichte Modellfiguren** ohne Gesicht und ohne sichtbare Gelenke (weicht bewusst von 7.7 ab:
+  keine Augen-Einlagen, keine Fugen). Menschenmengen: `W.modellFiguren` mit Kleidung + Haut als zwei Instanz-Puffer.
+- **Leitfaden:** `js/ansicht/fuehrung.js` – `ANSICHT.aufgabe` (Aufgabenkarte, Texte `DATA.texte.aufgaben`) und
+  `ANSICHT.fuehrung.zeige(id, ziel, fertig)` (Mira-Hinweis mit Hervorhebung, einmal pro Spielstand, Flag `f_<id>`).
+- **Weniger gleichzeitig:** `ANSICHT.fraktionsleiste` ist jetzt die große Mehrheitsanzeige (Details auf Antippen);
+  Wirkung im Entwurfsfeld (`#edWirkung`); Entwurfsfeld zeigt einen Artikel; Trilog-Tabelle nur strittige Punkte.
+- **Eine Kernentscheidung pro Artikel** (7 Stellschrauben). EVM-Schwelle 5,5: Kommissionsvorschlag scheitert knapp,
+  mit etwas Vertrauen klappt er. Wirkungsstufen über `wirkung_mitte`/`wirkung_teiler` (spielwerte.js).
+- Oberfläche: Papierweiß statt Milchglas (`DATA.stil.oberflaeche`), Akzent Petrol `#00727a`.
+
 ## Stand
 - **Phase 1 (3D-Stil-Prototyp) fertig.** Plenarsaal-Titel mit Kamerafahrt, Tinte, geprägtem Titel; Büro mit
   Papierstapel (Umblättern, Füllfeder), Glasmodell (60 Sitze), Figuren, Stempel; alle Effekte aus 7.5; Grafikstufen; Rückfälle.
@@ -75,6 +87,8 @@ Spielsprache und alle Antworten an den User: **Deutsch**. Code-Bezeichner und Ko
   Standard-Antworten auf die Fragen aus 12.6 (User hat nicht einzeln geantwortet): sechs Fraktionen + Brücke wie im
   Konzept; Spielfigur = neu gewählte abgeordnete Person; sieben Artikel inklusive Stellschraube Verbandsklage;
   Wunschzettel (Kita-Garantie, Elternzeit) wie im Konzept; Länder wie im Konzept.
-- Prüfungen grün: Gespräche, Daten, Ziffern, Textlänge (≈ 3550 Wörter pro Durchgang), Balance (alle vier Ziele).
+- Prüfungen grün: Gespräche, Daten, Ziffern, Textlänge (≈ 3600 Wörter pro Durchgang), Balance (alle vier Ziele,
+  11.520 Fassungen, 3,3 % mit Mehrheit ohne Verhandlung).
+- **Überarbeitung nach Rückmeldung (2026-11-01) fertig – wartet auf Rückmeldung des Users.**
 - Zeichenaufrufe auf „Hoch“ (1280×720): höchstens ≈ 260 (Gebäudemodell), Budget 300 eingehalten.
 - Offen: Test auf echtem iPad/Windows-Laptop/Firefox/Safari, Zahlen verifizieren (27 Fakten), Credits-Namen.

@@ -15,9 +15,8 @@ DATA.vergleich = {
   spalten: ["Deine Fassung", "Echte Richtlinie", "Warum so entschieden wurde"],
   zeichen: { gleich: "ähnlich entschieden", mutiger: "mutiger", vorsichtiger: "vorsichtiger", anders: "anders" },
   echteOption: {
-    begruendung: "gerechtigkeit", vorher_info: "vorgespraech", vorgehalt: "verboten", kriterien: "neutral", werkzeuge: "ja",
-    auskunft_umfang: "durchschnitt_info", verschwiegenheit: "verboten", schwelle: "gestaffelt", empfaenger: "beschaeftigte",
-    massnahme: "bewertung", beweislast: "indizien", sanktionen: "entschaedigung", verbandsklage: "ja", frist: "mittel"
+    begruendung: "gerechtigkeit", vorher_info: "vorgespraech", kriterien: "neutral", auskunft_umfang: "durchschnitt_info",
+    schwelle: "gestaffelt", massnahme: "bewertung", beweislast: "verbaende", frist: "mittel"
   },
   artikel: {
     zweck: { echt: "Die Richtlinie stützt sich auf {fakt:aeuv_157}. Sie soll den Grundsatz des gleichen Entgelts durch Transparenz und Durchsetzung stärken.",

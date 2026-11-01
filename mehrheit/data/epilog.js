@@ -32,7 +32,7 @@ DATA.epilog = {
     /* Karin Hofstetter berichtet (Brief) */
     { figur: "karin", art: "brief", bedingung: "!angenommen",
       text: "Ein Gesetz kam nicht. Wir haben trotzdem angefangen, Stellen zu vergleichen. Freiwillig und langsam." },
-    { figur: "karin", art: "brief", bedingung: "werkzeuge == \"ja\" && aufwand <= 3",
+    { figur: "karin", art: "brief", bedingung: "kriterien == \"neutral\" && aufwand <= 3",
       text: "Ehrlich: überraschend machbar. Mit den Vorlagen hat die Bewertung ein paar Wochen gedauert. Sogar die Lohnsoftware hat ihr Update inzwischen fertig." },
     { figur: "karin", art: "brief", bedingung: "aufwand >= 4",
       text: "Ein Jahr Kopfschmerzen. Wir haben es geschafft, aber ohne Hilfe war es zu viel für eine halbe Personalstelle." },

@@ -88,9 +88,10 @@ WELT.szenen = (function () {
       sz.figuren.sam = WELT.figuren.bauen(B, DATA.figuren.personen.sam, { pos: [rp0.x + 1.6, rp0.y, 1.6], dreh: -90, haltung: "stehen" }, sz);
       // Besucher*innen gehen durch die Flure (weiße Modellfiguren)
       var netz = MOTOR.netz(WELT.figuren.modellFigur(false));
+      var farbenBes = ["#3d4452", "#7a3f3a", "#2e4a44", "#8c8574", "#4b3f55"];
       sz.besucher = [];
       for (var i = 0; i < (d.besucher || 4); i++) {
-        var o = B.objekt(null, WELT.material("modellharz", { farbe: "#f2f0ea" }), M.m4(), { netz: netz });
+        var o = B.objekt(null, WELT.material("stoff", { farbe: farbenBes[i % farbenBes.length], strukturSkala: 18 }), M.m4(), { netz: netz });
         o.festeKugel = true; o.kugelWelt = { m: [0, 5, 0], r: 16 };
         sz.besucher.push({ o: o, etage: i % 3, x: -10 + i * 4.3, z: 1.2 + (i % 2) * 1.4, richtung: i % 2 ? 1 : -1, tempo: 0.6 + (i % 3) * 0.15 });
       }
@@ -111,6 +112,8 @@ WELT.szenen = (function () {
       sz.staubBox = { mitte: [0, 1.2, 0], groesse: [3, 1.2, 2], teilchenGroesse: 0.003, helligkeit: 0.8 }; sz.staubAnzahl = 400;
     }
     (d.lichter && name !== "ausschusssaal" ? d.lichter : []).forEach(function (L) { B.licht({ pos: L.pos, kelvin: L.kelvin, farbe: L.farbe, staerke: L.staerke, reichweite: L.reichweite }); });
+    // Gebäudemodell: ein zusätzliches Raumlicht, das beim Besuch eines Büros dort angeht
+    if (name === "gebaeude") sz.raumLicht = B.licht({ pos: [0, -50, 0], kelvin: 3500, staerke: 0, reichweite: 5 });
     sz.objekte = B.fertig();
     sz.lichter = B.lichter;
     sz.lichter.forEach(function (L) { L.aktuell = L.staerke; });

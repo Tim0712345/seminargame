@@ -21,7 +21,7 @@ body { font-size: calc(16px * var(--faktor)); -webkit-text-size-adjust: 100%; }
 
 #buehne { position: fixed; inset: 0; }
 #bild { position: absolute; inset: 0; width: 100%; height: 100%; display: block; transition: filter 0.9s ease; }
-body.unscharf #bild { filter: blur(7px) brightness(0.85); }
+body.unscharf #bild { filter: brightness(0.7); }  /* abgedunkelt, nicht unscharf */
 #blende { position: absolute; inset: 0; background: #000; opacity: 0; pointer-events: none; transition: opacity 0.6s ease; }
 #blende.zu { opacity: 1; }
 
@@ -29,35 +29,33 @@ body.unscharf #bild { filter: blur(7px) brightness(0.85); }
 .versteckt { display: none !important; }
 .klein { font-size: 0.82em; color: var(--text-leise); margin: 0.4em 0 0; }
 
-/* ---------- Glas ---------- */
+/* ---------- Flächen: ruhiges Papierweiß, feiner Rand, weicher Schatten ---------- */
 .glas {
   background: var(--glas);
   border: 1px solid var(--glas-rand);
   border-radius: var(--rundung);
-  box-shadow: 0 10px 34px rgba(10, 14, 24, 0.28), 0 1px 0 rgba(255, 255, 255, 0.5) inset;
-  -webkit-backdrop-filter: blur(16px) saturate(1.2);
-  backdrop-filter: blur(16px) saturate(1.2);
-}
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .glas { background: rgba(247, 247, 244, 0.95); }
+  box-shadow: 0 10px 30px rgba(10, 14, 24, 0.22), 0 1px 3px rgba(10, 14, 24, 0.08);
 }
 
 /* ---------- Knöpfe ---------- */
 .knopf {
   font: inherit; color: var(--text);
   min-height: 44px; min-width: 44px; padding: 0.55em 1.05em;
-  border-radius: var(--rundung);
-  border: 1px solid rgba(255, 255, 255, 0.85);
-  background: rgba(255, 255, 255, 0.55);
-  box-shadow: 0 2px 10px rgba(10, 14, 24, 0.12);
-  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  border-radius: calc(var(--rundung) - 2px);
+  border: 1px solid #d9d6cf;
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgba(10, 14, 24, 0.06);
   cursor: pointer; text-align: left;
   touch-action: manipulation; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent;
-  transition: background 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 }
-.knopf.hover { background: rgba(255, 255, 255, 0.82); box-shadow: 0 4px 16px rgba(10, 14, 24, 0.18); }
+.knopf.hover { background: #f3f1ec; border-color: #c9c5bc; }
+.knopf[disabled] { opacity: 0.45; cursor: default; }
+.knopf.leise { background: transparent; border-color: transparent; box-shadow: none; color: var(--akzent); font-weight: 600; }
+.knopf.leise.hover { background: rgba(0, 114, 122, 0.08); }
 .knopf:active { transform: translateY(1px); }
-.knopf.haupt { font-weight: 600; }
+.knopf.haupt { font-weight: 600; background: var(--akzent); color: #fff; border-color: var(--akzent); }
+.knopf.haupt.hover { background: #005d64; border-color: #005d64; }
 .knopf[aria-pressed="true"] { background: var(--akzent); color: #fff; border-color: var(--akzent); }
 :focus { outline: none; }
 :focus-visible { outline: 3px solid var(--akzent); outline-offset: 2px; }
@@ -85,7 +83,8 @@ body.unscharf #bild { filter: blur(7px) brightness(0.85); }
 
 /* ---------- Glasknöpfe oben rechts ---------- */
 #kopfKnoepfe { position: fixed; top: max(14px, env(safe-area-inset-top)); right: max(14px, env(safe-area-inset-right)); display: flex; gap: 8px; }
-#kopfKnoepfe .knopf { width: 46px; height: 46px; padding: 0; display: grid; place-items: center; border-radius: 50%; }
+#kopfKnoepfe .knopf { width: 46px; height: 46px; padding: 0; display: grid; place-items: center; border-radius: 50%; box-shadow: 0 4px 14px rgba(10, 14, 24, 0.18); }
+#kalenderZeile { display: none; }
 #kopfKnoepfe svg { width: 20px; height: 20px; stroke: var(--text); fill: none; stroke-width: 2; }
 
 /* ---------- Gesprächsleiste ---------- */
@@ -203,7 +202,7 @@ body.dokumentmodus.editor-offen #dokumentmodus { margin-left: max(16px, calc(50v
    ===================================================================== */
 #kalenderZeile { align-self: center; padding: 8px 12px; font-size: 0.85em; border-radius: 22px; }
 #zettelEcke {
-  position: fixed; left: max(14px, env(safe-area-inset-left)); top: max(14px, env(safe-area-inset-top));
+  position: fixed; left: max(14px, env(safe-area-inset-left)); bottom: max(14px, env(safe-area-inset-bottom));
   width: 58px; height: 58px; border: 0; background: #f7f1df; transform: rotate(-5deg); cursor: pointer;
   box-shadow: 0 6px 16px rgba(0,0,0,0.3); font: italic 14px Georgia, serif; color: #24304a; touch-action: manipulation;
 }
@@ -212,29 +211,55 @@ body.dokumentmodus.editor-offen #dokumentmodus { margin-left: max(16px, calc(50v
 .zettel-gross .unterschrift { text-align: right; }
 .namensfeld { font: inherit; font-size: 1.2em; padding: 10px 12px; width: 100%; border-radius: var(--rundung); border: 2px solid var(--akzent); }
 
-/* Fraktionsleiste oben */
-#fraktionsleiste { position: fixed; left: 50%; transform: translateX(-50%); top: max(10px, env(safe-area-inset-top)); width: min(640px, calc(100vw - 230px)); padding: 6px 12px 8px; font-size: 0.82em; }
-#fraktionsleiste .fl-kopf { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 4px; }
-#fraktionsleiste .fl-kopf strong.ja { color: #1e7a48; } #fraktionsleiste .fl-kopf strong.nein { color: #b0332a; }
-#fraktionsleiste ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
-#fraktionsleiste li { display: grid; grid-template-columns: 18px 1fr; grid-template-rows: auto auto auto; column-gap: 4px; align-items: center; }
-#fraktionsleiste .muster { grid-row: 1 / 3; border-radius: 3px; }
-.fl-name { font-weight: 700; } .fl-zahl { font-family: var(--schrift-zahlen); font-size: 0.9em; }
-.fl-zahl em { font-style: normal; font-weight: 700; } .fl-zahl em.plus { color: #1e7a48; } .fl-zahl em.minus { color: #b0332a; }
-.fl-balken { grid-column: 1 / 3; display: flex; height: 6px; border-radius: 3px; overflow: hidden; background: rgba(0,0,0,0.08); }
-.fl-balken i { display: block; height: 100%; } .fl-balken .ja { background: #3aa66a; } .fl-balken .enth { background: #e0b43a; } .fl-balken .nein { background: #c8463c; }
-.fl-vertrauen { grid-column: 1 / 3; font-size: 0.75em; color: #4a4f5a; letter-spacing: 1px; }
+/* Aufgabenkarte oben links */
+#aufgabe { position: fixed; left: max(14px, env(safe-area-inset-left)); top: max(14px, env(safe-area-inset-top)); width: min(320px, calc(100vw - 28px)); padding: 0; overflow: hidden; z-index: 5; }
+.af-kopf { all: unset; box-sizing: border-box; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; width: 100%; padding: 10px 14px; cursor: pointer; background: var(--akzent); color: #fff; min-height: 40px; touch-action: manipulation; }
+.af-kopf:focus-visible { outline: 3px solid #fff; outline-offset: -4px; }
+.af-kapitel { font-weight: 700; font-size: 0.92em; }
+.af-tag { font-size: 0.78em; opacity: 0.9; white-space: nowrap; }
+.af-zeile { display: grid; grid-template-columns: 46px 1fr; gap: 6px; padding: 8px 14px 0; font-size: 0.9em; line-height: 1.35; }
+.af-zeile b { font-size: 0.72em; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-leise); padding-top: 2px; }
+.af-jetzt span { font-weight: 600; }
+.af-fort { margin: 8px 14px 0; padding: 4px 8px; background: rgba(0, 114, 122, 0.09); color: #00585e; border-radius: 6px; font-size: 0.82em; display: inline-block; }
+#aufgabe > :last-child { margin-bottom: 12px; }
 
-/* Wirkungsanzeige */
-#wirkung { position: fixed; left: max(14px, env(safe-area-inset-left)); bottom: max(14px, env(safe-area-inset-bottom)); width: 240px; padding: 10px 12px; font-size: 0.8em; }
-.wk-titel { font-weight: 700; } .wk-unter { font-size: 0.85em; color: var(--text-leise); margin-bottom: 6px; }
+/* Mehrheitsanzeige oben in der Mitte */
+#fraktionsleiste { position: fixed; left: 50%; transform: translateX(-50%); top: max(14px, env(safe-area-inset-top)); width: min(460px, calc(100vw - 2 * 360px)); min-width: 300px; padding: 0; overflow: hidden; z-index: 4; }
+.mh-knopf { all: unset; box-sizing: border-box; display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; width: 100%; padding: 10px 16px 8px; cursor: pointer; touch-action: manipulation; }
+.mh-knopf:focus-visible { outline: 3px solid var(--akzent); outline-offset: -3px; }
+.mh-knopf.hover { background: rgba(0, 0, 0, 0.03); }
+.mh-ort { font-size: 0.72em; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-leise); align-self: center; }
+.mh-zahlen { font-size: 1.05em; text-align: right; }
+.mh-zahlen .ja { color: #1e7a48; } .mh-zahlen .nein { color: #b0332a; } .mh-zahlen .enth { color: #8a6d12; font-size: 0.9em; }
+.mh-balken { grid-column: 1 / 3; position: relative; display: flex; height: 10px; border-radius: 5px; overflow: hidden; background: rgba(0, 0, 0, 0.08); }
+.mh-balken i { display: block; height: 100%; }
+.mh-balken .ja { background: #3aa66a; } .mh-balken .enth { background: #e0b43a; } .mh-balken .nein { background: #c8463c; margin-left: auto; }
+.mh-balken u { position: absolute; left: 50%; top: -2px; bottom: -2px; width: 2px; background: #1b1d22; text-decoration: none; }
+.mh-satz { grid-column: 1 / 3; font-weight: 700; font-size: 1.02em; }
+.mh-satz.ja { color: #1e7a48; } .mh-satz.nein { color: #b0332a; }
+.mh-vorschau { grid-column: 1 / 3; font-size: 0.86em; background: #fff7d9; border-radius: 6px; padding: 4px 8px; }
+.mh-mehr { grid-column: 1 / 3; font-size: 0.78em; color: var(--akzent); font-weight: 600; text-align: center; }
+.mh-regel { padding: 0 16px; margin: 0 0 4px; }
+.mh-liste { list-style: none; margin: 0; padding: 4px 16px 12px; display: grid; gap: 6px; font-size: 0.86em; }
+.mh-liste li { display: grid; grid-template-columns: 18px 1fr 90px 52px 46px; gap: 8px; align-items: center; }
+.fl-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fl-zahl { font-family: var(--schrift-zahlen); font-size: 0.9em; text-align: right; }
+.fl-zahl em { font-style: normal; font-weight: 700; } .fl-zahl em.plus { color: #1e7a48; } .fl-zahl em.minus { color: #b0332a; }
+.fl-balken { display: flex; height: 8px; border-radius: 4px; overflow: hidden; background: rgba(0,0,0,0.08); }
+.fl-balken i { display: block; height: 100%; } .fl-balken .ja { background: #3aa66a; } .fl-balken .enth { background: #e0b43a; } .fl-balken .nein { background: #c8463c; }
+.fl-vertrauen { font-size: 0.75em; color: #4a4f5a; letter-spacing: 1px; }
+
+/* Wirkung (im Entwurfsfeld) */
+.ed-wirkung { margin-top: 14px; padding: 10px 12px; background: #f4f2ed; border-radius: 8px; font-size: 0.86em; }
+.wk-titel { font-weight: 700; } .wk-unter { font-size: 0.82em; color: var(--text-leise); margin-bottom: 6px; }
 .wk-achse { display: flex; justify-content: space-between; align-items: center; gap: 6px; margin: 4px 0; width: 100%; }
 .wk-kaesten { display: flex; gap: 3px; flex: none; }
-.wk-kaesten i { width: 14px; height: 14px; border-radius: 3px; background: rgba(0,0,0,0.1); border: 1px solid rgba(0,0,0,0.12); }
+.wk-kaesten i { width: 14px; height: 14px; border-radius: 3px; background: rgba(0,0,0,0.1); }
 .wk-kaesten i.an { background: var(--akzent); }
 .wk-achse.aufwand .wk-kaesten i.an { background: #c98a3a; }
-button.wk-achse.grau { min-height: 0; padding: 4px 6px; font-size: 0.95em; text-align: left; background: rgba(0,0,0,0.04); }
+button.wk-achse.grau { min-height: 0; padding: 4px 6px; font-size: 0.95em; text-align: left; background: transparent; box-shadow: none; border-style: dashed; }
 .wk-achse.grau .wk-kaesten i.an { background: #a8acb3; }
+#wirkung { display: none !important; }
 
 /* HTML-Seite über dem 3D-Papier (deckungsgleich, Homografie) */
 #blattHtml { position: fixed; left: 0; top: 0; width: 840px; height: 1188px; transform-origin: 0 0; opacity: 0; transition: opacity 0.35s ease; pointer-events: none; }
@@ -255,21 +280,43 @@ button.wk-achse.grau { min-height: 0; padding: 4px 6px; font-size: 0.95em; text-
 .hn-von { display: block; font-size: 12px; color: #6a5a2a; margin-top: 4px; }
 .bl-fuss { position: absolute; left: 78px; right: 78px; bottom: 50px; display: flex; justify-content: space-between; font-style: italic; color: #6a6862; font-size: 16px; }
 
-/* Bedienfeld des Entwurfs */
-#editor { position: fixed; right: max(12px, env(safe-area-inset-right)); top: 112px; bottom: max(12px, env(safe-area-inset-bottom)); width: min(360px, 34vw); padding: 12px 14px; overflow: auto; font-size: 0.92em; }
-#editor h2 { font-family: var(--schrift-gesetz); font-weight: 400; font-size: 1.2em; margin: 6px 0 2px; }
-.ed-tabs { display: flex; flex-wrap: wrap; gap: 4px; }
-.ed-tab { min-width: 40px; padding: 0.3em 0.5em; text-align: center; }
+/* Bedienfeld des Entwurfs: ein Artikel, eine Frage */
+#editor { position: fixed; right: max(12px, env(safe-area-inset-right)); top: 130px; bottom: max(12px, env(safe-area-inset-bottom)); width: min(380px, 36vw); padding: 14px 16px; overflow: auto; font-size: 0.93em; }
+.ed-kopf { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.ed-von { font-size: 0.78em; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-leise); }
+.ed-tabs { display: flex; gap: 3px; }
+.ed-tab { min-width: 26px; min-height: 26px; width: 26px; height: 26px; padding: 0; display: grid; place-items: center; border-radius: 50%; font-size: 0.78em; box-shadow: none; }
 .ed-tab.aktiv { background: var(--akzent); color: #fff; border-color: var(--akzent); }
-.ed-tab.wz { font-size: 0.85em; }
-.ed-schraube { margin: 12px 0; padding-top: 8px; border-top: 1px solid rgba(0,0,0,0.1); }
-.ed-frage { font-weight: 600; margin-bottom: 6px; }
-.ed-schraube .segment { font-size: 0.92em; }
-.komm { font-size: 0.72em; opacity: 0.7; display: block; }
-.ed-karte { margin-top: 8px; font-size: 0.92em; } .ed-karte summary { cursor: pointer; min-height: 32px; }
-.ed-fuss { margin-top: 12px; }
-.lesehilfe { background: rgba(0,162,173,0.1); padding: 6px 8px; border-radius: 6px; }
-body.editor-offen #wahl { right: calc(min(360px, 34vw) + 24px); }
+@media (pointer: coarse) { .ed-tab { min-width: 34px; width: 34px; height: 34px; } }
+#editor h2 { font-family: var(--schrift-gesetz); font-weight: 400; font-size: 1.25em; margin: 10px 0 2px; }
+.ed-einleitung { margin: 0 0 10px; color: var(--text-leise); }
+.ed-frage { font-weight: 700; margin: 6px 0 8px; font-size: 1.02em; }
+.ed-optionen { display: grid; gap: 7px; }
+.ed-option { display: grid; gap: 3px; width: 100%; padding: 9px 12px; }
+.eo-kopf { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+.eo-kurz { font-weight: 700; }
+.eo-komm { font-size: 0.72em; padding: 1px 6px; border-radius: 8px; background: rgba(0,0,0,0.07); white-space: nowrap; }
+.eo-wer { font-size: 0.8em; color: var(--text-leise); line-height: 1.5; }
+.eo-label { display: inline-block; min-width: 68px; }
+.eo-fr { display: inline-block; padding: 0 5px; border-radius: 4px; border-left: 4px solid var(--fr); background: rgba(0,0,0,0.04); margin: 0 2px 2px 0; color: var(--text); }
+.eo-keiner { font-style: italic; }
+.ed-option[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--akzent) inset; background: #e9f4f4; color: var(--text); border-color: var(--akzent); }
+.ed-option[aria-pressed="true"] .eo-kurz { color: #00585e; }
+.ed-abwaegung { margin-top: 10px; font-size: 0.88em; line-height: 1.4; }
+.ed-abwaegung p { margin: 4px 0; }
+.ed-wunsch { margin: 12px 0; padding-top: 8px; border-top: 1px solid rgba(0,0,0,0.1); }
+.ed-fuss { margin-top: 14px; display: grid; gap: 8px; }
+.ed-nav { justify-content: space-between; }
+#edEinreichen { width: 100%; text-align: center; }
+.lesehilfe { background: rgba(0,114,122,0.08); padding: 6px 8px; border-radius: 6px; }
+body.editor-offen #wahl { right: calc(min(380px, 36vw) + 24px); }
+
+/* Mira erklärt: Hervorhebung + Sprechblase */
+#fuehrung { position: fixed; inset: 0; z-index: 70; }
+.fu-loch { position: fixed; border-radius: 12px; box-shadow: 0 0 0 4px #ffd66b, 0 0 0 9999px rgba(8, 10, 14, 0.55); pointer-events: none; transition: all 0.25s ease; }
+.fu-blase { position: fixed; background: #fffdf6; border-radius: 12px; padding: 14px 16px; box-shadow: 0 14px 40px rgba(0,0,0,0.35); border-top: 5px solid #ffd66b; }
+.fu-name { font-size: 0.75em; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-leise); font-weight: 700; }
+.fu-blase p { margin: 6px 0 12px; font-size: 1.02em; line-height: 1.45; }
 
 /* Auswahlfeld unten */
 #wahl { position: fixed; left: 50%; transform: translateX(-50%); bottom: max(16px, env(safe-area-inset-bottom)); width: min(780px, calc(100vw - 32px)); padding: 12px 16px 14px; max-height: 46vh; overflow: auto; }
@@ -304,7 +351,7 @@ body.gespraech #wahl { display: none; }
 #zaehler strong { font-family: var(--schrift-gesetz); font-weight: 400; }
 
 /* Trilog-Tabelle */
-#trilogTabelle { position: fixed; left: 50%; transform: translateX(-50%); top: 90px; bottom: max(14px, env(safe-area-inset-bottom)); width: min(1100px, calc(100vw - 24px)); padding: 12px 14px; display: flex; flex-direction: column; font-size: 0.86em; }
+#trilogTabelle { position: fixed; left: 50%; transform: translateX(-50%); top: 200px; bottom: max(14px, env(safe-area-inset-bottom)); width: min(1100px, calc(100vw - 24px)); padding: 12px 14px; display: flex; flex-direction: column; font-size: 0.86em; }
 .tt-kopf { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
 .tt-kopf h2 { margin: 0; font-family: var(--schrift-gesetz); font-weight: 400; }
 .tt-budget { font-family: var(--schrift-zahlen); }
@@ -312,7 +359,10 @@ body.gespraech #wahl { display: none; }
 #trilogTabelle table { border-collapse: collapse; width: 100%; }
 #trilogTabelle th, #trilogTabelle td { padding: 5px 6px; border-bottom: 1px solid rgba(0,0,0,0.1); text-align: left; vertical-align: top; }
 #trilogTabelle th small { display: block; font-weight: 400; color: var(--text-leise); }
-#trilogTabelle tr.gleich { opacity: 0.6; }
+#trilogTabelle .tt-parl { color: #00585e; font-weight: 600; } #trilogTabelle .tt-rat { color: #6a4a12; }
+.tt-einig { margin: 10px 2px 0; }
+/* breite Bildschirme: Tabelle rechts neben der Aufgabenkarte */
+@media (min-width: 1000px) { #trilogTabelle { left: 350px; right: max(14px, env(safe-area-inset-right)); width: auto; transform: none; top: 130px; } }
 #trilogTabelle td .segment { font-size: 0.86em; padding: 0.3em 0.6em; margin: 2px; min-height: 36px; }
 .tt-einig { color: #1e7a48; }
 body.gespraech #trilogTabelle { opacity: 0.25; pointer-events: none; }
@@ -354,11 +404,11 @@ body.gespraech #trilogTabelle { opacity: 0.25; pointer-events: none; }
 /* Hochformat */
 @media (orientation: portrait) and (max-width: 900px) {
   .hs-person { display: none; }
-  #editor { left: 12px; right: 12px; width: auto; top: auto; height: 42vh; }
-  #fraktionsleiste { width: calc(100vw - 20px); top: 66px; }
-  #fraktionsleiste ul { grid-template-columns: repeat(4, 1fr); }
-  #wirkung { display: none; }
-  #trilogTabelle { top: 66px; }
+  #editor { left: 12px; right: 12px; width: auto; top: auto; height: 46vh; }
+  #fraktionsleiste { width: calc(100vw - 24px); min-width: 0; top: auto; bottom: calc(46vh + 20px); }
+  body:not(.editor-offen) #fraktionsleiste { bottom: auto; top: 160px; }
+  #aufgabe { width: calc(100vw - 200px); }
+  #trilogTabelle { top: 250px; }
   body.editor-offen #wahl { right: auto; }
 }
 body.kontrast #blattInhalt, body.kontrast #vergleich, body.kontrast .karte { background: #fff; color: #000; }

@@ -44,7 +44,7 @@ ausdrücklich ein (mit Rückfrage).
 | Titel | leerer Plenarsaal | Kamerafahrt, Weiterspielen / Neue Legislatur / Einstellungen / Über das Spiel |
 | 1 – Der Stapel | Büro | Vorname, Mira, Zettel von Inès, Probe-Änderung im Gesetz, Abendnotiz |
 | 2 – Die Anhörung | Ausschusssaal | vier von sechs Fragen an fünf Gäste → Karten im Dossier |
-| 3 – Der Entwurf | Büro | sieben Artikel, dreizehn Stellschrauben, Wunschzettel, Glasmodell und Wirkungsanzeige, Einreichen mit Stempel |
+| 3 – Der Entwurf | Büro | sieben Artikel mit je einer Kernentscheidung, Wunschzettel, Mehrheitsanzeige, Wirkung, Einreichen mit Stempel |
 | 4 – Die Flure | Schnittmodell des Gebäudes | sechs Termine: Fraktionsbüros (Karte vorlegen, Zugeständnis, Versprechen), Bibliothek, Cafeteria |
 | 5 – Die Ausschussabstimmung | Ausschusssaal | Abstimmung im Glasmodell; bei Niederlage zwei Zusatztermine, beim zweiten Mal Kompromiss der Kommission |
 | 6 – Der Trilog | Verhandlungsraum bei Nacht | Vier-Spalten-Tabelle, Spielraum des Rates, Mittelwege, Brücke, Dolmetscher |
@@ -76,12 +76,12 @@ Alle Texte, Zahlen, Farben und Spielwerte liegen in `data/`:
 | `data/stil.js` | Materialien (Farbe, Rauheit, Glanz), Lichtstimmungen je Kapitel, Grafikstufen, Oberfläche |
 | `data/kameras.js` | Brennweiten, Kamerafahrten (Titel, Anhörung, Plenum), Kameraeinstellungen je Ort |
 | `data/szenen.js` | Aufbau der Räume (Büro, Ausschusssaal, Gebäude, Trilog, Plenum, Epilog) |
-| `data/texte.js` | Menüs, Kapitelkarten, Mail, Zettel von Inès, Oberfläche, Einstellungen, Admin-Menü |
+| `data/texte.js` | Menüs, Kapitelkarten, Aufgabenkarte (`aufgaben`), Miras Hinweise (`fuehrung`), Mehrheitsanzeige, Oberfläche, Einstellungen, Admin-Menü |
 | `data/fakten.js` | **alle echten Zahlen und Fakten** (ungeprüft, `verifiziert: false`) |
 | `data/spielwerte.js` | Zahlen der Spielmechanik (Sitze, Termine, Schwellen – keine Fakten) |
 | `data/fraktionen.js` | die sechs erfundenen Fraktionen und die Brücke: Sitze, Schwellen, Anliegen |
 | `data/figuren.js` | Figuren-Baukasten (Hauttöne, Körperbau, Kleidung, Haare, Gesten) und alle Personen |
-| `data/artikel.js` | sieben Artikel mit Stellschrauben und Optionen (Haltung je Fraktion, Wirkung, Jurist*in), Wunschzettel, Umsetzungsfrist |
+| `data/artikel.js` | sieben Artikel mit je einer Kernentscheidung und ihren Optionen (Haltung je Fraktion, Wirkung, Jurist*in), Wunschzettel, Umsetzungsfrist |
 | `data/gespraeche.js` | alle Gesprächszeilen je Kapitel (`DATA.zeilen`), Abendnotizen, Presse |
 | `data/karten.js` | Karten im Dossier (Stimme, Beleg, Einwand) und Bibliothek |
 | `data/trilog.js` | Positionen des Rates, Mittelwege, Kompromiss der Kommission |
@@ -92,8 +92,8 @@ Alle Texte, Zahlen, Farben und Spielwerte liegen in `data/`:
 Texte benutzen Platzhalter statt Zahlen: `{fakt:gpg_eu}`, `{jahr:gpg_eu}`, `{quelle:gpg_eu}`,
 `{wert:termine_flure}`, `{name}`, `{g:begriff}` (Glossar), `{info:id}`. `**fett**` wird fett gedruckt.
 Der Debug-Modus prüft beim Start: alle Gesprächs- und Datenverweise, keine Ziffer direkt im Text,
-Textlänge pro Durchgang (Ziel höchstens 6000 Wörter, derzeit etwa 3550) und die **Balance**: Er rechnet
-alle 1,87 Millionen Fassungen des Gesetzes durch (in etwa 0,2 Sekunden) und meldet, ob es mindestens drei
+Textlänge pro Durchgang (Ziel höchstens 6000 Wörter, derzeit etwa 3600) und die **Balance**: Er rechnet
+alle 11.520 Fassungen des Gesetzes durch und meldet, ob es mindestens drei
 verschiedene Wege zur Mehrheit gibt, ob die Maximalfassungen beider Seiten und „fast alles gestrichen“
 scheitern und ob eine Fraktion unverzichtbar ist.
 
@@ -106,7 +106,7 @@ scheitern und ob eine Fraktion unverzichtbar ist.
   Raum-Würfeltextur (mit zweitem Lichtweg), Spiegel-Ebene für Tischplatten und polierte Böden,
   Glas mit Brechung, vorberechnete Verdeckung in Ecken, Instancing für Sitze und Glaswürfel.
 - Nachbearbeitung: Umgebungsverdeckung im Bildraum → Lichtstrahlen im Staub (Strahlenverfolgung mit
-  der Schattenkarte) → Tiefenschärfe mit runden Bokeh-Formen → Bloom → filmische Tonwertkurve →
+  der Schattenkarte) → (Tiefenschärfe ist im Code vorhanden, aber auf Wunsch ausgeschaltet) → Bloom → filmische Tonwertkurve →
   Farbkorrektur (im Code erzeugte 3D-Farbtabelle) → zeitliche Kantenglättung bzw. FXAA → Korn,
   Vignette, Farbsaum.
 - Alle Geometrie, Texturen (Holzmaserung, Gewebe, Papierfaser, Kratzer …) und Töne entstehen im Code.
@@ -119,6 +119,26 @@ scheitern und ob eine Fraktion unverzichtbar ist.
   Gemurmel, Regen, ein kurzes Musik-Motiv.
 - Namensräume: `DATA` (Daten), `MOTOR` (3D-Maschine), `WELT` (Szenen, Figuren, Bausteine),
   `ANSICHT` (HTML-Oberfläche), `LOGIK` (Spielstand, Berechnungen, Ablauf).
+
+## Überarbeitung nach Rückmeldung (1. November 2026)
+
+Rückmeldung: „Es fehlt das direkte Verstehen, es ist unnötig kompliziert. Die Aufgaben sollen schwer sein, aber
+mit Leitfaden. Die Personen sehen nicht gut aus, vieles passt vom Aussehen nicht. Die Unschärfe muss weg.“
+
+- **Leitfaden:** Aufgabenkarte oben links (Kapitel, Ziel, nächster Schritt, Fortschritt) und Mira erklärt jeden neuen
+  Bildschirm einmal mit Hervorhebung („Verstanden“).
+- **Weniger gleichzeitig:** große Mehrheitsanzeige („Dir fehlen 3 Stimmen“), Einzelheiten je Fraktion erst auf Antippen;
+  das Entwurfsfeld zeigt nur einen Artikel mit einer Frage, Optionen als Karten mit „mögen / lehnen ab“;
+  Wirkung im Entwurfsfeld; Trilog nur mit den strittigen Punkten.
+- **Eine Kernentscheidung pro Artikel** (7 statt 13). Was wegfiel, steckt jetzt in den Optionen oder im festen Text.
+  Schwer bleibt es: Ohne Verhandlung findet nur jede dreißigste Fassung eine Mehrheit, der unveränderte Vorschlag der
+  Kommission scheitert knapp.
+- **Keine Tiefenschärfe** mehr – die Unschärfe ist ganz ausgeschaltet.
+- **Schlichte Modellfiguren:** glatt, ohne Gesicht und ohne sichtbare Gelenke; Menschenmengen in gedeckten Farben
+  mit natürlichen Hauttönen.
+- **Räume und Licht:** mehr Einrichtung (Teppiche, Garderoben, Bilder, Sideboard, Stehlampe, Uhr, Akten),
+  Wandlicht im Ausschusssaal, Plenum nicht mehr überstrahlt, Trilog-Raum heller, Raumlicht in den Fraktionsbüros.
+- **Oberfläche:** ruhiges Papierweiß statt Milchglas, kräftigeres Petrol, einheitliche Karten und Knöpfe.
 
 ## Stand
 

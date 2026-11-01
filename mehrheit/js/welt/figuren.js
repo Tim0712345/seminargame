@@ -1,9 +1,12 @@
 /* =====================================================================
-   js/welt/figuren.js – Gliederfiguren aus dem Modellbau (Abschnitt 7.7)
+   js/welt/figuren.js – schlichte Modellfiguren (Abschnitt 7.7, geändert)
    ---------------------------------------------------------------------
-   Starre Teile an einer Knochen-Hierarchie (keine Haut-Verformung).
+   Auf Wunsch des Users (1. November 2026): glatte, edle Figuren wie aus
+   einem Architekturmodell – ohne Gesicht, ohne sichtbare Gelenke.
+   Erkennbar an Silhouette, Frisur, Kleidung und einem Farbakzent.
+   Technik: starre Teile an einer Knochen-Hierarchie (keine Haut-Verformung),
+   die sich an den Gelenken überlappen, damit keine Fugen zu sehen sind.
    Pro Material entsteht ein Puffer; jeder Eckpunkt kennt seinen Knochen.
-   Gelenke sind dezent sichtbar (kleine Fugen) – das ist Teil des Stils.
    Figur schaut in lokaler +z-Richtung, +x ist ihre linke Seite.
    ===================================================================== */
 var WELT = window.WELT || {};
@@ -24,23 +27,16 @@ WELT.figuren = (function () {
 
   /* ---------- Kopfform: Ellipsoid mit modellierten Formen ---------- */
   function kopfPunkt(d, kb) {
-    var rx = 0.076, ry = 0.1, rz = 0.093;
+    var rx = 0.074, ry = 0.1, rz = 0.088;
     var x = d[0], y = d[1], z = d[2];
-    var kiefer = M.glatt(-0.05, -0.8, y);
-    var sx = 1 - 0.14 * kiefer, sz = 1 - 0.06 * kiefer * M.glatt(0.0, 0.8, z);
-    var gesicht = M.glatt(0.55, 1.0, z) * M.glatt(-0.9, -0.2, y);
-    var p = [x * rx * sx, y * ry, z * rz * sz * (1 - 0.07 * gesicht)];
-    var b = 0;
-    function g(a, mitte, breite) { var dx = (x - mitte[0]) / breite[0], dy = (y - mitte[1]) / breite[1], dz = (z - mitte[2]) / breite[2]; return a * Math.exp(-(dx * dx + dy * dy + dz * dz)); }
-    b += g(0.010, [0, -0.8, 0.58], [0.2, 0.13, 0.2]);                          // Kinn
-    b += g(0.016, [0, -0.08, 1.0], [0.055, 0.16, 0.25]) + g(0.006, [0, -0.24, 1], [0.08, 0.06, 0.25]);  // Nasenrücken und -spitze
-    b += g(0.005, [0, 0.2, 0.98], [0.38, 0.07, 0.3]);                          // Brauenbogen
-    b -= g(0.007, [0.36, 0.08, 0.92], [0.12, 0.07, 0.2]) + g(0.007, [-0.36, 0.08, 0.92], [0.12, 0.07, 0.2]);   // Augenhöhlen
-    b += g(0.004, [0.62, -0.1, 0.74], [0.18, 0.15, 0.2]) + g(0.004, [-0.62, -0.1, 0.74], [0.18, 0.15, 0.2]); // Wangenknochen
-    b += g(0.012, [0, 0.4, -0.88], [0.65, 0.45, 0.3]);                         // Hinterkopf
-    b -= g(0.003, [0, -0.47, 0.88], [0.22, 0.05, 0.2]);                        // Mundlinie (ganz leicht)
+    var kiefer = M.glatt(-0.05, -0.85, y);
+    var sx = 1 - 0.16 * kiefer, sz = 1 - 0.08 * kiefer * M.glatt(-0.2, 0.8, z);
+    var p = [x * rx * sx, y * ry, z * rz * sz];
+    // nur zwei ganz weiche Formen: Hinterkopf und ein Hauch von Kinn – kein Gesicht
+    var b = 0.010 * Math.exp(-(x * x / 0.42 + (y - 0.4) * (y - 0.4) / 0.2 + (z + 0.88) * (z + 0.88) / 0.09));
+    b += 0.004 * Math.exp(-(x * x / 0.04 + (y + 0.8) * (y + 0.8) / 0.02 + (z - 0.58) * (z - 0.58) / 0.04));
     b += (kb || 0);
-    return [p[0] + x * b, p[1] + y * b + 0.112, p[2] + z * b + 0.006];
+    return [p[0] + x * b, p[1] + y * b + 0.112, p[2] + z * b + 0.004];
   }
   function kugelRichtung(th, ph) { return [Math.sin(th) * Math.sin(ph), Math.cos(th), Math.sin(th) * Math.cos(ph)]; }
 
@@ -106,23 +102,15 @@ WELT.figuren = (function () {
     return g;
   }
 
-  /* Hand (kanonisch: hängt nach unten, Handfläche nach +z, Daumen bei +x) */
+  /* Hand als schlichte Modellhand (kanonisch: hängt nach unten, Handfläche +z, Daumen bei +x).
+     zeigen = ausgestreckter Zeigefinger für die Geste „auf das Papier zeigen“ */
   function handGeo(zeigen, spiegel) {
     var g = Geo.leer(), s = spiegel ? -1 : 1;
-    Geo.anhaengen(g, Geo.box(0.072, 0.085, 0.026, 0.011, 2), trs([0, -0.05, 0]));
-    var fx = [-0.026, -0.009, 0.009, 0.026], fl = [0.055, 0.068, 0.072, 0.064];
-    for (var i = 0; i < 4; i++) {
-      var kr = zeigen ? (i === 2 ? -4 : -95) : -18 - i * 4;
-      if (zeigen && i === 2) kr = -2;
-      var basis = mul(trs([fx[i] * s, -0.09, 0.002]), rot([kr * 0.55, 0, 0]));
-      var r = 0.0078 - i * 0.0004;
-      Geo.anhaengen(g, Geo.kapsel(r, fl[i] * 0.5, 8, 3), mul(basis, rot([180, 0, 0])));
-      var mitte = mul(basis, trs([0, -fl[i] * 0.5, 0]), rot([kr * 0.6, 0, 0]));
-      Geo.anhaengen(g, Geo.kapsel(r * 0.92, fl[i] * 0.45, 8, 3), mul(mitte, rot([180, 0, 0])));
-    }
-    var daumen = mul(trs([0.034 * s, -0.035, 0.012]), rot([-35, 0, 28 * s]));
-    Geo.anhaengen(g, Geo.kapsel(0.0092, 0.035, 8, 3), mul(daumen, rot([180, 0, 0])));
-    Geo.anhaengen(g, Geo.kapsel(0.0085, 0.028, 8, 3), mul(daumen, trs([0, -0.04, 0]), rot([-20, 0, 0]), rot([180, 0, 0])));
+    var flach = ellipsoid(0.036, 0.062, 0.016, 16);
+    Geo.verformen(flach, function (p) { var t = M.klemme(-p[1] / 0.062, 0, 1); return [p[0] * (1 - 0.18 * t), p[1], p[2] * (1 - 0.25 * t)]; });
+    Geo.anhaengen(g, flach, trs([0, zeigen ? -0.045 : -0.06, 0.002]));
+    if (zeigen) Geo.anhaengen(g, Geo.kapsel(0.0075, 0.06, 8, 3), mul(trs([0.004 * s, -0.1, 0.004]), rot([180, 0, 0])));
+    Geo.anhaengen(g, Geo.kapsel(0.0095, 0.032, 8, 3), mul(trs([0.03 * s, -0.035, 0.01]), rot([-30, 0, 22 * s]), rot([180, 0, 0])));
     return g;
   }
 
@@ -160,52 +148,40 @@ WELT.figuren = (function () {
     };
 
     /* Haut: Kopf, Hals, Hände, (Unter-)Arme an Ärmelenden, Ohren */
-    h(kopfGeo(30, 40), null, "kopf");
-    [-1, 1].forEach(function (s) {
-      h(ellipsoid(0.011, 0.028, 0.019, 12), mul(trs([s * 0.076, 0.106, -0.006]), rot([0, s * 18, 0])), "kopf");
-    });
-    h(Geo.drehkoerper([[ha * 0.92, 0], [ha * 0.86, 0.05], [ha * 0.84, 0.1]], 20, {}), trs([0, -0.03, 0]), "hals");
-    // Augen: matte dunkle Einlagen
-    [-1, 1].forEach(function (s) {
-      var d = M.norm([0.36 * s, 0.08, 0.93]);
-      var p = kopfPunkt(d);
-      teil("auge", "auge", null, ellipsoid(0.0125, 0.0068, 0.005, 14), mul(trs([p[0] + d[0] * 0.0006, p[1], p[2] + d[2] * 0.0006]), rot([0, s * 18, 0])), "kopf");
-    });
+    h(kopfGeo(28, 36), null, "kopf");
+    h(Geo.drehkoerper([[ha * 0.95, -0.02], [ha * 0.88, 0.04], [ha * 0.84, 0.1], [ha * 0.8, 0.13]], 20, {}), trs([0, -0.04, 0]), "hals");
     // Hände
     h(Geo.transform(handGeo(false, false), rot([0, -90, 0])), null, "handL");
     h(Geo.transform(handGeo(false, true), rot([0, 90, 0])), null, "handR");
     h(Geo.transform(handGeo(true, false), rot([0, -90, 0])), null, "handL_zeigen");
     h(Geo.transform(handGeo(true, true), rot([0, 90, 0])), null, "handR_zeigen");
     // Handgelenke (Fugen)
-    h(Geo.kugel(ar * 0.6, 12, 6), trs([0, 0.004, 0]), "handL");
-    h(Geo.kugel(ar * 0.6, 12, 6), trs([0, 0.004, 0]), "handR");
+    h(ellipsoid(ar * 0.6, 0.022, ar * 0.5, 12), trs([0, -0.004, 0]), "handL");
+    h(ellipsoid(ar * 0.6, 0.022, ar * 0.5, 12), trs([0, -0.004, 0]), "handR");
 
     /* Oberkörper: Kleidung (Sakko/Blazer) mit offenem Kragen */
     var rumpfProfil = [[0, -0.03], [ta * 0.95, -0.03], [ta * 0.93, 0.03], [ta * 0.98, 0.1], [sch * 0.88, 0.18], [sch * 0.99, 0.25], [sch * 1.04, 0.29], [sch * 0.97, 0.322], [sch * 0.64, 0.346], [ha * 1.3, 0.356], [0, 0.36]];
-    stoffOben(rumpf(rumpfProfil.map(function (q) { return [q[0] * 1.06, q[1]]; }), bt / sch * 0.95, 40, 0), null, "brust");
-    if (formen > 0) {
-      [-1, 1].forEach(function (s) { stoffOben(ellipsoid(0.055, 0.05, 0.035 * formen + 0.01, 14), trs([s * 0.055, 0.2, bt * 0.88]), "brust"); });
-    }
+    var oberkoerper = rumpf(rumpfProfil.map(function (q) { return [q[0] * 1.06, q[1]]; }), bt / sch * 0.95, 40, 0);
+    // Brustform weich in den Rumpf eingearbeitet (keine einzelnen Kugeln)
+    if (formen > 0) Geo.verformen(oberkoerper, function (q) {
+      if (q[2] <= 0) return q;
+      var dy = (q[1] - 0.2) / 0.075, wx = Math.abs(q[0]) / (sch * 0.9);
+      return [q[0], q[1], q[2] * (1 + 0.16 * formen * Math.exp(-dy * dy) * (1 - 0.5 * wx * wx))];
+    });
+    stoffOben(oberkoerper, null, "brust");
     var mitJacke = oben.art === "blazer" || oben.art === "sakko";
     if (mitJacke) {
-      // Hemd/Bluse im V-Ausschnitt
-      var v = Geo.leer();
-      Geo.anhaengen(v, Geo.box(0.11, 0.17, 0.02, 0.008, 2), mul(trs([0, 0.27, bt * 0.98 + 0.004]), rot([-14, 0, 0])));
-      Geo.verformen(v, function (p) { var t = M.klemme((0.36 - p[1]) / 0.18, 0, 1); return [p[0] * (0.25 + 0.75 * (1 - t)) + 0.0, p[1], p[2]]; });
-      stoffHemd(v, null, "brust");
-      // Revers (Lapels)
-      [-1, 1].forEach(function (s) {
-        var rv = Geo.box(0.045, 0.16, 0.012, 0.005, 2);
-        stoffOben(rv, mul(trs([s * 0.05, 0.27, bt * 1.04 + 0.006]), rot([-12, 0, s * 18])), "brust");
-      });
-      // Kragen
-      stoffHemd(Geo.drehkoerper([[ha * 1.1, 0], [ha * 1.08, 0.035], [ha * 1.02, 0.055]], 22, {}), trs([0, 0.33, 0.004]), "brust");
+      // Hemd- bzw. Blusenkragen als weicher Ring über der Jacke
+      stoffHemd(Geo.drehkoerper([[ha * 1.16, 0], [ha * 1.12, 0.03], [ha * 1.04, 0.05]], 22, {}), trs([0, 0.322, 0.006]), "brust");
+      // ein schmaler, glatter Hemdstreifen vorne (statt Revers)
+      var streifen = ellipsoid(0.03, 0.085, 0.01, 12);
+      stoffHemd(streifen, trs([0, 0.265, bt * 1.0 + 0.002]), "brust");
     } else {
       // Pullover: Rundkragen mit Rippen
       stoffOben(Geo.drehkoerper([[ha * 1.18, 0], [ha * 1.14, 0.025], [ha * 1.06, 0.04]], 22, {}), trs([0, 0.33, 0.004]), "brust");
     }
     // Schultern (Fugen in Stoff)
-    [-1, 1].forEach(function (s) { stoffOben(Geo.kugel(ar * 1.1, 16, 8), trs([s * sch * 0.95, 0.318, -0.012]), "brust"); });
+    [-1, 1].forEach(function (s) { stoffOben(ellipsoid(ar * 1.05, ar * 1.0, ar * 1.1, 16), trs([s * sch * 0.92, 0.312, -0.012]), "brust"); });
     var rock = unten.art === "rock";
     function stoffBein(geo, m, kn) { if (rock) teil("beine", "stoff", { farbe: unten.strumpf || haut, strukturSkala: 40, rauheit: 0.6 }, geo, m, kn); else stoffUnten(geo, m, kn); }
     if (rock) stoffUnten(Geo.drehkoerper([[hu * 1.42, -0.44], [hu * 1.42, -0.44], [hu * 1.3, -0.3], [hu * 1.1, -0.1], [ta * 1.05, 0.06], [ta * 1.0, 0.11], [0, 0.11]], 36, { deckelUnten: false }), trs([0, 0, 0.004], [1, 1, bt / sch * 1.1]), "becken");
@@ -216,9 +192,9 @@ WELT.figuren = (function () {
 
     /* Arme: Ärmel über Ober- und Unterarm */
     ["L", "R"].forEach(function (s) {
-      stoffOben(glied(ar * 1.1, ar * 0.98, 0.27, 16, 0.0), null, "oberarm" + s);
-      stoffOben(Geo.kugel(ar * 0.97, 14, 7), trs([0, -0.285, 0]), "unterarm" + s);
-      stoffOben(glied(ar * 0.98, ar * 0.88, 0.205, 16, 0.0), null, "unterarm" + s);
+      stoffOben(glied(ar * 1.02, ar * 0.92, 0.29, 16, 0.0), null, "oberarm" + s);
+      stoffOben(Geo.kugel(ar * 0.92, 14, 7), trs([0, -0.285, 0]), "unterarm" + s);
+      stoffOben(glied(ar * 0.92, ar * 0.8, 0.215, 16, 0.0), null, "unterarm" + s);
       stoffHemd(Geo.zylinder(ar * 0.8, 0.02, 14, false), trs([0, -0.225, 0]), "unterarm" + s);
       h(glied(ar * 0.72, ar * 0.62, 0.06, 12, 0), trs([0, -0.2, 0]), "unterarm" + s);
     });
@@ -228,8 +204,8 @@ WELT.figuren = (function () {
       stoffBein(glied(be * (rock ? 0.95 : 1.05), be * 0.8, 0.41, 18, 0.0), null, "oberschenkel" + s);
       stoffBein(Geo.kugel(be * 0.8, 14, 7), trs([0, -0.415, 0]), "unterschenkel" + s);
       stoffBein(glied(be * (rock ? 0.72 : 0.78), be * (rock ? 0.56 : 0.64), 0.37, 18, 0.004), null, "unterschenkel" + s);
-      var schuh = Geo.box(0.088, 0.07, 0.255, 0.03, 3);
-      Geo.verformen(schuh, function (p) { var vorne = M.glatt(0.0, 0.12, p[2]); return [p[0] * (1 - vorne * 0.12), p[1] - vorne * Math.max(0, p[1]) * 0.45, p[2]]; });
+      var schuh = ellipsoid(0.045, 0.036, 0.125, 16);
+      Geo.verformen(schuh, function (p) { return [p[0], Math.max(p[1], -0.03) + (p[2] > 0.05 ? -0.006 * (p[2] - 0.05) / 0.07 : 0), p[2]]; });
       teil("schuhe", "leder", { farbe: schuhe.farbe }, schuh, trs([0, -0.035, 0.055]), "fuss" + s);
     });
 
@@ -484,21 +460,33 @@ WELT.figuren = (function () {
 
   /* Schlichte weiße Modellfiguren (wie im Architekturmodell) für Plenum, Ausschuss und Ränge.
      Ein Netz, mit Instancing vielfach gezeichnet. */
-  F.modellFigur = function (sitzend) {
-    var g = Geo.leer();
-    var hb = sitzend ? 0.52 : 0.95;
-    Geo.anhaengen(g, ellipsoid(0.085, 0.11, 0.09, 14), trs([0, hb + 0.62, 0.01]));
-    Geo.anhaengen(g, Geo.zylinder(0.045, 0.1, 10, false), trs([0, hb + 0.46, 0]));
-    Geo.anhaengen(g, rumpf([[0, 0], [0.15, 0], [0.16, 0.2], [0.19, 0.42], [0.08, 0.49], [0, 0.5]], 0.62, 18, 0), trs([0, hb - 0.02, 0]));
+  /* Einfache Modellfigur für Menschenmengen (Instancing).
+     teil: "koerper" (Kleidung), "haut" (Kopf und Hände) oder leer (alles zusammen) */
+  F.modellFigur = function (sitzend, teil) {
+    var g = Geo.leer(), hb = sitzend ? 0.52 : 0.95;
+    var mitHaut = teil !== "koerper", mitKoerper = teil !== "haut";
+    if (mitHaut) {
+      Geo.anhaengen(g, kopfGeo(9, 12), trs([0, hb + 0.5, 0.0]));   // grob genug für die Entfernung
+      Geo.anhaengen(g, Geo.zylinder(0.042, 0.1, 10, false), trs([0, hb + 0.44, 0]));
+    }
+    if (mitKoerper) {
+      Geo.anhaengen(g, rumpf([[0, 0], [0.15, 0], [0.16, 0.2], [0.185, 0.4], [0.17, 0.46], [0.07, 0.5], [0, 0.5]], 0.62, 18, 0), trs([0, hb - 0.02, 0]));
+    }
     [-1, 1].forEach(function (s) {
       if (sitzend) {
-        Geo.anhaengen(g, Geo.kapsel(0.06, 0.4, 10, 3), mul(trs([s * 0.095, hb + 0.0, 0.0]), rot([90, 0, 0])));
-        Geo.anhaengen(g, Geo.kapsel(0.05, 0.42, 10, 3), mul(trs([s * 0.095, 0.04, 0.42]), rot([0, 0, 0])));
-        Geo.anhaengen(g, Geo.kapsel(0.042, 0.26, 8, 3), mul(trs([s * 0.19, hb + 0.42, 0.0]), rot([180 - 25, 0, 0])));
-        Geo.anhaengen(g, Geo.kapsel(0.036, 0.24, 8, 3), mul(trs([s * 0.17, hb + 0.2, 0.12]), rot([95, 0, 0])));
+        if (mitKoerper) {
+          Geo.anhaengen(g, Geo.kapsel(0.062, 0.4, 10, 3), mul(trs([s * 0.095, hb + 0.0, 0.0]), rot([90, 0, 0])));
+          Geo.anhaengen(g, Geo.kapsel(0.052, 0.42, 10, 3), mul(trs([s * 0.095, 0.04, 0.42]), rot([0, 0, 0])));
+          Geo.anhaengen(g, Geo.kapsel(0.046, 0.26, 8, 3), mul(trs([s * 0.19, hb + 0.42, 0.0]), rot([180 - 25, 0, 0])));
+          Geo.anhaengen(g, Geo.kapsel(0.04, 0.22, 8, 3), mul(trs([s * 0.17, hb + 0.2, 0.12]), rot([95, 0, 0])));
+        }
+        if (mitHaut) Geo.anhaengen(g, ellipsoid(0.03, 0.022, 0.05, 6), trs([s * 0.17, hb + 0.2, 0.36]));
       } else {
-        Geo.anhaengen(g, Geo.kapsel(0.06, 0.86, 10, 3), trs([s * 0.095, 0.06, 0]));
-        Geo.anhaengen(g, Geo.kapsel(0.042, 0.52, 8, 3), mul(trs([s * 0.2, hb + 0.44, 0]), rot([180, 0, s * -6])));
+        if (mitKoerper) {
+          Geo.anhaengen(g, Geo.kapsel(0.062, 0.86, 10, 3), trs([s * 0.095, 0.06, 0]));
+          Geo.anhaengen(g, Geo.kapsel(0.046, 0.5, 8, 3), mul(trs([s * 0.2, hb + 0.44, 0]), rot([180, 0, s * -6])));
+        }
+        if (mitHaut) Geo.anhaengen(g, ellipsoid(0.03, 0.05, 0.022, 6), trs([s * 0.255, hb - 0.1, 0]));
       }
     });
     return g;
