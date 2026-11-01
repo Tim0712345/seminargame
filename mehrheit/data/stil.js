@@ -89,8 +89,8 @@ DATA.stil = {
       sonne: { richtung: [0.40, 0.82, -0.41], kelvin: 3300, staerke: 5.0, winkel: 0.7 },
       himmel: { oben: "#41598a", horizont: "#e6a47c", unten: "#1a1c24", sonnenglanz: 4.0, staerke: 3.0 },
       umgebung: 1.4,
-      nebel: { dichte: 0.02, farbe: "#55648a", streuung: 0.68, strahlen: 3.6, reichweite: 40, dunst: 0.15 },
-      belichtung: 0.95,
+      nebel: { dichte: 0.02, farbe: "#55648a", streuung: 0.35, strahlen: 14, reichweite: 40, dunst: 0.15 },
+      belichtung: 0.85,
       farbe: { temperatur: 0.02, saettigung: 0.92, kontrast: 1.12, schatten: "#1e2c4a", lichter: "#ffd2a0", toenung: 0.45, schwarz: 0.012 },
       bloom: 0.065, vignette: 0.42, korn: 0.035
     },
@@ -99,7 +99,7 @@ DATA.stil = {
       sonne: { richtung: [-0.30, 0.42, -0.86], kelvin: 6800, staerke: 2.4, winkel: 2.5 },
       himmel: { oben: "#9fb6d4", horizont: "#e3e6ea", unten: "#6c7078", sonnenglanz: 1.2, staerke: 2.2 },
       umgebung: 1.7,
-      nebel: { dichte: 0.012, farbe: "#c3cede", streuung: 0.4, strahlen: 0.5, reichweite: 9, dunst: 1.0 },
+      nebel: { dichte: 0.012, farbe: "#c3cede", streuung: 0.4, strahlen: 3.0, reichweite: 9, dunst: 0.5 },
       belichtung: 1.25,
       farbe: { temperatur: -0.06, saettigung: 0.9, kontrast: 1.05, schatten: "#2a3550", lichter: "#fff1dc", toenung: 0.3, schwarz: 0.01 },
       bloom: 0.05, vignette: 0.32, korn: 0.03
@@ -109,7 +109,7 @@ DATA.stil = {
       sonne: { richtung: [-0.46, 0.60, -0.65], kelvin: 5200, staerke: 5.5, winkel: 0.5 },
       himmel: { oben: "#7fa3d6", horizont: "#e7e9e6", unten: "#6c6a66", sonnenglanz: 2.0, staerke: 2.0 },
       umgebung: 1.5,
-      nebel: { dichte: 0.016, farbe: "#d9d3c4", streuung: 0.6, strahlen: 0.8, reichweite: 9, dunst: 1.0 },
+      nebel: { dichte: 0.016, farbe: "#d9d3c4", streuung: 0.45, strahlen: 5.0, reichweite: 9, dunst: 0.5 },
       belichtung: 1.15,
       farbe: { temperatur: 0.05, saettigung: 0.95, kontrast: 1.1, schatten: "#273046", lichter: "#ffe8c4", toenung: 0.35, schwarz: 0.01 },
       bloom: 0.05, vignette: 0.32, korn: 0.03

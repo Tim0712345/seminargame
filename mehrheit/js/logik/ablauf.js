@@ -99,7 +99,7 @@ LOGIK.ablauf = (function () {
     var seite = M.norm(M.kreuz([0, 1, 0], richtung));
     if (seite[2] < 0) seite = M.mal(seite, -1);
     var pos = M.plus(M.plus(lk, M.mal(richtung, K.schulterAbstand)), M.plus(M.mal(seite, K.schulterSeite), [0, K.schulterHoehe, 0]));
-    var ziel = [sk[0], sk[1] - 0.04, sk[2]];
+    var ziel = [sk[0], sk[1] - 0.2, sk[2]];
     MOTOR.post.verlaufLoeschen();
     A.kamera.setze({ pos: pos, ziel: ziel, mm: K.mm, blende: K.blende, fokus: M.abstand(pos, sk) });
     A.ansicht = "gespraech";

@@ -505,7 +505,7 @@ WELT.bausteine = (function () {
     for (i = -1; i <= 1; i++) W.stuhl(B, { pos: [i * 1.6, pr.hoehe + 0.04, pz - 0.55], dreh: 0 });
     // Lichtwand
     B.box(raum.breiteVorne * 2, raum.hoehe, 0.3, 0, "modellharz", [0, raum.hoehe / 2, raum.vorne - 0.15], 0);
-    B.box(11, 5.4, 0.08, 0.02, WELT.material("milchglas", { glas: false, farbe: "#ece9e2", rauheit: 0.5, emission: 0.35, emissionFarbe: "#cfd8e8" }), [0, 4.6, raum.vorne + 0.04], 0, { verdecker: false });
+    B.box(11, 5.4, 0.08, 0.02, WELT.material("milchglas", { glas: false, farbe: "#ece9e2", rauheit: 0.5, emission: 0.12, emissionFarbe: "#cfd8e8" }), [0, 4.6, raum.vorne + 0.04], 0, { verdecker: false });
     // Seitenwände (vorne gerade) und Rückwand (Halbrund)
     B.box(0.4, raum.hoehe, -raum.vorne, 0, "modellharz", [-raum.radius - 0.2, raum.hoehe / 2, raum.vorne / 2], 0);
     B.box(0.4, raum.hoehe, -raum.vorne, 0, "modellharz", [raum.radius + 0.2, raum.hoehe / 2, raum.vorne / 2], 0);
