@@ -6,7 +6,7 @@
      ?stufe=ultra      Grafikstufe festlegen (ultra, hoch, mittel, niedrig)
      ?webgl=1          WebGL 1 erzwingen (Rückfall testen)
      ?modus=dokument   Dokumentmodus erzwingen (ohne WebGL)
-     ?szene=buero      direkt ins Büro (Stil-Prototyp)
+     ?kapitel=4        direkt in ein Kapitel springen (1 bis 9, nur mit ?debug=1)
    ===================================================================== */
 var MEHRHEIT = (function () {
   var X = {};
@@ -28,8 +28,24 @@ var MEHRHEIT = (function () {
     kanvas = document.getElementById("bild");
     var ok = url.get("modus") !== "dokument" && MOTOR.gl.init(kanvas, url.get("webgl") === "1");
     if (!ok) {
+      // Dokumentmodus: ganzes Spiel als HTML, gleicher Ablauf ohne 3D-Welt
+      ANSICHT.leiste.init();
+      ANSICHT.menues.init();
       ANSICHT.dokumentmodus.zeigen();
+      LOGIK.ablauf.ohne3D = true;
+      kamera = ANSICHT.dokumentmodus.kamera();
+      LOGIK.ablauf.init(kamera);
+      X.einstellungenAnwenden(true);
+      X.eingaben();
+      window.addEventListener("pagehide", function () { LOGIK.speicher.speichern(); });
+      document.addEventListener("visibilitychange", function () { if (document.hidden) LOGIK.speicher.speichern(); });
+      var kap0 = parseInt(url.get("kapitel"), 10);
+      if (url.get("debug") === "1" && kap0 >= 1 && kap0 <= 9) { DEBUG.beispielStand("mitte", kap0); LOGIK.ablauf.kapitel(kap0); }
+      else LOGIK.ablauf.titel();
+      ANSICHT.blende(false);
       DEBUG.init();
+      ANSICHT.dokumentmodus.schleife();
+      gestartet = true;
       return;
     }
     R = MOTOR.renderer;
@@ -49,7 +65,8 @@ var MEHRHEIT = (function () {
     };
     window.addEventListener("resize", function () { X.groesse(); });
     X.groesse(true);
-    if (url.get("szene") === "buero") { LOGIK.ablauf.kapitel(1); }
+    var kap = parseInt(url.get("kapitel"), 10);
+    if (url.get("debug") === "1" && kap >= 1 && kap <= 9) { DEBUG.beispielStand("mitte", kap); LOGIK.ablauf.kapitel(kap); }
     else LOGIK.ablauf.titel();
     ANSICHT.blende(false);
     DEBUG.init();
@@ -127,17 +144,45 @@ var MEHRHEIT = (function () {
   /* ---------- Eingaben ---------- */
   X.eingaben = function () {
     function erste() { if (MOTOR.ton) MOTOR.ton.starten(); }
+    var zieh = null;
+    function aufBild(e) { return e.target === kanvas || e.target.id === "oberflaeche" || e.target.tagName === "MAIN" || e.target.id === "hotspots"; }
     window.addEventListener("pointerdown", function (e) {
       erste();
       ANSICHT.tastatur = false;
-      if (LOGIK.ablauf.modus === "titel" && (e.target === kanvas || e.target.id === "oberflaeche" || e.target.tagName === "MAIN")) LOGIK.ablauf.titelUeberspringen();
+      if (LOGIK.ablauf.modus === "titel" && aufBild(e)) LOGIK.ablauf.titelUeberspringen();
+      // Kapitel 4: Gebäudemodell durch Ziehen drehen (Maus, Finger, Stift)
+      if (LOGIK.ablauf.modus === "flure" && aufBild(e)) zieh = { x: e.clientX, id: e.pointerId };
     }, true);
+    window.addEventListener("pointermove", function (e) {
+      if (!zieh || e.pointerId !== zieh.id) return;
+      var dx = e.clientX - zieh.x; zieh.x = e.clientX;
+      LOGIK.ablauf.ziehDreh = (LOGIK.ablauf.ziehDreh || 0) + dx * 0.35;
+    });
+    function ziehEnde() { zieh = null; }
+    window.addEventListener("pointerup", ziehEnde);
+    window.addEventListener("pointercancel", ziehEnde);
     window.addEventListener("keydown", function (e) {
       erste();
       if (e.key === "Tab") ANSICHT.tastatur = true;
+      if (e.target && e.target.tagName === "INPUT") return;
+      // Pfeiltasten wechseln innerhalb einer Gruppe von Knöpfen (Optionen, Antworten, Menü)
+      if (/^Arrow/.test(e.key) && e.target && e.target.tagName === "BUTTON" && e.target.closest) {
+        var gruppe = e.target.closest(".segmente, .wahl-knoepfe, #leisteAntworten, #titelMenue, .reihe, .kartenreihe, #hotspots");
+        if (gruppe) {
+          var bs = Array.prototype.filter.call(gruppe.querySelectorAll("button"), function (b) { return !b.disabled && b.offsetParent !== null; });
+          var i = bs.indexOf(e.target), d = (e.key === "ArrowRight" || e.key === "ArrowDown") ? 1 : -1;
+          if (i >= 0 && bs.length > 1) { bs[(i + d + bs.length) % bs.length].focus(); e.preventDefault(); return; }
+        }
+      }
+      var kk = document.getElementById("kapitelKarte");
+      if (!kk.classList.contains("versteckt") && (e.key === "Enter" || e.key === " " || e.key === "Escape")) { kk.click(); e.preventDefault(); return; }
       if (e.key === "Escape" && ANSICHT.menues.fensterZu()) { e.preventDefault(); return; }
       if (ANSICHT.menues.fensterOffen()) return;
       if (ANSICHT.leiste.taste(e)) { e.preventDefault(); return; }
+      if (ANSICHT.wahlTaste(e)) { e.preventDefault(); return; }
+      if (ANSICHT.editor.taste(e)) { e.preventDefault(); return; }
+      if ((e.key === "d" || e.key === "D") && !e.ctrlKey && !e.metaKey && LOGIK.ablauf.modus !== "titel" && !LOGIK.gespraech.aktiv &&
+          !document.getElementById("kopfKnoepfe").classList.contains("versteckt")) { ANSICHT.dossier.oeffnen(); e.preventDefault(); return; }
       if (LOGIK.ablauf.modus === "titel" && e.key !== "Tab" && e.key !== "Shift") LOGIK.ablauf.titelUeberspringen();
     });
   };
@@ -154,7 +199,7 @@ var MEHRHEIT = (function () {
     MOTOR.post.einstellungen.helligkeit = E.helligkeit || 1;
     MOTOR.einstellungHelligkeit = E.helligkeit || 1;
     if (MOTOR.ton) MOTOR.ton.einstellen(!!E.ton, E.lautMusik, E.lautGeraeusche);
-    if (!start && !MOTOR.qualitaet.fest) {
+    if (!start && !MOTOR.qualitaet.fest && !LOGIK.ablauf.ohne3D) {
       var Q = MOTOR.qualitaet, vorher = Q.name;
       if (E.grafik === "auto") { if (!Q.auto) Q.waehle("auto"); }
       else if (E.grafik !== Q.name || Q.auto) { Q.waehle(E.grafik); }
@@ -166,6 +211,7 @@ var MEHRHEIT = (function () {
   /* ---------- Hilfen für automatische Tests (Playwright) ---------- */
   X.test = {
     bereit: function () { return gestartet && !!LOGIK.ablauf.szene; },
+    dokumentmodus: function () { return !!LOGIK.ablauf.ohne3D; },
     kamera: function (e) { kamera.setze(e); MOTOR.post.verlaufLoeschen(); },
     titelEnde: function () { var F = DATA.kameras.fahrten.titel; kamera.setze(F.punkte[F.punkte.length - 1]); WELT.szenen.titelUeberspringen(LOGIK.ablauf.szene); },
     anhalten: function () { X.angehalten = true; },
@@ -180,8 +226,7 @@ var MEHRHEIT = (function () {
     },
     titelZeit: function (t) { var sz = LOGIK.ablauf.szene; if (sz && sz.titel) sz.titel.zeit = t; if (kamera.fahrt) kamera.fahrt.t = t; },
     festesDt: function (dt) { X.festesDt = dt; },
-    zeit: function () { return zeit; },
-    probe: function (a) { LOGIK.ablauf.probe(a); }
+    zeit: function () { return zeit; }
   };
 
   return X;

@@ -7,7 +7,8 @@ Man spielt eine neu gewählte abgeordnete Person im Europäischen Parlament, die
 Berichterstatter*in ist, und schreibt ein europäisches Gesetz gegen die Lohnlücke – und muss dafür
 eine Mehrheit finden. Am Ende steht die eigene Fassung neben der echten Richtlinie (EU) 2023/970.
 
-> **Stand: Phase 1 von 5 – 3D-Stil-Prototyp.** Noch kein vollständiges Spiel. Siehe „Stand“ unten.
+> **Stand: alle fünf Phasen umgesetzt – vollständig spielbar** (Titel, sieben Kapitel, Epilog,
+> „So ist es wirklich“). Alle Zahlen sind noch **ungeprüft** (siehe `QUELLEN.md`), die Credits-Namen fehlen.
 
 ## Starten
 
@@ -22,13 +23,37 @@ Adressleisten-Parameter zum Testen:
 |---|---|
 | `?debug=1` | Debug-Modus (Feld oben links, Tasten, Prüfungen in der Konsole) |
 | `?stufe=ultra` / `hoch` / `mittel` / `niedrig` | Grafikstufe fest einstellen |
-| `?szene=buero` | direkt ins Büro (Stil-Prototyp) |
+| `?debug=1&kapitel=4` | direkt in ein Kapitel springen (1–9, mit Beispielstand „Mitte“) |
 | `?webgl=1` | Rückfall auf WebGL 1 testen |
 | `?modus=dokument` | Dokumentmodus ohne 3D testen |
 
 Debug-Tasten: **G** Ansicht wechseln (Bild, nur Licht, Normalen, Tiefe, Verdeckung, Schattenkarte,
 Drahtgitter) · **L** Lichtquellen zeigen · **C** freie Kamera (WASD, Q/E, Maus ziehen) · **P** Standbild
-als PNG · **K** Titel ↔ Büro · **V** Vertrauen auf 0 · **F** Flags in der Konsole.
+als PNG · **K** Titel ↔ Kapitel 1 · **V** Vertrauen auf 0 · **F** Flags in der Konsole.
+
+**Admin-Menü** (für Lehrkräfte und Jury, auch ohne Debug-Modus): im Titel **fünfmal schnell auf das Bild
+tippen** oder **„admin“ eintippen**. Dort: zu jedem Kapitel springen, Beispielfassung laden („mutig“,
+„Mitte“, „schlank“), alle Karten ins Dossier, direkt zu „So ist es wirklich“, Mehrheiten der Beispielfassungen.
+Das Admin-Menü verändert den gespeicherten Spielstand nicht, außer man schaltet „Spielstand speichern“
+ausdrücklich ein (mit Rückfrage).
+
+## Ablauf des Spiels
+
+| Kapitel | Ort | Was passiert |
+|---|---|---|
+| Titel | leerer Plenarsaal | Kamerafahrt, Weiterspielen / Neue Legislatur / Einstellungen / Über das Spiel |
+| 1 – Der Stapel | Büro | Vorname, Mira, Zettel von Inès, Probe-Änderung im Gesetz, Abendnotiz |
+| 2 – Die Anhörung | Ausschusssaal | vier von sechs Fragen an fünf Gäste → Karten im Dossier |
+| 3 – Der Entwurf | Büro | sieben Artikel, dreizehn Stellschrauben, Wunschzettel, Glasmodell und Wirkungsanzeige, Einreichen mit Stempel |
+| 4 – Die Flure | Schnittmodell des Gebäudes | sechs Termine: Fraktionsbüros (Karte vorlegen, Zugeständnis, Versprechen), Bibliothek, Cafeteria |
+| 5 – Die Ausschussabstimmung | Ausschusssaal | Abstimmung im Glasmodell; bei Niederlage zwei Zusatztermine, beim zweiten Mal Kompromiss der Kommission |
+| 6 – Der Trilog | Verhandlungsraum bei Nacht | Vier-Spalten-Tabelle, Spielraum des Rates, Mittelwege, Brücke, Dolmetscher |
+| 7 – Das Plenum | voller Plenarsaal | Rede in drei Teilen, Abstimmung mit Kranfahrt, Stempel; bei Niederlage „Neuer Anlauf“ |
+| Epilog | Collage | „Fünf Jahre später“ – Bausteine je nach Fassung und Grundstimmung |
+| So ist es wirklich | Seite | eigene Fassung neben der echten Richtlinie, Vereinfachungen, Zeitleiste, Fragen, Quellen, Credits |
+
+Bedienung: Maus, Finger oder Tastatur (Tab, Enter, Esc, Pfeiltasten, Zahlen 1–9 für Antworten,
+Leertaste zeigt den Text sofort, **D** öffnet das Dossier, **Q/E** oder Ziehen dreht das Gebäudemodell).
 
 ## Lernziele (für die Jury)
 
@@ -49,19 +74,28 @@ Alle Texte, Zahlen, Farben und Spielwerte liegen in `data/`:
 | Datei | Inhalt |
 |---|---|
 | `data/stil.js` | Materialien (Farbe, Rauheit, Glanz), Lichtstimmungen je Kapitel, Grafikstufen, Oberfläche |
-| `data/kameras.js` | Brennweiten, Kamerafahrt im Titel, Kameraeinstellungen im Büro |
-| `data/szenen.js` | Aufbau der Räume (Positionen, Größen, Möbel, Zusatzlichter) |
-| `data/texte.js` | Menüs, Kapitelkarten, Mail, Zettel von Inès, Kopf des Gesetzentwurfs |
+| `data/kameras.js` | Brennweiten, Kamerafahrten (Titel, Anhörung, Plenum), Kameraeinstellungen je Ort |
+| `data/szenen.js` | Aufbau der Räume (Büro, Ausschusssaal, Gebäude, Trilog, Plenum, Epilog) |
+| `data/texte.js` | Menüs, Kapitelkarten, Mail, Zettel von Inès, Oberfläche, Einstellungen, Admin-Menü |
 | `data/fakten.js` | **alle echten Zahlen und Fakten** (ungeprüft, `verifiziert: false`) |
 | `data/spielwerte.js` | Zahlen der Spielmechanik (Sitze, Termine, Schwellen – keine Fakten) |
-| `data/fraktionen.js` | die sechs erfundenen Fraktionen und die Brücke |
-| `data/figuren.js` | Figuren-Baukasten (Hauttöne, Körperbau, Kleidung, Haare, Gesten) |
-| `data/artikel.js` | Artikel und Optionen des Gesetzentwurfs (Phase 1: nur Artikel 4) |
-| `data/gespraeche.js` | Gespräche (Phase 1: Beispiel-Gespräch mit Luca und Mira) |
+| `data/fraktionen.js` | die sechs erfundenen Fraktionen und die Brücke: Sitze, Schwellen, Anliegen |
+| `data/figuren.js` | Figuren-Baukasten (Hauttöne, Körperbau, Kleidung, Haare, Gesten) und alle Personen |
+| `data/artikel.js` | sieben Artikel mit Stellschrauben und Optionen (Haltung je Fraktion, Wirkung, Jurist*in), Wunschzettel, Umsetzungsfrist |
+| `data/gespraeche.js` | alle Gesprächszeilen je Kapitel (`DATA.zeilen`), Abendnotizen, Presse |
+| `data/karten.js` | Karten im Dossier (Stimme, Beleg, Einwand) und Bibliothek |
+| `data/trilog.js` | Positionen des Rates, Mittelwege, Kompromiss der Kommission |
+| `data/epilog.js` | Epilog-Bausteine mit Bedingungen, Miras Schlusssätze je Grundstimmung |
+| `data/vergleich.js` | „So ist es wirklich“: echte Richtlinie je Artikel, Vereinfachungen, Zeitleiste, Fragen, Credits |
+| `data/glossar.js` | Erklärungen der Fachbegriffe (kleines „?“ neben dem Wort) |
 
 Texte benutzen Platzhalter statt Zahlen: `{fakt:gpg_eu}`, `{jahr:gpg_eu}`, `{quelle:gpg_eu}`,
-`{wert:termine_flure}`, `{name}`. `**fett**` wird fett gedruckt. Der Debug-Modus prüft beim Start,
-ob irgendwo eine Ziffer direkt im Text steht.
+`{wert:termine_flure}`, `{name}`, `{g:begriff}` (Glossar), `{info:id}`. `**fett**` wird fett gedruckt.
+Der Debug-Modus prüft beim Start: alle Gesprächs- und Datenverweise, keine Ziffer direkt im Text,
+Textlänge pro Durchgang (Ziel höchstens 6000 Wörter, derzeit etwa 3550) und die **Balance**: Er rechnet
+alle 1,87 Millionen Fassungen des Gesetzes durch (in etwa 0,2 Sekunden) und meldet, ob es mindestens drei
+verschiedene Wege zur Mehrheit gibt, ob die Maximalfassungen beider Seiten und „fast alles gestrichen“
+scheitern und ob eine Fraktion unverzichtbar ist.
 
 ## Technik
 
@@ -76,18 +110,31 @@ ob irgendwo eine Ziffer direkt im Text steht.
   Farbkorrektur (im Code erzeugte 3D-Farbtabelle) → zeitliche Kantenglättung bzw. FXAA → Korn,
   Vignette, Farbsaum.
 - Alle Geometrie, Texturen (Holzmaserung, Gewebe, Papierfaser, Kratzer …) und Töne entstehen im Code.
-- Rückfall: WebGL 1 mit Stufe „Niedrig“; ohne WebGL der **Dokumentmodus** (alles als HTML/SVG).
+- Rückfall: WebGL 1 mit Stufe „Niedrig“; ohne WebGL der **Dokumentmodus**: das ganze Spiel als
+  HTML-Seite (Gesetzestext, Halbrund als SVG, Gespräche mit Namen, Räume als Liste) mit Hinweis,
+  wie man die Hardwarebeschleunigung einschaltet.
+- Lesbarkeit: Über dem 3D-Papier liegt deckungsgleich eine scharfe HTML-Seite (perspektivisch
+  per Homografie verzerrt), damit der Gesetzestext immer gestochen scharf und für Bildschirmleser lesbar ist.
+- Töne aus dem Code (Web Audio): Raumhall je Ort, Papier, Füllfeder, Stempel, Hammer, Schritte,
+  Gemurmel, Regen, ein kurzes Musik-Motiv.
 - Namensräume: `DATA` (Daten), `MOTOR` (3D-Maschine), `WELT` (Szenen, Figuren, Bausteine),
   `ANSICHT` (HTML-Oberfläche), `LOGIK` (Spielstand, Berechnungen, Ablauf).
 
 ## Stand
 
-**Phase 1 – 3D-Stil-Prototyp (wartet auf Abnahme):**
-Titelbildschirm im leeren Plenarsaal (120 Plätze mit Sitzlampen, Glasdach mit Stahlträgern,
-Lichtstrahl, Präsidium, Rednerpult) mit Kamerafahrt, Tinte und geprägtem Titel; Büro mit Schreibtisch,
-3D-Papierstapel (echte Seite, Umblättern, Füllfeder-Änderung), Glasmodell des Halbrunds mit 60 Sitzen,
-Schreibtischlampe, Becher mit Dampf, Fenster mit Stadt; Mira und Luca als Gliederfiguren mit
-Kleidung, Haaren, Atmen und vier Gesten; Beispiel-Gespräch mit Schuss/Gegenschuss und Tiefenschärfe;
-Stempel mit Abdruck; Grafikstufen mit automatischer Wahl.
+- **Phase 1 – 3D-Stil-Prototyp:** Plenarsaal-Titel, Büro mit 3D-Papierstapel, Glasmodell, Figuren, Stempel, Grafikstufen.
+- **Phase 2 – Kern:** Kapitel 1 bis 3, Entwurf mit allen sieben Artikeln, Fraktionsleiste, Wirkungsanzeige,
+  Wunschzettel, Juristischer Dienst, Speichern in einem Spielstand.
+- **Phase 3 – Verhandeln:** Kapitel 4 und 5, Gebäudemodell mit Räumen, Dossier mit Karten, Zugeständnisse und
+  Versprechen, Ausschussabstimmung mit Zusatzterminen und Kompromiss der Kommission.
+- **Phase 4 – Trilog, Plenum, Epilog:** Vier-Spalten-Tabelle, Rede, Plenumsabstimmung mit Kranfahrt,
+  „Neuer Anlauf“, Epilog-Collage, „So ist es wirklich“ mit automatisch erzeugter Quellenliste.
+- **Phase 5 – Feinschliff:** Glossar, Töne und Musik-Motiv, Tastaturbedienung, Dokumentmodus für das ganze Spiel,
+  Admin-Menü, Balance-Prüfung, Textlängen-Prüfung.
+
+Getestet (headless Chromium mit Software-Grafik): kompletter Durchlauf in drei Varianten (Mehrheit beim ersten Mal;
+Ausschuss scheitert zweimal → Kompromiss; Plenum scheitert → neuer Anlauf), Dokumentmodus komplett,
+Tastatur bis Kapitel 4, keine Konsolenfehler. **Nicht getestet:** echtes iPad/Safari, Firefox, Windows-Schul-Laptop,
+echte Grafikkarte (Bildzeiten aus der Software-Grafik sind nicht aussagekräftig).
 
 Credits: Konzept und Texte: [Dein Name] · Umsetzung mit KI-Unterstützung (siehe `KI-DOKUMENTATION.md`).

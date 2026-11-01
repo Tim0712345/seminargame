@@ -35,7 +35,25 @@ LOGIK.mehrheit = (function () {
         if (o && o.haltung && o.haltung[f.id] !== undefined) summe += o.haltung[f.id] * gewicht;
       });
     });
+    (entwurf.__wunsch || []).forEach(function (id) { DATA.wunschzettel.forEach(function (w) { if (w.id === id && w.haltung[f.id] !== undefined) summe += w.haltung[f.id]; }); });
+    if (entwurf.frist) { var fo = DATA.umsetzungsfrist.optionen.filter(function (o) { return o.id === entwurf.frist; })[0]; if (fo && fo.haltung[f.id] !== undefined) summe += fo.haltung[f.id]; }
+    if (entwurf.__bonus && entwurf.__bonus[f.id]) summe += entwurf.__bonus[f.id];
     return summe + (vertrauen && vertrauen[f.id] !== undefined ? vertrauen[f.id] : (f.startVertrauen || 0));
+  };
+
+  /* Wirkungsanzeige: Summe je Achse über alle Stellschrauben → Stufe 1 bis 5 (qualitativ, keine Prognose) */
+  H.wirkung = function (entwurf) {
+    var s = { wissen: 0, durchsetzung: 0, aufwand: 0, recht: 0 };
+    DATA.artikel.forEach(function (art) { art.schrauben.forEach(function (sch) {
+      var o = optionVon(art, sch, entwurf);
+      if (o && o.wirkung) for (var a in s) s[a] += o.wirkung[a] || 0;
+    }); });
+    s.recht -= (entwurf.__wunsch || []).length * 2;
+    s.recht += entwurf.__praezise ? 2 : 0;
+    var st = {};
+    for (var a in s) st[a] = Math.max(1, Math.min(5, Math.round(1 + (s[a] + 8) / 5.5)));
+    st.roh = s;
+    return st;
   };
 
   /* Stimmen einer Fraktion aus ihren Punkten */
@@ -65,11 +83,21 @@ LOGIK.mehrheit = (function () {
   H.ausschuss = function (entwurf, vertrauen) { return abstimmung(entwurf, vertrauen || LOGIK.stand.vertrauen, "sitzeAusschuss"); };
   H.plenum = function (entwurf, vertrauen) { return abstimmung(entwurf, vertrauen || LOGIK.stand.vertrauen, "sitzePlenum"); };
 
-  /* Phase 1: Entwurf aus dem Probe-Dokument im Büro */
-  H.probeEntwurf = function (sz) {
-    var e = {};
-    if (sz && sz.dokument) { var a = sz.dokument.seiten[1].daten.auswahl; for (var k in a) e[k] = a[k]; }
-    return e;
+  /* Stimmen je Sitz in Sitzordnung (für Glasmodell und Sitzlampen) */
+  H.sitzStimmen = function (erg, feld) {
+    var l = [];
+    DATA.fraktionen.slice().sort(function (a, b) { return a.sitzordnung - b.sitzordnung; }).forEach(function (f) {
+      var e = erg.fraktionen[f.id];
+      for (var k = 0; k < f[feld]; k++) l.push(k < e.ja ? "ja" : (k < e.ja + e.enthaltung ? "enthaltung" : "nein"));
+    });
+    return l;
+  };
+
+  /* Die zwei Fraktionen, die am knappsten dagegen waren */
+  H.knappDagegen = function (erg) {
+    return DATA.fraktionen.filter(function (f) { return !f.immerJa && erg.fraktionen[f.id].ja * 2 < f.sitzeAusschuss; })
+      .sort(function (a, b) { return (b.punkte !== undefined ? 0 : 0) + (erg.fraktionen[b.id].punkte - b.schwelle) - (erg.fraktionen[a.id].punkte - a.schwelle); })
+      .slice(0, 2).map(function (f) { return f.name; });
   };
 
   /* Text für Bildschirmleser: „Ja: 34, Nein: 20, Enthaltung: 6 – Mehrheit erreicht“ */

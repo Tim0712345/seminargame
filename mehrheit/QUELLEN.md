@@ -35,6 +35,10 @@ genannten Quelle abgeglichen werden. Danach in `data/fakten.js` den Wert korrigi
 | `teilzeit_maenner_eu` | Teilzeitquote der erwerbstätigen Männer in der EU | 7,7 % (2023) | Eurostat, Tabelle lfsa_eppgan | ec.europa.eu/eurostat – Datenbank – Suche „lfsa_eppgan“ | nein |
 | `amtssprachen` | Zahl der Amtssprachen der EU | 24 (2026) | Europäische Union, offizielle Website | european-union.europa.eu – Sprachen | nein |
 
+Im Spiel erscheinen alle Fakten am Ende auf der Seite „So ist es wirklich“ in einer automatisch erzeugten
+Quellenliste mit Prüfstatus („noch nicht geprüft“ / „geprüft“). Ungeprüfte Zahlen sind im Debug-Modus
+rot unterstrichen.
+
 ## Spielwerte (keine Fakten)
 
 Zahlen der Spielmechanik stehen in `data/spielwerte.js` und sind dort als „Spielwert, frei gewählt“ markiert

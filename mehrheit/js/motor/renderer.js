@@ -57,7 +57,7 @@ MOTOR.renderer = (function () {
     } else if (art === "teilchen") {
       if (f.schatten) d.push("SCHATTEN");
     } else {
-      if (f.skin) d.push("SKIN"); if (f.instanz) d.push("INSTANZ"); if (f.muster) d.push("MUSTER");
+      if (f.skin) d.push("SKIN"); if (f.instanz) d.push("INSTANZ"); if (f.muster) d.push("MUSTER"); if (f.instFarbe) d.push("INSTFARBE");
       if (f.glas) d.push("GLAS"); if (f.brechung) d.push("BRECHUNG"); if (f.farbTex) d.push("FARBTEX");
       if (f.blatt) d.push("BLATT"); if (f.himmel) d.push("HIMMEL"); if (f.doppelseitig) d.push("DOPPELSEITIG");
       if (f.ebene) d.push("EBENE"); if (f.mrt) d.push("MRT"); if (f.direkt) d.push("DIREKT");
@@ -151,7 +151,7 @@ MOTOR.renderer = (function () {
   function flags(o, pass, sz) {
     var mat = o.mat, st = R.stufe;
     var f = {
-      skin: !!o.knochen, instanz: !!o.netz.maxInstanzen, muster: !!o.muster,
+      skin: !!o.knochen, instanz: !!o.netz.maxInstanzen, muster: !!o.muster, instFarbe: !!o.instFarbe,
       glas: !!mat.glas, farbTex: !!o.farbTex, blatt: !!o.hoehe, himmel: !!mat.himmel,
       doppelseitig: !!mat.doppelseitig, direkt: !G.hdr
     };
@@ -173,6 +173,7 @@ MOTOR.renderer = (function () {
     P.f3("uKamPos", kam.augePos || kam.pos);
     P.f3("uSonneR", st.sonneR);
     P.f3("uSonneF", sz.sonne ? st.sonneF : [0, 0, 0]);
+    P.f4("uSonneKegel", st.kegel || [0, 0, 0, 0]);
     P.f2("uRausch", (R.bildNr % 64) * 0.618, (R.bildNr % 64) * 0.382);
     P.f4("uClip", pass === "spiegel" ? [0, 1, 0, -sz.spiegelEbene + 0.002] : [0, 0, 0, 1]);
     // Umgebung
@@ -486,11 +487,23 @@ MOTOR.renderer = (function () {
     gl.disable(gl.BLEND); gl.depthMask(true); gl.enable(gl.CULL_FACE);
   }
 
+  /* Alle Shader-Varianten einer Szene gleich beim Laden übersetzen (hinter der Abblende),
+     damit es später kein Ruckeln gibt, wenn ein Objekt zum ersten Mal ins Bild kommt. */
+  R.vorwaermen = function (sz) {
+    for (var i = 0; i < sz.objekte.length; i++) {
+      var o = sz.objekte[i];
+      if (!o.netz || !o.mat) continue;
+      R.prog("szene", flags(o, "haupt", sz));
+      if (R.stufe.schatten && o.schatten !== false) R.prog("tiefe", { skin: !!o.knochen, instanz: !!o.netz.maxInstanzen, blatt: !!o.hoehe });
+    }
+  };
+
   /* ---------- Ein Bild ---------- */
   R.zeichne = function (sz, kam) {
     R.bildNr++;
     R.statistik.aufrufe = 0; R.statistik.dreiecke = 0;
     var st = R.stufe;
+    if (!sz._vorgewaermt) { sz._vorgewaermt = true; R.vorwaermen(sz); }
     if (!sz.umgebung) R.sondeAufnehmen(sz);
     // 1. Schattenkarte (nur wenn sich etwas bewegt hat)
     if (sz.sonne && st.schatten) {

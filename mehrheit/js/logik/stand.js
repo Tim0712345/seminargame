@@ -15,8 +15,19 @@ LOGIK.neuerStand = function () {
     version: LOGIK.STAND_VERSION,
     name: "Sam", kapitel: 1, termineUebrig: DATA.spielwerte.termine_flure,
     entwurf: {}, wunschzettel: [], vertrauen: v, dossier: [], versprechen: [],
-    abendantworten: [], ergebnis: {}, flags: {}
+    abendantworten: [], presse: [], ergebnis: {}, flags: {}, gefragt: [], tag: 1, cafeteria: {}, bibliothek: false,
+    trilog: null, rede: null, versuche: 0, neuerAnlauf: 0, eingereicht: false
   };
+};
+
+/* Aktueller Entwurf: gewählte Optionen, sonst der Vorschlag der Kommission */
+LOGIK.entwurf = function (stand) {
+  var st = stand || LOGIK.stand, e = {};
+  DATA.artikel.forEach(function (a) { a.schrauben.forEach(function (s) { e[s.id] = st.entwurf[s.id] || s.start; }); });
+  if (st.entwurf.frist) e.frist = st.entwurf.frist;
+  e.__wunsch = (st.wunschzettel || []).slice();
+  if (st.flags && st.flags.praezisiert) e.__praezise = true;
+  return e;
 };
 
 LOGIK.stand = LOGIK.neuerStand();

@@ -26,6 +26,12 @@ LOGIK.text = (function () {
       var kl = "fakt" + (window.MEHRHEIT_DEBUG && f && !f.verifiziert ? " ungeprueft" : "");
       return '<span class="' + kl + '" data-fakt="' + id + '">' + esc(w) + "</span>";
     });
+    r = r.replace(/\{info:([a-z0-9_]+)\}/g, function (_, id) { var f = DATA.fakten[id]; return f ? (nurText ? f.text : esc(f.text)) : "[?" + id + "]"; });
+    r = r.replace(/\{g:([a-z0-9_]+)\}/g, function (_, id) {
+      var g = DATA.glossar && DATA.glossar[id]; if (!g) return id;
+      if (nurText) return g.wort;
+      return '<span class="begriff">' + esc(g.wort) + '<button type="button" class="glossar" aria-label="' + esc(g.wort) + ' erklären" data-erklaerung="' + esc(g.text) + '">?</button></span>';
+    });
     r = r.replace(/\{wert:([a-z0-9_]+)\}/g, function (_, id) { var v = DATA.spielwerte[id]; return v === undefined ? "[?" + id + "]" : String(v); });
     r = r.replace(/\{option:([a-z0-9_]+)\}/g, function (_, id) {
       var kurz = id;
@@ -37,7 +43,7 @@ LOGIK.text = (function () {
   };
   /* Platzhalter aus einem Text herausziehen (für die Prüfungen) */
   T.platzhalter = function (s) {
-    var l = [], m, re = /\{(fakt|jahr|quelle|wert|option):([a-z0-9_]+)\}/g;
+    var l = [], m, re = /\{(fakt|jahr|quelle|wert|option|info|g):([a-z0-9_]+)\}/g;
     while ((m = re.exec(s || ""))) l.push({ art: m[1], id: m[2] });
     return l;
   };
@@ -80,6 +86,22 @@ LOGIK.gespraech = (function () {
     ANSICHT.leiste.knoten(n, a.d);
   };
 
+  /* Folge von Sätzen (optional mit Antworten am Ende); fertig(i) bekommt die gewählte Antwort */
+  G.folge = function (saetze, fertig, antworten) {
+    var d = { start: "s0", knoten: {} };
+    saetze.forEach(function (z, i) {
+      var k = { sprecher: z.sprecher || "hinweis", text: z.text, geste: z.geste };
+      if (i < saetze.length - 1) k.weiter = "s" + (i + 1);
+      else if (antworten) k.antworten = antworten.map(function (a) { return { text: a.text || a, ziel: "ende" }; });
+      else k.weiter = "ende";
+      d.knoten["s" + i] = k;
+    });
+    if (G.aktiv) G.beenden(true);
+    G.aktiv = { id: "folge", d: d, knoten: null, beiEnde: fertig, folge: true };
+    document.body.classList.add("gespraech");
+    G.zeige("s0");
+  };
+
   G.weiter = function () {
     var a = G.aktiv; if (!a) return;
     var n = a.d.knoten[a.knoten];
@@ -90,18 +112,21 @@ LOGIK.gespraech = (function () {
     var a = G.aktiv; if (!a) return;
     var n = a.d.knoten[a.knoten];
     if (n && n.antworten && n.antworten[i]) {
+      a.gewaehlt = i;
       if (MOTOR.ton) MOTOR.ton.spiele("klick");
       G.zeige(n.antworten[i].ziel);
     }
   };
 
-  G.beenden = function () {
+  G.beenden = function (still) {
     var a = G.aktiv; G.aktiv = null;
+    if (still) { return; }
     document.body.classList.remove("gespraech");
     ANSICHT.leiste.ausblenden();
     var sz = LOGIK.ablauf.szene;
     if (sz && sz.figuren) for (var p in sz.figuren) sz.figuren[p].blickZiel = null;
-    if (a && a.beiEnde) a.beiEnde();
+    if (LOGIK.ablauf.nachGespraech) LOGIK.ablauf.nachGespraech();
+    if (a && a.beiEnde) a.beiEnde(a.gewaehlt);
   };
 
   /* Dialogprüfung: alle Knoten erreichbar, Verweise gültig */
@@ -116,7 +141,7 @@ LOGIK.gespraech = (function () {
         erreicht[k] = true;
         var n = d.knoten[k];
         if (!n) { fehler.push(id + ": Verweis auf fehlenden Knoten „" + k + "“"); continue; }
-        if (!DATA.figuren.personen[n.sprecher]) fehler.push(id + "/" + k + ": unbekannte Figur „" + n.sprecher + "“");
+        if (!DATA.figuren.personen[n.sprecher] && n.sprecher !== "hinweis") fehler.push(id + "/" + k + ": unbekannte Figur „" + n.sprecher + "“");
         if (n.geste && !DATA.figuren.gesten[n.geste]) fehler.push(id + "/" + k + ": unbekannte Geste „" + n.geste + "“");
         LOGIK.text.platzhalter(n.text).forEach(function (p) {
           if ((p.art === "wert" && DATA.spielwerte[p.id] === undefined) || (p.art !== "wert" && p.art !== "option" && !DATA.fakten[p.id])) fehler.push(id + "/" + k + ": Platzhalter {" + p.art + ":" + p.id + "} fehlt");

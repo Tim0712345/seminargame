@@ -81,6 +81,7 @@ DATA.stil = {
      nebel.dichte: wie stark die Luft Licht streut (Lichtstrahlen im Staub)
      nebel.reichweite: bis zu welcher Entfernung (Meter) Lichtstrahlen berechnet werden
      nebel.dunst: wie stark ferne Dinge im Dunst verschwinden (0 = gar nicht, 1 = normal)
+     sonne.kegel: [x, z, innen, außen] – Licht nur in diesem Kreis (Pendelleuchte)
      farbe: Farbkorrektur (Temperatur -1..1, Sättigung, Kontrast, Tönung der Schatten/Lichter)
   */
   stimmungen: {
@@ -113,6 +114,67 @@ DATA.stil = {
       belichtung: 1.15,
       farbe: { temperatur: 0.05, saettigung: 0.95, kontrast: 1.1, schatten: "#273046", lichter: "#ffe8c4", toenung: 0.35, schwarz: 0.01 },
       bloom: 0.05, vignette: 0.32, korn: 0.03
+    }
+    ,
+    anhoerung: {
+      name: "Kapitel 2 – helles Saallicht von oben, warme Spots auf die Gäste",
+      sonne: { richtung: [0.18, 1.0, 0.32], kelvin: 5200, staerke: 3.0, winkel: 9 },
+      himmel: { oben: "#d9dde3", horizont: "#e8e4dc", unten: "#7a7670", sonnenglanz: 0.2, staerke: 1.2 },
+      umgebung: 1.5,
+      nebel: { dichte: 0.008, farbe: "#d8d4cc", streuung: 0.3, strahlen: 0.0, reichweite: 12, dunst: 0.4 },
+      belichtung: 1.1,
+      farbe: { temperatur: 0.03, saettigung: 0.95, kontrast: 1.06, schatten: "#2e3446", lichter: "#fff0dc", toenung: 0.25, schwarz: 0.01 },
+      bloom: 0.045, vignette: 0.3, korn: 0.025
+    },
+    ausschuss: {
+      name: "Kapitel 5 – Kunstlicht, leicht kühl; Sitzlampen leuchten in Fraktionsfarben",
+      sonne: { richtung: [0.1, 1.0, 0.25], kelvin: 6500, staerke: 2.2, winkel: 9 },
+      himmel: { oben: "#c8d0dc", horizont: "#d0d4d8", unten: "#5a5e66", sonnenglanz: 0.2, staerke: 0.9 },
+      umgebung: 1.1,
+      nebel: { dichte: 0.01, farbe: "#b8c2d0", streuung: 0.3, strahlen: 0.0, reichweite: 12, dunst: 0.4 },
+      belichtung: 0.95,
+      farbe: { temperatur: -0.08, saettigung: 0.9, kontrast: 1.12, schatten: "#1e2638", lichter: "#e8f0ff", toenung: 0.3, schwarz: 0.012 },
+      bloom: 0.07, vignette: 0.38, korn: 0.03
+    },
+    flure: {
+      name: "Kapitel 4 – Nachmittagssonne in langen Bahnen durch die Rückseite",
+      sonne: { richtung: [-0.38, 0.42, -0.82], kelvin: 4100, staerke: 6.5, winkel: 0.6 },
+      himmel: { oben: "#8fb0d8", horizont: "#f0dcc0", unten: "#2a2622", sonnenglanz: 1.5, staerke: 1.6 },
+      umgebung: 1.0,
+      nebel: { dichte: 0.004, farbe: "#c8b8a0", streuung: 0.45, strahlen: 2.0, reichweite: 40, dunst: 0.04 },
+      belichtung: 1.0,
+      farbe: { temperatur: 0.06, saettigung: 0.95, kontrast: 1.1, schatten: "#24283a", lichter: "#ffe2bc", toenung: 0.35, schwarz: 0.012 },
+      bloom: 0.05, vignette: 0.42, korn: 0.03
+    },
+    trilog: {
+      name: "Kapitel 6 – Nacht, nur eine warme Pendelleuchte über dem Tisch",
+      sonne: { richtung: [0.06, 1.0, 0.04], kelvin: 2700, staerke: 7.0, winkel: 7, kegel: [0, 0, 1.7, 3.4] },
+      himmel: { oben: "#0b0f1c", horizont: "#1a2234", unten: "#050608", sonnenglanz: 0.0, staerke: 1.0 },
+      umgebung: 0.75,
+      nebel: { dichte: 0.012, farbe: "#3a3020", streuung: 0.4, strahlen: 0.8, reichweite: 8, dunst: 0.15 },
+      belichtung: 1.3,
+      farbe: { temperatur: 0.08, saettigung: 0.92, kontrast: 1.15, schatten: "#141a2c", lichter: "#ffd8a8", toenung: 0.45, schwarz: 0.014 },
+      bloom: 0.08, vignette: 0.55, korn: 0.04
+    },
+    plenum: {
+      name: "Kapitel 7 – festliches helles Licht durch das Glasdach",
+      sonne: { richtung: [0.28, 0.9, -0.33], kelvin: 5600, staerke: 5.5, winkel: 0.8 },
+      himmel: { oben: "#9cbce6", horizont: "#eef0f2", unten: "#4a4a4c", sonnenglanz: 2.0, staerke: 4.0 },
+      umgebung: 1.5,
+      nebel: { dichte: 0.012, farbe: "#c8d0dc", streuung: 0.35, strahlen: 7, reichweite: 40, dunst: 0.15 },
+      belichtung: 0.95,
+      farbe: { temperatur: 0.0, saettigung: 0.97, kontrast: 1.08, schatten: "#263048", lichter: "#fff4e4", toenung: 0.25, schwarz: 0.01 },
+      bloom: 0.06, vignette: 0.35, korn: 0.03
+    },
+    epilog: {
+      name: "Epilog – weicher, leicht überbelichteter Erinnerungs-Look",
+      sonne: { richtung: [-0.5, 0.75, 0.3], kelvin: 3700, staerke: 5.0, winkel: 2.5 },
+      himmel: { oben: "#f0e6d8", horizont: "#fff4e4", unten: "#8a7a6a", sonnenglanz: 1.0, staerke: 1.5 },
+      umgebung: 1.2,
+      nebel: { dichte: 0.008, farbe: "#f0dcc0", streuung: 0.5, strahlen: 1.5, reichweite: 6, dunst: 0.15 },
+      belichtung: 0.8,
+      farbe: { temperatur: 0.14, saettigung: 0.88, kontrast: 1.04, schatten: "#5a4a40", lichter: "#fff0d8", toenung: 0.45, schwarz: 0.03 },
+      bloom: 0.12, vignette: 0.5, korn: 0.04
     }
   },
 

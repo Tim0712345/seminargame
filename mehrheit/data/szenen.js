@@ -65,5 +65,89 @@ DATA.szenen = {
       { person: "mira", pos: [-1.92, 0, 0.55], dreh: 75, haltung: "sitzen" },
       { person: "luca", pos: [0.92, 0, 0.78], dreh: -72, haltung: "stehen" }
     ]
+  },
+
+  /* ---------------- Ausschusssaal (Kapitel 2 und 5) ---------------- */
+  ausschusssaal: {
+    stimmung: "anhoerung",
+    beschreibung: "ausschusssaal",
+    raum: { breite: 16, tiefe: 13, hoehe: 4.6, hinten: -6.2 },
+    // Hufeisentisch: Querteil für die Gäste, zwei Arme für die Abgeordneten
+    tisch: { querZ: -3.3, querBreite: 9.4, armX: 4.7, armVon: -2.7, armBis: 5.6 },
+    gaeste: [
+      { person: "ines",    pos: [-2.4, 0, -3.95], dreh: 0, haltung: "sitzen" },
+      { person: "weiss",   pos: [-1.2, 0, -3.95], dreh: 0, haltung: "sitzen" },
+      { person: "karin",   pos: [ 0.0, 0, -3.95], dreh: 0, haltung: "sitzen" },
+      { person: "nadia",   pos: [ 1.2, 0, -3.95], dreh: 0, haltung: "sitzen" },
+      { person: "mateusz", pos: [ 2.4, 0, -3.95], dreh: 0, haltung: "sitzen" }
+    ],
+    flaggen: ["eu", "frankreich", "italien", "belgien", "irland", "oesterreich", "deutschland"],
+    lichter: [
+      { pos: [-1.2, 3.6, -2.2], kelvin: 3200, staerke: 3.2, reichweite: 6, richtung: [0, -0.85, -0.52], kegelAussen: 34, kegelInnen: 18 },
+      { pos: [1.2, 3.6, -2.2], kelvin: 3200, staerke: 3.2, reichweite: 6, richtung: [0, -0.85, -0.52], kegelAussen: 34, kegelInnen: 18 }
+    ]
+  },
+
+  /* ---------------- Schnittmodell des Parlamentsgebäudes (Kapitel 4) ---------------- */
+  gebaeude: {
+    stimmung: "flure",
+    beschreibung: "gebaeude",
+    breite: 24, tiefe: 8, etagenHoehe: 3.3, etagen: 3,
+    // Räume: etage 0 = Erdgeschoss; x von/bis in Metern
+    raeume: [
+      { id: "cafeteria",  etage: 0, von: -12, bis: -4, art: "cafeteria" },
+      { id: "halle",      etage: 0, von: -4, bis: 3, art: "halle" },
+      { id: "bibliothek", etage: 0, von: 3, bis: 12, art: "bibliothek" },
+      { id: "BFW",        etage: 1, von: -12, bis: -6, art: "buero", fraktion: "BFW" },
+      { id: "EVM",        etage: 1, von: -6, bis: 0, art: "buero", fraktion: "EVM" },
+      { id: "ASG",        etage: 1, von: 0, bis: 6, art: "buero", fraktion: "ASG" },
+      { id: "GZL",        etage: 1, von: 6, bis: 12, art: "buero", fraktion: "GZL" },
+      { id: "BSN",        etage: 2, von: -12, bis: -6, art: "buero", fraktion: "BSN" },
+      { id: "FU",         etage: 2, von: -6, bis: 0, art: "buero", fraktion: "FU" },
+      { id: "eigenes",    etage: 2, von: 0, bis: 6, art: "buero", fraktion: "BRUECKE" },
+      { id: "terrasse",   etage: 2, von: 6, bis: 12, art: "leer" }
+    ],
+    // Deckenlicht je Etage (warm, weich), damit man in die Räume hineinsieht
+    lichter: [
+      { pos: [-6, 3.0, -1.2], kelvin: 3600, staerke: 7.5, reichweite: 7 },
+      { pos: [6, 3.0, -1.2], kelvin: 3600, staerke: 7.5, reichweite: 7 },
+      { pos: [-6, 6.3, -1.2], kelvin: 3800, staerke: 7.5, reichweite: 7 },
+      { pos: [6, 6.3, -1.2], kelvin: 3800, staerke: 7.5, reichweite: 7 },
+      { pos: [-6, 9.6, -1.2], kelvin: 3800, staerke: 7.0, reichweite: 7 },
+      { pos: [3, 9.6, -1.2], kelvin: 3800, staerke: 7.0, reichweite: 7 }
+    ],
+    besucher: 5
+  },
+
+  /* ---------------- Trilog-Raum (Kapitel 6) ---------------- */
+  trilog: {
+    stimmung: "trilog",
+    beschreibung: "trilog",
+    raum: { breite: 10, tiefe: 7.4, hoehe: 3.1 },
+    figuren: [
+      { person: "marinescu", pos: [-0.3, 0, -1.05], dreh: 0, haltung: "sitzen" },
+      { person: "tiago",     pos: [2.75, 0, 0.0], dreh: -90, haltung: "sitzen" },
+      { person: "sam",       pos: [0.3, 0, 1.05], dreh: 180, haltung: "sitzen" },
+      { person: "hanna",     pos: [-2.75, 0, 0.15], dreh: 90, haltung: "sitzen" },
+      { person: "dolmetscher", pos: [-1.2, 1.55, -3.55], dreh: 0, haltung: "sitzen" }
+    ]
+  },
+
+  /* ---------------- Plenarsaal in Straßburg (Kapitel 7) ---------------- */
+  plenum: {
+    basis: "plenarsaal",
+    stimmung: "plenum",
+    beschreibung: "plenum",
+    besucher: 46,
+    figuren: [
+      { person: "sam",        pos: [0, 0, -2.18], dreh: 0, haltung: "stehen" },
+      { person: "saaldiener", pos: [-4.2, 0, -2.7], dreh: 35, haltung: "stehen" }
+    ]
+  },
+
+  /* ---------------- Epilog: Collage auf einem Tisch ---------------- */
+  epilog: {
+    stimmung: "epilog",
+    beschreibung: "epilog"
   }
 };

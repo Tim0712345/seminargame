@@ -52,6 +52,10 @@ WELT.dokument = (function () {
       y += 18 * s;
       c.font = (25 * s) + "px " + S.schriftGesetz;
       var zh = 38 * s;
+      if (art.grundtext) {
+        umbrechen(c, text(art.grundtext), br).forEach(function (z) { c.fillText(z, rand, y); y += zh; });
+        y += 22 * s;
+      }
       art.schrauben.forEach(function (sch, nr) {
         var aktuell = seite.auswahl[sch.id], start = sch.start;
         var optA = sch.optionen.filter(function (o) { return o.id === aktuell; })[0];
@@ -238,6 +242,7 @@ WELT.dokument = (function () {
   D.optionSetzen = function (doc, schraubeId, optionId) {
     var s = doc.seiten[1];
     var art = s.daten.artikel, sch = art.schrauben.filter(function (x) { return x.id === schraubeId; })[0];
+    if (!sch) { s.daten.auswahl[schraubeId] = optionId; D.seiteNeu(doc, s); return; }  // steht nicht auf dieser Seite
     var alt = s.daten.auswahl[schraubeId];
     if (alt === optionId) return;
     var altOpt = sch.optionen.filter(function (o) { return o.id === alt; })[0];
@@ -253,6 +258,13 @@ WELT.dokument = (function () {
   D.umblaettern = function (doc) {
     if (doc.blaettern) return;
     doc.blaettern = { t: 0, von: doc.blatt, nach: 1 - doc.blatt };
+    if (MOTOR.ton) MOTOR.ton.spiele("papier");
+  };
+
+  /* Anderen Artikel aufschlagen: Blatt anheben, neuen Inhalt zeigen, ablegen */
+  D.blaetternWechsel = function (doc) {
+    if (MOTOR.bewegungReduziert) { D.seiteNeu(doc, doc.seiten[1]); return; }
+    doc.blaettern = { t: 0, von: 0, nach: 0, wechsel: true, neu: false };
     if (MOTOR.ton) MOTOR.ton.spiele("papier");
   };
 
@@ -292,13 +304,17 @@ WELT.dokument = (function () {
       b.t += dt / (MOTOR.bewegungReduziert ? 0.01 : 1.1);
       var f = M.klemme(b.t, 0, 1);
       var wert = b.von === 0 ? f : 1 - f;
+      if (b.wechsel) {
+        wert = Math.sin(f * Math.PI) * 0.42;
+        if (f >= 0.5 && !b.neu) { b.neu = true; D.seiteNeu(doc, oben); }
+      }
       var p = blaetterForm(oben.ruhe, wert);
       oben.normalenGeo.p = p;
       Geo.normalenNeu(oben.normalenGeo);
       // Rückseite zeigt nach oben, wenn umgeblättert: Normalen bleiben, Doppelseitigkeit erledigt den Rest
       MOTOR.netzPositionen(oben.obj.netz, p, oben.normalenGeo.n);
       sz.schattenNeu = true;
-      if (b.t >= 1) { doc.blatt = b.nach; doc.blaettern = null; }
+      if (b.t >= 1) { doc.blatt = b.nach; doc.blaettern = null; if (b.wechsel && !b.neu) D.seiteNeu(doc, oben); }
     }
     // Füllfeder-Animation
     var a = doc.anim;
@@ -365,7 +381,7 @@ WELT.dokument = (function () {
   /* =====================================================================
      Titelblatt auf dem Rednerpult: Tinte und geprägter Titel
      ===================================================================== */
-  D.titelBlatt = function (B, sz) {
+  D.titelBlatt = function (B, sz, modus) {
     var W = 1024, H = 1448;
     var lw = MOTOR.texturen.leinwand(W, H), hw = MOTOR.texturen.leinwand(512, 724);
     var tex = MOTOR.gl.textur({ quelle: lw, mip: true, aniso: 16, drehen: true });
@@ -391,16 +407,17 @@ WELT.dokument = (function () {
     var m = M.mul(M.m4(), sz.pultFlaeche, M.trs(M.m4(), [0.01, 0.0004, 0.01], 180 + 2));
     var o = B.objekt(g, "papier", m, { farbTex: tex, hoehe: { tex: hoeheTex, staerke: 0 }, statisch: true, schatten: true });
     o.festeKugel = true; o.kugelWelt = { m: M.punktMal(m, [0, 0, 0]), r: 0.3 };
-    var tb = { lw: lw, tex: tex, obj: o, W: W, H: H, tinte: 0, strich: 0, neu: 0, praegung: 0, letzt: "" };
+    var tb = { lw: lw, tex: tex, obj: o, W: W, H: H, tinte: 0, strich: 0, neu: 0, praegung: 0, letzt: "", plenum: modus === "plenum" };
     sz.titelBlatt = tb;
     D.titelZeichnen(tb);
     return tb;
   };
 
   D.titelZeichnen = function (tb) {
-    var schl = [tb.tinte.toFixed(2), tb.strich.toFixed(2), Math.floor(tb.neu * 40)].join("|");
+    var schl = [tb.tinte.toFixed(2), tb.strich.toFixed(2), Math.floor(tb.neu * 40), tb.stempel ? tb.stempel.text : ""].join("|");
     if (schl === tb.letzt) return;
     tb.letzt = schl;
+    if (tb.plenum) { plenumBlatt(tb); return; }
     var c = tb.lw.getContext("2d"), W = tb.W, H = tb.H, s = W / 1000;
     var T = DATA.texte.titelBlatt, S = DATA.stil.oberflaeche, F = DATA.stil.tinte;
     c.fillStyle = "#ffffff"; c.fillRect(0, 0, W, H);
@@ -431,6 +448,60 @@ WELT.dokument = (function () {
     }
     MOTOR.gl.texturNeu(tb.tex, tb.lw);
     tb.obj.nass = [0.1, 1 - (y + 130 * s) / H, 0.9, 1 - (y - 60 * s) / H];
+  };
+
+  /* Blatt am Rednerpult in Kapitel 7: Schlussabstimmung */
+  function plenumBlatt(tb) {
+    var c = tb.lw.getContext("2d"), W = tb.W, H = tb.H, s = W / 1000, S = DATA.stil.oberflaeche, T = DATA.texte;
+    c.fillStyle = "#ffffff"; c.fillRect(0, 0, W, H);
+    c.textAlign = "center"; c.fillStyle = "#4a4945"; c.font = (22 * s) + "px " + S.schriftGesetz;
+    c.fillText(T.titelBlatt.kopf.toUpperCase(), W / 2, 150 * s);
+    c.fillRect(W / 2 - 150 * s, 168 * s, 300 * s, 1.2 * s);
+    c.fillStyle = "#1d1c1a"; c.font = "bold " + (60 * s) + "px " + S.schriftGesetz; c.fillText(T.titelBlatt.vorher.toUpperCase(), W / 2, 420 * s);
+    c.font = "italic " + (54 * s) + "px " + S.schriftGesetz; c.fillStyle = DATA.stil.tinte.neu; c.fillText(T.titelBlatt.neu, W / 2, 500 * s);
+    c.fillStyle = "#3a3936"; c.font = (30 * s) + "px " + S.schriftGesetz;
+    c.fillText(T.plenumBlatt || "", W / 2, 640 * s);
+    c.fillText(LOGIK.text.ersetzen(DATA.texte.dokument.berichterstattung, true), W / 2, 700 * s);
+    c.textAlign = "left";
+    if (tb.stempel) D.stempelAbdruck(c, tb.stempel, W, H);
+    MOTOR.gl.texturNeu(tb.tex, tb.lw);
+  }
+
+  /* Stempel für das Plenum */
+  D.stempelWerkzeug = function (B, sz) {
+    var griff = Geo.drehkoerper([[0, 0], [0.018, 0], [0.019, 0.006], [0.012, 0.02], [0.011, 0.06], [0.018, 0.085], [0.016, 0.098], [0, 0.1]], 24, {});
+    sz.stempelObj = [
+      B.objekt(griff, "eiche_matt", M.m4(), { schatten: true }),
+      B.objekt(Geo.box(0.09, 0.016, 0.05, 0.004, 2), "aluminium", M.m4(), { schatten: true }),
+      B.objekt(Geo.box(0.086, 0.006, 0.046, 0.002, 1), WELT.material("gummi", { farbe: "#5a201c" }), M.m4(), { schatten: true })
+    ];
+    sz.stempelObj.forEach(function (o) { o.sichtbar = false; });
+  };
+  D.plenumStempeln = function (sz, text) { sz.stempelAnim = { t: 0, text: text, gesetzt: false }; };
+  D.stempelSchritt = function (sz, dt) {
+    var st = sz.stempelAnim, tb = sz.titelBlatt; if (!st || !tb) return;
+    st.t += dt;
+    var ziel = M.punktMal(tb.obj.matrix, [(0.62 - 0.5) * BLATT_B, 0.0015, (0.78 - 0.5) * BLATT_T]);
+    var tt = st.t, y, schwung;
+    if (tt < 0.55) { var k = M.weich(tt / 0.55); y = M.lerp(0.32, 0.0, k * k); schwung = (1 - k) * 25; }
+    else if (tt < 0.75) { y = 0; schwung = 0; }
+    else { var k2 = M.weich((tt - 0.75) / 0.6); y = k2 * 0.35; schwung = -k2 * 12; }
+    if (tt >= 0.55 && !st.gesetzt) {
+      st.gesetzt = true;
+      tb.stempel = { text: st.text, x: 0.62, y: 0.78, dreh: -0.12, saat: 8 };
+      tb.letzt = ""; D.titelZeichnen(tb);
+      if (sz.kamera) sz.kamera.wackeln = 1;
+      if (MOTOR.ton) MOTOR.ton.spiele("stempel");
+    }
+    var sm = M.mul(M.m4(), M.trs(M.m4(), [ziel[0] + schwung * 0.004, ziel[1] + y, ziel[2] - schwung * 0.002], 180 - 8), M.ausQuat(M.m4(), M.quatEuler([schwung, 0, schwung * 0.3])));
+    var o = sz.stempelObj;
+    o[2].matrix = M.mul(M.m4(), sm, M.trs(M.m4(), [0, 0.003, 0]));
+    o[1].matrix = M.mul(M.m4(), sm, M.trs(M.m4(), [0, 0.014, 0]));
+    o[0].matrix = M.mul(M.m4(), sm, M.trs(M.m4(), [0, 0.022, 0]));
+    var sichtbar = tt < 1.35;
+    o.forEach(function (x) { x.sichtbar = sichtbar; x.kugelWelt = null; });
+    sz.schattenNeu = true;
+    if (!sichtbar) sz.stempelAnim = null;
   };
 
   return D;

@@ -2,9 +2,9 @@
    js/ansicht/ton.js – Töne aus dem Code (Web Audio)
    ---------------------------------------------------------------------
    Raumhall je Ort (im Code erzeugte Impulsantwort), Papierrascheln,
-   Füllfeder, Stempel, ein tiefer warmer Ton im Titel. Keine Sprachausgabe.
+   Füllfeder, Stempel, Hammer, Schritte, Gemurmel, Regen am Fenster und ein
+   kurzes Musik-Motiv (vier Töne, ruhig). Keine Sprachausgabe.
    Startet erst nach der ersten Eingabe. Standard: leise.
-   (Musik-Motiv, Schritte, Regen und Gemurmel folgen in Phase 4 und 5.)
    ===================================================================== */
 var ANSICHT = window.ANSICHT || {};
 
@@ -98,6 +98,65 @@ ANSICHT.ton = (function () {
       });
     }
   };
+
+  /* Hintergrund je Ort: "regen" (Trilog), "saal" (leises Gemurmel), sonst Stille */
+  var atmo = null;
+  T.atmo = function (art) {
+    T._atmo = art;
+    if (!ctx) return;
+    if (atmo) { var alt = atmo; alt.g.gain.setTargetAtTime(0, ctx.currentTime, 0.6); setTimeout(function () { try { alt.s.stop(); } catch (e) {} }, 3000); atmo = null; }
+    if (!art) return;
+    var s = ctx.createBufferSource(); s.buffer = rausch; s.loop = true;
+    var f = ctx.createBiquadFilter(), g = ctx.createGain();
+    if (art === "regen") { f.type = "bandpass"; f.frequency.value = 2600; f.Q.value = 0.4; }
+    else { f.type = "bandpass"; f.frequency.value = 480; f.Q.value = 1.1; }
+    g.gain.value = 0; g.gain.setTargetAtTime(art === "regen" ? 0.05 : 0.035, ctx.currentTime, 1.2);
+    s.connect(f); f.connect(g); g.connect(gGer);
+    // langsames Schwanken (Gemurmel lebt, Regen prasselt)
+    var lfo = ctx.createOscillator(), lg = ctx.createGain();
+    lfo.frequency.value = art === "regen" ? 7 : 0.4; lg.gain.value = art === "regen" ? 0.012 : 0.02;
+    lfo.connect(lg); lg.connect(g.gain); lfo.start();
+    s.start();
+    atmo = { s: s, g: g, lfo: lfo };
+  };
+
+  /* Musik-Motiv: vier ruhige Töne (aufsteigend = Hoffnung, offen endend) */
+  function motiv(toene, laut) {
+    var t = ctx.currentTime;
+    toene.forEach(function (n, k) {
+      var f = 220 * Math.pow(2, n / 12);
+      [1, 2].forEach(function (ob, j) {
+        var o = ctx.createOscillator(); o.type = j ? "sine" : "triangle"; o.frequency.value = f * ob;
+        var g = ctx.createGain(), a = t + k * 0.42;
+        g.gain.setValueAtTime(0, a); g.gain.linearRampToValueAtTime(laut / (j ? 3 : 1), a + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, a + 2.2);
+        o.connect(g); g.connect(gMusik); g.connect(hall);
+        o.start(a); o.stop(a + 2.3);
+      });
+    });
+  }
+
+  var altSpiele = T.spiele;
+  T.spiele = function (name) {
+    if (!ctx || !T.an) return altSpiele(name);
+    if (name === "hammer") {
+      [0, 0.32].forEach(function (v) {
+        setTimeout(function () {
+          var o = sinus(170, 0.18, 0.45); o.frequency.exponentialRampToValueAtTime(90, ctx.currentTime + 0.12);
+          rauschStoss(0.05, "bandpass", 900, 1.2, 0.35);
+        }, v * 1000);
+      });
+    } else if (name === "gemurmel") {
+      rauschStoss(4, "bandpass", 520, 1.2, 0.12, null, [[0.8, 0.12], [2.5, 0.09], [4, 0]]);
+      rauschStoss(4, "bandpass", 900, 2, 0.06, null, [[1.0, 0.06], [3.0, 0.04], [4, 0]]);
+    } else if (name === "schritte") {
+      for (var i = 0; i < 4; i++) (function (k) { setTimeout(function () { rauschStoss(0.07, "lowpass", 420, 0.7, 0.22); sinus(70, 0.09, 0.1); }, k * 380); })(i);
+    } else if (name === "motiv") motiv([0, 5, 7, 12], 0.07);
+    else if (name === "motivOffen") motiv([0, 5, 7, 4], 0.06);
+    else if (name === "motivDunkel") motiv([0, 3, 7, 2], 0.06);
+    else altSpiele(name);
+  };
+  var altStarten = T.starten;
+  T.starten = function () { var neu = !ctx; altStarten(); if (neu && ctx && T._atmo) T.atmo(T._atmo); };
 
   return T;
 })();

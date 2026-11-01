@@ -17,7 +17,7 @@ WELT.szenen = (function () {
     var sf = M.kelvin(d.sonne.kelvin);
     return {
       name: name, daten: d,
-      sonneR: M.norm(d.sonne.richtung), sonneF: M.mal(sf, d.sonne.staerke), winkel: d.sonne.winkel,
+      sonneR: M.norm(d.sonne.richtung), sonneF: M.mal(sf, d.sonne.staerke), winkel: d.sonne.winkel, kegel: d.sonne.kegel || null,
       himmelOben: M.mal(M.farbe(d.himmel.oben), hs), himmelHorizont: M.mal(M.farbe(d.himmel.horizont), hs), himmelUnten: M.mal(M.farbe(d.himmel.unten), hs),
       himmelStaerke: 1, sonnenglanz: d.himmel.sonnenglanz || 1,
       umgebung: d.umgebung, nebelDichte: d.nebel.dichte, nebelFarbe: M.farbe(d.nebel.farbe), nebelStreuung: d.nebel.streuung,
@@ -26,52 +26,101 @@ WELT.szenen = (function () {
     };
   };
 
-  S.bauen = function (name, kamera) {
+  function figurenBauen(B, liste, sz) {
+    (liste || []).forEach(function (f) {
+      var def = DATA.figuren.personen[f.person];
+      if (def) sz.figuren[f.person] = WELT.figuren.bauen(B, def, f, sz);
+    });
+  }
+
+  S.bauen = function (name, kamera, extra) {
     var d = DATA.szenen[name];
     var sz = { name: name, daten: d, objekte: [], lichter: [], sonne: true, dampfQuellen: [], teilchen: [], figuren: {}, kamera: kamera, zeit: 0 };
-    sz.stimmung = S.stimmung(d.stimmung);
-    var B = new WELT.Bauer({ aoReichweite: name === "plenarsaal" ? 0.9 : 0.3 });
-    var stufe = MOTOR.qualitaet.stufe();
+    sz.stimmung = S.stimmung((extra && extra.stimmung) || d.stimmung);
+    var B = new WELT.Bauer({ aoReichweite: (name === "plenarsaal" || name === "plenum") ? 0.9 : (name === "gebaeude" ? 0.5 : 0.3) });
+    var W = WELT.bausteine;
     if (name === "buero") {
-      WELT.bausteine.bueroRaum(B, d, sz);
+      W.bueroRaum(B, d, sz);
       d.moebel.forEach(function (e) {
         if (e.baustein === "papierstapel") WELT.dokument.stapel(B, e, sz);
-        else if (WELT.bausteine[e.baustein]) WELT.bausteine[e.baustein](B, e, sz);
+        else if (W[e.baustein]) W[e.baustein](B, e, sz);
       });
       WELT.dokument.werkzeuge(B, sz.dokument);
-      d.figuren.forEach(function (f) { sz.figuren[f.person] = WELT.figuren.bauen(B, DATA.figuren.personen[f.person], f, sz); });
+      figurenBauen(B, (extra && extra.figuren) || d.figuren, sz);
       sz.schattenBox = { mitte: [0, 1.45, -0.1], groesse: [5.0, 3.1, 5.2] };
-      sz.spiegelEbene = 0.75;
-      sz.sondePos = [0.1, 1.3, 0.2];
-      sz.ao = { radius: 0.2, staerke: 1.25 };
-      sz.staubBox = { mitte: [-0.4, 1.45, -1.2], groesse: [3.6, 2.6, 2.4], teilchenGroesse: 0.0026, helligkeit: 0.7 };
-      sz.staubAnzahl = 700;
-    } else if (name === "plenarsaal") {
-      WELT.bausteine.plenarsaal(B, d, sz);
-      WELT.dokument.titelBlatt(B, sz);
+      sz.spiegelEbene = 0.75; sz.sondePos = [0.1, 1.3, 0.2]; sz.ao = { radius: 0.2, staerke: 1.25 };
+      sz.staubBox = { mitte: [-0.4, 1.45, -1.2], groesse: [3.6, 2.6, 2.4], teilchenGroesse: 0.0026, helligkeit: 0.7 }; sz.staubAnzahl = 700;
+    } else if (name === "plenarsaal" || name === "plenum") {
+      var dp = DATA.szenen.plenarsaal;
+      W.plenarsaal(B, dp, sz);
+      WELT.dokument.titelBlatt(B, sz, name === "plenum" ? "plenum" : "titel");
       sz.schattenBox = { mitte: [0, 6.0, 2.6], groesse: [32.5, 13, 26] };
-      sz.spiegelEbene = 0.0;
-      sz.sondePos = [0, 3.2, 3.0];
-      sz.ao = { radius: 0.6, staerke: 1.2 };
-      sz.staubBox = { mitte: [2.2, 5.5, -3.0], groesse: [13, 11, 10], teilchenGroesse: 0.011, helligkeit: 0.5 };
-      sz.staubAnzahl = 2600;
-      sz.titel = { zeit: 0, flacker: -1, fertig: false };
-      // nächste Sitzlampe zum Flackerpunkt
-      var fp = DATA.kameras.fahrten.titel.flackerPunkt, best = 0, bd = 1e9;
-      sz.sitze.forEach(function (s, i) { var dd = M.abstand(s.lampenPos, fp); if (dd < bd) { bd = dd; best = i; } });
-      sz.titel.flacker = best;
+      sz.spiegelEbene = 0.0; sz.sondePos = [0, 3.2, 3.0]; sz.ao = { radius: 0.6, staerke: 1.2 };
+      sz.staubBox = { mitte: [2.2, 5.5, -3.0], groesse: [13, 11, 10], teilchenGroesse: 0.011, helligkeit: 0.5 }; sz.staubAnzahl = 2600;
+      if (name === "plenarsaal") {
+        sz.titel = { zeit: 0, flacker: -1, fertig: false };
+        var fp = DATA.kameras.fahrten.titel.flackerPunkt, best = 0, bd = 1e9;
+        sz.sitze.forEach(function (st, i) { var dd = M.abstand(st.lampenPos, fp); if (dd < bd) { bd = dd; best = i; } });
+        sz.titel.flacker = best;
+      } else {
+        W.plenumBelebt(B, d, sz);
+        figurenBauen(B, d.figuren, sz);
+        WELT.dokument.stempelWerkzeug(B, sz);
+        sz.plenum = { lampen: sz.sitze.map(function () { return { licht: 0.25, ziel: 0.25, farbe: [1, 0.86, 0.66], form: 1, zielForm: 1, verz: 0 }; }), zeit: 0 };
+      }
+    } else if (name === "ausschusssaal") {
+      W.ausschusssaal(B, d, sz);
+      if (!(extra && extra.ohneGaeste)) figurenBauen(B, d.gaeste, sz);
+      (d.lichter || []).forEach(function (L) { B.licht({ pos: L.pos, kelvin: L.kelvin, staerke: L.staerke, reichweite: L.reichweite, richtung: M.norm(L.richtung), kegelAussen: L.kegelAussen, kegelInnen: L.kegelInnen }); });
+      sz.schattenBox = { mitte: [0, 2.3, 0.2], groesse: [16.6, 4.8, 13.2] };
+      sz.spiegelEbene = 0.76; sz.sondePos = [0, 1.8, 1.0]; sz.ao = { radius: 0.4, staerke: 1.2 };
+      sz.ausschuss = { lampen: sz.ausschussSitze.map(function () { return { licht: 0.1, ziel: 0.1, farbe: [1, 0.9, 0.75], verz: 0 }; }), zeit: 0 };
+    } else if (name === "gebaeude") {
+      W.gebaeude(B, d, sz);
+      // Schattenberichterstatter*innen in ihren Büros
+      d.raeume.forEach(function (r) {
+        if (r.art !== "buero" || r.fraktion === "BRUECKE") return;
+        var f = DATA.fraktionen.filter(function (x) { return x.id === r.fraktion; })[0];
+        var rp = sz.raumPos[r.id];
+        if (f && f.person && DATA.figuren.personen[f.person]) sz.figuren[f.person] = WELT.figuren.bauen(B, DATA.figuren.personen[f.person], { pos: [rp.x + 0.9, rp.y, -1.35], dreh: -15, haltung: "stehen" }, sz);
+      });
+      var rp0 = sz.raumPos.eigenes;
+      sz.figuren.sam = WELT.figuren.bauen(B, DATA.figuren.personen.sam, { pos: [rp0.x + 1.6, rp0.y, 1.6], dreh: -90, haltung: "stehen" }, sz);
+      // Besucher*innen gehen durch die Flure (weiße Modellfiguren)
+      var netz = MOTOR.netz(WELT.figuren.modellFigur(false));
+      sz.besucher = [];
+      for (var i = 0; i < (d.besucher || 4); i++) {
+        var o = B.objekt(null, WELT.material("modellharz", { farbe: "#f2f0ea" }), M.m4(), { netz: netz });
+        o.festeKugel = true; o.kugelWelt = { m: [0, 5, 0], r: 16 };
+        sz.besucher.push({ o: o, etage: i % 3, x: -10 + i * 4.3, z: 1.2 + (i % 2) * 1.4, richtung: i % 2 ? 1 : -1, tempo: 0.6 + (i % 3) * 0.15 });
+      }
+      sz.schattenBox = { mitte: [0, 5.2, 0], groesse: [26, 11, 10] };
+      sz.spiegelEbene = null; sz.sondePos = [0, 4.0, 2.0]; sz.ao = { radius: 0.5, staerke: 1.2 };  // kein Spiegel: spart einen ganzen Durchgang
+      sz.staubBox = { mitte: [0, 4.6, 0], groesse: [24, 9, 8], teilchenGroesse: 0.006, helligkeit: 0.5 }; sz.staubAnzahl = 1200;
+    } else if (name === "trilog") {
+      W.trilog(B, d, sz);
+      figurenBauen(B, d.figuren, sz);
+      sz.schattenBox = { mitte: [0, 1.4, 0], groesse: [10.4, 3.4, 7.8] };
+      sz.spiegelEbene = 0.765; sz.sondePos = [0, 1.5, 0.6]; sz.ao = { radius: 0.25, staerke: 1.3 };
+      sz.staubBox = { mitte: [0, 1.5, 0], groesse: [3.0, 1.6, 2.0], teilchenGroesse: 0.003, helligkeit: 0.6 }; sz.staubAnzahl = 400;
+      sz.trilogZeit = 0;
+    } else if (name === "epilog") {
+      W.epilog(B, d, sz, extra);
+      sz.schattenBox = { mitte: [0, 0.9, 0], groesse: [4, 2, 3] };
+      sz.spiegelEbene = 0.75; sz.sondePos = [0, 1.2, 0.8]; sz.ao = { radius: 0.15, staerke: 1.2 };
+      sz.staubBox = { mitte: [0, 1.2, 0], groesse: [3, 1.2, 2], teilchenGroesse: 0.003, helligkeit: 0.8 }; sz.staubAnzahl = 400;
     }
-    (d.lichter || []).forEach(function (L) { B.licht({ pos: L.pos, kelvin: L.kelvin, farbe: L.farbe, staerke: L.staerke, reichweite: L.reichweite }); });
+    (d.lichter && name !== "ausschusssaal" ? d.lichter : []).forEach(function (L) { B.licht({ pos: L.pos, kelvin: L.kelvin, farbe: L.farbe, staerke: L.staerke, reichweite: L.reichweite }); });
     sz.objekte = B.fertig();
     sz.lichter = B.lichter;
     sz.lichter.forEach(function (L) { L.aktuell = L.staerke; });
     sz.lut = MOTOR.texturen.farbtabelle(sz.stimmung.farbe);
     sz.schattenNeu = true;
-    // Teilchen
-    var anteil = stufe.teilchen;
+    var stufe = MOTOR.qualitaet.stufe();
     if (sz.staubBox && MOTOR.gl.webgl2) { sz.staub = MOTOR.teilchen.staub(sz.staubBox, sz.staubAnzahl, 7); sz.teilchen.push(sz.staub); }
-    sz.dampfQuellen.forEach(function (q, i) { var dm = MOTOR.teilchen.dampf(q, 36, 11 + i); sz.teilchen.push(dm); });
+    sz.dampfQuellen.forEach(function (q, i) { sz.teilchen.push(MOTOR.teilchen.dampf(q, 36, 11 + i)); });
     if (sz.glasmodell) S.halbrundStart(sz);
+    if (sz.fenster) WELT.bausteine.fensterZeichnen(sz.fenster, 0, 0);
     return sz;
   };
 
@@ -97,7 +146,7 @@ WELT.szenen = (function () {
 
   /* ---------- Glasmodell des Halbrunds ---------- */
   S.halbrundStart = function (sz) {
-    var erg = LOGIK.mehrheit.ausschuss(LOGIK.mehrheit.probeEntwurf(sz));
+    var erg = LOGIK.mehrheit.ausschuss(LOGIK.entwurf());
     S.halbrundSetzen(sz, erg, true);
   };
 
@@ -236,6 +285,69 @@ WELT.szenen = (function () {
     if (sz.glasmodell) halbrundAktualisieren(sz, dt);
     if (sz.dokument) WELT.dokument.aktualisieren(sz.dokument, dt, zeit, sz);
     if (sz.titel) titelAktualisieren(sz, dt);
+    if (sz.besucher && sz.name === "gebaeude") besucherAktualisieren(sz, dt);
+    if (sz.fenster) { sz.fensterZeit = (sz.fensterZeit || 0) + dt; if (sz.fensterZeit > 0.12) { sz.fensterZeit = 0; WELT.bausteine.fensterZeichnen(sz.fenster, zeit, sz.morgen || 0); } }
+    if (sz.ausschuss) lampenAktualisieren(sz.ausschuss, sz.ausschussLampen, sz.ausschussSitze.length, dt, false);
+    if (sz.plenum) lampenAktualisieren(sz.plenum, sz.sitzlampen, sz.sitze.length, dt, true);
+    if (sz.stempelAnim) WELT.dokument.stempelSchritt(sz, dt);
+  };
+
+  function besucherAktualisieren(sz, dt) {
+    var H = sz.daten.etagenHoehe;
+    sz.besucher.forEach(function (b) {
+      b.x += b.richtung * b.tempo * dt;
+      if (b.x > 10.8) b.richtung = -1; if (b.x < -10.8) b.richtung = 1;
+      var hub = Math.abs(Math.sin(b.x * 3.0)) * 0.02;
+      b.o.matrix = M.trs(M.m4(), [b.x, 0.25 + b.etage * H + hub, b.z], b.richtung > 0 ? 90 : -90, 1);
+      b.o.kugelWelt = { m: [b.x, 1 + b.etage * H, b.z], r: 1.2 };
+    });
+  }
+
+  /* Sitzlampen: Licht, Farbe und Form nach Stimme (Ja hoch, Nein flach, Enthaltung halb) */
+  function lampenAktualisieren(L, obj, n, dt, plenum) {
+    if (!obj) return;
+    L.zeit += dt;
+    var d = obj.netz.instanzDaten, aktiv = false;
+    for (var i = 0; i < n; i++) {
+      var l = L.lampen[i];
+      if (L.zeit > l.verz) {
+        var k = Math.min(1, dt * 7);
+        if (Math.abs(l.ziel - l.licht) > 0.002) aktiv = true;
+        l.licht += (l.ziel - l.licht) * k;
+        l.form = (l.form || 1) + ((l.zielForm || 1) - (l.form || 1)) * k;
+        l.f = l.f ? M.mix(l.f, l.farbe, k) : l.farbe.slice();
+      }
+      var q = i * 12;
+      d[q + 4] = l.f ? l.f[0] : l.farbe[0]; d[q + 5] = l.f ? l.f[1] : l.farbe[1]; d[q + 6] = l.f ? l.f[2] : l.farbe[2];
+      d[q + 7] = l.licht;
+      d[q + 9] = l.form || 1;
+    }
+    MOTOR.netzInstanzen(obj.netz, n);
+  }
+
+  /* Abstimmung zeigen: stimmen = Liste je Sitz ("ja"/"nein"/"enthaltung"), Reihenfolge: erst Ja, dann Nein, dann Enthaltung */
+  S.abstimmungZeigen = function (sz, stimmen) {
+    var L = sz.plenum || sz.ausschuss; if (!L) return;
+    L.zeit = 0;
+    var FARBE = { ja: M.farbe("#5fc48a"), nein: M.farbe("#e0503f"), enthaltung: M.farbe("#f0c24e") };
+    var reihen = { ja: [], nein: [], enthaltung: [] };
+    stimmen.forEach(function (s, i) { reihen[s].push(i); });
+    var t = 0.4;
+    ["ja", "nein", "enthaltung"].forEach(function (art) {
+      reihen[art].forEach(function (i, k) {
+        var l = L.lampen[i];
+        l.verz = t + k * (MOTOR.bewegungReduziert ? 0 : 0.035);
+        l.ziel = art === "ja" ? 5.5 : (art === "nein" ? 3.0 : 2.4);
+        l.zielForm = art === "ja" ? 1.6 : (art === "nein" ? 0.45 : 1.0);
+        l.farbe = FARBE[art];
+      });
+      t += reihen[art].length * (MOTOR.bewegungReduziert ? 0 : 0.035) + 0.6;
+    });
+    return t;
+  };
+  S.abstimmungZuruecksetzen = function (sz) {
+    var L = sz.plenum || sz.ausschuss; if (!L) return;
+    L.lampen.forEach(function (l) { l.ziel = sz.plenum ? 0.25 : 0.1; l.zielForm = 1; l.farbe = [1, 0.88, 0.7]; l.verz = 0; });
   };
 
   /* Szene freigeben (Puffer und Texturen) */

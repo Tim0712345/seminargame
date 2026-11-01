@@ -29,8 +29,69 @@ DATA.texte = {
     rueckfrageNeu: "Ein neues Spiel überschreibt den gespeicherten Stand. Wirklich neu beginnen?",
     ja: "Ja, neu beginnen",
     nein: "Abbrechen",
-    weiterTippen: "Tippen oder Taste drücken, um die Fahrt zu überspringen"
+    weiterTippen: "Tippen oder Taste drücken, um die Fahrt zu überspringen",
+    rueckfrageTitel: "Bist du sicher?",
+    altStand: "Der gespeicherte Spielstand passt nicht zu dieser Version. Es beginnt eine neue Legislatur."
   },
+
+  /* Vorname der Spielfigur (Kapitel 1) */
+  name: { titel: "Willkommen im Europäischen Parlament", frage: "Wie heißt du? (Vorname)", hinweis: "Höchstens sechzehn Zeichen, nur Buchstaben, Bindestrich und Leerzeichen.", vorschlag: "Sam", los: "Los geht's" },
+  zettelTitel: "Der Zettel von Inès",
+  abend: { titel: "Abendnotiz" },
+  kalender: { titel: "Kalender", mittwoch: "Mittwoch", donnerstag: "Donnerstag", termine: "Termine übrig" },
+
+  /* Fraktionsleiste und Wirkungsanzeige (Abschnitt 5.6) */
+  leisten: { fraktionen: "Ausschuss – erwartete Stimmen", vertrauen: "Vertrauen" },
+  wirkung: {
+    titel: "Wirkung",
+    untertitel: "Einschätzung im Spiel – vereinfacht, keine Prognose",
+    achsen: { wissen: "Wissen", durchsetzung: "Durchsetzung", aufwand: "Aufwand für Betriebe", recht: "Rechtssicherheit" },
+    grau: "Ursachen außerhalb dieses Gesetzes (Kitas, Elternzeit, Berufswahl)",
+    grauErklaerung: ["Diese Leiste bleibt grau, egal was ihr schreibt. Kita-Plätze, Elternzeit, Berufswahl – das regelt ein Transparenzgesetz nicht.", "Dafür bräuchte es andere Gesetze. Gut, dass ihr das hier macht. Aber es ist nur die Hälfte."]
+  },
+
+  /* Dossier (Abschnitt 5.4) */
+  dossier: { titel: "Dossier", leer: "Noch keine Karten. Alles, was du hörst, landet hier.", neu: "Neu im Dossier –", waehlen: "Welche Karte legst du vor?",
+    versprechen: "Deine Versprechen", arten: { stimme: "Stimme", beleg: "Beleg", einwand: "Einwand" }, von: { bibliothek: "Bibliothek des Parlaments" } },
+
+  /* Entwurf (Kapitel 3) */
+  editor: {
+    kommission: "Kommission", dafuerDagegen: "Dafür / Dagegen", dafuer: "Dafür:", dagegen: "Dagegen:", moegen: "Mögen das:", ablehnen: "Lehnen ab:",
+    gestrichen: "(gestrichen)", lesehilfe: "In einem Satz:", wunschTab: "Wunschzettel", wunschTitel: "Wunschzettel",
+    wunschErklaerung: "Zwei Vorschläge, die viele gut finden. Gehören sie in dieses Gesetz?",
+    wunschRein: "In den Entwurf aufnehmen", wunschRaus: "Wieder herausnehmen",
+    einreichen: "Entwurf einreichen", einreichenFrage: "Danach kannst du den Text nur noch über Verhandlungen und im Trilog ändern. Jetzt einreichen?",
+    probeHinweis: "Nur eine Probe: Wähle eine Begründung und schau auf das Glasmodell."
+  },
+
+  /* Kapitel 2 */
+  anhoerung: { titel: "Wen fragst du?", uebrig: "Fragen übrig" },
+
+  /* Kapitel 4 */
+  flure: {
+    cafeteria: "Cafeteria", bibliothek: "Bibliothek", bibliothekTitel: "Bibliothek des Parlaments",
+    cafeteriaSchon: "In der Cafeteria warst du heute schon.", bibliothekLeer: "Die Bibliothek hat dir schon alles gegeben.",
+    wasTun: "Wie antwortest du?", schonDrin: "steht schon so im Entwurf",
+    zugestaendnisFrage: "Diese Änderung in den Entwurf übernehmen:", zugestaendnisJa: "Ja, übernehmen"
+  },
+
+  /* Kapitel 6 */
+  trilog: {
+    titel: "Vier-Spalten-Tabelle", spalten: ["Artikel", "Kommission", "Parlament", "Rat", "Kompromiss"],
+    budget: "Spielraum des Rates:", halten: "Parlament halten", uebernehmen: "Rat übernehmen", mittelweg: "Mittelweg", bruecke: "Tiago fragen",
+    brueckeText: "Ein Kompromisstext der Kommission.", abschliessen: "Kompromiss abschließen", nochOffen: "Es sind noch Zeilen offen.",
+    praezisieren: "Formulierung präzisieren", nichtPraezisieren: "So lassen"
+  },
+
+  /* Kapitel 7 */
+  plenum: { einstieg: "Deine Rede – Einstieg", kern: "Deine Rede – Kern: Welcher Artikel?", schluss: "Deine Rede – Schluss",
+    wieWeiter: "Wie geht es weiter?", anlauf: "Neuer Anlauf (zurück in den Trilog)", zumEpilog: "Zum Epilog" },
+
+  /* Epilog und Vergleich */
+  epilogArten: { postkarte: "Postkarte", brief: "Brief", chat: "Nachricht", zeitung: "Zeitungsausschnitt" },
+  epilogWeiter: "Weiter", zumVergleich: "So ist es wirklich", zumTitel: "Zum Titel",
+  vergleichAngenommen: "Dein Gesetz wurde im Plenum angenommen.", vergleichAbgelehnt: "Dein Gesetz kam im Plenum nicht durch.",
+  quellenTitel: "Quellen (automatisch aus den Fakten des Spiels)", geprueft: "geprüft", ungeprueft: "noch nicht geprüft",
 
   /* Kapitelkarten (Kapitelnummer setzt der Code ein) */
   kapitelWort: "Kapitel",
@@ -47,8 +108,16 @@ DATA.texte = {
   /* Kurze Szenenbeschreibung für Bildschirmleser (das 3D-Bild selbst ist aria-hidden) */
   szenen: {
     titel: "Ein leerer Plenarsaal im Morgengrauen. Ein Sonnenstrahl fällt durch das Glasdach. Auf dem Rednerpult liegt ein Blatt mit dem Titel Mehrheit.",
-    buero: "Ein schmales Büro mit Fensterwand. Auf dem Schreibtisch liegen der Gesetzentwurf, ein gläsernes Modell des Ausschusses und ein Becher Kaffee. Mira sitzt an einem kleinen Tisch, Luca Bianchi steht im Raum."
+    ausschusssaal: "Ein Ausschusssaal mit hufeisenförmigem Eichentisch, Mikrofonen, Flaggen und Dolmetschkabinen. Fünf Gäste sitzen am Kopfende.",
+    gebaeude: "Ein aufgeschnittenes Modell des Parlamentsgebäudes mit drei Etagen: Cafeteria, Bibliothek und die Büros der Fraktionen. Nachmittagssonne fällt durch die Fenster.",
+    trilog: "Ein fensterloser Verhandlungsraum bei Nacht. Über dem langen Tisch hängt eine Pendelleuchte. Am Fenster läuft Regen herunter.",
+    plenum: "Der Plenarsaal in Straßburg, voll besetzt. Licht fällt durch das Glasdach. Am Rednerpult steht die Spielfigur.",
+    epilog: "Eine Collage auf einem Tisch: Postkarte, Brief, Telefon mit Nachrichten und ein Zeitungsausschnitt.",
+    buero: "Ein schmales Büro mit Fensterwand. Auf dem Schreibtisch liegen der Gesetzentwurf, ein gläsernes Modell des Ausschusses und ein Becher Kaffee. Mira sitzt an einem kleinen Tisch, die Spielfigur steht am Schreibtisch."
   },
+
+  /* Blatt am Rednerpult in Kapitel 7 */
+  plenumBlatt: "Schlussabstimmung im Plenum",
 
   /* Bildschirm im Büro: Miras Mail */
   mail: {
@@ -128,22 +197,23 @@ DATA.texte = {
     titel: "Dokumentmodus",
     hinweis: "Dein Browser zeigt keine 3D-Grafik. Das Spiel läuft trotzdem vollständig als Dokument. Für das 3D-Bild: In den Browser-Einstellungen „Hardwarebeschleunigung verwenden“ einschalten und den Browser neu starten.",
     halbrundTitel: "Der Ausschuss",
+    plenumTitel: "Das Plenum",
     gespraechTitel: "Gespräch"
   },
 
-  /* Phase-1-Prototyp: kleine Bedienleiste im Büro (wird in Phase 2 ersetzt) */
-  probe: {
-    titel: "Stil-Prototyp",
-    erklaerung: "Hier lassen sich Kamera, Licht, Gesetzespapier, Glasmodell, Stempel und ein Beispiel-Gespräch ausprobieren.",
-    totale: "Totale",
-    gespraech: "Gespräch",
-    dokument: "Gesetz",
-    halbrund: "Halbrund",
-    option: "Option ändern",
-    umblaettern: "Umblättern",
-    stempel: "Stempel",
-    licht: "Licht: Kapitel",
-    titel_zurueck: "Zum Titel"
+  /* Verstecktes Admin-Menü für Lehrkräfte und Jury (5× auf den Titel tippen oder „admin“ tippen) */
+  admin: {
+    titel: "Admin",
+    hinweis: "Zum Vorführen und Prüfen. Änderungen hier werden nicht gespeichert, außer du schaltest das Speichern ausdrücklich ein.",
+    speichern: "Spielstand speichern", aus: "aus", an: "an",
+    speichernFrage: "Der bisherige Spielstand wird dann überschrieben. Speichern einschalten?", speichernJa: "Einschalten",
+    kapitel: "Zu Kapitel springen",
+    entwurf: "Beispielentwurf", mutig: "mutig", mitte: "Mitte (Kommission)", schlank: "schlank",
+    karten: "Alle Karten ins Dossier", kartenOk: "Alle Karten liegen im Dossier.",
+    vergleich: "Direkt zu „So ist es wirklich“",
+    epilog: "Epilog", vergleichKurz: "Vergleich",
+    balance: "Mehrheiten der Beispielentwürfe (ohne Verhandlung)", ausschuss: "Ausschuss", plenum: "Plenum",
+    entwurfGesetzt: "Beispielentwurf gesetzt:"
   },
 
   /* Gesprächsleiste */
