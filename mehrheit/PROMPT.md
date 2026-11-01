@@ -14,7 +14,7 @@ Du bist erfahrene*r Spieleentwickler*in, Interaktionsdesigner*in, Informationsgr
 
 **Arbeitsweise (zwingend):**
 
-1. Du arbeitest in **vier Phasen** (Abschnitt 12). Nach jeder Phase lieferst du einen lauffähigen Stand ohne Konsolenfehler, eine kurze deutsche Zusammenfassung und wartest dann auf mein OK. Ohne OK beginnst du die nächste Phase nicht.
+1. Du arbeitest in **fünf Phasen** (Abschnitt 12). Nach jeder Phase lieferst du einen lauffähigen Stand ohne Konsolenfehler, eine kurze deutsche Zusammenfassung und wartest dann auf mein OK. Ohne OK beginnst du die nächste Phase nicht.
 2. Du baust nichts, was nicht in diesem Konzept steht, ohne vorher zu fragen. Wenn dir eine Idee kommt, schreibst du sie in die Zusammenfassung unter „Vorschläge“ – du baust sie nicht einfach.
 3. Du erfindest **niemals** echte Statistiken, Daten, Paragrafen oder Zitate echter Personen. Alle Regeln dazu stehen in Abschnitt 2.
 4. Alle Texte, alle Zahlen, alle Farben, alle Abstände und alle Spielwerte liegen in `mehrheit/data/`, gut kommentiert und so aufgebaut, dass ich sie ohne Programmierkenntnisse ändern kann.
@@ -144,7 +144,7 @@ Alle Figuren werden mit Name, Herkunftsland, Rolle, Haltung, stärkstem Argument
 
 **Tiago Esteves (Portugal), Vertreter der Kommission.** Höflich, präzise, verteidigt den Vorschlag der Kommission wie ein Elternteil sein Kind. Erklärt im Spiel, warum die Kommission handelt (Grundsatz seit Jahrzehnten im Vertrag, aber kaum durchgesetzt; viele Beschäftigte wissen nicht, ob sie fair bezahlt werden). Im Trilog vermittelt er. Stärkstes Argument: „Ein Recht, das niemand nachprüfen kann, ist ein Recht auf dem Papier.“ Humor über Fußnoten.
 
-**Dr. Hanna Lindqvist (Schweden), Juristischer Dienst des Parlaments.** Prüft jede Formulierung der Spielfigur auf Rechtssicherheit und Zuständigkeit. Sie ist die Stimme, die ehrlich sagt: „Das ist politisch verständlich, aber nicht Teil dieses Gesetzes“ oder „So formuliert landet das vor Gericht und verliert.“ Sie ist nie parteiisch. Ihre Hinweise erscheinen als Randbemerkungen im Text (Abschnitt 7.5). Humor über Kommas („Ein Komma an der falschen Stelle hat schon mehr Gesetze gekippt als jede Opposition.“).
+**Dr. Hanna Lindqvist (Schweden), Juristischer Dienst des Parlaments.** Prüft jede Formulierung der Spielfigur auf Rechtssicherheit und Zuständigkeit. Sie ist die Stimme, die ehrlich sagt: „Das ist politisch verständlich, aber nicht Teil dieses Gesetzes“ oder „So formuliert landet das vor Gericht und verliert.“ Sie ist nie parteiisch. Ihre Hinweise erscheinen als Haftnotizen auf dem Gesetzentwurf (Abschnitt 7.8). Humor über Kommas („Ein Komma an der falschen Stelle hat schon mehr Gesetze gekippt als jede Opposition.“).
 
 **Botschafterin Elena Marinescu (Rumänien), Vertreterin der Ratspräsidentschaft.** Verhandelt im Trilog für die Mitgliedstaaten. Ihr Mandat: Die Regierungen wollen das Ziel, aber weniger Aufwand für kleine Betriebe, längere Fristen und Spielraum für nationale Lösungen. Sie ist freundlich, unnachgiebig in Details und hat immer eine Liste. Stärkstes Argument: „Siebenundzwanzig Länder, siebenundzwanzig Arbeitsmärkte. Was in einem Land einfach ist, ist im anderen ein Umbau.“ (Die Zahl der Mitgliedstaaten als `{fakt:eu_mitgliedstaaten}` eintragen und prüfen.)
 
@@ -179,7 +179,7 @@ In der Anhörung (Abschnitt 4.2) treten fünf Personen auf. Jede vertritt eine a
 
 ### 3.6 Darstellung aller Figuren
 
-Alle Figuren werden **ohne Gesichtszüge** dargestellt (siehe Abschnitt 7.6): abstrakte Porträts aus wenigen Grundformen, erkennbar an Silhouette, Frisur, Kleidung, Accessoire und Fraktionsfarbe. Große Vielfalt bei Alter, Körperbau, Hautton, Haarform, Kopfbedeckung (Kopftuch, Kippa, Turban sind möglich), Brille, Hörgerät, Rollstuhl, Gehstock. Diversität ist selbstverständlich, sie wird nicht kommentiert.
+Alle Figuren sind hochwertige **3D-Gliederfiguren im Stil eines Architekturmodells** (siehe Abschnitt 7.7): realistische Proportionen, fein modellierte, ruhige Köpfe ohne gemalte Mimik, Gefühle über Körpersprache und Gesten, erkennbar an Silhouette, Frisur, Kleidung, Accessoire und einem Element in Fraktionsfarbe. Große Vielfalt bei Alter, Körperbau, Hautton, Haarform, Kopfbedeckung (Kopftuch, Kippa, Turban sind möglich), Brille, Hörgerät, Rollstuhl, Gehstock. Diversität ist selbstverständlich, sie wird nicht kommentiert.
 
 ---
 
@@ -226,7 +226,7 @@ Jede Antwort enthält eine **Kernaussage**, die als Karte ins Dossier fliegt. Ka
 
 ### 4.3 Kapitel 3 – Der Entwurf
 
-Das Herzstück. Die Spielfigur sitzt am **Entwurfstisch** (Abschnitt 7.3): links der Gesetzestext, rechts das Halbrund und die Wirkungsanzeige, unten das Dossier mit den gesammelten Karten.
+Das Herzstück. Die Spielfigur sitzt am **Schreibtisch im Büro** (Abschnitte 7.6, 7.8, 7.9): vorne der 3D-Gesetzentwurf mit scharfer Text-Ebene, daneben das leuchtende Glasmodell des Halbrunds, am Rand Fraktionsleiste und Wirkungsanzeige, unten das Dossier mit den gesammelten Karten.
 
 - Der Text hat **sieben Artikel** (Abschnitt 6). Jeder Artikel hat eine oder zwei **Stellschrauben** mit drei bis fünf Optionen. Eine Option ist immer „Streichen“ (der Artikel fällt weg), außer bei Artikel 1 (Zweck).
 - Wählt man eine Option, **tippt sich der neue Wortlaut** in den Text (Schreibmaschinen-Effekt, abschaltbar), der alte wird farbig durchgestrichen – wie im Änderungsmodus eines Textprogramms.
@@ -237,7 +237,7 @@ Das Herzstück. Die Spielfigur sitzt am **Entwurfstisch** (Abschnitt 7.3): links
 
 ### 4.4 Kapitel 4 – Die Flure
 
-Jetzt wird verhandelt. Die Ansicht wechselt zu einer **Gebäudekarte** (Abschnitt 7.4): ein stilisierter Grundriss des Parlamentsgebäudes mit Büros der Fraktionen, Cafeteria, Bibliothek, Ausschusssaal. Auf der Karte sind die Schattenberichterstatter*innen als Porträt-Marken zu sehen.
+Jetzt wird verhandelt. Die Ansicht wechselt zu einem **aufgeschnittenen 3D-Modell des Parlamentsgebäudes** (Abschnitt 7.6) mit Büros der Fraktionen, Cafeteria, Bibliothek, Ausschusssaal. Darin sind die Schattenberichterstatter*innen als Figuren zu sehen, die durch die Flure gehen oder in ihren Büros arbeiten.
 
 - Die Spielfigur hat **sechs Termine** (Spielwert `termine_flure`). Jedes Gespräch kostet einen Termin. Eine Uhr am Rand zeigt den Tag vergehen (Mittwoch 9 Uhr bis Donnerstag 13 Uhr). Wenn die Termine aufgebraucht sind, ruft Mira zur Ausschussabstimmung.
 - Die Bibliothek kostet ebenfalls einen Termin und gibt eine zusätzliche **Beleg-Karte** nach Wahl (aus drei angebotenen). So kann man fehlende Argumente nachholen.
@@ -255,7 +255,7 @@ Jetzt wird verhandelt. Die Ansicht wechselt zu einer **Gebäudekarte** (Abschnit
 ### 4.5 Kapitel 5 – Die Ausschussabstimmung
 
 - Der Ausschuss hat **sechzig Sitze** (Spielwert `sitze_ausschuss`), verteilt nach Spielwerten auf die Fraktionen (Abschnitt 5.3). Gebraucht wird eine einfache Mehrheit der abgegebenen Stimmen.
-- Die Abstimmung wird als kurze Animation gezeigt: Die Punkte im Halbrund kippen nacheinander auf Ja (gefüllt), Nein (leer mit Rand) oder Enthaltung (halb).
+- Die Abstimmung wird als kurze Szene im Ausschusssaal gezeigt: Hände gehen hoch, die Sitzlampen an den Plätzen leuchten nacheinander auf – Ja (hell, aufrecht), Nein (gedimmt) oder Enthaltung (halb) – und das Glasmodell zeigt das Ergebnis.
 - **Bei Mehrheit:** weiter zum Trilog, die Journalistin stellt eine Frage, man wählt eine von drei Antworten (sie erscheint im Epilog als Zitat).
 - **Ohne Mehrheit:** Kein Game Over. Mira sagt, was gefehlt hat (die zwei Fraktionen, die am knappsten dagegen waren, und warum). Die Spielfigur bekommt **zwei Extra-Termine** und kehrt in die Flure zurück. Scheitert es ein zweites Mal, greift die Kommission ein und schlägt einen Kompromisstext vor (aus den Daten), den man annehmen muss; das Spiel geht weiter, der Epilog vermerkt es.
 
@@ -359,7 +359,7 @@ Gespräche sind Knoten-Netze: Jeder Knoten hat `sprecher`, `text`, optional `bed
 
 **Nachfrage-Antworten:** Manche Antworten erscheinen nur, wenn eine bestimmte Karte im Dossier liegt; sie sind mit einem kleinen Büroklammer-Symbol markiert („Sie haben in der Anhörung gesagt, dass …“).
 
-**Darstellung:** Gespräche laufen in einer **Gesprächsleiste** am unteren Rand (Abschnitt 7.7), nicht in Sprechblasen. Text erscheint zügig (Schreibmaschine, abschaltbar), ein Klick zeigt den Rest sofort.
+**Darstellung:** Gespräche laufen in einer **Gesprächsleiste** am unteren Rand (Abschnitt 7.10), nicht in Sprechblasen; darüber sieht man die Figuren im 3D-Bild in Halbnah mit Gesten. Jeder Satz kann in den Daten eine Geste und eine Kameraeinstellung bekommen. Text erscheint zügig (Schreibmaschine, abschaltbar), ein Klick zeigt den Rest sofort.
 
 ### 5.6 Die Wirkungsanzeige (qualitativ!)
 
@@ -434,112 +434,180 @@ Im Trilog kommt eine achte Frage hinzu: Wie viel Zeit bekommen die Mitgliedstaat
 
 ---
 
-## 7. Grafikstil und Oberfläche: „Änderungsmodus“
+## 7. Grafikstil: „Kammerspiel im Modell“ – kinoreifes 3D
 
-### 7.1 Die Grundidee des Stils
+> **Anspruch:** „Mehrheit“ soll grafisch das Beeindruckendste sein, was die Jury je in einem Schülerprojekt gesehen hat. Echtes, aufwendiges 3D mit Kinolicht, weichen Schatten, Spiegelungen, Tiefenschärfe und Lichtstrahlen im Staub – und trotzdem ruhig, edel und gut lesbar. Gib dir hier richtig Mühe. Jede Szene wird so lange verfeinert, bis sie auf einem Standbild wie ein Filmstill aussieht. „Geht so“ ist bei der Grafik kein Zwischenstand, den du mir zeigst.
 
-Kein 3D, kein Bilderbuch, kein Riso-Zine, kein Pixel-Look. „Mehrheit“ sieht aus wie **ein lebendiges Arbeitsdokument**: ein Gesetzentwurf auf hellem Papier, in dem gerade gearbeitet wird. Farbige Einfügungen und Streichungen wie im Änderungsmodus eines Textprogramms, Randbemerkungen, Haftnotizen, Büroklammern, Stempel, Aktenzeichen. Dazu kommt eine zweite, klare Bildsprache: **Informationsgrafik** – das Halbrund aus Punkten, Leisten aus Kästchen, ein Grundriss. Die Kombination aus „Papier, auf dem gerungen wird“ und „präziser Datengrafik“ ist der Stil.
+### 7.1 Die Grundidee
 
-Leitsätze für jede Gestaltungsentscheidung:
-1. **Der Text ist der Held.** Das Wichtigste auf dem Bildschirm ist fast immer ein Satz im Gesetz. Alles andere ordnet sich unter.
-2. **Jede Farbe bedeutet etwas.** Farben werden nur für Fraktionen, Zustände (eingefügt, gestrichen, Hinweis) und Akzente benutzt – nie als Dekoration.
-3. **Ruhe statt Spektakel.** Bewegung ist knapp, sachlich und hat immer einen Grund (etwas ändert sich).
-4. **Nichts sieht aus wie ein bekanntes Spiel** und nichts sieht aus wie eine echte EU-Website: keine echten Logos, kein Sternenkranz als Logo, keine Nachbildung offizieller Layouts.
+Die ganze Welt von „Mehrheit“ sieht aus wie **ein extrem hochwertiges Architekturmodell, das wie ein Kinofilm ausgeleuchtet ist**. Stell dir vor, ein Architekturbüro hätte das Europäische Parlament im Maßstab 1:20 aus mattweißem Kunstharz, hellem Eichenholz, gebürstetem Aluminium, Milchglas und Stoff gebaut – mit winzigen, beweglichen Gliederfiguren – und ein Kamerateam filmt darin mit Makro-Objektiven, Nebelmaschine und echten Lampen.
 
-### 7.2 Farben, Schrift, Raster (alle Werte in `data/stil.js`)
+Daraus folgen drei Eigenschaften, die überall gelten:
 
-**Grundfarben:**
-- Papier: gebrochenes Weiß `#f6f3ec`, Papier dunkler (für Ränder, zweite Ebene): `#ebe6da`
-- Tinte (Text): fast Schwarz mit Blaustich `#1d2233`
-- Graphit (Nebentext, Linien): `#5b6070`
-- Akzent „Entwurf“ (Hervorhebungen der Spielfigur, Brücke): Petrol `#00707a`
-- Hinweis Juristischer Dienst: Bernstein `#c98a00` (Randbemerkung), Warnung Ziegelrot `#b83a2a`
-- Einfügung: Unterstreichung in der Farbe der Fraktion, die die Änderung wollte (bei eigenen Änderungen Petrol); Streichung: Durchstreichung in Graphit
+1. **Materialien statt Farben.** Die Welt ist überwiegend hell und zurückhaltend (Weiß, Holz, Glas, Metall). Farbe kommt fast nur über **Licht** (warmes Lampenlicht, kühles Morgenlicht, Abendsonne) und über die **Fraktionsfarben**, die als lackierte Akzente, leuchtende Sitzlampen, Schals, Mappen und Namensschilder auftauchen. Dadurch sieht man auf einen Blick, „wer wo steht“.
+2. **Licht ist die Hauptfigur der Grafik.** Jede Szene hat eine klare Lichtidee (7.3): Woher kommt das Licht, welche Farbe hat es, wo fallen die Schatten, wo glänzt etwas. Weiche Schatten, Kontaktschatten, Spiegelungen auf polierten Böden und Lichtstrahlen in der Luft machen den „Wow“-Effekt.
+3. **Makro-Gefühl.** Durch Tiefenschärfe mit weichem Bokeh, leichte Vignette und eine Kamera, die sich langsam wie auf einer Schiene bewegt, wirkt alles kostbar und greifbar – wie ein Modell, über das man sich beugt.
 
-**Fraktionsfarben** (jede mit Muster für Farbsehschwäche, Kontrast zu Papier mindestens 3:1 für Flächen):
-- BFW: Gelbocker `#d9a21b`, Muster: diagonale Streifen
-- EVM: Mittelblau `#3567b5`, Muster: Punkte
-- ASG: Rot `#c8382f`, Muster: waagerechte Streifen
-- GZL: Grün `#3b8a4a`, Muster: Wellen
-- BSN: Violettbraun `#7a4b6b`, Muster: Karo
-- FU: Grau `#8a8f99`, Muster: kleine Dreiecke
-- Brücke: Petrol `#00707a`, Muster: voll
+**Was es ausdrücklich nicht sein darf:** kein Comic-3D, kein Knuddel-Look mit großen Köpfen, kein Low-Poly, keine Voxel, kein Plastik-Spielzeug-Look, keine Lebenssimulation, nichts, was an ein bekanntes Spiel erinnert. Auch kein Fotorealismus mit echten Gesichtern (das wirkt in einem Lernspiel schnell gruselig). Die Modell-Ästhetik ist der Kompromiss: hochwertig und realistisch beleuchtet, aber erkennbar gebaut und stilisiert.
 
-**Schriften (nur Systemschriften, nichts laden):**
-- Gesetzestext: Serifenschrift – `Georgia, "Times New Roman", serif`. Groß (Grundgröße 19 px am Desktop), Zeilenabstand 1,55, Spaltenbreite höchstens 62 Zeichen.
-- Oberfläche: `system-ui, "Segoe UI", -apple-system, "Helvetica Neue", Arial, sans-serif`.
-- Aktenzeichen, Uhrzeiten, Zähler: `ui-monospace, Consolas, "Courier New", monospace`.
-- Kapiteltitel: Georgia fett, sehr groß (bis 72 px), mit engem Zeilenabstand, linksbündig.
+### 7.2 Materialien (alle Werte in `data/stil.js`)
 
-**Raster:** 12-Spalten-Raster mit 24 px Abstand am Desktop, 8-px-Grundraster für alle Abstände. Ecken: Papierelemente 2 px, Knöpfe 6 px, Haftnotizen 0 px (mit leicht gebogener Ecke als Schatten).
+Alle Materialien folgen einem physikalisch basierten Modell (Grundfarbe, Rauheit, Metallanteil, optional Durchscheinen, Klarlack, Struktur). Texturen werden **beim Start im Code erzeugt** (Rauschen, Maserung, Faser, Gewebe) – es werden keine Bilder geladen.
 
-**Papier-Details:** sehr feines Papierkorn (im Code erzeugtes Rauschen, Deckkraft unter 5 %), dünne blaue Linien wie Konzeptpapier nur am Rand des Dokuments, eine Lochung am linken Rand. Keine Kaffeeflecken, keine Knitterfalten – das würde in Kitsch kippen. Ausnahme: der Trilog, dort dürfen sich im Laufe der Nacht Becherringe auf der Tabelle sammeln (genau drei).
+| Material | Einsatz | Eigenschaften |
+|---|---|---|
+| **Modellharz** | Wände, Säulen, Treppen, Figuren-Grundkörper | sehr helles Warmweiß `#efece6`, Rauheit 0,55, minimales Durchscheinen an dünnen Kanten (Kanten leuchten im Gegenlicht leicht auf) |
+| **Eiche hell** | Tische, Pulte, Wandverkleidung, Rednerpult | im Code erzeugte Maserung (verzerrtes Ringmuster + Poren), Rauheit 0,45, dünner Klarlack mit schwacher Spiegelung |
+| **Aluminium gebürstet** | Stuhlbeine, Mikrofone, Geländer, Lampen | Metall 1, Rauheit 0,3, anisotrop gebürstet (Streifen in eine Richtung) |
+| **Milchglas** | Trennwände, Lampenschirme, Fassaden-Innenseite | durchscheinend, Licht dahinter wird weich gestreut |
+| **Klarglas** | Fenster, Dolmetschkabinen, Wassergläser, Glasmodell des Halbrunds | Spiegelung + Brechung genähert, Fresnel-Rand, feine Kratzer im Gegenlicht |
+| **Teppich** | Plenarsaal, Büros | tiefes Graublau `#2f3a52`, Rauheit 0,95, feines Gewebe-Rauschen, schluckt Licht |
+| **Polierter Steinboden** | Flure, Eingangshalle | hellgrau, Rauheit 0,15 – hier entstehen die schönen Spiegelungen |
+| **Papier** | Gesetzentwurf, Akten, Haftnotizen | Faserstruktur, leichtes Durchscheinen (Gegenlicht zeigt die Rückseite schwach), Rauheit 0,8 |
+| **Stoff** | Kleidung, Flaggen, Vorhänge | Gewebe-Struktur, Samt-Glanz am Rand (Schein bei flachem Winkel) |
+| **Lack in Fraktionsfarbe** | Mappen, Namensschilder, Sitzlampen, Schals | Grundfarbe aus 7.9, Rauheit 0,25, Klarlack |
+| **Kaffee, Wasser** | Becher, Gläser | dunkle, leicht spiegelnde Oberfläche, Dampf als weiche Teilchen |
 
-### 7.3 Der Entwurfstisch (Kapitel 3 – wichtigster Bildschirm)
+Jedes Material hat in `data/stil.js` einen kommentierten Eintrag, damit ich Farben und Glanz selbst ändern kann.
 
-Aufteilung am Desktop (Querformat):
-- **Links, 7 von 12 Spalten: das Dokument.** Kopf mit Aktenzeichen (erfunden, z. B. „Entwurf · Berichterstattung {name}“), Titel der Richtlinie, dann die Artikel als Abschnitte. Jeder Artikel hat am linken Rand eine kleine Nummer-Marke. Der aktive Artikel ist hervorgehoben (Petrol-Balken links); die anderen sind leicht ausgegraut, aber lesbar.
-- **Rechts oben, 5 Spalten: das Halbrund** (Ausschuss, 60 Punkte) mit Zähler „Ja / Nein / Enthaltung“ und einer gestrichelten Mehrheitslinie. Darunter die **Fraktionsleiste**: sechs Zeilen mit Porträt-Marke, Kurzname, Vertrauen (Punkte −3…+3) und Tendenz (Pfeil).
-- **Rechts unten: die Wirkungsanzeige** (vier Leisten plus die graue Leiste, Abschnitt 5.6).
-- **Unten über die ganze Breite: das Dossier** als Kartenreihe (seitlich verschiebbar), die Karten leicht überlappend wie auf einem Tisch.
-- **Oben rechts: Kalender** (Wochentag, Uhrzeit, Termine als Kästchen) und Knöpfe „Dossier“, „Pause“.
+### 7.3 Licht und Stimmung je Kapitel
 
-**Stellschrauben:** Klickt/tippt man einen Artikel an, öffnet sich unter dem Artikeltext eine **Optionsleiste**: die Optionen als nebeneinanderliegende Karteikarten-Reiter mit Kurznamen. Darunter, aufklappbar, die Dafür/Dagegen-Karte. Wählt man eine Option, passiert in dieser Reihenfolge (zusammen höchstens 1,2 Sekunden): alter Text wird durchgestrichen → neuer Text tippt sich ein → Punkte im Halbrund wandern (jeder Punkt einzeln, leicht versetzt, wie ein Schwarm) → Leisten der Wirkung füllen sich → ggf. erscheint eine Randbemerkung. Bei „Bewegung reduzieren“ passiert alles sofort ohne Animation.
+Jedes Kapitel hat eine eigene **Lichtstimmung**, die die Geschichte erzählt – von hoffnungsvollem Morgen über konzentrierten Tag bis zur durchwachten Nacht und dem feierlichen Finale. Alle Werte (Farbtemperatur, Helligkeit, Nebeldichte, Sonnenrichtung) stehen in `data/stil.js` unter `stimmungen`.
 
-**Vorschau beim Überfahren:** Nur mit der Maus (`pointerType === "mouse"`) zeigt das Halbrund beim Überfahren einer Option eine **gestrichelte Vorschau**, wohin die Punkte wandern würden. Auf Touch-Geräten gibt es stattdessen einen kleinen Knopf „Vorschau“ an jeder Option. Die Optionsknöpfe werden beim Überfahren **niemals** neu aufgebaut (siehe Touch-Regel, Abschnitt 10.3).
+| Kapitel | Licht | Wirkung |
+|---|---|---|
+| Titel | Morgendämmerung im leeren Plenarsaal, ein einzelner Sonnenstrahl durch das Glasdach, Staub tanzt darin | Stille vor dem Sturm |
+| 1 Der Stapel | Kühles Morgenlicht durch große Fenster, Schreibtischlampe noch an, Stadt draußen im Dunst | Anfang, Respekt vor der Aufgabe |
+| 2 Anhörung | Gleichmäßiges, helles Saallicht von oben (Flächenleuchten), warme Spots auf die Gäste | Sachlich, aufmerksam |
+| 3 Entwurf | Später Vormittag, Sonne fällt schräg über den Schreibtisch, harte Fensterkreuz-Schatten auf dem Papier, Lichtflecken | Konzentration |
+| 4 Flure | Nachmittag: lange Sonnenbahnen im Flur, Spiegelungen im Steinboden, Gegenlicht an den Figuren | Bewegung, Begegnungen |
+| 5 Ausschuss | Kunstlicht, leicht kühl; bei der Abstimmung leuchten die Sitzlampen in Fraktionsfarben auf | Spannung |
+| 6 Trilog | Nacht. Nur eine große, warme Pendelleuchte über dem Tisch, alles andere fast schwarz; Regen auf den Fenstern, Stadtlichter verschwommen im Hintergrund; gegen Ende wird es draußen langsam blau | Erschöpfung, Nähe, Durchbruch |
+| 7 Plenum | Festliches, helles Licht; Glasdach mit Tageslicht, das langsam von Wolken gedimmt wird, während abgestimmt wird; beim Ergebnis bricht die Sonne durch | Feierlich |
+| Epilog | Weicher, leicht überbelichteter „Erinnerungs“-Look, Kamerafahrt über die Collage auf einem Tisch | Nachdenklich |
 
-**Hochformat (iPad, Handy):** Dokument oben, darunter eine einklappbare Leiste mit Halbrund und Wirkung („Mehrheit: 34 von 60“ als Zusammenfassung, antippen zum Aufklappen), Dossier als Knopf unten.
+Lichtquellen pro Szene: eine Hauptlichtquelle mit weichem Schatten (Sonne oder große Leuchte), ein Himmels-/Umgebungslicht aus einer im Code erzeugten Umgebung (für Spiegelungen und weiches Füllicht), bis zu **acht kleinere Lichter** (Lampen, Sitzlampen) ohne eigene Schattenkarte, plus „leuchtende“ Materialien (Bildschirme, Lampenschirme, Sitzlampen), die über Bloom strahlen.
 
-### 7.4 Die Gebäudekarte (Kapitel 4)
+### 7.4 Kamera und Bildsprache
 
-Ein **Grundriss** im Stil eines Architekturplans: dünne Graphit-Linien auf Papier, Räume als Rechtecke mit Beschriftung in Versalien (Monospace), Flure als breitere helle Bänder, Treppen als Linienstapel. Die Büros der Fraktionen sind mit einer schmalen Fläche in Fraktionsfarbe und -muster markiert. Die Spielfigur ist eine Petrol-Marke mit Initiale. Die Schattenberichterstatter*innen stehen als Porträt-Marken in ihren Büros (oder in der Cafeteria, je nach Uhrzeit – feste Abfolge aus den Daten).
+Die Kamera ist ein **Kamerateam**, keine freie Spielkamera:
 
-Bedienung: Raum antippen → die Spielfigur-Marke gleitet entlang der Flure dorthin (einfache, vorgegebene Wege, keine Wegsuche nötig) → Gespräch beginnt. Nicht verfügbare Personen haben eine kleine Haftnotiz „Bin in einer Sitzung, zurück um …“. Der Grundriss ist erfunden und ähnelt keinem echten Gebäude im Detail; Raumnamen sind allgemein („Büro BFW“, „Cafeteria“, „Bibliothek“, „Saal 3“).
+- **Brennweiten:** Totale mit etwa 35 mm (Übersicht über einen Raum), Halbnah mit 50 mm (Gespräche), Nah mit 85 mm (Gesicht/Hände), Makro (Dokument, Stempel, Kaffeetasse). Die Werte stehen als Kameravorlagen in `data/kameras.js`.
+- **Tiefenschärfe:** Immer dort, wo die Aufmerksamkeit liegen soll. Bei Gesprächen liegt die Schärfe auf der sprechenden Person, der Hintergrund verschwimmt in weichem Bokeh mit runden Lichtpunkten. Bei Entscheidungen wandert die Schärfe („Schärfe ziehen“) vom Papier zum Glasmodell des Halbrunds, wenn sich die Mehrheit ändert.
+- **Bewegung:** Langsame Fahrten (Dolly), sanfte Schwenks, ganz leichtes „Atmen“ der Kamera (wenige Millimeter, im Modellmaßstab). Keine wackelnde Handkamera, keine schnellen Schnitte außer bei der Abstimmung.
+- **Schnitte:** Beim Gespräch klassisch Schuss/Gegenschuss über die Schulter. Beim Wechsel zwischen Orten eine kurze Fahrt oder eine weiche Abblende über Schwarz mit Papiergeräusch.
+- **Bildaufbau:** Drittelregel, viel Luft über den Köpfen in großen Räumen, Linien des Raums (Reihen im Plenum, Flurfluchten) führen den Blick.
+- **Kamerafahrten (Pflicht):** (a) Titel: Flug durch den leeren Plenarsaal; (b) Kapitel 2: Fahrt am Hufeisentisch entlang an allen Gästen vorbei; (c) Kapitel 4: Draufsicht auf das Schnittmodell, Zoom in einen Raum; (d) Kapitel 6: Kamera kreist langsam um den Tisch, während die Stunden vergehen; (e) Kapitel 7: Abstimmung als Kranfahrt über das Halbrund, Sitzlampe für Sitzlampe leuchtet auf.
+- Bei **„Bewegung reduzieren“** werden alle Fahrten durch ruhige Standbilder mit weicher Überblendung ersetzt; die Tiefenschärfe bleibt.
 
-### 7.5 Randbemerkungen und Stempel
+### 7.5 Bildeffekte (Nachbearbeitung) und Grafikstufen
 
-- **Randbemerkungen** des Juristischen Dienstes erscheinen rechts neben dem Dokument (am Desktop) bzw. als aufklappbare Fußnote (Hochformat): ein schmaler Bernstein-Strich, Initialen „HL“ (Hanna Lindqvist), ein bis zwei Sätze. Rote Bemerkungen (Warnung) haben ein kleines Paragrafenzeichen und einen Text, der erklärt, was das Problem ist und welche Option es löst.
-- **Stempel** (im Code als SVG gezeichnet, leicht schräg, mit unregelmäßiger Deckkraft wie echte Stempelfarbe): „EINGEREICHT“, „ANGENOMMEN“, „ABGELEHNT“, „KOMPROMISS“, „VERTRAULICH“ (über dem Trilog-Dokument). Ein Stempel kommt mit einem kurzen „Plopp“-Ton und einer Bewegung von 120 ms.
-- **Haftnotizen**: quadratisch, Gelb `#f2d25a` (Mira) oder Petrol hell (eigene Versprechen), Handschrift wird NICHT imitiert (keine Schriftart dafür vorhanden) – stattdessen Systemschrift kursiv.
+Die Bildqualität entsteht zu einem großen Teil in der Nachbearbeitung. Alle Effekte selbst geschrieben (WebGL 2, Abschnitt 10):
 
-### 7.6 Porträts ohne Gesichter
+| Effekt | Ultra | Hoch | Mittel | Niedrig |
+|---|---|---|---|---|
+| Rendern in HDR (Gleitkomma-Puffer), filmische Tonwertkurve | ✓ | ✓ | ✓ | ✓ (vereinfacht) |
+| Weiche Schatten der Hauptlichtquelle (Schattenkarte, gefiltert, weiche Kanten je nach Abstand) | 4096 px, sehr weich | 2048 px | 1024 px | 1024 px, hart |
+| Umgebungsverdeckung (Kontaktschatten in Ecken und unter Gegenständen, im Bildraum berechnet) | hohe Qualität | normal | halbe Auflösung | nur vorberechnet in den Ecken der Modelle |
+| Spiegelungen auf Böden und Tischen (Spiegel-Ebene bzw. Bildraum-Spiegelung) | ✓ | ✓ | nur Boden, halbe Auflösung | Umgebungsspiegelung |
+| Lichtstrahlen im Staub (volumetrisches Licht) | ✓ | ✓ | vereinfacht | – |
+| Bloom (Leuchten heller Stellen) | ✓ | ✓ | ✓ | schwach |
+| Tiefenschärfe mit Bokeh | ✓ (runde Bokeh-Formen) | ✓ | einfache Unschärfe | – |
+| Kantenglättung (zeitlich oder FXAA-ähnlich) | zeitlich | zeitlich | FXAA-ähnlich | FXAA-ähnlich |
+| Farbkorrektur je Stimmung (Farbtabelle im Code erzeugt) | ✓ | ✓ | ✓ | ✓ |
+| Filmkorn, leichte Vignette, minimale chromatische Aberration am Rand | ✓ | ✓ | ✓ | nur Vignette |
+| Teilchen (Staub, Dampf, Regen auf Glas) | viele | normal | wenige | nur Dampf |
+| Renderskala | 1,0 (bis 1,5 auf großen Bildschirmen) | 1,0 | 0,85 | 0,7 |
 
-Alle Figuren werden als **abstrakte Porträt-Büsten aus Grundformen** gezeichnet (SVG im Code, Daten in `data/figuren.js`):
-- Kopf als Kreis oder Oval in einem von acht Hauttönen (eigene, natürliche Palette, keine Fantasiefarben),
-- Haare als eine bis drei Formen (Kurzhaar, Locken, Zopf, Dutt, Glatze, Afro, Kopftuch, Turban, Kippa, Mütze),
-- Schultern als Halbkreis in Kleidungsfarbe mit Kragen-Form (Hemd, Rollkragen, Blazer, Pullover, Kittel),
-- ein Detail: Brille, Ohrring, Hörgerät, Bart, Schal, Namensschild, Rollstuhllehne angedeutet,
-- **keine Augen, kein Mund, keine Nase.** Gefühle werden über Haltung gezeigt: Kopf leicht geneigt (nachdenklich), Schultern hochgezogen (angespannt), kleines Nicken (zustimmend) – als sanfte Transformation von 2–4 Grad bzw. Pixeln.
-- Um das Porträt ein dünner Ring in Fraktionsfarbe (bei Fraktionslosen grau, bei Kommission/Rat/Dienst Graphit).
-- Größen: Marke (32 px), Leiste (48 px), Gespräch (120 px), Epilog (180 px).
+**Automatische Wahl:** Beim ersten Start misst das Spiel einige Sekunden lang die Bildrate im Titelbildschirm und wählt die passende Stufe. Fällt die Bildrate im Spiel länger unter 28 FPS, sinkt die Stufe einen Schritt (mit kleinem Hinweis). In den Einstellungen kann man die Stufe von Hand wählen.
 
-Dieser Stil ist bewusst sachlich – wie Piktogramme auf einer Konferenz-Namensliste – und hebt sich klar von Figuren in Spielen ab.
+**Ziel:** „Ultra“ auf einem guten Laptop mit eigener Grafikkarte sieht aus wie ein Filmstill. „Niedrig“ läuft mit mindestens 30 FPS auf einem Schul-Laptop mit Onboard-Grafik und einem älteren iPad – und sieht trotzdem noch gepflegt aus (gute Materialien und vorberechnete Schatten tragen dort das Bild).
 
-### 7.7 Gespräche: die Gesprächsleiste
+### 7.6 Die Schauplätze im Detail
 
-Gespräche erscheinen in einer **Leiste am unteren Bildschirmrand**, die wie ein Ausschnitt aus einem Sitzungsprotokoll aussieht: links das Porträt (120 px), daneben Name in Versalien (Monospace, klein), Rolle und Fraktion, darunter der Text in der Oberflächenschrift (Grundgröße 18 px). Antworten der Spielfigur sind **Protokoll-Zeilen** mit vorangestelltem Namen der Spielfigur und einem kleinen Pfeil – zwei bis drei untereinander, jede ein großer Knopf (mindestens 48 px hoch). Kartenantworten (aus dem Dossier) erscheinen als kleine Karten, die man in ein Feld „Vorlegen“ zieht oder antippt.
+Alle Räume sind **erfunden** und an keinen echten Raum im Detail angelehnt; die Form (Halbrund, Ausschusssaal, Glasdach) ist allgemein parlamentarisch. Alles wird im Code aus Bausteinen erzeugt (Abschnitt 10.4).
 
-Das Protokoll scrollt nach oben weg, die letzten drei Wortwechsel bleiben lesbar. Ein Knopf „Protokoll“ öffnet den ganzen Verlauf des Gesprächs.
+**Das Büro (Kapitel 1 und 3).** Ein schmaler Raum mit einer Fensterwand aus Glas und Aluminiumprofilen, dahinter eine dunstige Stadtsilhouette aus einfachen, hellen Blöcken (keine echten Wahrzeichen). Schreibtisch aus heller Eiche, darauf: der Gesetzentwurf (7.8), ein Stapel Akten mit farbigen Reitern, eine Schreibtischlampe mit Milchglasschirm, ein Becher mit Dampf, ein Bildschirm (leuchtend, zeigt Miras Mail), eine Pflanze mit großen Blättern, das **Glasmodell des Halbrunds** (7.9). An der Wand eine Pinnwand mit Inès’ Zettel. Regal mit Ordnern, deren Rücken Fraktionsfarben haben. Mira sitzt an einem kleinen Tisch daneben.
 
-### 7.8 Szenen-Bilder
+**Der Ausschusssaal (Kapitel 2 und 5).** Hufeisenförmiger Tisch aus Eiche mit Mikrofonen (gebürstetes Aluminium, rote Leuchtringe am Mikrofon, wenn jemand spricht), Namensschilder in Fraktionsfarben, Wasserflaschen und Gläser, die das Licht brechen. An der Rückwand hinter Glas die Dolmetschkabinen mit warmem Licht und Silhouetten. Flaggen an Ständern: die Europaflagge und Flaggen der Mitgliedstaaten als Stoff (sanft bewegt), aber **keine Logos von Institutionen**. Decke mit großen, leuchtenden Milchglasfeldern.
 
-Jedes Kapitel hat ein ruhiges **Hintergrundbild aus Linien und Flächen** (im Code gezeichnet, SVG oder Canvas 2D), das hinter dem Dokument liegt und an den Rändern sichtbar ist:
-- Büro: Fensterband mit angedeuteter Stadt (Brüssel, nur Silhouetten von generischen Gebäuden), Regal, Pflanze,
-- Ausschusssaal: Hufeisen-Tisch von oben, Mikrofone als kleine Kreise, Dolmetschkabinen als Fensterreihe,
-- Flure: der Grundriss (7.4),
-- Trilog: Tisch von oben mit der Vier-Spalten-Tabelle, Becher, Lampe; im Laufe der Nacht wird der Rand dunkler (Papier → Dämmerblau `#2b3350`),
-- Plenum: das große Halbrund von vorn, Reihen als Bögen, Präsidiumspult als Rechteck.
-Alle Hintergründe in gedeckten Tönen (Papier, Graphit, eine Akzentfarbe), damit der Text im Vordergrund immer lesbar bleibt (Kontrast Text/Hintergrund mindestens 4,5:1).
+**Die Flure (Kapitel 4) – das Schnittmodell.** Statt eines flachen Grundrisses ist das Gebäude ein **aufgeschnittenes Architekturmodell** auf einer dunklen Tischplatte: drei Etagen, die vordere Wand und das Dach fehlen, man sieht wie in ein Puppenhaus aus edlem Material hinein. Flure mit Steinboden, Büros der Fraktionen (an Möbeln und Mappen in Fraktionsfarbe erkennbar), eine Cafeteria mit Hochtischen und Kaffeemaschine (Dampf), eine Bibliothek mit Regalwänden, Treppen, Aufzug mit leuchtender Anzeige. Die Kamera schaut schräg von oben (Draufsicht mit etwa 40° Neigung, langsam drehbar um die Mittelachse mit zwei Fingern oder Q/E). Die Spielfigur und die Schattenberichterstatter*innen sind als Gliederfiguren sichtbar und gehen sichtbar durch die Flure (vorgegebene Wege). Beim Antippen eines Raums fährt die Kamera in den Raum hinein, bis die Wand „verschwindet“ und das Gespräch in Halbnah beginnt. Lichtstimmung: Nachmittagssonne, die durch die Fenster der Rückseite in langen Bahnen über die Böden fällt.
 
-### 7.9 Bewegung und Ton
+**Der Trilog-Raum (Kapitel 6).** Fensterloser Raum mit einem langen, dunklen Tisch, darauf die Vier-Spalten-Tabelle als großes Papier, Laptops mit leuchtenden Bildschirmen, Kaffeebecher, die sich im Laufe der Nacht vermehren, Wassergläser mit Kondenstropfen. Einzige Lichtquelle: eine große Pendelleuchte (warm) – die Gesichter der Figuren liegen halb im Schatten. An einer Seite doch ein Fenster mit Regentropfen, die herunterlaufen (Brechung der Stadtlichter dahinter). Gegen Morgen färbt sich das Fenster blau.
 
-**Bewegung:** Seitenwechsel als horizontales Blättern (300 ms), Kapitelkarten blenden ein (400 ms), Punkte im Halbrund wandern mit leichter Verzögerung pro Punkt, Stempel mit kurzem Aufsetzen. Keine wackelnden Kameras, keine Partikel, kein Konfetti – auch nicht bei Erfolg. Bei Erfolg: Stempel, ein kurzer Akkord, Applaus als leises Rauschen im Plenum.
+**Der Plenarsaal (Kapitel 7 und Titel).** Ein großes Halbrund mit ansteigenden Sitzreihen aus heller Eiche, Teppich in Graublau, **einhundertzwanzig Plätze** mit Pult, Stuhl, Mikrofon und einer kleinen **Sitzlampe**, die bei der Abstimmung in der Farbe der Stimme leuchtet (Ja, Nein, Enthaltung – zusätzlich durch Form unterscheidbar, 9). Oben ein Glasdach mit Stahlträgern, durch das Tageslicht in Strahlen fällt. Vorne das Präsidium und das Rednerpult, dahinter eine große, leere helle Wand. Auf den Rängen Besucher*innen als kleinere Gliederfiguren. Bei der Abstimmung: Gemurmel, Lichter springen in Wellen an, Kranfahrt.
 
-**Ton (Web Audio API, im Code erzeugt, nichts laden):** Tipp-Geräusch (sehr leise, kurze Rauschimpulse), Papierrascheln beim Blättern (gefiltertes Rauschen), Stempel-Plopp (tiefer, kurzer Ton), Hammer der Sitzungsleitung (zwei Schläge), Gemurmel im Plenum (gefiltertes Rauschen mit langsamer Lautstärkeänderung), Abstimmungs-Klick pro Punkt (sehr leise), Akkord bei Annahme, gedämpfter Ton bei Ablehnung. Keine Sprechlaute für Figuren. Alle Töne in den Einstellungen abschaltbar, Lautstärke regelbar, Standard: leise. Ton startet erst nach der ersten Nutzereingabe (Browser-Regel).
+**Titelbildschirm.** Siehe 7.12.
 
-### 7.10 Titelbildschirm
+### 7.7 Figuren in 3D: Gliederfiguren aus dem Modellbau
 
-Ein leeres Blatt Papier. Langsam erscheint, Wort für Wort getippt: „Richtlinie über …“ – dann wird „über“ durchgestrichen, „gegen die Lohnlücke“ eingefügt, und darüber legt sich groß der Titel **MEHRHEIT** in Georgia fett. Darunter ein kleines Halbrund, dessen Punkte sich ruhig hin und her bewegen. Menü links unten als Liste schlichter Textknöpfe. Unten der Hinweis: „Alle Personen und Fraktionen sind erfunden. Die Richtlinie und die Zahlen sind echt – Quellen am Ende.“
+Alle Figuren sind **edle Gliederfiguren**, wie man sie aus Architekturmodellen und Zeichenmodellen kennt – aber mit Persönlichkeit:
+
+- **Bauweise:** Der Körper besteht aus einzelnen, sauber modellierten Teilen (Kopf, Hals, Brustkorb, Becken, Ober-/Unterarm, Hand, Ober-/Unterschenkel, Fuß), die an Gelenken verbunden sind. Die Gelenke sind dezent sichtbar (kleine Fugen) – das ist gewollt und Teil des Stils. Dadurch braucht es keine aufwendige Haut-Verformung: Jedes Teil ist starr und wird nur gedreht. Teile werden im Code aus abgerundeten Grundkörpern (Kapseln, verformte Kugeln, gedrehte Profile) erzeugt.
+- **Proportionen:** realistisch schlank, etwa siebeneinhalb Kopflängen; keine großen Köpfe, keine Kulleraugen.
+- **Material:** Körper in **Modellharz**, eingefärbt in einem von acht natürlichen Hauttönen (matt, mit ganz leichtem Durchscheinen an Ohren und Fingern im Gegenlicht). Kleidung als **separate Hülle** aus Stoff-Material (Jackett, Blazer, Pullover, Hemd, Bluse, Kleid, Hose, Rock, Kittel), mit eigenen Faltenkanten aus der Geometrie.
+- **Gesichter:** Ein fein modellierter, ruhiger Kopf: Nasenrücken, Augenbrauenbogen, Wangenknochen und Kinn als sanfte Formen; **Augen als zwei kleine, matte, dunkle Einlagen ohne Glanzpunkt**, kein gemalter Mund (der Kiefer bewegt sich beim Sprechen minimal). Gefühle zeigen sich über **Körpersprache**, nicht über Mimik.
+- **Haare und Kopfbedeckungen** als eigene, plastisch geformte Teile (glatt gekämmt, Locken als Gruppe kleiner Kugeln, Zopf, Dutt, Kurzhaar mit Struktur, Glatze, Bart, Kopftuch aus Stoff mit Faltenwurf, Turban, Kippa, Mütze), Brillen aus feinem Metall mit Glas, Ohrringe, Hörgeräte, Uhren.
+- **Vielfalt:** Alter (20 bis 70), Körperbau (schmal bis kräftig), Größe, Hautton, Rollstuhl (aus Aluminium und Stoff, Räder drehen sich), Gehstock, Prothese. Alle Werte in `data/figuren.js` als Baukasten.
+- **Fraktions-Erkennung:** Jede Figur trägt ein Element in der Fraktionsfarbe (Schal, Mappe, Krawatte, Brillenrahmen, Anstecker) – nie das ganze Outfit.
+- **Animation (prozedural, im Code):** Atmen (Brustkorb hebt sich), Gewicht verlagern, Kopf zur sprechenden Person drehen, Blick nachführen, Gesten aus einer kleinen Bibliothek: Hand heben, auf das Papier zeigen, Arme verschränken, nicken, Kopf neigen, Brille abnehmen, Kaffeebecher anheben, sich zurücklehnen, aufstehen, gehen (Gehzyklus mit Fuß-Bodenkontakt per einfacher Bein-Lösung, damit nichts rutscht). Jede Geste dauert 0,6–1,5 s und wird weich überblendet. Gesten werden in den Gesprächsdaten pro Satz angegeben (z. B. `geste: "arme_verschraenken"`).
+- **Detailstufen:** Nah (alle Teile, Kleidung mit Falten, Finger einzeln), mittel (Finger als Fäustlinge), fern (vereinfachter Körper, für Besucher*innen und Plenum). Die Stufen wechseln weich nach Entfernung.
+
+### 7.8 Das Gesetz: ein echtes 3D-Dokument – und gut lesbar
+
+Der Gesetzentwurf ist ein **3D-Papierstapel** auf dem Schreibtisch: einzelne Blätter mit leichter Wölbung, Büroklammer, Eselsohr, farbigen Klebe-Reitern an den Artikeln. Die Seiten zeigen den echten aktuellen Text, gerendert als hochauflösende Textur (im Code mit Canvas 2D gesetzt, in Georgia/Times, mit Änderungsmarkierungen in Fraktionsfarben). Beim Umblättern biegt sich das Blatt physikalisch glaubwürdig (Blatt als fein unterteiltes Netz, das sich um eine wandernde Achse krümmt) – mit Papiergeräusch.
+
+**Lesbarkeit geht vor:** Sobald man einen Artikel bearbeitet, fährt die Kamera in eine Makro-Ansicht auf die Seite, und **über die 3D-Seite legt sich deckungsgleich eine scharfe HTML-Ebene** mit demselben Text (für perfekte Schrift, Bildschirmleser, Kopieren und Schriftgrößen-Einstellung). In der Totalen sieht man nur die 3D-Textur. Der Übergang ist eine weiche Überblendung, man soll ihn nicht bemerken.
+
+**Änderungsmodus in 3D:** Wählt man eine Option, zieht eine **Füllfeder-Spitze** (kleines 3D-Objekt) einen Strich durch den alten Text, und der neue Text erscheint, als würde Tinte ins Papier sinken (Textur-Animation von dunkel-nass zu trocken-matt, kurzes Glänzen). Randbemerkungen des Juristischen Dienstes erscheinen als **Haftnotiz**, die auf das Blatt fällt und sich leicht wölbt; Warnungen tragen einen kleinen Bernstein-Stempel mit Paragrafenzeichen.
+
+**Stempel** sind echte 3D-Stempel (Holzgriff, Gummiplatte), die von oben ins Bild kommen, mit Schwung aufsetzen (Kamera wackelt einmal minimal), und einen Abdruck mit unregelmäßiger Stempelfarbe hinterlassen: „EINGEREICHT“, „ANGENOMMEN“, „ABGELEHNT“, „KOMPROMISS“, „VERTRAULICH“.
+
+### 7.9 Das Halbrund: ein Glasmodell mit Licht
+
+Auf dem Schreibtisch steht ein **Modell des Ausschusses als gläsernes Halbrund** (etwa unterarmlang im Modellmaßstab) mit **sechzig kleinen Glaswürfeln** als Sitze. Jeder Würfel leuchtet von innen in der Farbe der Fraktion, und seine **Form** zeigt die Stimme: aufrecht leuchtend = Ja, gedimmt und gekippt = Nein, halb leuchtend = Enthaltung (für Farbsehschwäche zusätzlich Muster auf dem Sockel, 9). Ändert sich die Mehrheit, wandern die Lichter mit kurzer Verzögerung von Würfel zu Würfel, und das ganze Modell wirft farbiges, gebrochenes Licht auf Papier und Tisch (Kaustik genähert über eine Lichttextur). Eine feine Linie aus Licht markiert die Mehrheit.
+
+Darunter steht die **Fraktionsleiste** als HTML-Oberfläche (scharf, lesbar), die Wirkungsanzeige ebenfalls als HTML (Abschnitt 5.6), beide auf halbtransparentem, mattiertem „Glas“ mit weichem Schatten.
+
+**Fraktionsfarben** (lackierte Akzente und Licht; für Licht etwas gesättigter):
+- BFW: Bernstein `#e0a526`
+- EVM: Kobaltblau `#3a6fd1`
+- ASG: Signalrot `#d6453a`
+- GZL: Smaragd `#2f9a5a`
+- BSN: Pflaume `#8a4f7d`
+- FU: Silbergrau `#9aa0aa`
+- Brücke (Spielfigur): Petrol `#00a2ad`
+
+### 7.10 Oberfläche über dem 3D-Bild
+
+Die eigentliche Bedienung bleibt **HTML über dem 3D-Bild** – gestochen scharf, barrierefrei, unabhängig von der Grafikstufe:
+
+- Stil der Oberfläche: **mattiertes Glas** (halbtransparente Fläche mit Unschärfe des Hintergrunds per `backdrop-filter`, wo verfügbar, sonst helle deckende Fläche), dünne helle Ränder, weiche Schatten, abgerundete Ecken (8 px). Schrift für die Oberfläche: `system-ui, "Segoe UI", -apple-system, "Helvetica Neue", Arial, sans-serif`; Gesetzestext und Kapiteltitel: `Georgia, "Times New Roman", serif`; Zahlen/Uhrzeiten: `ui-monospace, Consolas, monospace`.
+- **Gesprächsleiste** unten (Abschnitt 5.5): Name und Rolle der sprechenden Figur, Text, zwei bis drei Antwortknöpfe; die Figur selbst sieht man im 3D-Bild darüber in Halbnah. Kein Porträt-Bild nötig – das 3D-Bild ist das Porträt.
+- **Kapitelkarten** als große Georgia-Titel, die über dem langsam unscharf werdenden 3D-Bild einblenden.
+- **Kalender, Dossier, Pause** als kleine Glasknöpfe oben rechts.
+- **Dossier**: Die Karten sind im 3D-Bild als echte Karteikarten auf dem Tisch zu sehen; in der Bedienung öffnet sich eine HTML-Kartenreihe (wischen, antippen, vorlegen).
+- Die Oberfläche verdeckt nie mehr als ein Drittel des Bildes; im Hochformat wird sie unten gestapelt und das 3D-Bild rückt nach oben (Kamera passt den Bildausschnitt an).
+
+### 7.11 Bewegung und Ton
+
+**Bewegung:** Alles bewegt sich mit Gewicht und Dämpfung (weiche Beschleunigung, kein lineares Gleiten). Figuren reagieren auf Ereignisse: Wenn eine Fraktion zustimmt, nickt ihre Schattenberichterstatterin im Hintergrund; wenn sie verärgert ist, lehnt sie sich zurück. Stempel und Abstimmung sind die einzigen „lauten“ Momente. Kein Konfetti, keine Explosionen.
+
+**Ton (Web Audio API, alles im Code erzeugt):** Raumhall je Ort (kleiner Raum, Saal, großes Plenum – Hall per im Code erzeugter Impulsantwort), Papierrascheln, Füllfeder auf Papier, Stempel, Holzhammer der Sitzungsleitung, Schritte auf Stein und Teppich (räumlich, je nach Position), Kaffeemaschine, Regen am Fenster, Gemurmel im Plenum (gefiltertes Rauschen in mehreren Schichten), leises Summen der Sitzlampen, ein ruhiges, im Code erzeugtes Klavier-/Synthesizer-Motiv für Titel und Epilog (wenige Töne, kein Ohrwurm). Keine Sprachausgabe. Alles abschaltbar, getrennte Regler für Musik und Geräusche, Standard leise. Ton startet erst nach der ersten Eingabe.
+
+### 7.12 Titelbildschirm
+
+Schwarz. Ein tiefer, warmer Ton. Ein einzelner Sonnenstrahl fällt durch das Glasdach in den **leeren Plenarsaal im Morgengrauen**, Staub schwebt darin. Die Kamera gleitet langsam in einer großen Kurve über die Sitzreihen, an einer Sitzlampe vorbei, die kurz aufflackert. Unten auf dem Rednerpult liegt ein Blatt; die Kamera senkt sich darauf, Tinte erscheint: „Richtlinie über …“ – „über“ wird durchgestrichen, „gegen die Lohnlücke“ eingefügt. Darüber hebt sich der Titel **MEHRHEIT** als geprägte, plastische Buchstaben aus dem Papier (Prägung mit Licht und Schatten). Menü als schlichte Glasknöpfe links unten: „Weiterspielen“, „Neue Legislatur“, „Einstellungen“, „Über das Spiel“. Unten klein: „Alle Personen und Fraktionen sind erfunden. Die Richtlinie und die Zahlen sind echt – Quellen am Ende.“ Die Fahrt läuft als Schleife weiter, solange das Menü offen ist (bei „Bewegung reduzieren“: Standbild).
+
+### 7.13 Qualitätsregeln für die Grafik (bei jeder Phase prüfen)
+
+- Jede Szene hat **ein klares Licht-Konzept**, sichtbare weiche Schatten und Kontaktschatten – nichts „schwebt“.
+- Keine flachen, einfarbigen, unbeleuchteten Flächen; jede Fläche hat Materialstruktur (Maserung, Korn, Gewebe).
+- Kanten haben eine kleine Rundung (Fase), damit Licht darauf glänzt – das ist der wichtigste Trick für den hochwertigen Modell-Look.
+- Keine Treppchen an Kanten (Kantenglättung), kein Flimmern bei Bewegung, keine sichtbaren Schatten-Artefakte (Streifen, „Peter-Panning“).
+- Text ist immer gestochen scharf (HTML-Ebene), auch wenn der Hintergrund unscharf ist.
+- Jede Phase liefert **Standbilder in Filmqualität** von jeder neuen Szene (Ultra und Niedrig nebeneinander) und ein kurzes Vorher/Nachher, wenn Grafik verbessert wurde.
+- Wenn ein Effekt auf „Niedrig“ das Bild verschlechtert statt verbessert, wird er dort abgeschaltet.
 
 ---
 
@@ -556,9 +624,11 @@ Ein leeres Blatt Papier. Langsam erscheint, Wort für Wort getippt: „Richtlini
 ## 9. Barrierefreiheit und Einstellungen
 
 - **Vollständig mit Tastatur spielbar:** Tab-Reihenfolge logisch, sichtbarer Fokusrahmen (Petrol, 3 px), Pfeiltasten wechseln Optionen, Enter wählt, Esc schließt Fenster, Zahlen 1–3 wählen Antworten, D öffnet das Dossier, Leertaste zeigt Text sofort vollständig.
-- **Bildschirmleser:** echte Knöpfe (`<button>`), Überschriften-Hierarchie, `aria-live` für Abstimmungsergebnisse und neue Karten, Halbrund mit Textalternative („Ja: 34, Nein: 20, Enthaltung: 6 – Mehrheit erreicht“).
+- **Bildschirmleser:** echte Knöpfe (`<button>`), Überschriften-Hierarchie, `aria-live` für Abstimmungsergebnisse und neue Karten, Halbrund mit Textalternative („Ja: 34, Nein: 20, Enthaltung: 6 – Mehrheit erreicht“), das 3D-Bild selbst als `aria-hidden` mit einer kurzen Szenenbeschreibung pro Kapitel als Text.
 - **Farbsehschwäche:** Jede Fraktion hat ein Muster; Zustände (Ja/Nein/Enthaltung) unterscheiden sich durch Form (voll/leer/halb), nicht nur durch Farbe.
 - **Einstellungen** (im Titel und im Pausemenü): Ton an/aus und Lautstärke, Schriftgröße (100/120/140 %), hoher Kontrast (reines Weiß/Schwarz, dickere Linien, keine Papierstruktur), Bewegung reduzieren (keine Animationen, keine Schreibmaschine; Betriebssystem-Einstellung wird übernommen), Schreibmaschinen-Tempo, „Lesehilfe“ (zeigt bei jedem Artikel eine Ein-Satz-Zusammenfassung in einfacher Sprache).
+- **Grafik-Einstellungen:** Grafikstufe (Automatisch, Ultra, Hoch, Mittel, Niedrig), Tiefenschärfe an/aus, Filmkorn an/aus, Bildschirmhelligkeit. „Hoher Kontrast“ schaltet zusätzlich Tiefenschärfe, Korn und Vignette ab und legt hinter alle Texte deckende Flächen.
+- **Bewegung reduzieren** ersetzt alle Kamerafahrten durch weiche Überblendungen, schaltet das Kamera-Atmen ab und lässt Figuren nur noch langsam gestikulieren.
 - Kein Zeitdruck in Echtzeit, keine Reaktionsaufgaben.
 
 ---
@@ -567,12 +637,14 @@ Ein leeres Blatt Papier. Langsam erscheint, Wort für Wort getippt: „Richtlini
 
 ### 10.1 Grundsätze
 
-- **Vanilla JavaScript ohne Module**, normale `<script>`-Tags in fester Reihenfolge, damit das Spiel per **Doppelklick auf `mehrheit/index.html`** läuft (`file://`). Kein `fetch`, kein XHR, keine Cookies.
-- **DOM + CSS für Oberfläche und Text**, **SVG** (im Code erzeugt) für Halbrund, Porträts, Stempel, Grundriss und Leisten. Canvas 2D nur, wenn nötig (z. B. Papierkorn als einmal erzeugtes Bild, das per `toDataURL` als CSS-Hintergrund dient).
-- **Keine Bibliotheken, keine CDNs, keine Schriften, Bilder, Töne oder Daten von außen.** Alles wird im Code erzeugt.
-- Läuft offline in aktuellen Versionen von Edge, Chrome, Firefox (Windows), Safari (iPad, macOS) und auf GitHub Pages. Gesamtgröße unter 2 MB.
-- Leistung: flüssig (60 FPS bei Animationen) auf einem normalen Laptop, mindestens 30 FPS auf einem Schul-Laptop und einem älteren iPad. Animationen nur mit `transform` und `opacity`; das Halbrund mit höchstens 120 SVG-Kreisen.
-- Namensräume: `DATA` (Daten), `ANSICHT` (Darstellung, DOM/SVG), `LOGIK` (Spielzustand, Berechnungen, Ablauf). Code-Bezeichner und Kommentare auf Deutsch.
+- **Vanilla JavaScript ohne Module**, normale `<script>`-Tags in fester Reihenfolge, damit das Spiel per **Doppelklick auf `mehrheit/index.html`** läuft (`file://`). Kein `fetch`, kein XHR, keine Cookies. Shader stehen als Zeichenketten in eigenen `.js`-Dateien (nicht als externe Dateien, die geladen werden müssten).
+- **3D mit WebGL 2 und einer eigenen 3D-Maschine** im Namensraum `MOTOR` (Ordner `js/motor/`). Keine Bibliotheken, keine CDNs, keine Modelle, Texturen, Schriften, Töne oder Daten von außen. Alle Geometrie, alle Texturen und alle Töne werden im Code erzeugt.
+- **Oberfläche und Text als HTML/CSS über dem 3D-Bild** (Namensraum `ANSICHT`), damit Text immer scharf, barrierefrei und unabhängig von der Grafikstufe ist.
+- **Rückfallebenen:** (1) WebGL 2 mit allen Effekten je nach Grafikstufe; (2) wenn WebGL 2 fehlt: WebGL 1 mit Stufe „Niedrig“ (ohne Gleitkomma-Puffer: einfache Tonwertkurve im Hauptshader, keine Bildraum-Effekte); (3) wenn gar kein WebGL geht: **„Dokumentmodus“** – das Spiel ist vollständig als HTML spielbar (Gesetzestext, Halbrund als SVG, Gespräche mit Namen), mit einem freundlichen Hinweis, wie man die Hardwarebeschleunigung einschaltet. Kein Spielinhalt darf nur im 3D-Bild stecken.
+- Läuft offline in aktuellen Versionen von Edge, Chrome, Firefox (Windows), Safari (iPad, macOS) und auf GitHub Pages. Gesamtgröße unter 3 MB.
+- **Leistung:** Ultra flüssig auf einem Laptop mit eigener Grafikkarte; „Niedrig“ mit mindestens 30 FPS auf einem Schul-Laptop mit Onboard-Grafik und einem älteren iPad. Ziel-Budgets pro Bild auf „Hoch“: höchstens 300 Zeichenaufrufe, höchstens 1,5 Mio. Dreiecke, Schattenkarte nur neu berechnen, wenn sich etwas bewegt hat. Viele gleiche Objekte (Sitze, Stühle, Mikrofone, Bücher) immer per Instancing in einem Aufruf.
+- **Speicher:** Texturen im Code erzeugt und wiederverwendet; beim Szenenwechsel Puffer und Texturen freigeben; Verlust des WebGL-Kontexts (passiert auf Tablets) abfangen und alles neu aufbauen.
+- Namensräume: `DATA` (Daten), `MOTOR` (3D-Maschine), `WELT` (Szenen, Figuren, Bausteine), `ANSICHT` (HTML-Oberfläche), `LOGIK` (Spielzustand, Berechnungen, Ablauf). Code-Bezeichner und Kommentare auf Deutsch.
 
 ### 10.2 Dateien
 
@@ -580,30 +652,44 @@ Ein leeres Blatt Papier. Langsam erscheint, Wort für Wort getippt: „Richtlini
 mehrheit/
   index.html
   css/stil.css
-  data/stil.js          Farben, Schriften, Abstände, Animationsdauern
+  data/stil.js          Materialien, Stimmungen, Fraktionsfarben, Grafikstufen, Oberfläche
+  data/kameras.js       Kameravorlagen und Kamerafahrten je Szene
+  data/szenen.js        Aufbau der Räume aus Bausteinen (Positionen, Maße, Materialien)
   data/texte.js         Oberflächentexte, Kapitelkarten, Menüs
   data/fakten.js        alle echten Zahlen und Fakten (verifiziert: false)
   data/spielwerte.js    Spielmechanik-Zahlen (Sitze, Termine, Schwellen-Optionen)
   data/fraktionen.js    Fraktionen, Sitze, Haltungen, Schwellen
-  data/figuren.js       Aussehen der Porträts
+  data/figuren.js       Figuren-Baukasten (Körper, Kleidung, Haare, Farben, Gesten)
   data/artikel.js       Artikel, Optionen, Wortlaute, Haltungen, Wirkungen
   data/karten.js        Dossier-Karten
-  data/gespraeche.js    alle Gespräche (Anhörung, Flure, Trilog, Mira)
+  data/gespraeche.js    alle Gespräche inkl. Gesten und Kameraeinstellungen pro Satz
   data/trilog.js        Ratsposition, Mittelwege
   data/epilog.js        Epilog-Bausteine, Schlagzeilen
   data/vergleich.js     Vergleichstexte „Deine Fassung / echte Richtlinie / warum“
   data/glossar.js       Fachbegriffe
+  js/motor/gl.js           WebGL-2-Kontext, Erweiterungen, Kontextverlust, Rückfall
+  js/motor/mathe.js        Vektoren, Matrizen, Quaternionen
+  js/motor/shader.js       Shader-Quelltexte (PBR, Schatten, Nachbearbeitung) und Kompilierung
+  js/motor/geometrie.js    Grundkörper und Werkzeuge: Box mit Fase, Kapsel, Drehkörper, Extrusion, Unterteilung
+  js/motor/texturen.js     prozedurale Texturen (Maserung, Korn, Gewebe, Kratzer, Umgebung)
+  js/motor/renderer.js     Szene zeichnen, Instancing, Lichter, Schattenkarte, Sichtbarkeit
+  js/motor/nachbearbeitung.js  HDR, Umgebungsverdeckung, Spiegelung, Bloom, Tiefenschärfe, Lichtstrahlen, Kantenglättung, Farbkorrektur, Korn
+  js/motor/teilchen.js     Staub, Dampf, Regen auf Glas
+  js/motor/kamera.js       Kamera, Fahrten, Schärfe ziehen
+  js/motor/qualitaet.js    Grafikstufen, Messung, automatische Anpassung
+  js/welt/bausteine.js     Möbel, Räume, Halbrund, Glasmodell, Papier, Stempel, Flaggen …
+  js/welt/figuren.js       Gliederfiguren, Kleidung, Haare, Gesten, Gehen
+  js/welt/dokument3d.js    3D-Papier, Textur aus Text, Umblättern, Tinte, Füllfeder
+  js/welt/szenen.js        Büro, Ausschusssaal, Schnittmodell, Trilog, Plenum, Titel, Epilog
   js/logik/stand.js     Spielstand, Speichern
   js/logik/mehrheit.js  Zustimmung, Abstimmung, Wirkung
   js/logik/ablauf.js    Kapitel, Termine, Übergänge
   js/logik/gespraech.js Gesprächsknoten, Bedingungen, Aktionen
-  js/ansicht/dokument.js   Gesetzestext, Änderungsmodus, Optionsleisten
-  js/ansicht/halbrund.js   Sitzgrafik, Vorschau, Abstimmungsanimation
-  js/ansicht/portrait.js   Porträts aus Grundformen
-  js/ansicht/karte.js      Gebäudekarte
-  js/ansicht/leiste.js     Gesprächsleiste, Dossier
-  js/ansicht/szenen.js     Hintergründe, Kapitelkarten, Titel, Epilog, Vergleich
-  js/ansicht/ton.js        Web-Audio-Töne
+  js/ansicht/dokument.js   HTML-Ebene des Gesetzestexts, Änderungsmodus, Optionsleisten
+  js/ansicht/leiste.js     Gesprächsleiste, Dossier, Fraktionsleiste, Wirkungsanzeige
+  js/ansicht/menues.js     Titelmenü, Einstellungen, Pause, Vergleich, Reflexion, Credits
+  js/ansicht/dokumentmodus.js  Rückfall ohne WebGL (HTML/SVG)
+  js/ansicht/ton.js        Web-Audio-Töne, Raumhall, Musik-Motiv
   js/debug.js
   js/start.js
   README.md, QUELLEN.md, KI-DOKUMENTATION.md, CLAUDE.md
@@ -616,7 +702,20 @@ mehrheit/
 - Ziehen (Karten ins Feld „Vorlegen“) muss immer auch per Antippen gehen (Karte antippen → Feld antippen).
 - Kein Text-Markieren bei Doppeltipp auf Knöpfe (`user-select: none` dort, aber nicht im Gesetzestext und nicht in der Vergleichstabelle – die soll man kopieren können).
 
-### 10.4 Datenformat-Beispiel (zur Orientierung, nicht wörtlich übernehmen)
+### 10.4 Die eigene 3D-Maschine – Anforderungen im Detail
+
+- **Rendering:** Vorwärts-Rendering in einen HDR-Puffer (RGBA16F, wo verfügbar), physikalisch basiertes Licht (GGX-Glanz, Fresnel, energieerhaltend), Umgebungslicht aus einer beim Start im Code erzeugten Umgebungs-Würfeltextur (Himmel/Raum je Stimmung, vorgefiltert für verschiedene Rauheiten), Hauptlicht mit Schattenkarte (gefiltert für weiche Kanten, Abstand-abhängige Weichheit), bis zu acht Zusatzlichter ohne Schatten, leuchtende Materialien.
+- **Geometrie aus Code:** Alle Möbel, Räume und Figuren entstehen aus Bausteinen: Box mit abgerundeten Kanten (Fase), Kapsel, Drehkörper aus Profil (Lampen, Gläser, Becher), Extrusion aus 2D-Umriss (Pulte, Halbrund-Reihen), Rohr entlang Kurve (Geländer, Kabel), unterteilte Ebene (Papier, Stoff). Normalen sauber, Kanten mit Fase, damit Licht darauf glänzt. Statische Teile einer Szene werden pro Material zu wenigen großen Puffern zusammengefasst.
+- **Vorberechnete Verdeckung:** Für statische Szenen wird beim Laden pro Eckpunkt eine einfache Umgebungsverdeckung berechnet (Strahlen gegen die Szene, im Hintergrund in kleinen Portionen), damit auch „Niedrig“ Kontaktschatten hat.
+- **Spiegelungen:** Spiegel-Ebene für den Steinboden und Tischplatten (Szene gespiegelt in halbe Auflösung rendern, mit Rauheit verwischen) auf Hoch/Ultra; sonst Umgebungs-Würfeltextur.
+- **Nachbearbeitung:** in dieser Reihenfolge – Umgebungsverdeckung im Bildraum → Lichtstrahlen (Strahlenverfolgung entlang des Lichts im Bildraum mit Schattenkarte) → Tiefenschärfe (Streukreis aus Tiefe, Bokeh) → Bloom (mehrstufig herunter- und hochgerechnet) → Tonwertkurve (filmisch) → Farbkorrektur (Farbtabelle) → Kantenglättung → Korn, Vignette, chromatische Aberration.
+- **Text auf 3D-Papier:** Canvas 2D setzt die Seite in hoher Auflösung (Georgia/Times, Änderungsmarkierungen), daraus wird eine Textur mit Mip-Stufen; nur geänderte Seiten werden neu gesetzt.
+- **Teilchen:** GPU-Teilchen (Instancing) für Staub in Lichtstrahlen, Dampf über Bechern, Regentropfen am Fenster (Tropfen + Laufspuren als Brechung in einer kleinen Textur).
+- **Figuren:** starre Teile an einer Knochen-Hierarchie (keine Haut-Verformung nötig), Gesten als kleine Schlüsselbild-Folgen in `data/figuren.js`, Kopf- und Blicksteuerung, Gehzyklus mit einfacher Zwei-Gelenk-Lösung für die Beine.
+- **Sichtbarkeit:** Kegelstumpf-Prüfung pro Objekt, Detailstufen nach Entfernung, Schattenkarte nur mit schattenwerfenden Objekten.
+- **Zuverlässigkeit:** Jeder Shader wird beim Start kompiliert und geprüft; scheitert ein Effekt-Shader auf einem Gerät, wird nur dieser Effekt abgeschaltet (mit Konsolenhinweis), nicht das ganze Spiel.
+
+### 10.5 Datenformat-Beispiel (zur Orientierung, nicht wörtlich übernehmen)
 
 ```js
 // data/artikel.js
@@ -652,6 +751,7 @@ DATA.artikel = [
 - Kleines Feld oben rechts: Kapitel, Termine, Punkte je Fraktion, Schwellen, aktuelle Mehrheit, Flags.
 - Taste K: springt zum nächsten Kapitel; Taste V: setzt alle Vertrauenswerte auf 0; Taste F: zeigt alle Flags.
 - Ungeprüfte Fakten werden im Spiel rot unterstrichen; die Konsole listet sie als Tabelle.
+- **Grafik-Debug:** FPS, Bildzeit (CPU und, wo verfügbar, GPU per Zeitmessungs-Erweiterung), Zeichenaufrufe, Dreiecke, Grafikstufe; Taste G schaltet Ansichten durch (fertiges Bild, nur Licht, Normalen, Tiefe, Umgebungsverdeckung, Schattenkarte, Drahtgitter); Taste L zeigt Lichtquellen als Symbole; Taste C löst die Kamera (frei fliegen mit WASD + Maus) für Standbilder; Taste P speichert ein Standbild als PNG-Download.
 
 **Automatische Prüfungen beim Start (Konsole):**
 1. **Dialogprüfung:** Alle Gesprächsknoten sind erreichbar, jeder Verweis zeigt auf einen existierenden Knoten, jede Bedingung nutzt existierende Flags/Karten/Optionen. Ergebnis: „Gespräche: alle Knoten erreichbar ✓“.
@@ -666,26 +766,30 @@ DATA.artikel = [
 
 ## 12. Phasen, Abnahme und Fragen
 
-### 12.1 Phase 1 – Stil-Prototyp (danach Stil-Abnahme durch mich)
-- Grundgerüst, `data/stil.js`, Papier, Schriften.
-- **Der Entwurfstisch mit genau einem Artikel** (Artikel 4, Auskunftsrecht) mit allen Optionen, Änderungsmodus-Animation, Halbrund (60 Punkte) mit Vorschau, Fraktionsleiste, Wirkungsanzeige, einer Randbemerkung des Juristischen Dienstes.
-- Drei Porträts (Mira, Luca, Hanna) in allen Größen und eine kurze Beispiel-Gesprächsleiste mit zwei Antworten.
-- Ein Stempel, der Titelbildschirm als Skizze.
-- Testbilder am Desktop (1280×720, 1920×1080) und iPad (quer und hoch).
-- **Danach fragst du mich, ob der Stil passt, bevor du weiterbaust.**
+### 12.1 Phase 1 – 3D-Stil-Prototyp (danach Stil-Abnahme durch mich)
+- Die 3D-Maschine mit PBR-Licht, Schattenkarte, Umgebungslicht, HDR, Nachbearbeitung (alle Effekte aus 7.5), Grafikstufen mit automatischer Wahl, Rückfall auf WebGL 1 und Dokumentmodus.
+- **Der Plenarsaal** vollständig mit 120 Plätzen und Sitzlampen, Glasdach, Lichtstrahlen, Teppich, Präsidium – als Titelbildschirm mit Kamerafahrt.
+- **Das Büro** mit Schreibtisch, 3D-Papierstapel (eine Seite mit echtem Text, Umblättern, Füllfeder-Änderung), Glasmodell des Halbrunds (60 Sitze), Schreibtischlampe, Becher mit Dampf, Fenster mit Stadt.
+- **Zwei Gliederfiguren** (Mira und Luca) mit Kleidung, Haaren, Atmen und drei Gesten; eine kurze Beispiel-Gesprächsleiste mit Schuss/Gegenschuss und Tiefenschärfe.
+- Ein Stempel mit Abdruck.
+- Standbilder jeder Szene auf Ultra, Hoch, Mittel und Niedrig (1280×720 und 1920×1080) und im iPad-Format (quer und hoch); gemessene Bildzeiten pro Stufe.
+- **Danach fragst du mich, ob der Stil passt, bevor du weiterbaust.** Wenn ich „mehr Wow“ sage, verbesserst du Licht, Materialien und Kamera, bevor es weitergeht.
 
 ### 12.2 Phase 2 – Kern
-- Spielstand, Speichern, Kapitelablauf, Kapitel 1 (Tutorial), Kapitel 2 (Anhörung) und Kapitel 3 (Entwurf) vollständig mit allen sieben Artikeln und dem Wunschzettel, Dossier, Glossar, Fraktionsmodell mit Balance-Prüfung.
+- Spielstand, Speichern, Kapitelablauf, Kapitel 1 (Tutorial) und Kapitel 3 (Entwurf) vollständig mit allen sieben Artikeln, Wunschzettel, HTML-Ebene über dem 3D-Papier, Glasmodell reagiert live, Fraktionsleiste, Wirkungsanzeige, Dossier, Glossar, Fraktionsmodell mit Balance-Prüfung.
 
-### 12.3 Phase 3 – Verhandeln
-- Kapitel 4 (Flure mit Gebäudekarte, alle sechs Schattenberichterstatter*innen, Bibliothek, Cafeteria, Versprechen), Kapitel 5 (Ausschussabstimmung inkl. Nacharbeit), Kapitel 6 (Trilog mit Vier-Spalten-Tabelle, Dolmetscher-Moment, Umsetzungsfrist).
+### 12.3 Phase 3 – Anhörung und Flure
+- Kapitel 2 (Ausschusssaal mit allen fünf Gästen als Figuren, Kamerafahrt am Tisch), Kapitel 4 (Schnittmodell des Gebäudes mit drei Etagen, gehende Figuren, alle sechs Schattenberichterstatter*innen, Bibliothek, Cafeteria, Versprechen), Kapitel 5 (Ausschussabstimmung inkl. Nacharbeit).
 
-### 12.4 Phase 4 – Finale und Feinschliff
-- Kapitel 7 (Plenum, Rede, Abstimmung, Neuer Anlauf), Epilog, Vergleich mit der echten Richtlinie, Reflexion, Quellen, Credits, Titelbildschirm, Einstellungen, Ton, Admin-Menü, Barrierefreiheits-Durchgang, Touch-Test, Leistungstest.
+### 12.4 Phase 4 – Trilog und Plenum
+- Kapitel 6 (Nachtszene mit Pendelleuchte, Regen am Fenster, Vier-Spalten-Tabelle, kreisende Kamera, Dolmetscher-Moment, Umsetzungsfrist), Kapitel 7 (Plenum mit Rede, Abstimmungs-Kranfahrt, Sitzlampen, Stempel, Neuer Anlauf).
 
-**Am Ende jeder Phase lieferst du:** lauffähigen Stand ohne Konsolenfehler, grüne Prüfungen (Gespräche, Daten, Ziffern, ab Phase 2 Balance), eine kurze deutsche Zusammenfassung (Was ist neu? Wo kann ich es in `data/` ändern? Was wurde getestet, was nicht?), aktualisierte `README.md`, `QUELLEN.md` und `CLAUDE.md` (mit Stand, Entscheidungen und Regeln aus Erfahrung), Testbilder – dann wartest du auf mein OK.
+### 12.5 Phase 5 – Finale und Feinschliff
+- Epilog als 3D-Collage, Vergleich mit der echten Richtlinie, Reflexion, Quellen, Credits, Einstellungen, Ton mit Raumhall und Musik-Motiv, Admin-Menü, Barrierefreiheits-Durchgang, Touch-Test, Leistungstest auf allen Grafikstufen, letzter Grafik-Feinschliff (jede Szene noch einmal als Filmstill prüfen).
 
-### 12.5 Fragen, die du mir vor Phase 2 stellst
+**Am Ende jeder Phase lieferst du:** lauffähigen Stand ohne Konsolenfehler, grüne Prüfungen (Gespräche, Daten, Ziffern, ab Phase 2 Balance), eine kurze deutsche Zusammenfassung (Was ist neu? Wo kann ich es in `data/` ändern? Was wurde getestet, was nicht?), aktualisierte `README.md`, `QUELLEN.md` und `CLAUDE.md` (mit Stand, Entscheidungen und Regeln aus Erfahrung), Standbilder und Bildzeiten – dann wartest du auf mein OK.
+
+### 12.6 Fragen, die du mir vor Phase 2 stellst
 1. Sind die sechs erfundenen Fraktionen und ihre Namen in Ordnung, oder möchte ich andere Namen/Schwerpunkte?
 2. Bleibt die Spielfigur ein*e junge abgeordnete Person, oder lieber eine Rolle mit mehr Nähe zur Zielgruppe (z. B. Mitglied einer Jugend-Delegation, die einen Tag lang mitverhandeln darf)?
 3. Sollen es sieben Artikel bleiben, oder lieber fünf (kürzere Spielzeit)? Soll Stellschraube C in Artikel 7 (Verbandsklage) hinein?
@@ -704,6 +808,7 @@ DATA.artikel = [
 - [ ] Erfundenes ist als erfunden gekennzeichnet; echte Personen kommen nicht vor; keine echten Logos.
 - [ ] Touch-Regeln eingehalten; mit Tastatur vollständig spielbar; Bewegung reduzieren und hoher Kontrast funktionieren.
 - [ ] Gespräche-, Daten-, Ziffern- und Balance-Prüfung grün.
+- [ ] Grafik: jede Szene als Filmstill geprüft (Licht-Konzept, weiche Schatten, Kontaktschatten, Materialstruktur, Kantenglättung, kein Flimmern); Bildzeiten aller Grafikstufen gemessen; „Niedrig“ ≥ 30 FPS-Ziel plausibel; Rückfall WebGL 1 und Dokumentmodus getestet.
 - [ ] Testbilder Desktop und iPad (quer/hoch) angesehen; ehrlich aufgeschrieben, was nicht getestet werden konnte.
 - [ ] README, QUELLEN, CLAUDE.md, KI-DOKUMENTATION aktualisiert; committet und gepusht.
 
