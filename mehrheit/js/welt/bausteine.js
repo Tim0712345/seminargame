@@ -817,8 +817,9 @@ WELT.bausteine = (function () {
     var H = d.etagenHoehe, bx = d.breite, tz = d.tiefe, sock = 0.25;
     var hz = tz / 2;
     // dunkle Tischplatte, auf der das Modell steht (spiegelt)
-    B.teil(Geo.box(46, 0.6, 24, 0.05, 2), WELT.material("lack", { farbe: "#1c1d21", rauheit: 0.28, klarlack: 0.9, spiegelt: true }), M.trs(M.m4(), [0, -0.3, 0]));
-    B.verdecker.push({ typ: "box", inv: M.invert(M.m4(), M.trs(M.m4(), [0, -0.3, 0])), h: [23, 0.3, 12], m: [0, -0.3, 0], r: 26 });
+    // groß genug, dass man auch im Hochformat (Kamera flach von vorn) keine Tischkante sieht
+    B.teil(Geo.box(70, 0.6, 64, 0.05, 2), WELT.material("lack", { farbe: "#1c1d21", rauheit: 0.28, klarlack: 0.9, spiegelt: true }), M.trs(M.m4(), [0, -0.3, 12]));
+    B.verdecker.push({ typ: "box", inv: M.invert(M.m4(), M.trs(M.m4(), [0, -0.3, 12])), h: [35, 0.3, 32], m: [0, -0.3, 12], r: 48 });
     sz.raumGlas = {}; sz.hotspots = []; sz.raumPos = {};
     for (var e = 0; e < d.etagen; e++) {
       var y0 = sock + e * H;

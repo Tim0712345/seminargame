@@ -76,5 +76,5 @@ Spielsprache und alle Antworten an den User: **Deutsch**. Code-Bezeichner und Ko
   Konzept; Spielfigur = neu gewählte abgeordnete Person; sieben Artikel inklusive Stellschraube Verbandsklage;
   Wunschzettel (Kita-Garantie, Elternzeit) wie im Konzept; Länder wie im Konzept.
 - Prüfungen grün: Gespräche, Daten, Ziffern, Textlänge (≈ 3550 Wörter pro Durchgang), Balance (alle vier Ziele).
-- Offen: Test auf echtem iPad/Windows-Laptop/Firefox/Safari, Zahlen verifizieren (27 Fakten), Credits-Namen,
-  Zeichenaufrufe im Gebäudemodell auf „Hoch“ (≈ 380, Budget 300).
+- Zeichenaufrufe auf „Hoch“ (1280×720): höchstens ≈ 260 (Gebäudemodell), Budget 300 eingehalten.
+- Offen: Test auf echtem iPad/Windows-Laptop/Firefox/Safari, Zahlen verifizieren (27 Fakten), Credits-Namen.
