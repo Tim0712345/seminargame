@@ -14,12 +14,18 @@
   --text-leise: #4a4f5a;
   --rundung: 8px;
   --faktor: 1;
+  --sb: 100vw;   /* Breite der Spielfläche (bei sehr breiten Bildschirmen schmaler, siehe start.js) */
+  --sx: 0px;     /* Abstand der Spielfläche vom linken Rand */
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; overflow: hidden; background: #0c0d10; color: var(--text); font-family: var(--schrift-ui); }
 body { font-size: calc(16px * var(--faktor)); -webkit-text-size-adjust: 100%; }
 
-#buehne { position: fixed; inset: 0; }
+/* Spielfläche: auf sehr breiten Bildschirmen (z. B. 21:9) mittig mit begrenzter Breite.
+   #oberflaeche ist der Bezugsrahmen für alle festen Elemente darin (transform). */
+#buehne { position: fixed; top: 0; bottom: 0; left: var(--sx); width: var(--sb); }
+#oberflaeche { position: fixed; top: 0; bottom: 0; left: var(--sx); width: var(--sb); transform: translateZ(0); pointer-events: none; z-index: 1; }
+#oberflaeche > * { pointer-events: auto; }
 #bild { position: absolute; inset: 0; width: 100%; height: 100%; display: block; transition: filter 0.9s ease; }
 body.unscharf #bild { filter: brightness(0.7); }  /* abgedunkelt, nicht unscharf */
 #blende { position: absolute; inset: 0; background: #000; opacity: 0; pointer-events: none; transition: opacity 0.6s ease; }
@@ -64,13 +70,13 @@ body.unscharf #bild { filter: brightness(0.7); }  /* abgedunkelt, nicht unscharf
 /* ---------- Titel ---------- */
 #titelMenue {
   position: fixed; left: max(24px, env(safe-area-inset-left)); bottom: max(26px, env(safe-area-inset-bottom));
-  display: flex; flex-direction: column; gap: 10px; width: min(300px, 76vw);
+  display: flex; flex-direction: column; gap: 10px; width: min(300px, calc(var(--sb) * 0.76));
   animation: einblenden 1.6s ease 0.6s both;
 }
 #titelMenue .knopf { width: 100%; }
 #erfundenHinweis {
   position: fixed; right: max(20px, env(safe-area-inset-right)); bottom: max(18px, env(safe-area-inset-bottom));
-  max-width: min(420px, 60vw); margin: 0; text-align: right;
+  max-width: min(420px, calc(var(--sb) * 0.6)); margin: 0; text-align: right;
   font-size: 0.78em; color: rgba(240, 238, 232, 0.86); text-shadow: 0 1px 6px rgba(0, 0, 0, 0.7);
   animation: einblenden 2s ease 1.2s both;
 }
@@ -90,7 +96,7 @@ body.unscharf #bild { filter: brightness(0.7); }  /* abgedunkelt, nicht unscharf
 /* ---------- Gesprächsleiste ---------- */
 #leiste {
   position: fixed; left: 50%; transform: translateX(-50%);
-  bottom: max(16px, env(safe-area-inset-bottom)); width: min(760px, calc(100vw - 32px));
+  bottom: max(16px, env(safe-area-inset-bottom)); width: min(760px, calc(var(--sb) - 32px));
   padding: 14px 18px 16px; max-height: 33vh; overflow: auto;
 }
 #leisteKopf { display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px; padding-right: 44px; }
@@ -114,7 +120,7 @@ body.gespraech #kopfKnoepfe { display: none; }
   animation: einblenden 1.1s ease both; padding: 24px;
 }
 #kapitelKarte .kapitelNr { font-family: var(--schrift-gesetz); letter-spacing: 0.3em; text-transform: uppercase; font-size: 0.9em; opacity: 0.85; }
-#kapitelKarte h2 { font-family: var(--schrift-gesetz); font-weight: 400; font-size: clamp(2.2em, 7vw, 4.6em); margin: 0.2em 0 0.1em; }
+#kapitelKarte h2 { font-family: var(--schrift-gesetz); font-weight: 400; font-size: clamp(2.2em, calc(var(--sb) * 0.07), 4.6em); margin: 0.2em 0 0.1em; }
 #kapitelKarte .kapitelTag { font-family: var(--schrift-gesetz); font-style: italic; font-size: 1.2em; }
 #kapitelKarte p { max-width: 34em; font-size: 1.05em; }
 
@@ -132,16 +138,16 @@ body.gespraech #kopfKnoepfe { display: none; }
 #fensterInhalt p { line-height: 1.5; }
 
 /* ---------- Hinweis ---------- */
-#hinweis { position: fixed; top: max(16px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); padding: 10px 16px; max-width: calc(100vw - 32px); }
+#hinweis { position: fixed; top: max(16px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); padding: 10px 16px; max-width: calc(var(--sb) - 32px); }
 
 /* ---------- Hochformat: Oberfläche unten gestapelt ---------- */
 @media (orientation: portrait) and (max-width: 900px) {
-  #probe { left: 50%; right: auto; transform: translateX(-50%); width: calc(100vw - 24px); bottom: 10px; }
+  #probe { left: 50%; right: auto; transform: translateX(-50%); width: calc(var(--sb) - 24px); bottom: 10px; }
   .probeKnoepfe { grid-template-columns: repeat(4, 1fr); }
   .probeKnoepfe .knopf { font-size: 0.8em; padding: 0.4em 0.3em; text-align: center; }
   #probe .klein { display: none; }
   #erfundenHinweis { left: 16px; right: 16px; max-width: none; text-align: left; bottom: auto; top: max(14px, env(safe-area-inset-top)); }
-  #titelMenue { width: calc(100vw - 48px); }
+  #titelMenue { width: calc(var(--sb) - 48px); }
 }
 
 /* ---------- Hoher Kontrast ---------- */
@@ -156,7 +162,7 @@ body.ruhig *, body.ruhig *::before, body.ruhig *::after { animation-duration: 0.
 /* ---------- Debug ---------- */
 #debugFeld {
   position: fixed; top: 8px; left: 8px; z-index: 50; font: 11px/1.35 var(--schrift-zahlen);
-  background: rgba(0, 0, 0, 0.72); color: #d8f0ee; padding: 6px 8px; border-radius: 6px; white-space: pre; pointer-events: none; max-width: 46vw;
+  background: rgba(0, 0, 0, 0.72); color: #d8f0ee; padding: 6px 8px; border-radius: 6px; white-space: pre; pointer-events: none; max-width: calc(var(--sb) * 0.46);
 }
 
 /* ---------- Dokumentmodus (ohne WebGL) ---------- */
@@ -212,7 +218,7 @@ body.dokumentmodus.editor-offen #dokumentmodus { margin-left: max(16px, calc(50v
 .namensfeld { font: inherit; font-size: 1.2em; padding: 10px 12px; width: 100%; border-radius: var(--rundung); border: 2px solid var(--akzent); }
 
 /* Aufgabenkarte oben links */
-#aufgabe { position: fixed; left: max(14px, env(safe-area-inset-left)); top: max(14px, env(safe-area-inset-top)); width: min(320px, calc(100vw - 28px)); padding: 0; overflow: hidden; z-index: 5; }
+#aufgabe { position: fixed; left: max(14px, env(safe-area-inset-left)); top: max(14px, env(safe-area-inset-top)); width: min(320px, calc(var(--sb) - 28px)); padding: 0; overflow: hidden; z-index: 5; }
 .af-kopf { all: unset; box-sizing: border-box; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; width: 100%; padding: 10px 14px; cursor: pointer; background: var(--akzent); color: #fff; min-height: 40px; touch-action: manipulation; }
 .af-kopf:focus-visible { outline: 3px solid #fff; outline-offset: -4px; }
 .af-kapitel { font-weight: 700; font-size: 0.92em; }
@@ -224,7 +230,7 @@ body.dokumentmodus.editor-offen #dokumentmodus { margin-left: max(16px, calc(50v
 #aufgabe > :last-child { margin-bottom: 12px; }
 
 /* Mehrheitsanzeige oben in der Mitte */
-#fraktionsleiste { position: fixed; left: 50%; transform: translateX(-50%); top: max(14px, env(safe-area-inset-top)); width: min(460px, calc(100vw - 2 * 360px)); min-width: 300px; padding: 0; overflow: hidden; z-index: 4; }
+#fraktionsleiste { position: fixed; left: 50%; transform: translateX(-50%); top: max(14px, env(safe-area-inset-top)); width: min(460px, calc(var(--sb) - 2 * 360px)); min-width: 300px; padding: 0; overflow: hidden; z-index: 4; }
 .mh-knopf { all: unset; box-sizing: border-box; display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; width: 100%; padding: 10px 16px 8px; cursor: pointer; touch-action: manipulation; }
 .mh-knopf:focus-visible { outline: 3px solid var(--akzent); outline-offset: -3px; }
 .mh-knopf.hover { background: rgba(0, 0, 0, 0.03); }
@@ -281,7 +287,7 @@ button.wk-achse.grau { min-height: 0; padding: 4px 6px; font-size: 0.95em; text-
 .bl-fuss { position: absolute; left: 78px; right: 78px; bottom: 50px; display: flex; justify-content: space-between; font-style: italic; color: #6a6862; font-size: 16px; }
 
 /* Bedienfeld des Entwurfs: ein Artikel, eine Frage */
-#editor { position: fixed; right: max(12px, env(safe-area-inset-right)); top: 130px; bottom: max(12px, env(safe-area-inset-bottom)); width: min(380px, 36vw); padding: 14px 16px; overflow: auto; font-size: 0.93em; }
+#editor { position: fixed; right: max(12px, env(safe-area-inset-right)); top: 130px; bottom: max(12px, env(safe-area-inset-bottom)); width: min(380px, calc(var(--sb) * 0.36)); padding: 14px 16px; overflow: auto; font-size: 0.93em; }
 .ed-kopf { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
 .ed-von { font-size: 0.78em; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-leise); }
 .ed-tabs { display: flex; gap: 3px; }
@@ -309,7 +315,7 @@ button.wk-achse.grau { min-height: 0; padding: 4px 6px; font-size: 0.95em; text-
 .ed-nav { justify-content: space-between; }
 #edEinreichen { width: 100%; text-align: center; }
 .lesehilfe { background: rgba(0,114,122,0.08); padding: 6px 8px; border-radius: 6px; }
-body.editor-offen #wahl { right: calc(min(380px, 36vw) + 24px); }
+body.editor-offen #wahl { right: calc(min(380px, calc(var(--sb) * 0.36)) + 24px); }
 
 /* Mira erklärt: Hervorhebung + Sprechblase */
 #fuehrung { position: fixed; inset: 0; z-index: 70; }
@@ -319,7 +325,7 @@ body.editor-offen #wahl { right: calc(min(380px, 36vw) + 24px); }
 .fu-blase p { margin: 6px 0 12px; font-size: 1.02em; line-height: 1.45; }
 
 /* Auswahlfeld unten */
-#wahl { position: fixed; left: 50%; transform: translateX(-50%); bottom: max(16px, env(safe-area-inset-bottom)); width: min(780px, calc(100vw - 32px)); padding: 12px 16px 14px; max-height: 46vh; overflow: auto; }
+#wahl { position: fixed; left: 50%; transform: translateX(-50%); bottom: max(16px, env(safe-area-inset-bottom)); width: min(780px, calc(var(--sb) - 32px)); padding: 12px 16px 14px; max-height: 46vh; overflow: auto; }
 .wahl-kopf { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; }
 .wahl-zusatz { color: var(--text-leise); font-size: 0.85em; font-family: var(--schrift-zahlen); }
 #wahl p { margin: 6px 0 8px; line-height: 1.4; }
@@ -351,29 +357,29 @@ body.gespraech #wahl { display: none; }
 #zaehler strong { font-family: var(--schrift-gesetz); font-weight: 400; }
 
 /* Trilog-Tabelle */
-#trilogTabelle { position: fixed; left: 50%; transform: translateX(-50%); top: 200px; bottom: max(14px, env(safe-area-inset-bottom)); width: min(1100px, calc(100vw - 24px)); padding: 12px 14px; display: flex; flex-direction: column; font-size: 0.86em; }
+#trilogTabelle { position: fixed; left: 50%; transform: translateX(-50%); bottom: max(14px, env(safe-area-inset-bottom)); max-height: calc(100% - 220px); width: min(1100px, calc(var(--sb) - 24px)); padding: 12px 14px; display: flex; flex-direction: column; font-size: 0.86em; }
 .tt-kopf { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
 .tt-kopf h2 { margin: 0; font-family: var(--schrift-gesetz); font-weight: 400; }
 .tt-budget { font-family: var(--schrift-zahlen); }
-.tt-scroll { overflow: auto; flex: 1; margin: 8px 0; }
+.tt-scroll { overflow: auto; flex: 0 1 auto; margin: 8px 0; }
 #trilogTabelle table { border-collapse: collapse; width: 100%; }
 #trilogTabelle th, #trilogTabelle td { padding: 5px 6px; border-bottom: 1px solid rgba(0,0,0,0.1); text-align: left; vertical-align: top; }
 #trilogTabelle th small { display: block; font-weight: 400; color: var(--text-leise); }
 #trilogTabelle .tt-parl { color: #00585e; font-weight: 600; } #trilogTabelle .tt-rat { color: #6a4a12; }
 .tt-einig { margin: 10px 2px 0; }
 /* breite Bildschirme: Tabelle rechts neben der Aufgabenkarte */
-@media (min-width: 1000px) { #trilogTabelle { left: 350px; right: max(14px, env(safe-area-inset-right)); width: auto; transform: none; top: 130px; } }
+@media (min-width: 1000px) { #trilogTabelle { left: 350px; right: max(14px, env(safe-area-inset-right)); width: auto; transform: none; max-height: calc(100% - 150px); } }
 #trilogTabelle td .segment { font-size: 0.86em; padding: 0.3em 0.6em; margin: 2px; min-height: 36px; }
 .tt-einig { color: #1e7a48; }
 body.gespraech #trilogTabelle { opacity: 0.25; pointer-events: none; }
 
 /* Abendnotiz */
-#abendnotiz { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%) rotate(-1.5deg); width: min(460px, calc(100vw - 40px)); padding: 24px 26px; background: #f7f1df; color: #24304a; font: italic 1.15em/1.6 Georgia, serif; box-shadow: 0 14px 40px rgba(0,0,0,0.35); animation: einblenden 0.8s ease both; }
+#abendnotiz { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%) rotate(-1.5deg); width: min(460px, calc(var(--sb) - 40px)); padding: 24px 26px; background: #f7f1df; color: #24304a; font: italic 1.15em/1.6 Georgia, serif; box-shadow: 0 14px 40px rgba(0,0,0,0.35); animation: einblenden 0.8s ease both; }
 .an-kopf { font-style: normal; font-size: 0.8em; letter-spacing: 0.15em; text-transform: uppercase; color: #8a7a5a; }
 .an-von { text-align: right; }
 
 /* Epilog */
-#epilogFeld { position: fixed; right: max(16px, env(safe-area-inset-right)); bottom: max(16px, env(safe-area-inset-bottom)); width: min(440px, calc(100vw - 32px)); padding: 14px 16px; }
+#epilogFeld { position: fixed; right: max(16px, env(safe-area-inset-right)); bottom: max(16px, env(safe-area-inset-bottom)); width: min(440px, calc(var(--sb) - 32px)); padding: 14px 16px; }
 .ep-kopf h2 { margin: 0; font-family: var(--schrift-gesetz); font-weight: 400; }
 .ep-stueck { margin: 10px 0; padding: 12px; background: rgba(255,255,255,0.6); border-radius: 6px; font-family: Georgia, serif; line-height: 1.5; }
 .ep-stueck.zeitung p { font-weight: 700; font-size: 1.15em; }
@@ -405,10 +411,10 @@ body.gespraech #trilogTabelle { opacity: 0.25; pointer-events: none; }
 @media (orientation: portrait) and (max-width: 900px) {
   .hs-person { display: none; }
   #editor { left: 12px; right: 12px; width: auto; top: auto; height: 46vh; }
-  #fraktionsleiste { width: calc(100vw - 24px); min-width: 0; top: auto; bottom: calc(46vh + 20px); }
+  #fraktionsleiste { width: calc(var(--sb) - 24px); min-width: 0; top: auto; bottom: calc(46vh + 20px); }
   body:not(.editor-offen) #fraktionsleiste { bottom: auto; top: 160px; }
-  #aufgabe { width: calc(100vw - 200px); }
-  #trilogTabelle { top: 250px; }
+  #aufgabe { width: calc(var(--sb) - 200px); }
+  #trilogTabelle { max-height: calc(100% - 260px); }
   body.editor-offen #wahl { right: auto; }
 }
 body.kontrast #blattInhalt, body.kontrast #vergleich, body.kontrast .karte { background: #fff; color: #000; }

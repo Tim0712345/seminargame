@@ -350,6 +350,49 @@ MOTOR.netz = function (g, opt) {
   return netz;
 };
 
+/* Netz für Menschen: Position, Normale, UV, Verdeckung, vier Knochen + Gewichte, Farbe je Punkt.
+   g: { p, n, uv, ao, kn (4 je Punkt), gw (4 je Punkt), farbe (3 je Punkt), i } */
+MOTOR.netzFigur = function (g) {
+  var G = MOTOR.gl, gl = G.gl;
+  var anz = g.p.length / 3, stride = 20;
+  var d = new Float32Array(anz * stride);
+  for (var v = 0; v < anz; v++) {
+    var o = v * stride, v3 = v * 3, v4 = v * 4;
+    d[o] = g.p[v3]; d[o + 1] = g.p[v3 + 1]; d[o + 2] = g.p[v3 + 2];
+    d[o + 3] = g.n[v3]; d[o + 4] = g.n[v3 + 1]; d[o + 5] = g.n[v3 + 2];
+    d[o + 6] = g.uv[v * 2]; d[o + 7] = g.uv[v * 2 + 1];
+    d[o + 8] = g.ao[v];
+    d[o + 9] = g.kn[v4]; d[o + 10] = g.kn[v4 + 1]; d[o + 11] = g.kn[v4 + 2]; d[o + 12] = g.kn[v4 + 3];
+    d[o + 13] = g.gw[v4]; d[o + 14] = g.gw[v4 + 1]; d[o + 15] = g.gw[v4 + 2]; d[o + 16] = g.gw[v4 + 3];
+    d[o + 17] = g.farbe[v3]; d[o + 18] = g.farbe[v3 + 1]; d[o + 19] = g.farbe[v3 + 2];
+  }
+  var gross = anz > 65535;
+  var idx = gross ? new Uint32Array(g.i) : new Uint16Array(g.i);
+  var vao = G.vao();
+  G.bindeVao(vao);
+  var vb = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, vb);
+  gl.bufferData(gl.ARRAY_BUFFER, d, gl.STATIC_DRAW);
+  var A = G.ATTR, s = stride * 4;
+  gl.enableVertexAttribArray(A.aPos); gl.vertexAttribPointer(A.aPos, 3, gl.FLOAT, false, s, 0);
+  gl.enableVertexAttribArray(A.aNor); gl.vertexAttribPointer(A.aNor, 3, gl.FLOAT, false, s, 12);
+  gl.enableVertexAttribArray(A.aUv); gl.vertexAttribPointer(A.aUv, 2, gl.FLOAT, false, s, 24);
+  gl.enableVertexAttribArray(A.aAo); gl.vertexAttribPointer(A.aAo, 1, gl.FLOAT, false, s, 32);
+  gl.enableVertexAttribArray(A.aKn4); gl.vertexAttribPointer(A.aKn4, 4, gl.FLOAT, false, s, 36);
+  gl.enableVertexAttribArray(A.aGw4); gl.vertexAttribPointer(A.aGw4, 4, gl.FLOAT, false, s, 52);
+  gl.enableVertexAttribArray(A.aFarbe); gl.vertexAttribPointer(A.aFarbe, 3, gl.FLOAT, false, s, 68);
+  var ib = gl.createBuffer();
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ib);
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, idx, gl.STATIC_DRAW);
+  G.bindeVao(null);
+  var h = MOTOR.geo.huelle(g);
+  return {
+    vao: vao, vb: vb, ib: ib, anzahl: idx.length, typ: gross ? gl.UNSIGNED_INT : gl.UNSIGNED_SHORT,
+    dreiecke: idx.length / 3, kugel: { m: h.m, r: h.r }, min: h.min, max: h.max, stride: stride, daten: null,
+    instanzen: 0, ib2: null
+  };
+};
+
 /* Instanzdaten hochladen */
 MOTOR.netzInstanzen = function (netz, n) {
   var gl = MOTOR.gl.gl;

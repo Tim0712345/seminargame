@@ -729,18 +729,36 @@ WELT.bausteine = (function () {
   W.modellFiguren = function (B, plaetze, sitzend, kugel) {
     if (!plaetze.length) return null;
     var r = M.zufall(plaetze.length * 7 + 3);
-    var koerper = B.objekt(WELT.figuren.modellFigur(sitzend, "koerper"), WELT.material("stoff", { farbe: "#ffffff", strukturSkala: 18 }), M.m4(), { instanzen: plaetze.length, instFarbe: true });
-    var haut = B.objekt(WELT.figuren.modellFigur(sitzend, "haut"), WELT.material("haut", { farbe: "#ffffff" }), M.m4(), { instanzen: plaetze.length, instFarbe: true });
-    plaetze.forEach(function (p, i) {
-      var sk = [p.skala || 1, p.skala || 1, p.skala || 1];
-      var kl = M.farbe(p.kleidung || KLEIDUNG_MENGE[Math.floor(r() * KLEIDUNG_MENGE.length)]);
-      var hf = M.farbe(DATA.figuren.hauttoene[Math.floor(r() * DATA.figuren.hauttoene.length)]);
-      inst(koerper, i, p.pos, p.dreh, kl, 0, sk);
-      inst(haut, i, p.pos, p.dreh, hf, 0, sk);
+    var HAARE = ["#2a201b", "#3b2c24", "#5a4636", "#8a6a4a", "#b89462", "#6e6862", "#a8a29a", "#161211", "#7a4632"];
+    // Drei Arten von Figuren (Anzug, Blazer, Pullover), zufällig, aber immer gleich verteilt
+    var gruppen = [[], [], []];
+    plaetze.forEach(function (p, i) { gruppen[Math.min(2, Math.floor(r() * 3))].push(p); });
+    var erstes = null;
+    gruppen.forEach(function (liste, variante) {
+      if (!liste.length) return;
+      var teile = [
+        ["koerper", WELT.material("stoff", { farbe: "#ffffff", strukturSkala: 26, strukturStaerke: 0.4 })],
+        ["haut", WELT.material("haut", { farbe: "#ffffff" })],
+        ["haar", WELT.material("haar", { farbe: "#ffffff" })]
+      ];
+      var objs = teile.map(function (t) {
+        var o = B.objekt(WELT.figuren.modellFigur(sitzend, t[0], variante), t[1], M.m4(), { instanzen: liste.length, instFarbe: true });
+        o.festeKugel = true; o.kugelWelt = kugel;
+        return o;
+      });
+      liste.forEach(function (p, i) {
+        var sk = [p.skala || 1, p.skala || 1, p.skala || 1];
+        var kl = M.farbe(p.kleidung || KLEIDUNG_MENGE[Math.floor(r() * KLEIDUNG_MENGE.length)]);
+        var hf = M.farbe(DATA.figuren.hauttoene[Math.floor(r() * DATA.figuren.hauttoene.length)]);
+        var ha = M.farbe(HAARE[Math.floor(r() * HAARE.length)]);
+        inst(objs[0], i, p.pos, p.dreh, kl, 0, sk);
+        inst(objs[1], i, p.pos, p.dreh, hf, 0, sk);
+        inst(objs[2], i, p.pos, p.dreh, ha, 0, sk);
+      });
+      objs.forEach(function (o) { MOTOR.netzInstanzen(o.netz, liste.length); });
+      if (!erstes) erstes = objs[0];
     });
-    MOTOR.netzInstanzen(koerper.netz, plaetze.length); MOTOR.netzInstanzen(haut.netz, plaetze.length);
-    koerper.festeKugel = true; koerper.kugelWelt = kugel; haut.festeKugel = true; haut.kugelWelt = kugel;
-    return koerper;
+    return erstes;
   };
 
   /* Flaggen als Stoff (Europaflagge und Flaggen von Mitgliedstaaten) */
@@ -987,41 +1005,71 @@ WELT.bausteine = (function () {
   /* =====================================================================
      Trilog-Raum (Kapitel 6)
      ===================================================================== */
+  /* Trilog-Raum (Kapitel 6): neu gebaut auf Wunsch des Users (November 2026) –
+     ein heller, gut ausgeleuchteter Besprechungsraum: helle Wände, Eichenpaneel,
+     großes Deckenlicht über dem Tisch, Fensterband zur Stadt bei Nacht. */
   W.trilog = function (B, d, sz) {
     var r = d.raum, H = r.hoehe, hx = r.breite / 2, hz = r.tiefe / 2;
-    var wand = WELT.material("modellharz", { farbe: "#8a8c90" });
-    B.box(r.breite + 0.4, 0.1, r.tiefe + 0.4, 0, WELT.material("teppich", { farbe: "#262a34" }), [0, -0.05, 0], 0);
-    B.box(r.breite + 0.4, 0.2, r.tiefe + 0.4, 0, wand, [0, H + 0.1, 0], 0);
-    B.box(r.breite, H, 0.3, 0, wand, [0, H / 2, -hz - 0.15], 0);
+    var wand = WELT.material("modellharz", { farbe: "#e9e4da", rauheit: 0.85, durchscheinen: 0 });
+    var decke = WELT.material("modellharz", { farbe: "#f3f1ec", rauheit: 0.9, durchscheinen: 0 });
+    var paneel = WELT.material("eiche_matt", { farbe: "#cdb08c" });
+    B.box(r.breite + 0.4, 0.1, r.tiefe + 0.4, 0, WELT.material("teppich", { farbe: "#8c8780" }), [0, -0.05, 0], 0);
+    B.box(r.breite + 0.4, 0.2, r.tiefe + 0.4, 0, decke, [0, H + 0.1, 0], 0);
+    // Nordwand mit Fenster zur Dolmetschkabine, unten Eichenpaneel
+    var ox0 = -2.0, ox1 = -0.4, oy0 = 1.75, oy1 = 2.85;
+    B.box(ox0 + hx, H, 0.3, 0, wand, [(-hx + ox0) / 2, H / 2, -hz - 0.15], 0);
+    B.box(hx - ox1, H, 0.3, 0, wand, [(ox1 + hx) / 2, H / 2, -hz - 0.15], 0);
+    B.box(ox1 - ox0, oy0, 0.3, 0, wand, [(ox0 + ox1) / 2, oy0 / 2, -hz - 0.15], 0);
+    B.box(ox1 - ox0, H - oy1, 0.3, 0, wand, [(ox0 + ox1) / 2, oy1 + (H - oy1) / 2, -hz - 0.15], 0);
+    for (var pi = 0; pi < 8; pi++) B.box(1.18, 1.6, 0.03, 0.004, paneel, [-hx + 0.62 + pi * 1.22, 0.9, -hz + 0.016], 0, { verdecker: false });
+    B.box(r.breite, 0.06, 0.05, 0.01, paneel, [0, 1.72, -hz + 0.025], 0, { verdecker: false });
+    // Kabine hinter dem Fenster: Boden, Decke, Seiten, warme Rückwand, Pult
+    var kz = -hz - 0.3, kt = 1.1, kb = 1.35;
+    B.box(ox1 - ox0 + 0.2, 0.05, kt, 0, WELT.material("teppich", { farbe: "#4a4744" }), [(ox0 + ox1) / 2, kb - 0.025, kz - kt / 2], 0);
+    B.box(ox1 - ox0 + 0.2, 0.05, kt, 0, decke, [(ox0 + ox1) / 2, oy1 + 0.1, kz - kt / 2], 0);
+    [ox0 - 0.1, ox1 + 0.1].forEach(function (x) { B.box(0.05, oy1 - kb + 0.2, kt, 0, wand, [x, (kb + oy1) / 2, kz - kt / 2], 0); });
+    B.teil(Geo.box(ox1 - ox0 + 0.2, oy1 - kb + 0.2, 0.04, 0.01, 1), WELT.material("milchglas", { glas: false, emission: 1.3, emissionFarbe: "#ffe6c8", rauheit: 0.6 }), M.trs(M.m4(), [(ox0 + ox1) / 2, (kb + oy1) / 2, kz - kt]), { schatten: false, kein_ao: true });
+    B.box(ox1 - ox0, 0.04, 0.45, 0.01, WELT.material("eiche_matt", { farbe: "#b89a78" }), [(ox0 + ox1) / 2, kb + 0.74, kz - 0.25], 0);
+    // Ostwand und Südwand hell
     B.box(0.3, H, r.tiefe, 0, wand, [hx + 0.15, H / 2, 0], 0);
-    // Westwand mit Fenster (Regen, Stadtlichter)
-    B.box(0.3, 0.9, r.tiefe, 0, wand, [-hx - 0.15, 0.45, 0], 0);
-    B.box(0.3, H - 2.5, r.tiefe, 0, wand, [-hx - 0.15, 2.5 + (H - 2.5) / 2, 0], 0);
-    B.box(0.3, 1.6, hz - 1.2, 0, wand, [-hx - 0.15, 1.7, -hz + (hz - 1.2) / 2], 0);
-    B.box(0.3, 1.6, hz - 1.2, 0, wand, [-hx - 0.15, 1.7, hz - (hz - 1.2) / 2], 0);
+    B.box(r.breite, H, 0.3, 0, wand, [0, H / 2, hz + 0.15], 0);
+    B.box(0.03, 0.1, r.tiefe, 0.004, paneel, [hx - 0.015, 0.05, 0], 0, { verdecker: false });
+    B.box(r.breite, 0.1, 0.03, 0.004, paneel, [0, 0.05, hz - 0.015], 0, { verdecker: false });
+    // Westwand: Fensterband zur Stadt (Regen, Lichter)
+    B.box(0.3, 0.8, r.tiefe, 0, wand, [-hx - 0.15, 0.4, 0], 0);
+    B.box(0.3, H - 2.6, r.tiefe, 0, wand, [-hx - 0.15, 2.6 + (H - 2.6) / 2, 0], 0);
     var lw = MOTOR.texturen.leinwand(256, 256);
     var tex = MOTOR.gl.textur({ quelle: lw, mip: true, drehen: true });
-    var fenster = Geo.ebene(2.4, 1.6, 1, 1);
+    var fenster = Geo.ebene(r.tiefe - 0.2, 1.8, 1, 1);
     var fm = mal(M.trs(M.m4(), [-hx + 0.01, 1.7, 0]), mal((function () { var q = M.m4(); q[0] = 0; q[2] = -1; q[8] = 1; q[10] = 0; return q; })(), aufrecht()));
-    var fo = B.objekt(fenster, WELT.material("bildschirm", { klarlack: 1, rauheit: 0.05 }), fm, { statisch: true, farbTex: tex, emission: [0, 1.2, 0], schatten: false });
-    for (var k = 0; k <= 3; k++) B.box(0.06, 1.6, 0.06, 0.008, "aluminium", [-hx + 0.03, 1.7, -1.2 + k * 0.8], 0, { verdecker: false });
+    var fo = B.objekt(fenster, WELT.material("bildschirm", { klarlack: 1, rauheit: 0.05 }), fm, { statisch: true, farbTex: tex, emission: [0, 1.0, 0], schatten: false });
+    for (var k = 0; k <= 5; k++) B.box(0.06, 1.8, 0.06, 0.008, "aluminium", [-hx + 0.03, 1.7, -hz + 0.1 + k * (r.tiefe - 0.2) / 5], 0, { verdecker: false });
+    B.box(0.08, 0.05, r.tiefe, 0.008, "aluminium", [-hx + 0.04, 0.8, 0], 0, { verdecker: false });
     sz.fenster = { lw: lw, tex: tex, obj: fo, tropfen: [] };
-    // Dolmetschkabine in der Nordwand
-    B.teil(Geo.box(1.6, 0.8, 0.6, 0.01, 1), WELT.material("milchglas", { glas: false, emission: 1.2, emissionFarbe: "#ffcf96" }), M.trs(M.m4(), [-1.2, 2.3, -hz - 0.6]), { schatten: false });
-    B.teil(Geo.box(1.6, 0.8, 0.02, 0, 0), "klarglas", M.trs(M.m4(), [-1.2, 2.3, -hz + 0.02]), { schatten: false, kein_ao: true });
-    B.box(1.7, 0.06, 0.1, 0.01, "aluminium", [-1.2, 1.88, -hz + 0.03], 0, { verdecker: false });
-    B.licht({ pos: [-1.2, 2.6, -hz - 0.3], kelvin: 3000, staerke: 0.35, reichweite: 1.5 });
-    // langer dunkler Tisch
-    var tisch = WELT.material("eiche", { farbe: "#5a4636", spiegelt: true, klarlack: 0.7 });
-    B.teil(Geo.box(5.0, 0.05, 1.6, 0.015, 3), tisch, M.trs(M.m4(), [0, 0.74, 0]));
-    B.verdecker.push({ typ: "box", inv: M.invert(M.m4(), M.trs(M.m4(), [0, 0.74, 0])), h: [2.5, 0.025, 0.8], m: [0, 0.74, 0], r: 2.7 });
-    [[-2.1, -0.55], [2.1, -0.55], [-2.1, 0.55], [2.1, 0.55]].forEach(function (p) { B.teil(Geo.box(0.06, 0.72, 0.06, 0.01, 1), "aluminium", M.trs(M.m4(), [p[0], 0.36, p[1]])); });
-    // Stühle
-    [[-1.4, -1.05, 0], [0.9, -1.05, 0], [-0.9, 1.05, 180], [1.5, 1.05, 180]].forEach(function (p) { W.stuhl(B, { pos: [p[0], 0, p[1]], dreh: p[2] }); });
-    // Pendelleuchte
-    B.teil(Geo.rohr([[0, H, 0], [0, 2.45, 0]], 0.006, 6), "chrom", null, { kein_ao: true });
-    B.teil(Geo.drehkoerper([[0.04, 0.22], [0.3, 0.12], [0.42, 0.0], [0.41, -0.01]], 40, {}), WELT.material("lack", { farbe: "#1d1e20", rauheit: 0.3, doppelseitig: true }), M.trs(M.m4(), [0, 2.24, 0]), { schatten: false, kein_ao: true });
-    B.teil(Geo.zylinder(0.4, 0.01, 40, true), WELT.material("milchglas", { glas: false, emission: 9, emissionFarbe: "#ffd7a0" }), M.trs(M.m4(), [0, 2.235, 0]), { schatten: false, kein_ao: true });
+    // Glasscheibe und Rahmen der Dolmetschkabine
+    B.teil(Geo.box(ox1 - ox0, oy1 - oy0, 0.02, 0, 0), "klarglas", M.trs(M.m4(), [(ox0 + ox1) / 2, (oy0 + oy1) / 2, -hz - 0.05]), { schatten: false, kein_ao: true });
+    B.box(ox1 - ox0 + 0.08, 0.05, 0.12, 0.01, "aluminium", [(ox0 + ox1) / 2, oy0 - 0.02, -hz + 0.02], 0, { verdecker: false });
+    B.licht({ pos: [(ox0 + ox1) / 2, oy1 - 0.15, kz - 0.5], kelvin: 3400, staerke: 0.8, reichweite: 2.0 });
+    // Tisch: helle Eiche, abgerundet
+    var tisch = WELT.material("eiche", { farbe: "#c8a77f", spiegelt: true, klarlack: 0.45 });
+    B.teil(Geo.box(5.2, 0.05, 1.7, 0.03, 3), tisch, M.trs(M.m4(), [0, 0.74, 0]));
+    B.verdecker.push({ typ: "box", inv: M.invert(M.m4(), M.trs(M.m4(), [0, 0.74, 0])), h: [2.6, 0.025, 0.85], m: [0, 0.74, 0], r: 2.8 });
+    [[-1.9, 0], [1.9, 0]].forEach(function (p) {
+      B.teil(Geo.box(0.08, 0.7, 0.9, 0.02, 2), "aluminium", M.trs(M.m4(), [p[0], 0.37, p[1]]));
+      B.teil(Geo.box(0.5, 0.03, 0.9, 0.01, 1), "aluminium", M.trs(M.m4(), [p[0], 0.015, p[1]]));
+    });
+    // Stühle: einer unter jeder sitzenden Person, dazu freie Plätze
+    var besetzt = (d.figuren || []).filter(function (f) { return f.haltung === "sitzen" && f.pos[1] < 0.5; });
+    besetzt.forEach(function (f) { W.stuhl(B, { pos: [f.pos[0], 0, f.pos[2]], dreh: f.dreh }); });
+    [[-1.5, -1.05, 0], [1.0, -1.05, 0], [-1.0, 1.05, 180], [1.6, 1.05, 180]].forEach(function (p) { W.stuhl(B, { pos: [p[0], 0, p[1]], dreh: p[2] }); });
+    // Großes Deckenlicht über dem Tisch und Spots an den Wänden
+    B.teil(Geo.box(3.6, 0.06, 1.1, 0.01, 2), "aluminium", M.trs(M.m4(), [0, H - 0.03, 0]), { kein_ao: true });
+    B.teil(Geo.box(3.5, 0.012, 1.0, 0.004, 1), WELT.material("milchglas", { glas: false, emission: 5.5, emissionFarbe: "#fff3e2", rauheit: 0.5 }), M.trs(M.m4(), [0, H - 0.066, 0]), { schatten: false, kein_ao: true });
+    [[-1.2, 0], [1.2, 0]].forEach(function (p) { B.licht({ pos: [p[0], H - 0.35, p[1]], kelvin: 3800, staerke: 2.6, reichweite: 5.5 }); });
+    [[-3.8, -2.6], [0, -2.9], [3.8, -2.6], [3.9, 2.6], [-3.6, 2.6]].forEach(function (p) {
+      B.teil(Geo.zylinder(0.07, 0.02, 16, true), WELT.material("milchglas", { glas: false, emission: 4, emissionFarbe: "#fff0dc" }), M.trs(M.m4(), [p[0], H - 0.01, p[1]]), { schatten: false, kein_ao: true });
+      B.licht({ pos: [p[0], H - 0.3, p[1]], kelvin: 3300, staerke: 0.9, reichweite: 3.4 });
+    });
     // Vier-Spalten-Tabelle als großes Papier
     var tw = MOTOR.texturen.leinwand(1600, 800);
     var tc = tw.getContext("2d"); tc.fillStyle = "#fbfaf6"; tc.fillRect(0, 0, 1600, 800);   // leeres Blatt, bis die Tabelle steht
@@ -1029,15 +1077,15 @@ WELT.bausteine = (function () {
     var bl = Geo.ebene(1.3, 0.65, 8, 4);
     var bo = B.objekt(bl, "papier", M.trs(M.m4(), [-0.25, 0.768, 0.12], 0), { statisch: true, farbTex: tt });
     sz.trilogBlatt = { lw: tw, tex: tt, obj: bo };
-    // Laptops mit leuchtenden Bildschirmen
-    [[-1.6, -0.35, 15], [1.0, -0.4, -10], [1.9, 0.35, 170]].forEach(function (p) {
+    // Laptops
+    [[-1.6, -0.35, 15], [1.0, -0.4, -10], [2.05, 0.3, 170]].forEach(function (p) {
       var lm = M.trs(M.m4(), [p[0], 0.765, p[1]], p[2]);
       B.teil(Geo.box(0.34, 0.012, 0.24, 0.004, 1), "aluminium", lm);
       var dm = mal(lm, mal(M.trs(M.m4(), [0, 0.0, -0.12]), rotX(-105)));
       B.teil(Geo.box(0.34, 0.01, 0.23, 0.004, 1), "aluminium", mal(dm, M.trs(M.m4(), [0, 0, 0.115])));
-      B.teil(Geo.box(0.31, 0.002, 0.2, 0, 0), WELT.material("bildschirm", { emission: 1.6, emissionFarbe: "#a8c0e8" }), mal(dm, M.trs(M.m4(), [0, 0.006, 0.115])), { schatten: false, kein_ao: true });
+      B.teil(Geo.box(0.31, 0.002, 0.2, 0, 0), WELT.material("bildschirm", { emission: 0.9, emissionFarbe: "#dfe8f4" }), mal(dm, M.trs(M.m4(), [0, 0.006, 0.115])), { schatten: false, kein_ao: true });
     });
-    // Kaffeebecher (es werden im Laufe der Nacht mehr) und Wassergläser
+    // Kaffeebecher (es werden im Laufe der Nacht mehr) und Wasser
     sz.trilogBecher = [];
     var pl = [[-1.1, 0.4], [-0.7, -0.45], [0.6, 0.5], [1.4, -0.2], [-1.9, 0.1], [0.2, -0.55], [1.8, 0.55], [-0.3, 0.6], [2.2, -0.5]];
     pl.forEach(function (p, i) {
@@ -1047,17 +1095,16 @@ WELT.bausteine = (function () {
       teile.forEach(function (o) { o.sichtbar = i < 2; B.objekte.push(o); });
       sz.trilogBecher.push(teile);
     });
-    wasser(B, [-2.0, 0.765, -0.3]); wasser(B, [0.4, 0.765, 0.45]);
-    // bewohnt: Akten, Sideboard mit Kaffee, Garderobe, Uhr, Bild, zwei warme Wandleuchten
+    wasser(B, [-2.0, 0.765, -0.3]); wasser(B, [0.4, 0.765, 0.45]); wasser(B, [2.3, 0.765, 0.2]);
+    // Einrichtung: Akten, Sideboard mit Kaffee, Garderobe, Uhr, Bild, Pflanzen, Europaflagge
     [[-1.3, 0.765, -0.2, 12], [1.25, 0.765, 0.15, -8], [2.15, 0.765, -0.25, 30]].forEach(function (p) { W.aktenstapel(B, { pos: [p[0], p[1], p[2]], dreh: p[3] }); });
     W.sideboard(B, { pos: [2.6, 0, -hz + 0.25], dreh: 0, laenge: 1.8, kanne: "#2f3a48" }, sz);
-    W.garderobe(B, { pos: [hx - 0.45, 0, -hz + 0.5], dreh: 0, mantel: ["#2e3138", "#6a5240", "#3d4b5c"], schal: "#a8443a" });
-    W.wanduhr(B, { pos: [0.6, 2.35, -hz + 0.02], dreh: 0 });
-    W.bild(B, { pos: [hx - 0.02, 1.6, 0.6], dreh: -90, groesse: [1.2, 0.8], saat: 12, farben: ["#2f5f73", "#c99a4a", "#7a8f7c", "#b85a42"] });
-    [[-3.6, -1], [3.6, -1]].forEach(function (p) {
-      B.teil(Geo.box(0.32, 0.18, 0.06, 0.02, 2), WELT.material("milchglas", { glas: false, emission: 2.4, emissionFarbe: "#ffcf96", rauheit: 0.5 }), M.trs(M.m4(), [p[0], 2.2, -hz + 0.04]), { schatten: false, kein_ao: true });
-      B.licht({ pos: [p[0], 2.1, -hz + 0.35], kelvin: 2800, staerke: 1.6, reichweite: 4.5 });
-    });
+    W.garderobe(B, { pos: [hx - 0.45, 0, hz - 0.5], dreh: 180, mantel: ["#2e3138", "#6a5240", "#3d4b5c"], schal: "#a8443a" });
+    W.wanduhr(B, { pos: [0.6, 2.75, -hz + 0.04], dreh: 0 });
+    W.bild(B, { pos: [hx - 0.02, 1.6, 0.4], dreh: -90, groesse: [1.6, 1.0], saat: 12, farben: ["#2f5f73", "#c99a4a", "#7a8f7c", "#b85a42"] });
+    W.pflanze(B, { pos: [-hx + 0.45, 0, hz - 0.45], groesse: 1.3 });
+    W.pflanze(B, { pos: [hx - 0.5, 0, -hz + 0.5], groesse: 1.1 });
+    W.flagge(B, [-hx + 0.7, 0, -hz + 0.7], "eu", 0.4);
     B.objekt(Geo.kugel(200, 24, 12), WELT.material("himmel", { doppelseitig: true }), M.m4(), { statisch: true, schatten: false, immerZeichnen: true });
   };
 

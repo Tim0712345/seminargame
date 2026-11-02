@@ -21,9 +21,9 @@ DATA.epilog = {
     { figur: "ines", art: "postkarte", bedingung: "auskunft_umfang == \"nichts\"",
       text: "Ich bin jetzt Gesellin. Gefragt habe ich nie – es gab ja kein Recht darauf. Ich weiß es bis heute nicht." },
     { figur: "ines", art: "postkarte", bedingung: "wissen >= 4 && durchsetzung >= 4",
-      text: "Über das Auskunftsrecht habe ich erfahren, dass ich weniger bekam. Mit Hilfe der Gewerkschaft wurde nachgezahlt. Mein Zettel hat sich gelohnt!" },
+      text: "Über das Auskunftsrecht habe ich erfahren, dass ich weniger bekam. Mit Hilfe der Gewerkschaft wurde nachgezahlt." },
     { figur: "ines", art: "postkarte", bedingung: "durchsetzung <= 2",
-      text: "Ich weiß jetzt, dass ich weniger bekam. Aber allein gegen den Betrieb vorgehen? Ich habe es gelassen. Das Recht war da, die Kraft nicht." },
+      text: "Ich weiß jetzt, dass ich weniger bekam. Aber allein gegen den Betrieb vorgehen? Das habe ich mich nicht getraut." },
     { figur: "ines", art: "postkarte", bedingung: "schwelle == \"gross\" || schwelle == \"keine\"",
       text: "Mein Betrieb ist zu klein für die Berichtspflicht. Ich durfte fragen, aber die Antwort war vage. Ich weiß es immer noch nicht genau." },
     { figur: "ines", art: "postkarte",
@@ -33,9 +33,9 @@ DATA.epilog = {
     { figur: "karin", art: "brief", bedingung: "!angenommen",
       text: "Ein Gesetz kam nicht. Wir haben trotzdem angefangen, Stellen zu vergleichen. Freiwillig und langsam." },
     { figur: "karin", art: "brief", bedingung: "kriterien == \"neutral\" && aufwand <= 3",
-      text: "Ehrlich: überraschend machbar. Mit den Vorlagen hat die Bewertung ein paar Wochen gedauert. Sogar die Lohnsoftware hat ihr Update inzwischen fertig." },
+      text: "Es war besser machbar als gedacht. Mit den Vorlagen hat die Bewertung ein paar Wochen gedauert." },
     { figur: "karin", art: "brief", bedingung: "aufwand >= 4",
-      text: "Ein Jahr Kopfschmerzen. Wir haben es geschafft, aber ohne Hilfe war es zu viel für eine halbe Personalstelle." },
+      text: "Es hat ein Jahr gedauert. Wir haben es geschafft, aber ohne Hilfe war es zu viel für eine halbe Personalstelle." },
     { figur: "karin", art: "brief",
       text: "Es war Arbeit. Aber jetzt wissen wir, wo wir stehen. Zwei Stellen haben wir angepasst." },
 
@@ -47,9 +47,9 @@ DATA.epilog = {
 
     /* Mateusz (Chatnachricht) – erinnert an das, was ein Gesetz nicht lösen kann */
     { figur: "mateusz", art: "chat", bedingung: "wunsch",
-      text: "Ihr habt die Kita-Garantie damals versucht. Sie stand im falschen Gesetz – aber man hat darüber geredet. Da fehlt noch ein anderes Gesetz." },
+      text: "Ihr habt die Kita-Garantie damals versucht. Sie gehörte in ein anderes Gesetz, aber immerhin wurde darüber geredet." },
     { figur: "mateusz", art: "chat",
-      text: "Transparenz hilft. Aber die Kita schließt immer noch früh. Da fehlt noch ein anderes Gesetz – egal welche Fassung." },
+      text: "Transparenz hilft. Aber die Kita schließt immer noch früh. Dafür bräuchte es ein anderes Gesetz." },
 
     /* Schlagzeilen von Clara Vogt (Zeitungsausschnitt) */
     { figur: "clara", art: "zeitung", bedingung: "kompromiss",
@@ -63,8 +63,8 @@ DATA.epilog = {
   ],
   /* Miras Schlusszeile nach der Grundstimmung (aus den Abendantworten und Pressefragen) */
   mira: {
-    mutig: "Du hast dich was getraut. Das bleibt hängen – im Parlament und bei mir.",
-    pragmatisch: "Du hast zugehört, gerechnet und Brücken gebaut. So entstehen Gesetze.",
-    vorsichtig: "Du hast niemanden zurückgelassen. Manchmal ist das die mutigste Entscheidung."
+    mutig: "Du hast viel gewagt. Nicht alle waren begeistert, aber man hat dir zugehört.",
+    pragmatisch: "Du hast zugehört und Kompromisse gefunden. So entstehen Gesetze.",
+    vorsichtig: "Du hast darauf geachtet, dass alle mitkommen. Das war nicht immer leicht."
   }
 };

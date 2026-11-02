@@ -35,7 +35,14 @@ Spielsprache und alle Antworten an den User: **Deutsch**. Code-Bezeichner und Ko
 - Umgebungslicht: Raum wird beim Laden in eine Würfeltextur aufgenommen (2 Durchgänge = zweiter Lichtweg),
   zuerst mit einem Himmel-Würfel aus der Stimmung. Spiegel-Ebene (`sz.spiegelEbene`) für Material `spiegelt`.
 - Statische Teile über `WELT.Bauer` pro Material zusammengefasst; Verdeckung pro Eckpunkt aus Abstandsfeld
-  der Verdecker (`B.box`, `B.ringVerdecker`). Figuren: starre Teile, ein Knochen pro Eckpunkt (`uKnochen`).
+  der Verdecker (`B.box`, `B.ringVerdecker`).
+- Menschen (seit 2. November 2026): Netze aus `werkzeuge/menschen.py` (Python, nur zum Erzeugen) →
+  `js/welt/menschen_netze.js` (raw deflate + base64, entpackt mit `MOTOR.inflate`). Shader-Define `SKIN4`:
+  4 Knochen je Punkt (`aKn4`, `aGw4`, 28 Knochen = `uKnochen[84]`), Farbe je Punkt (`aFarbe`); Attribute teilen sich
+  die Plätze mit `iA/iB/iC` (nie zusammen mit Instanzen). Bindehaltung = Ruhehaltung (Arme hängen). Ärmel/Rumpf
+  getrennte Körper. Kopf je Geschlecht ein eigenes Netz (`kopf`, `kopf_w`) – Projektions-Formvarianten zwischen
+  Mann und Frau zerstören Gesichter. Normalen aus dem geglätteten feinen Netz (Oktaeder, 2 Byte), Umgebungs-
+  verdeckung je Punkt geglättet. Menschenmengen: grobe Fassungen (`*_lo`), einmal auf der CPU posiert, Instancing.
 - Grafikstufen in `data/stil.js` (`grafikstufen`), automatische Wahl in `js/motor/qualitaet.js`.
 - Touch-Regeln: Hover nur über `ANSICHT.hover` (pointerType "mouse"), **nie** Knöpfe beim Überfahren neu
   bauen, `touch-action: manipulation`, ≥ 44 px, Ziehen muss auch per Antippen gehen.
@@ -78,6 +85,15 @@ Spielsprache und alle Antworten an den User: **Deutsch**. Code-Bezeichner und Ko
   mit etwas Vertrauen klappt er. Wirkungsstufen über `wirkung_mitte`/`wirkung_teiler` (spielwerte.js).
 - Oberfläche: Papierweiß statt Milchglas (`DATA.stil.oberflaeche`), Akzent Petrol `#00727a`.
 
+## Zweite Rückmeldung (2. November 2026) – gilt vor dem Konzept und vor der ersten Rückmeldung
+- **Menschen sollen wie echte Menschen aussehen** (nicht mehr gesichtslose Modellfiguren): Gesichter mit Augen,
+  Lidern, Brauen, Nase, Lippen, Ohren; Hände mit Fingern; Kleidung mit Details; Frisuren. Jede Person mit eigenen
+  Gesichtszügen (`gesicht` in `data/figuren.js`). Werkzeug: `werkzeuge/` (README dort im Kopf von `menschen.py`).
+- **21:9** wird mittig auf `DATA.stil.bildformat.maxSeitenverhaeltnis` begrenzt (`--sb`/`--sx`, `#oberflaeche`
+  ist Bezugsrahmen per `transform`). Positionen aus `getBoundingClientRect` immer relativ zu `#oberflaeche` rechnen.
+- **Keine Witzsätze/Sprüche** in Texten; schlicht und sachlich („wirkt sonst nach KI“).
+- **Trilog-Raum hell** (Besprechungsraum mit Deckenlicht), Dolmetscher in einer Kabine hinter Glas.
+
 ## Stand
 - **Phase 1 (3D-Stil-Prototyp) fertig.** Plenarsaal-Titel mit Kamerafahrt, Tinte, geprägtem Titel; Büro mit
   Papierstapel (Umblättern, Füllfeder), Glasmodell (60 Sitze), Figuren, Stempel; alle Effekte aus 7.5; Grafikstufen; Rückfälle.
@@ -89,6 +105,8 @@ Spielsprache und alle Antworten an den User: **Deutsch**. Code-Bezeichner und Ko
   Wunschzettel (Kita-Garantie, Elternzeit) wie im Konzept; Länder wie im Konzept.
 - Prüfungen grün: Gespräche, Daten, Ziffern, Textlänge (≈ 3600 Wörter pro Durchgang), Balance (alle vier Ziele,
   11.520 Fassungen, 3,3 % mit Mehrheit ohne Verhandlung).
-- **Überarbeitung nach Rückmeldung (2026-11-01) fertig – wartet auf Rückmeldung des Users.**
-- Zeichenaufrufe auf „Hoch“ (1280×720): höchstens ≈ 260 (Gebäudemodell), Budget 300 eingehalten.
+- **Überarbeitung nach Rückmeldung (2026-11-01) fertig.**
+- **Zweite Überarbeitung (2026-11-02) fertig – wartet auf Rückmeldung des Users** (Menschen neu, Formate, Texte, Trilog).
+- Zeichenaufrufe auf „Hoch“ (1280×720): höchstens ≈ 270, Budget 300 eingehalten. Größe des Ordners ≈ 2,8 MB
+  (davon Menschen-Netze ≈ 1,9 MB).
 - Offen: Test auf echtem iPad/Windows-Laptop/Firefox/Safari, Zahlen verifizieren (27 Fakten), Credits-Namen.

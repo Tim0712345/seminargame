@@ -55,7 +55,7 @@ DATA.texte = {
   /* Aufgabenkarte oben links: Ziel des Kapitels und nächster Schritt */
   aufgaben: {
     titel: "Deine Aufgabe", ziel: "Ziel", jetzt: "Jetzt",
-    k1: { ziel: "Lerne deinen Auftrag kennen.", schritte: { start: "Hör Mira zu.", probe: "Probier es aus: Wähle im Gesetz eine andere Option.", fertig: "Der erste Tag ist geschafft." } },
+    k1: { ziel: "Lerne deinen Auftrag kennen.", schritte: { start: "Hör Mira zu.", probe: "Probier es aus: Wähle im Gesetz eine andere Option.", fertig: "Der erste Tag ist vorbei." } },
     k2: { ziel: "Sammle Argumente für dein Gesetz.", schritte: { start: "Hör dem Ökonomen zu.", fragen: "Stell den Gästen deine Fragen. Jede Antwort wird eine Karte in deinem Dossier." },
           fortschritt: "Fragen: {n} von {max}" },
     k3: { ziel: "Schreib ein Gesetz, für das im Ausschuss mehr Ja als Nein kommen.", schritte: { start: "Hör Mira und dem Juristischen Dienst zu.", artikel: "Entscheide in jedem Artikel eine Frage. Behalte die Mehrheit oben im Blick.", einreichen: "Fertig? Dann reich den Entwurf ein." },
@@ -71,17 +71,17 @@ DATA.texte = {
   /* Mira erklärt jeden neuen Bildschirm einmal (Hervorhebung + ein Satz) */
   fuehrung: {
     verstanden: "Verstanden",
-    probe: "Hier entscheidest du. Tipp eine Option an – auf dem Blatt siehst du sofort, was sich ändert.",
+    probe: "Hier entscheidest du. Tipp eine Option an, auf dem Blatt siehst du sofort, was sich ändert.",
     mehrheitProbe: "Und hier oben siehst du, wie der Ausschuss gerade abstimmen würde.",
-    fragen: "Du kannst nicht alle fragen. Jede Antwort landet als Karte in deinem Dossier – die brauchst du später zum Verhandeln.",
-    dossier: "Hier liegt dein Dossier. Tipp es an, wann immer du deine Karten sehen willst.",
+    fragen: "Du kannst nicht alle fragen. Jede Antwort landet als Karte in deinem Dossier. Die brauchst du später zum Verhandeln.",
+    dossier: "Hier liegt dein Dossier mit allen Karten.",
     mehrheit: "Das Wichtigste: Du brauchst mehr Ja als Nein. Tipp hier, um zu sehen, welche Fraktion wie denkt.",
     artikel: "Sieben Artikel, in jedem eine Entscheidung. Neben jeder Option steht, wer sie mag und wer nicht.",
-    wirkung: "Das zeigt, was dein Gesetz bewirkt. Mehr ist nicht immer besser – achte auf Aufwand und Rechtssicherheit.",
+    wirkung: "Das zeigt, was dein Gesetz bewirkt. Achte auch auf den Aufwand für Betriebe und die Rechtssicherheit.",
     einreichen: "Wenn du fertig bist, reichst du hier ein. Danach änderst du den Text nur noch durch Verhandlungen.",
-    buero: "Tipp ein Büro an, um mit der Fraktion zu reden. Jeder Besuch kostet einen Termin – du hast nur wenige.",
+    buero: "Tipp ein Büro an, um mit der Fraktion zu reden. Jeder Besuch kostet einen Termin, und du hast nur wenige.",
     verhandeln: "Eine passende Karte schafft Vertrauen. Ein Zugeständnis ändert deinen Text. Ein Versprechen musst du im Trilog halten.",
-    trilog: "Links steht, was du willst und was der Rat will. Der Rat gibt nur bei wenigen Punkten nach – such dir aus, wo du hart bleibst.",
+    trilog: "Hier steht, was du willst und was der Rat will. Der Rat gibt nur bei wenigen Punkten nach. Entscheide, wo du hart bleibst.",
     rede: "Deine Rede kann Unentschlossene überzeugen. Wähle, was zu deinem Gesetz passt."
   },
   wirkung: {
@@ -89,11 +89,11 @@ DATA.texte = {
     untertitel: "Einschätzung im Spiel – vereinfacht, keine Prognose",
     achsen: { wissen: "Wissen", durchsetzung: "Durchsetzung", aufwand: "Aufwand für Betriebe", recht: "Rechtssicherheit" },
     grau: "Ursachen außerhalb dieses Gesetzes (Kitas, Elternzeit, Berufswahl)",
-    grauErklaerung: ["Diese Leiste bleibt grau, egal was ihr schreibt. Kita-Plätze, Elternzeit, Berufswahl – das regelt ein Transparenzgesetz nicht.", "Dafür bräuchte es andere Gesetze. Gut, dass ihr das hier macht. Aber es ist nur die Hälfte."]
+    grauErklaerung: ["Diese Leiste bleibt grau, egal was im Gesetz steht. Kita-Plätze, Elternzeit und Berufswahl regelt ein Transparenzgesetz nicht.", "Dafür bräuchte es andere Gesetze."]
   },
 
   /* Dossier (Abschnitt 5.4) */
-  dossier: { titel: "Dossier", leer: "Noch keine Karten. Alles, was du hörst, landet hier.", neu: "Neu im Dossier –", waehlen: "Welche Karte legst du vor?",
+  dossier: { titel: "Dossier", leer: "Noch keine Karten. Was du in Gesprächen erfährst, landet hier.", neu: "Neu im Dossier –", waehlen: "Welche Karte legst du vor?",
     versprechen: "Deine Versprechen", arten: { stimme: "Stimme", beleg: "Beleg", einwand: "Einwand" }, von: { bibliothek: "Bibliothek des Parlaments" } },
 
   /* Entwurf (Kapitel 3) */
@@ -141,13 +141,13 @@ DATA.texte = {
   /* Kapitelkarten (Kapitelnummer setzt der Code ein) */
   kapitelWort: "Kapitel",
   kapitel: [
-    { titel: "Der Stapel", tag: "Montag", zeile: "Ein dicker Vorschlag, ein neues Büro – und ein Zettel auf dem Schreibtisch." },
-    { titel: "Die Anhörung", tag: "Dienstag, {wert:uhr_anhoerung}", zeile: "Fünf Menschen, fünf Blickwinkel. Du darfst nur einige fragen." },
-    { titel: "Der Entwurf", tag: "Dienstag, später Vormittag", zeile: "Sieben Artikel. Jedes Wort hat Freund*innen und Feind*innen." },
-    { titel: "Die Flure", tag: "Mittwoch", zeile: "Verhandeln, zuhören, Versprechen geben." },
-    { titel: "Die Ausschussabstimmung", tag: "Donnerstag", zeile: "Hände gehen hoch. Oder nicht." },
-    { titel: "Der Trilog", tag: "Donnerstag, nachts", zeile: "Parlament, Rat und Kommission an einem Tisch." },
-    { titel: "Das Plenum", tag: "Straßburg", zeile: "Die letzte Abstimmung." }
+    { titel: "Der Auftrag", tag: "Montag", zeile: "Mira erklärt dir, was du als Berichterstatter*in machst." },
+    { titel: "Die Anhörung", tag: "Dienstag, {wert:uhr_anhoerung}", zeile: "Du befragst Gäste im Ausschuss." },
+    { titel: "Der Entwurf", tag: "Dienstag, später Vormittag", zeile: "Du schreibst die sieben Artikel deines Entwurfs." },
+    { titel: "Die Flure", tag: "Mittwoch", zeile: "Du sprichst mit den Fraktionen und suchst Stimmen." },
+    { titel: "Die Ausschussabstimmung", tag: "Donnerstag", zeile: "Der Ausschuss stimmt über deinen Entwurf ab." },
+    { titel: "Der Trilog", tag: "Donnerstag, nachts", zeile: "Parlament, Rat und Kommission verhandeln den endgültigen Text." },
+    { titel: "Das Plenum", tag: "Straßburg", zeile: "Alle Abgeordneten stimmen ab." }
   ],
 
   /* Kurze Szenenbeschreibung für Bildschirmleser (das 3D-Bild selbst ist aria-hidden) */
@@ -155,7 +155,7 @@ DATA.texte = {
     titel: "Ein leerer Plenarsaal im Morgengrauen. Ein Sonnenstrahl fällt durch das Glasdach. Auf dem Rednerpult liegt ein Blatt mit dem Titel Mehrheit.",
     ausschusssaal: "Ein Ausschusssaal mit hufeisenförmigem Eichentisch, Mikrofonen, Flaggen und Dolmetschkabinen. Fünf Gäste sitzen am Kopfende.",
     gebaeude: "Ein aufgeschnittenes Modell des Parlamentsgebäudes mit drei Etagen: Cafeteria, Bibliothek und die Büros der Fraktionen. Nachmittagssonne fällt durch die Fenster.",
-    trilog: "Ein fensterloser Verhandlungsraum bei Nacht. Über dem langen Tisch hängt eine Pendelleuchte. Am Fenster läuft Regen herunter.",
+    trilog: "Ein heller Besprechungsraum am späten Abend. Über dem langen Eichentisch hängt ein großes Deckenlicht. Durch das Fensterband sieht man die Stadt, am Glas läuft Regen herunter.",
     plenum: "Der Plenarsaal in Straßburg, voll besetzt. Licht fällt durch das Glasdach. Am Rednerpult steht die Spielfigur.",
     epilog: "Eine Collage auf einem Tisch: Postkarte, Brief, Telefon mit Nachrichten und ein Zeitungsausschnitt.",
     buero: "Ein schmales Büro mit Fensterwand. Auf dem Schreibtisch liegen der Gesetzentwurf, ein gläsernes Modell des Ausschusses und ein Becher Kaffee. Mira sitzt an einem kleinen Tisch, die Spielfigur steht am Schreibtisch."
@@ -167,8 +167,8 @@ DATA.texte = {
   /* Bildschirm im Büro: Miras Mail */
   mail: {
     von: "Mira Kovács",
-    betreff: "Glückwunsch. Und Beileid.",
-    zeilen: ["Du bist Berichterstatter*in.", "Der Vorschlag der Kommission liegt", "auf deinem Schreibtisch.", "Kaffee steht daneben. – M."]
+    betreff: "Dein neues Dossier",
+    zeilen: ["Du bist Berichterstatter*in.", "Der Vorschlag der Kommission liegt", "auf deinem Schreibtisch.", "Bis gleich, Mira"]
   },
 
   /* Zettel von Inès an der Pinnwand (Abschnitt 3.1) */

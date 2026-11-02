@@ -82,15 +82,18 @@ ANSICHT.fuehrung = (function () {
   /* Loch und Sprechblase an das hervorgehobene Element anlegen */
   F.ausrichten = function () {
     if (!F.offen) return;
-    var r = F.offen.el.getBoundingClientRect(), w = hol("fuehrung");
+    // Koordinaten relativ zur Spielfläche (#oberflaeche ist der Bezugsrahmen)
+    var o = hol("oberflaeche").getBoundingClientRect(), r0 = F.offen.el.getBoundingClientRect(), w = hol("fuehrung");
+    var r = { left: r0.left - o.left, top: r0.top - o.top, width: r0.width, height: r0.height, bottom: r0.bottom - o.top };
+    var B = o.width, Hh = o.height;
     var loch = w.querySelector(".fu-loch"), blase = w.querySelector(".fu-blase"), rand = 8;
     loch.style.left = (r.left - rand) + "px"; loch.style.top = (r.top - rand) + "px";
     loch.style.width = (r.width + 2 * rand) + "px"; loch.style.height = (r.height + 2 * rand) + "px";
-    var bw = Math.min(340, window.innerWidth - 24), bh = blase.offsetHeight || 150;
-    var x = Math.max(12, Math.min(window.innerWidth - bw - 12, r.left + r.width / 2 - bw / 2));
+    var bw = Math.min(340, B - 24), bh = blase.offsetHeight || 150;
+    var x = Math.max(12, Math.min(B - bw - 12, r.left + r.width / 2 - bw / 2));
     var y = r.bottom + rand + 12;
-    if (y + bh > window.innerHeight - 12) y = r.top - rand - 12 - bh;
-    if (y < 12) y = Math.max(12, Math.min(window.innerHeight - bh - 12, r.top + 12));
+    if (y + bh > Hh - 12) y = r.top - rand - 12 - bh;
+    if (y < 12) y = Math.max(12, Math.min(Hh - bh - 12, r.top + 12));
     blase.style.width = bw + "px"; blase.style.left = x + "px"; blase.style.top = y + "px";
   };
 

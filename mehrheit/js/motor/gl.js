@@ -13,7 +13,7 @@ MOTOR.gl = (function () {
   var gl;
 
   /* Feste Plätze der Vertex-Attribute */
-  G.ATTR = { aPos: 0, aNor: 1, aUv: 2, aAo: 3, aKnochen: 4, iA: 5, iB: 6, iC: 7 };
+  G.ATTR = { aPos: 0, aNor: 1, aUv: 2, aAo: 3, aKnochen: 4, iA: 5, iB: 6, iC: 7, aKn4: 5, aGw4: 6, aFarbe: 7 };   // aKn4/aGw4/aFarbe nur bei Menschen (nie zusammen mit Instanzen)
 
   G.init = function (kanvas, nurWebGL1) {
     G.kanvas = kanvas;

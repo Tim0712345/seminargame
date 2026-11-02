@@ -97,7 +97,17 @@ var MEHRHEIT = (function () {
     if (automatisch) ANSICHT.menues.hinweis(DATA.texte.einstellungen.abgesenkt);
   };
 
+  /* Sehr breite Bildschirme (z. B. 21:9): Spielfläche mittig mit höchstens diesem Seitenverhältnis,
+     damit Bildausschnitt und Bedienfelder zusammenbleiben (Wert in data/stil.js) */
+  X.spielflaeche = function () {
+    var vb = window.innerWidth, vh = window.innerHeight, max = (DATA.stil.bildformat && DATA.stil.bildformat.maxSeitenverhaeltnis) || 2.05;
+    var sb = vb, sx = 0;
+    if (vb / vh > max) { sb = Math.round(vh * max); sx = Math.floor((vb - sb) / 2); }
+    var st = document.documentElement.style;
+    st.setProperty("--sb", sb + "px"); st.setProperty("--sx", sx + "px");
+  };
   X.groesse = function (erzwingen) {
+    X.spielflaeche();
     var b = kanvas.clientWidth || window.innerWidth, h = kanvas.clientHeight || window.innerHeight;
     var a = MOTOR.qualitaet.aufloesung(b, h);
     if (!erzwingen && kanvas.width === a.b && kanvas.height === a.h) return;
@@ -227,6 +237,7 @@ var MEHRHEIT = (function () {
     },
     titelZeit: function (t) { var sz = LOGIK.ablauf.szene; if (sz && sz.titel) sz.titel.zeit = t; if (kamera.fahrt) kamera.fahrt.t = t; },
     festesDt: function (dt) { X.festesDt = dt; },
+    szene: function (name, extra) { LOGIK.ablauf.testSzene(name, extra); },
     zeit: function () { return zeit; }
   };
 

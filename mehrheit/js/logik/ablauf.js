@@ -34,6 +34,8 @@ LOGIK.ablauf = (function () {
       MOTOR.ton.atmo(name === "trilog" ? "regen" : (name === "plenum" || name === "ausschusssaal" ? "saal" : null));
     }
   }
+  /* Nur für Tests und Standbilder: beliebige Szene mit Figuren laden */
+  A.testSzene = function (name, extra) { szeneLaden(name, extra); A.modus = "test"; };
   A.szeneNeuAufbauen = function () {
     if (A.ohne3D) return;
     var a = A.szeneArgs || { name: "plenarsaal" };

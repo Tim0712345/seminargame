@@ -163,7 +163,7 @@ DATA.artikel = [
   /* ---------------- Artikel 6 ---------------- */
   {
     id: "folgen", titel: "Artikel 6 – Was passiert, wenn eine Lücke gefunden wird",
-    einleitung: "Ein Bericht zeigt eine Lücke. Und dann?",
+    einleitung: "Was passiert, wenn ein Bericht eine Lücke zeigt?",
     kurzfassung: "Wenn ein Betrieb eine unerklärte Lücke hat, soll er sie prüfen und beheben.",
     schrauben: [
       { id: "massnahme", frage: "Was folgt aus einer gefundenen Lücke?", start: "begruenden",

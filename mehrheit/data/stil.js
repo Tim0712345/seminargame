@@ -53,10 +53,10 @@ DATA.stil = {
     blatt_pflanze: { farbe: "#3f6a3a", rauheit: 0.5, metall: 0, durchscheinen: 0.7, klarlack: 0.2, struktur: "korn", strukturSkala: 10.0, strukturStaerke: 0.25, doppelseitig: true },
     erde:          { farbe: "#2b2119", rauheit: 0.95, metall: 0, struktur: "teppich", strukturSkala: 8.0, strukturStaerke: 0.8 },
     kork:          { farbe: "#b38a5e", rauheit: 0.9, metall: 0, struktur: "teppich", strukturSkala: 10.0, strukturStaerke: 0.9 },
-    // Haut der Gliederfiguren: Modellharz, eingefärbt (Farbe kommt aus figuren.js)
-    haut:          { farbe: "#d9a77f", rauheit: 0.5, metall: 0, durchscheinen: 0.45, struktur: "korn", strukturSkala: 12.0, strukturStaerke: 0.2 },
+    // Menschen: Haut (Farbe je Punkt aus figuren.js), feuchte Augen mit Glanzschicht
+    haut:          { farbe: "#d9a77f", rauheit: 0.7, metall: 0, durchscheinen: 0.45, struktur: "glatt", strukturSkala: 1.0, strukturStaerke: 0.0 },
+    auge:          { farbe: "#ffffff", rauheit: 0.3, metall: 0, klarlack: 1.0, struktur: "glatt", strukturStaerke: 0.0 },
     haar:          { farbe: "#3b2a20", rauheit: 0.55, metall: 0, struktur: "gebuerstet", strukturSkala: 30.0, strukturStaerke: 0.7, samt: 0.3 },
-    auge:          { farbe: "#15110f", rauheit: 0.6, metall: 0, struktur: "glatt", strukturStaerke: 0.0 },
     leder:         { farbe: "#2a201b", rauheit: 0.45, metall: 0, klarlack: 0.3, struktur: "korn", strukturSkala: 10.0, strukturStaerke: 0.5 },
     // Stempel: Holzgriff, Gummiplatte, Stempelfarbe
     stempelfarbe:  { farbe: "#a3322c" },
@@ -147,14 +147,14 @@ DATA.stil = {
       bloom: 0.05, vignette: 0.42, korn: 0.03
     },
     trilog: {
-      name: "Kapitel 6 – Nacht, nur eine warme Pendelleuchte über dem Tisch",
-      sonne: { richtung: [0.06, 1.0, 0.04], kelvin: 2700, staerke: 7.0, winkel: 7, kegel: [0, 0, 1.7, 3.4] },
-      himmel: { oben: "#0b0f1c", horizont: "#1a2234", unten: "#050608", sonnenglanz: 0.0, staerke: 1.0 },
-      umgebung: 1.0,
-      nebel: { dichte: 0.012, farbe: "#3a3020", streuung: 0.4, strahlen: 0.8, reichweite: 8, dunst: 0.15 },
-      belichtung: 1.3,
-      farbe: { temperatur: 0.08, saettigung: 0.92, kontrast: 1.15, schatten: "#141a2c", lichter: "#ffd8a8", toenung: 0.45, schwarz: 0.014 },
-      bloom: 0.08, vignette: 0.55, korn: 0.04
+      name: "Kapitel 6 – heller Besprechungsraum am späten Abend: großes Deckenlicht, Stadt im Fenster",
+      sonne: { richtung: [0.05, 1.0, 0.08], kelvin: 3900, staerke: 4.2, winkel: 16, kegel: [0, 0, 2.4, 4.8] },
+      himmel: { oben: "#101a2e", horizont: "#2a3a58", unten: "#0a0b0e", sonnenglanz: 0.0, staerke: 1.0 },
+      umgebung: 1.7,
+      nebel: { dichte: 0.003, farbe: "#e0d6c6", streuung: 0.4, strahlen: 0.2, reichweite: 10, dunst: 0.04 },
+      belichtung: 1.12,
+      farbe: { temperatur: 0.03, saettigung: 0.98, kontrast: 1.04, schatten: "#2c303c", lichter: "#fff2e0", toenung: 0.2, schwarz: 0.006 },
+      bloom: 0.05, vignette: 0.28, korn: 0.03
     },
     plenum: {
       name: "Kapitel 7 – festliches helles Licht durch das Glasdach",
@@ -202,6 +202,10 @@ DATA.stil = {
   automatik: { ultraUnter: 9, hochUnter: 17, mittelUnter: 28, absenkenUnterFps: 28, absenkenNachSekunden: 4 },
 
   /* ---------------- Oberfläche (Abschnitt 7.10) ---------------- */
+  /* Bildformat: Auf sehr breiten Bildschirmen (z. B. 21:9) wird die Spielfläche mittig
+     auf dieses Seitenverhältnis begrenzt (Breite : Höhe). 16:9 mit Browserleiste ≈ 2,0. */
+  bildformat: { maxSeitenverhaeltnis: 2.05 },
+
   oberflaeche: {
     akzent: "#00727a",                      // Petrol – Fokusrahmen, Hervorhebungen, Hauptknöpfe
     schriftUI: 'system-ui, "Segoe UI", -apple-system, "Helvetica Neue", Arial, sans-serif',

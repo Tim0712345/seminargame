@@ -142,7 +142,7 @@ DATA.szenen = {
       { person: "tiago",     pos: [2.75, 0, 0.0], dreh: -90, haltung: "sitzen" },
       { person: "sam",       pos: [0.3, 0, 1.05], dreh: 180, haltung: "sitzen" },
       { person: "hanna",     pos: [-2.75, 0, 0.15], dreh: 90, haltung: "sitzen" },
-      { person: "dolmetscher", pos: [-1.2, 1.55, -3.55], dreh: 0, haltung: "sitzen" }
+      { person: "dolmetscher", pos: [-1.2, 1.35, -4.62], dreh: 0, haltung: "sitzen" }
     ]
   },
 

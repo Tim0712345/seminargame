@@ -70,7 +70,7 @@ WELT.szenen = (function () {
       }
     } else if (name === "ausschusssaal") {
       W.ausschusssaal(B, d, sz);
-      if (!(extra && extra.ohneGaeste)) figurenBauen(B, d.gaeste, sz);
+      figurenBauen(B, (extra && extra.figuren) || (extra && extra.ohneGaeste ? [] : d.gaeste), sz);
       (d.lichter || []).forEach(function (L) { B.licht({ pos: L.pos, kelvin: L.kelvin, staerke: L.staerke, reichweite: L.reichweite, richtung: M.norm(L.richtung), kegelAussen: L.kegelAussen, kegelInnen: L.kegelInnen }); });
       sz.schattenBox = { mitte: [0, 2.3, 0.2], groesse: [16.6, 4.8, 13.2] };
       sz.spiegelEbene = 0.76; sz.sondePos = [0, 1.8, 1.0]; sz.ao = { radius: 0.4, staerke: 1.2 };
@@ -86,14 +86,21 @@ WELT.szenen = (function () {
       });
       var rp0 = sz.raumPos.eigenes;
       sz.figuren.sam = WELT.figuren.bauen(B, DATA.figuren.personen.sam, { pos: [rp0.x + 1.6, rp0.y, 1.6], dreh: -90, haltung: "stehen" }, sz);
-      // Besucher*innen gehen durch die Flure (weiße Modellfiguren)
-      var netz = MOTOR.netz(WELT.figuren.modellFigur(false));
+      // Besucher*innen gehen durch die Flure (grobe Menschen-Figuren)
       var farbenBes = ["#3d4452", "#7a3f3a", "#2e4a44", "#8c8574", "#4b3f55"];
+      var hautBes = [1, 4, 2, 6, 3], haarBes = ["#2a201b", "#6e6862", "#161211", "#8a6a4a", "#3b2c24"];
+      var netzeBes = {};
       sz.besucher = [];
       for (var i = 0; i < (d.besucher || 4); i++) {
-        var o = B.objekt(null, WELT.material("stoff", { farbe: farbenBes[i % farbenBes.length], strukturSkala: 18 }), M.m4(), { netz: netz });
-        o.festeKugel = true; o.kugelWelt = { m: [0, 5, 0], r: 16 };
-        sz.besucher.push({ o: o, etage: i % 3, x: -10 + i * 4.3, z: 1.2 + (i % 2) * 1.4, richtung: i % 2 ? 1 : -1, tempo: 0.6 + (i % 3) * 0.15 });
+        var v = i % 3, objs = [];
+        [["koerper", "stoff", { farbe: farbenBes[i % farbenBes.length], strukturSkala: 26 }], ["haut", "haut", { farbe: DATA.figuren.hauttoene[hautBes[i % 5]] }], ["haar", "haar", { farbe: haarBes[i % 5] }]].forEach(function (t) {
+          var schl = t[0] + v;
+          if (!netzeBes[schl]) netzeBes[schl] = MOTOR.netz(WELT.figuren.modellFigur(false, t[0], v));
+          var o = B.objekt(null, WELT.material(t[1], t[2]), M.m4(), { netz: netzeBes[schl] });
+          o.festeKugel = true; o.kugelWelt = { m: [0, 5, 0], r: 16 };
+          objs.push(o);
+        });
+        sz.besucher.push({ objekte: objs, etage: i % 3, x: -10 + i * 4.3, z: 1.2 + (i % 2) * 1.4, richtung: i % 2 ? 1 : -1, tempo: 0.6 + (i % 3) * 0.15 });
       }
       sz.schattenBox = { mitte: [0, 5.2, 0], groesse: [26, 11, 10] };
       sz.spiegelEbene = null; sz.sondePos = [0, 4.0, 2.0]; sz.ao = { radius: 0.5, staerke: 1.2 };  // kein Spiegel: spart einen ganzen Durchgang
@@ -301,8 +308,8 @@ WELT.szenen = (function () {
       b.x += b.richtung * b.tempo * dt;
       if (b.x > 10.8) b.richtung = -1; if (b.x < -10.8) b.richtung = 1;
       var hub = Math.abs(Math.sin(b.x * 3.0)) * 0.02;
-      b.o.matrix = M.trs(M.m4(), [b.x, 0.25 + b.etage * H + hub, b.z], b.richtung > 0 ? 90 : -90, 1);
-      b.o.kugelWelt = { m: [b.x, 1 + b.etage * H, b.z], r: 1.2 };
+      var m = M.trs(M.m4(), [b.x, 0.25 + b.etage * H + hub, b.z], b.richtung > 0 ? 90 : -90, 1);
+      b.objekte.forEach(function (o) { o.matrix = m; o.kugelWelt = { m: [b.x, 1 + b.etage * H, b.z], r: 1.2 }; });
     });
   }
 

@@ -1,303 +1,284 @@
 /* =====================================================================
-   js/welt/figuren.js – schlichte Modellfiguren (Abschnitt 7.7, geändert)
+   js/welt/figuren.js – Menschen (neu modelliert, November 2026)
    ---------------------------------------------------------------------
-   Auf Wunsch des Users (1. November 2026): glatte, edle Figuren wie aus
-   einem Architekturmodell – ohne Gesicht, ohne sichtbare Gelenke.
-   Erkennbar an Silhouette, Frisur, Kleidung und einem Farbakzent.
-   Technik: starre Teile an einer Knochen-Hierarchie (keine Haut-Verformung),
-   die sich an den Gelenken überlappen, damit keine Fugen zu sehen sind.
-   Pro Material entsteht ein Puffer; jeder Eckpunkt kennt seinen Knochen.
-   Figur schaut in lokaler +z-Richtung, +x ist ihre linke Seite.
+   Auf Wunsch des Users: Die Figuren sollen wie echte Menschen aussehen.
+   Die Netze (Kopf mit Gesicht, Augen, Brauen, Hände mit Fingern, Kleidung,
+   Frisuren) entstehen offline mit werkzeuge/menschen.py aus Abstandsfeldern
+   und liegen komprimiert in js/welt/menschen_netze.js.
+   Hier wird je Person zusammengesetzt:
+     - Teile wählen (Frisur, Oberteil, Hemd, Hose/Rock, Schuhe, Krawatte, Schal)
+     - Formvarianten mischen (Geschlecht, Körperbau, Nase, Kinn, Wangen, Lippen, Alter)
+     - Farben je Punkt (Haut, Lippen, Wimpernlinie, Augen, Stoffe …)
+     - weiche Verformung: bis zu vier Knochen je Punkt (Shader-Define SKIN4)
+   Bindehaltung der Netze: Arme 35° abgespreizt, Beine 4° gespreizt.
+   Ruhehaltung im Spiel: Arme hängen. Figur schaut in lokaler +z-Richtung.
+   Alle Farben und Personenwerte: data/figuren.js.
    ===================================================================== */
 var WELT = window.WELT || {};
 
 WELT.figuren = (function () {
   var F = {};
   var M = MOTOR.m, Geo = MOTOR.geo, GR = M.GRAD;
+  var D = null, KNOCHEN = [], ELTERN = [], K = {};
 
-  var KNOCHEN = ["becken", "brust", "hals", "kopf", "oberarmL", "unterarmL", "handL", "oberarmR", "unterarmR", "handR",
-                 "oberschenkelL", "unterschenkelL", "fussL", "oberschenkelR", "unterschenkelR", "fussR", "handL_zeigen", "handR_zeigen"];
-  var ELTERN = [-1, 0, 1, 2, 1, 4, 5, 1, 7, 8, 0, 10, 11, 0, 13, 14, 5, 8];
-  var K = {}; KNOCHEN.forEach(function (n, i) { K[n] = i; });
-  F.KNOCHEN = KNOCHEN;
+  /* ---------- Daten einmalig entpacken ---------- */
+  function daten() {
+    if (D) return D;
+    var R = WELT.menschenDaten;
+    var bin = MOTOR.inflate(MOTOR.base64(R.block), R.groesse), buf = bin.buffer;
+    KNOCHEN = R.knochen; ELTERN = R.eltern;
+    KNOCHEN.forEach(function (n, i) { K[n] = i; });
+    D = { teile: {}, R: R };
+    function u8(o) { return new Uint8Array(buf, o[0], o[1]); }
+    for (var name in R.teile) {
+      var t = R.teile[name];
+      var e = { name: name, n: t.n, d: t.d, w0: t.w0, art: t.art, lo: t.lo, sk: t.sk,
+        pos: new Uint16Array(buf, t.pos[0], t.pos[1] / 2), idx: new Uint16Array(buf, t.idx[0], t.idx[1] / 2),
+        kn: u8(t.kn), gw: u8(t.gw), schicht: u8(t.schicht), maske: u8(t.maske), ao: u8(t.ao),
+        nor: new Int8Array(buf, t.nor[0], t.nor[1]), morph: {} };
+      for (var m in t.morph) e.morph[m] = { s: t.morph[m].s, p: new Int8Array(buf, t.morph[m].p[0], t.morph[m].p[1]), n: new Int8Array(buf, t.morph[m].n[0], t.morph[m].n[1]) };
+      D.teile[name] = e;
+    }
+    return D;
+  }
+  F.daten = daten;
 
-  function trs(p, sk) { var m = M.m4(); m[12] = p[0]; m[13] = p[1]; m[14] = p[2]; if (sk) { m[0] = sk[0]; m[5] = sk[1]; m[10] = sk[2]; } return m; }
   function rot(e) { return M.ausQuat(M.m4(), M.quatEuler(e)); }
-  function mul() { var r = arguments[0]; for (var i = 1; i < arguments.length; i++) r = M.mul(M.m4(), r, arguments[i]); return r; }
+  function verschieb(v) { var m = M.m4(); m[12] = v[0]; m[13] = v[1]; m[14] = v[2]; return m; }
+  function mul(a, b) { return M.mul(M.m4(), a, b); }
+  function farbe(h) { return M.farbe(h); }
+  function misch(a, b, t) { return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t]; }
+  function mal(a, k) { return [a[0] * k[0], a[1] * k[1], a[2] * k[2]]; }
 
-  /* ---------- Kopfform: Ellipsoid mit modellierten Formen ---------- */
-  function kopfPunkt(d, kb) {
-    var rx = 0.074, ry = 0.1, rz = 0.088;
-    var x = d[0], y = d[1], z = d[2];
-    var kiefer = M.glatt(-0.05, -0.85, y);
-    var sx = 1 - 0.16 * kiefer, sz = 1 - 0.08 * kiefer * M.glatt(-0.2, 0.8, z);
-    var p = [x * rx * sx, y * ry, z * rz * sz];
-    // nur zwei ganz weiche Formen: Hinterkopf und ein Hauch von Kinn – kein Gesicht
-    var b = 0.010 * Math.exp(-(x * x / 0.42 + (y - 0.4) * (y - 0.4) / 0.2 + (z + 0.88) * (z + 0.88) / 0.09));
-    b += 0.004 * Math.exp(-(x * x / 0.04 + (y + 0.8) * (y + 0.8) / 0.02 + (z - 0.58) * (z - 0.58) / 0.04));
-    b += (kb || 0);
-    return [p[0] + x * b, p[1] + y * b + 0.112, p[2] + z * b + 0.004];
+  /* Pseudo-Zufall aus dem Namen (für Gesichtszüge ohne Angabe) */
+  function namensZufall(text) {
+    var h = 2166136261;
+    for (var i = 0; i < text.length; i++) { h ^= text.charCodeAt(i); h = Math.imul(h, 16777619); }
+    return M.zufall(h >>> 0);
   }
-  function kugelRichtung(th, ph) { return [Math.sin(th) * Math.sin(ph), Math.cos(th), Math.sin(th) * Math.cos(ph)]; }
 
-  function kopfGeo(ringe, seg) {
-    var g = Geo.leer();
-    for (var i = 0; i <= ringe; i++) for (var j = 0; j <= seg; j++) {
-      var th = Math.PI * i / ringe, ph = Math.PI * 2 * j / seg;
-      var p = kopfPunkt(kugelRichtung(th, ph));
-      g.p.push(p[0], p[1], p[2]); g.n.push(0, 1, 0); g.uv.push(ph * 0.08, th * 0.1);
+  /* ---------- Skelett einer Person ---------- */
+  function skelett(w, wk) {
+    var R = daten().R, n = KNOCHEN.length;
+    var gel = [], ruhe = [], bind = [], inv = [];
+    for (var i = 0; i < n; i++) {
+      var a = R.gelenke_m[i], b = R.gelenke_w[i];
+      var t = KNOCHEN[i].indexOf("auge") === 0 && wk !== undefined ? wk : w;   // Augen passen zum gewählten Kopf
+      gel.push([a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t]);
     }
-    for (i = 0; i < ringe; i++) for (j = 0; j < seg; j++) {
-      var a = i * (seg + 1) + j, b = a + 1, c = a + seg + 2, d = a + seg + 1;
-      g.i.push(a, d, c, a, c, b);
+    for (i = 0; i < n; i++) {
+      var e = ELTERN[i];
+      ruhe.push(e < 0 ? gel[i].slice() : [gel[i][0] - gel[e][0], gel[i][1] - gel[e][1], gel[i][2] - gel[e][2]]);
+      var lok = mul(verschieb(ruhe[i]), rot([0, 0, R.bind[KNOCHEN[i]] || 0]));
+      bind.push(e < 0 ? lok : mul(bind[e], lok));
+      inv.push(M.invert(M.m4(), bind[i]));
     }
-    Geo.normalenNeu(g);
-    return Geo.windung(g);
+    return { gelenke: gel, ruhe: ruhe, bindInv: inv };
   }
 
-  /* Haarkappe: Teil der Kopfform, etwas größer; grenze(ph) = Polarwinkel des Haaransatzes */
-  function haarKappe(grenze, dicke, ringe, seg, wellen) {
-    var g = Geo.leer();
-    for (var i = 0; i <= ringe; i++) for (var j = 0; j <= seg; j++) {
-      var ph = Math.PI * 2 * j / seg, th = grenze(ph) * i / ringe;
-      var d = kugelRichtung(th, ph);
-      var rand = M.glatt(0.82, 1.0, i / ringe);
-      var w = wellen ? Math.sin(ph * wellen) * 0.0015 * (1 - rand) : 0;
-      var p = kopfPunkt(d, dicke * (1 - rand * 0.85) + w);
-      g.p.push(p[0], p[1], p[2]); g.n.push(0, 1, 0); g.uv.push(ph * 0.1, th * 0.12);
+  /* ---------- Ein Teil mit Formvarianten in Bindehaltung ---------- */
+  function teilPunkte(t, gewichte) {
+    var n = t.n, p = new Float32Array(n * 3), lo = t.lo, sk = t.sk;
+    for (var v = 0; v < n; v++) for (var k = 0; k < 3; k++) p[v * 3 + k] = lo[k] + t.pos[v * 3 + k] * sk[k];
+    for (var m in t.morph) {
+      var g = gewichte(m, t);
+      if (!g) continue;
+      var md = t.morph[m], s = md.s * g;
+      for (v = 0; v < n * 3; v++) p[v] += md.p[v] * s;
     }
-    for (i = 0; i < ringe; i++) for (j = 0; j < seg; j++) {
-      var a = i * (seg + 1) + j, b = a + 1, c = a + seg + 2, dd = a + seg + 1;
-      g.i.push(a, dd, c, a, c, b);
+    return p;
+  }
+  /* Normalen aus den gespeicherten Feldnormalen (Oktaeder, 2 Bytes) plus Formvarianten */
+  function teilNormalen(t, gewichte) {
+    var n = t.n, out = new Float32Array(n * 3);
+    for (var v = 0; v < n; v++) {
+      var x = t.nor[v * 2] / 127, y = t.nor[v * 2 + 1] / 127, z = 1 - Math.abs(x) - Math.abs(y);
+      if (z < 0) { var ox = x; x = (1 - Math.abs(y)) * (ox >= 0 ? 1 : -1); y = (1 - Math.abs(ox)) * (y >= 0 ? 1 : -1); }
+      out[v * 3] = x; out[v * 3 + 1] = y; out[v * 3 + 2] = z;
     }
-    Geo.normalenNeu(g);
-    return Geo.windung(g);
+    for (var v2 = 0; v2 < n * 3; v2 += 3) { var l0 = Math.hypot(out[v2], out[v2 + 1], out[v2 + 2]) || 1; out[v2] /= l0; out[v2 + 1] /= l0; out[v2 + 2] /= l0; }
+    for (var m in t.morph) {
+      var g = gewichte(m, t); if (!g) continue;
+      var md = t.morph[m], k = g / 127;
+      for (v = 0; v < n * 3; v++) out[v] += md.n[v] * k;
+    }
+    for (v = 0; v < n * 3; v += 3) { var l = Math.hypot(out[v], out[v + 1], out[v + 2]) || 1; out[v] /= l; out[v + 1] /= l; out[v + 2] /= l; }
+    return out;
+  }
+  function normalen(p, idx) {
+    var n = new Float32Array(p.length);
+    for (var t = 0; t < idx.length; t += 3) {
+      var a = idx[t] * 3, b = idx[t + 1] * 3, c = idx[t + 2] * 3;
+      var e1x = p[b] - p[a], e1y = p[b + 1] - p[a + 1], e1z = p[b + 2] - p[a + 2];
+      var e2x = p[c] - p[a], e2y = p[c + 1] - p[a + 1], e2z = p[c + 2] - p[a + 2];
+      var nx = e1y * e2z - e1z * e2y, ny = e1z * e2x - e1x * e2z, nz = e1x * e2y - e1y * e2x;
+      n[a] += nx; n[a + 1] += ny; n[a + 2] += nz; n[b] += nx; n[b + 1] += ny; n[b + 2] += nz; n[c] += nx; n[c + 1] += ny; n[c + 2] += nz;
+    }
+    for (var v = 0; v < n.length; v += 3) {
+      var l = Math.hypot(n[v], n[v + 1], n[v + 2]) || 1;
+      n[v] /= l; n[v + 1] /= l; n[v + 2] /= l;
+    }
+    return n;
+  }
+  function gruppeNeu() { return { p: [], n: [], uv: [], ao: [], kn: [], gw: [], farbe: [], i: [] }; }
+  function anhaengen(gr, t, p, nor, farbFn) {
+    var basis = gr.p.length / 3;
+    for (var v = 0; v < t.n; v++) {
+      var v3 = v * 3, v4 = v * 4;
+      gr.p.push(p[v3], p[v3 + 1], p[v3 + 2]);
+      gr.n.push(nor[v3], nor[v3 + 1], nor[v3 + 2]);
+      // Strukturkoordinaten: Zylinder um die Körperachse (stetig, ganzzahlig viele Wiederholungen rundherum)
+      gr.uv.push(Math.atan2(p[v3], p[v3 + 2]) * 0.1224, p[v3 + 1]);
+      gr.ao.push(t.ao[v] / 255);
+      gr.kn.push(t.kn[v4], t.kn[v4 + 1], t.kn[v4 + 2], t.kn[v4 + 3]);
+      gr.gw.push(t.gw[v4] / 255, t.gw[v4 + 1] / 255, t.gw[v4 + 2] / 255, t.gw[v4 + 3] / 255);
+      var f = farbFn(v, p, nor);
+      gr.farbe.push(f[0], f[1], f[2]);
+    }
+    for (var i = 0; i < t.idx.length; i++) gr.i.push(t.idx[i] + basis);
   }
 
-  /* Glied: verjüngter Drehkörper von 0 nach -laenge */
-  function glied(r0, r1, laenge, seg, wulst) {
-    var p = [], n = 10;
-    for (var i = 0; i <= n; i++) {
-      var t = i / n;
-      var r = M.lerp(r0, r1, t) + (wulst ? wulst * Math.sin(Math.PI * Math.min(1, t * 1.3)) : 0);
-      var rund = 1;
-      if (i === 0) rund = 0.55; if (i === n) rund = 0.55;
-      p.push([r * rund, -t * laenge]);
-    }
-    p.unshift([0, r0 * 0.25]); p.push([0, -laenge - r1 * 0.25]);
-    return Geo.drehkoerper(p.reverse(), seg, {});
-  }
-  function ellipsoid(rx, ry, rz, seg) {
-    var g = Geo.kugel(1, seg || 16, Math.round((seg || 16) / 2));
-    return Geo.transform(g, trs([0, 0, 0], [rx, ry, rz]));
+  /* ---------- Hauttöne: Lippen, Wangen, Ohren ---------- */
+  function hautFarben(hex) {
+    var h = farbe(hex);
+    var dunkel = 1 - Math.min(1, (h[0] + h[1] + h[2]) / 2.2);
+    return {
+      haut: h,
+      lippe: mal(h, [0.86 - 0.1 * dunkel, 0.6 - 0.05 * dunkel, 0.6 - 0.02 * dunkel]),
+      rot: mal(h, [1.0, 0.9, 0.88]),
+      handInnen: mal(h, [1.06 + 0.2 * dunkel, 1.0 + 0.22 * dunkel, 0.98 + 0.22 * dunkel])
+    };
   }
 
-  /* Rumpf als elliptischer Drehkörper (Profil [radius, y]) */
-  function rumpf(profil, tiefe, seg, falten) {
-    var g = Geo.drehkoerper(profil, seg, {});
-    Geo.verformen(g, function (p) {
-      var f = falten ? Math.sin(p[1] * 90) * 0.0015 * falten : 0;
-      return [p[0] * (1 + f), p[1], p[2] * tiefe];
-    });
-    return g;
+  /* ---------- Teile je Person ---------- */
+  function teilListe(def) {
+    var kl = def.kleidung || {}, hr = def.haare || { form: "kurz" };
+    var w = F.geschlechtWert(def);
+    var wk = F.kopfWert(def);
+    var liste = [wk ? "kopf_w" : "kopf", "augen", wk ? "brauen_w" : "brauen", "haende"];
+    var oben = (kl.oben && kl.oben.art) || "pullover";
+    if (oben === "sakko" || oben === "blazer") { liste.push(oben === "sakko" && w < 0.75 ? "sakko" : "blazer"); liste.push(w >= 0.5 ? "bluse" : "hemd"); }
+    else liste.push("pullover");
+    var unten = (kl.unten && kl.unten.art) || "hose";
+    if (unten === "rock") { liste.push("rock"); liste.push("beine"); } else liste.push("hose");
+    liste.push(w > 0.6 ? "schuhe_w" : "schuhe_m");
+    var ak = def.akzent && def.akzent.art;
+    if (ak === "krawatte") liste.push("krawatte");
+    if (ak === "schal") liste.push("schal");
+    var form = hr.form || "kurz";
+    if (form === "kopftuch") liste.push("kopftuch");
+    else if (form === "kurz") liste.push(w > 0.25 ? "haar_kurz_w" : "haar_kurz");
+    else liste.push("haar_" + form);
+    return liste;
   }
-
-  /* Hand als schlichte Modellhand (kanonisch: hängt nach unten, Handfläche +z, Daumen bei +x).
-     zeigen = ausgestreckter Zeigefinger für die Geste „auf das Papier zeigen“ */
-  function handGeo(zeigen, spiegel) {
-    var g = Geo.leer(), s = spiegel ? -1 : 1;
-    var flach = ellipsoid(0.036, 0.062, 0.016, 16);
-    Geo.verformen(flach, function (p) { var t = M.klemme(-p[1] / 0.062, 0, 1); return [p[0] * (1 - 0.18 * t), p[1], p[2] * (1 - 0.25 * t)]; });
-    Geo.anhaengen(g, flach, trs([0, zeigen ? -0.045 : -0.06, 0.002]));
-    if (zeigen) Geo.anhaengen(g, Geo.kapsel(0.0075, 0.06, 8, 3), mul(trs([0.004 * s, -0.1, 0.004]), rot([180, 0, 0])));
-    Geo.anhaengen(g, Geo.kapsel(0.0095, 0.032, 8, 3), mul(trs([0.03 * s, -0.035, 0.01]), rot([-30, 0, 22 * s]), rot([180, 0, 0])));
-    return g;
-  }
+  F.geschlechtWert = function (def) { return def.geschlecht === "w" ? 1 : (def.geschlecht === "n" ? 0.5 : 0); };
+  /* Kopf: eigenes Netz für Mann und Frau (0 oder 1); die Spielfigur bekommt den feineren Kopf mit kräftigerem Kinn */
+  F.kopfWert = function (def) { return F.geschlechtWert(def) >= 0.5 ? 1 : 0; };
 
   /* ---------- Figur bauen ---------- */
   F.bauen = function (B, def, eintrag, sz) {
-    var bau = DATA.figuren.koerperbau[def.bau] || DATA.figuren.koerperbau.mittel;
-    var skala = (def.groesse || 1.7) / 1.7;
-    var haut = DATA.figuren.hauttoene[def.haut || 2];
-    var fr = null; DATA.fraktionen.forEach(function (f) { if (f.id === def.fraktion) fr = f; });
-    var akzentFarbe = (def.akzent && def.akzent.farbe) || (fr ? fr.farbe : "#00a2ad");
-    var kl = def.kleidung || {};
-    var teile = {};   // Material-Schlüssel → { mat, geo }
-    function teil(schl, matName, extra, geo, m, knochen) {
-      if (!teile[schl]) teile[schl] = { mat: WELT.material(matName, extra), geo: Geo.leer() };
-      Geo.anhaengen(teile[schl].geo, geo, m, K[knochen]);
-    }
-    function h(geo, m, kn) { teil("haut", "haut", { farbe: haut }, geo, m, kn); }
-    var oben = kl.oben || { farbe: "#555" }, hemd = kl.hemd || { farbe: "#eee" }, unten = kl.unten || { farbe: "#333" }, schuhe = kl.schuhe || { farbe: "#222" };
-    function stoffOben(geo, m, kn) { teil("oben", "stoff", { farbe: oben.farbe, strukturSkala: 22 }, geo, m, kn); }
-    function stoffHemd(geo, m, kn) { teil("hemd", "stoff", { farbe: hemd.farbe, strukturSkala: 30, rauheit: 0.75 }, geo, m, kn); }
-    function stoffUnten(geo, m, kn) { teil("unten", "stoff", { farbe: unten.farbe, strukturSkala: 22 }, geo, m, kn); }
-
-    var sch = bau.schulter, hu = bau.huefte, ta = bau.taille, bt = bau.brustTiefe;
-    var ar = bau.arm, be = bau.bein, ha = bau.hals;
-    var formen = def.formen || 0;
-
-    /* Ruhe-Versatz der Knochen (bei 1,70 m) */
-    var ruhe = {
-      becken: [0, 0.95, 0], brust: [0, 0.1, 0], hals: [0, 0.338, -0.004], kopf: [0, 0.052, 0.01],
-      oberarmL: [sch * 0.95, 0.318, -0.012], unterarmL: [0, -0.285, 0], handL: [0, -0.252, 0],
-      oberarmR: [-sch * 0.95, 0.318, -0.012], unterarmR: [0, -0.285, 0], handR: [0, -0.252, 0],
-      oberschenkelL: [hu * 0.58, -0.075, 0.004], unterschenkelL: [0, -0.415, 0], fussL: [0, -0.392, 0],
-      oberschenkelR: [-hu * 0.58, -0.075, 0.004], unterschenkelR: [0, -0.415, 0], fussR: [0, -0.392, 0],
-      handL_zeigen: [0, -0.252, 0], handR_zeigen: [0, -0.252, 0]
+    daten();
+    var A = DATA.figuren;
+    var w = F.geschlechtWert(def);
+    var fuelle = def.bau === "kraeftig" ? 1 : (def.bau === "schmal" ? -1 : 0);
+    var zuf = namensZufall(def.name || "x");
+    var gs = def.gesicht || {};
+    var zug = {
+      nase: gs.nase !== undefined ? gs.nase : zuf() * 1.3 - 0.55, kinn: gs.kinn !== undefined ? gs.kinn : zuf() * 1.2 - 0.6,
+      wangen: gs.wangen !== undefined ? gs.wangen : zuf() * 1.1 - 0.5, lippen: gs.lippen !== undefined ? gs.lippen : zuf() * 1.1 - 0.5,
+      alter: gs.alter || 0
     };
-
-    /* Haut: Kopf, Hals, Hände, (Unter-)Arme an Ärmelenden, Ohren */
-    h(kopfGeo(28, 36), null, "kopf");
-    h(Geo.drehkoerper([[ha * 0.95, -0.02], [ha * 0.88, 0.04], [ha * 0.84, 0.1], [ha * 0.8, 0.13]], 20, {}), trs([0, -0.04, 0]), "hals");
-    // Hände
-    h(Geo.transform(handGeo(false, false), rot([0, -90, 0])), null, "handL");
-    h(Geo.transform(handGeo(false, true), rot([0, 90, 0])), null, "handR");
-    h(Geo.transform(handGeo(true, false), rot([0, -90, 0])), null, "handL_zeigen");
-    h(Geo.transform(handGeo(true, true), rot([0, 90, 0])), null, "handR_zeigen");
-    // Handgelenke (Fugen)
-    h(ellipsoid(ar * 0.6, 0.022, ar * 0.5, 12), trs([0, -0.004, 0]), "handL");
-    h(ellipsoid(ar * 0.6, 0.022, ar * 0.5, 12), trs([0, -0.004, 0]), "handR");
-
-    /* Oberkörper: Kleidung (Sakko/Blazer) mit offenem Kragen */
-    var rumpfProfil = [[0, -0.03], [ta * 0.95, -0.03], [ta * 0.93, 0.03], [ta * 0.98, 0.1], [sch * 0.88, 0.18], [sch * 0.99, 0.25], [sch * 1.04, 0.29], [sch * 0.97, 0.322], [sch * 0.64, 0.346], [ha * 1.3, 0.356], [0, 0.36]];
-    var oberkoerper = rumpf(rumpfProfil.map(function (q) { return [q[0] * 1.06, q[1]]; }), bt / sch * 0.95, 40, 0);
-    // Brustform weich in den Rumpf eingearbeitet (keine einzelnen Kugeln)
-    if (formen > 0) Geo.verformen(oberkoerper, function (q) {
-      if (q[2] <= 0) return q;
-      var dy = (q[1] - 0.2) / 0.075, wx = Math.abs(q[0]) / (sch * 0.9);
-      return [q[0], q[1], q[2] * (1 + 0.16 * formen * Math.exp(-dy * dy) * (1 - 0.5 * wx * wx))];
-    });
-    stoffOben(oberkoerper, null, "brust");
-    var mitJacke = oben.art === "blazer" || oben.art === "sakko";
-    if (mitJacke) {
-      // Hemd- bzw. Blusenkragen als weicher Ring über der Jacke
-      stoffHemd(Geo.drehkoerper([[ha * 1.16, 0], [ha * 1.12, 0.03], [ha * 1.04, 0.05]], 22, {}), trs([0, 0.322, 0.006]), "brust");
-      // ein schmaler, glatter Hemdstreifen vorne (statt Revers)
-      var streifen = ellipsoid(0.03, 0.085, 0.01, 12);
-      stoffHemd(streifen, trs([0, 0.265, bt * 1.0 + 0.002]), "brust");
-    } else {
-      // Pullover: Rundkragen mit Rippen
-      stoffOben(Geo.drehkoerper([[ha * 1.18, 0], [ha * 1.14, 0.025], [ha * 1.06, 0.04]], 22, {}), trs([0, 0.33, 0.004]), "brust");
+    var wk = F.kopfWert(def);
+    function morphGewicht(m, t) {
+      if (m === "w") return (t.name === "augen" || t.name.indexOf("haar_") === 0 || t.name === "kopftuch" ? wk : w) - t.w0;
+      if (m === "voll") return Math.max(0, fuelle);
+      if (m === "schmal") return Math.max(0, -fuelle);
+      return zug[m] || 0;
     }
-    // Schultern (Fugen in Stoff)
-    [-1, 1].forEach(function (s) { stoffOben(ellipsoid(ar * 1.05, ar * 1.0, ar * 1.1, 16), trs([s * sch * 0.92, 0.312, -0.012]), "brust"); });
-    var rock = unten.art === "rock";
-    function stoffBein(geo, m, kn) { if (rock) teil("beine", "stoff", { farbe: unten.strumpf || haut, strukturSkala: 40, rauheit: 0.6 }, geo, m, kn); else stoffUnten(geo, m, kn); }
-    if (rock) stoffUnten(Geo.drehkoerper([[hu * 1.42, -0.44], [hu * 1.42, -0.44], [hu * 1.3, -0.3], [hu * 1.1, -0.1], [ta * 1.05, 0.06], [ta * 1.0, 0.11], [0, 0.11]], 36, { deckelUnten: false }), trs([0, 0, 0.004], [1, 1, bt / sch * 1.1]), "becken");
-    // Becken (Hose) und Saum des Sakkos
-    stoffUnten(rumpf([[0, -0.12], [hu * 0.7, -0.125], [hu * 0.98, -0.07], [hu * 1.0, 0.0], [ta * 1.02, 0.09], [ta * 0.98, 0.11], [0, 0.11]], bt / sch * 1.04, 32, 0), null, "becken");
-    var saum = Math.max(hu, ta) * 1.1;
-    if (mitJacke) stoffOben(rumpf([[saum * 0.97, -0.13], [saum * 0.96, -0.13], [saum * 1.0, -0.08], [saum * 1.02, 0.02], [saum * 0.98, 0.11], [saum * 0.95, 0.12]], bt / sch * 1.05, 32, 0), null, "becken");
+    var skala = (def.groesse || 1.7) / 1.7;
+    var hf = hautFarben(A.hauttoene[def.haut === undefined ? 2 : def.haut]);
+    var kl = def.kleidung || {}, hr = def.haare || { form: "kurz", farbe: "#3a2a22" };
+    var haarF = farbe(hr.farbe || "#3a2a22");
+    var augenF = farbe(def.augen || A.augenFarben[Math.floor(zuf() * A.augenFarben.length)]);
+    var fr = null; DATA.fraktionen.forEach(function (f) { if (f.id === def.fraktion) fr = f; });
+    var akzentF = farbe((def.akzent && def.akzent.farbe) || (fr ? fr.farbe : "#00a2ad"));
+    var obenF = farbe((kl.oben && kl.oben.farbe) || "#4a4f58"), hemdF = farbe((kl.hemd && kl.hemd.farbe) || "#ecebe7");
+    var untenF = farbe((kl.unten && kl.unten.farbe) || "#2c2f35"), schuhF = farbe((kl.schuhe && kl.schuhe.farbe) || "#211c19");
+    var strumpfF = kl.unten && kl.unten.strumpf ? farbe(kl.unten.strumpf) : null;
+    var T = daten().R.kopf.tragion;
 
-    /* Arme: Ärmel über Ober- und Unterarm */
-    ["L", "R"].forEach(function (s) {
-      stoffOben(glied(ar * 1.02, ar * 0.92, 0.29, 16, 0.0), null, "oberarm" + s);
-      stoffOben(Geo.kugel(ar * 0.92, 14, 7), trs([0, -0.285, 0]), "unterarm" + s);
-      stoffOben(glied(ar * 0.92, ar * 0.8, 0.215, 16, 0.0), null, "unterarm" + s);
-      stoffHemd(Geo.zylinder(ar * 0.8, 0.02, 14, false), trs([0, -0.225, 0]), "unterarm" + s);
-      h(glied(ar * 0.72, ar * 0.62, 0.06, 12, 0), trs([0, -0.2, 0]), "unterarm" + s);
-    });
-
-    /* Beine: Hose, Knie-Fugen, Schuhe */
-    ["L", "R"].forEach(function (s) {
-      stoffBein(glied(be * (rock ? 0.95 : 1.05), be * 0.8, 0.41, 18, 0.0), null, "oberschenkel" + s);
-      stoffBein(Geo.kugel(be * 0.8, 14, 7), trs([0, -0.415, 0]), "unterschenkel" + s);
-      stoffBein(glied(be * (rock ? 0.72 : 0.78), be * (rock ? 0.56 : 0.64), 0.37, 18, 0.004), null, "unterschenkel" + s);
-      var schuh = ellipsoid(0.045, 0.036, 0.125, 16);
-      Geo.verformen(schuh, function (p) { return [p[0], Math.max(p[1], -0.03) + (p[2] > 0.05 ? -0.006 * (p[2] - 0.05) / 0.07 : 0), p[2]]; });
-      teil("schuhe", "leder", { farbe: schuhe.farbe }, schuh, trs([0, -0.035, 0.055]), "fuss" + s);
+    var gruppen = {};
+    function gruppe(art) { if (!gruppen[art]) gruppen[art] = gruppeNeu(); return gruppen[art]; }
+    teilListe(def).forEach(function (name) {
+      var t = D.teile[name]; if (!t) return;
+      var p = teilPunkte(t, morphGewicht), nor = teilNormalen(t, morphGewicht);
+      var fn, art = t.art;
+      if (name === "kopf" || name === "kopf_w") fn = function (v) {
+        var x = p[v * 3] - T[0], y = p[v * 3 + 1] - T[1], z = p[v * 3 + 2] - T[2], ax = Math.abs(x);
+        // Wangen, Nase und Ohren etwas rötlicher
+        var r = Math.exp(-((ax - 0.042) * (ax - 0.042) / 0.0004 + (y + 0.015) * (y + 0.015) / 0.0006 + (z - 0.07) * (z - 0.07) / 0.002)) * 0.8 +
+                Math.exp(-(x * x / 0.0002 + (y + 0.02) * (y + 0.02) / 0.0003 + (z - 0.11) * (z - 0.11) / 0.0006)) * 0.7 +
+                Math.exp(-((ax - 0.078) * (ax - 0.078) / 0.0002 + y * y / 0.002 + (z + 0.01) * (z + 0.01) / 0.001)) * 0.6;
+        var c = misch(hf.haut, hf.rot, Math.min(1, r));
+        c = misch(c, hf.lippe, t.maske[v] / 255);
+        if (t.schicht[v] === 1) c = misch(c, mal(haarF, [0.35, 0.33, 0.32]), 0.7);
+        return c;
+      };
+      else if (name === "haende") fn = function (v) { return hf.haut; };
+      else if (name === "beine") fn = function () { return strumpfF || hf.haut; };
+      else if (name === "augen") fn = function (v) {
+        var s = t.schicht[v];
+        if (s === 2) return [0.02, 0.018, 0.016];
+        if (s === 1) return misch(mal(augenF, [0.5, 0.5, 0.5]), mal(augenF, [1.15, 1.12, 1.1]), t.maske[v] / 255);
+        var k = 0.5 + 0.5 * Math.min(1, t.maske[v] / 214);
+        return [0.5 * k, 0.47 * k, 0.43 * k];
+      };
+      else if (name === "brauen" || name === "brauen_w") fn = function (v) { return misch(hf.haut, mal(haarF, [0.78, 0.76, 0.74]), t.maske[v] / 255); };
+      else if (name.indexOf("haar_") === 0) fn = function (v) { return misch(misch(hf.haut, haarF, 0.55), haarF, t.maske[v] / 255); };
+      else if (name === "kopftuch") fn = function () { return haarF; };
+      else if (name === "sakko" || name === "blazer" || name === "pullover") fn = function (v) { return t.schicht[v] === 3 ? [0.05, 0.045, 0.04] : obenF; };
+      else if (name === "hemd" || name === "bluse") fn = function () { return hemdF; };
+      else if (name === "krawatte" || name === "schal") fn = function () { return akzentF; };
+      else if (name === "hose" || name === "rock") fn = function () { return untenF; };
+      else if (name.indexOf("schuhe") === 0) fn = function (v) { return t.schicht[v] === 1 ? mal(schuhF, [0.55, 0.55, 0.55]) : schuhF; };
+      else fn = function () { return [0.7, 0.7, 0.7]; };
+      if (name === "kopftuch") art = "stoff";
+      anhaengen(gruppe(art), t, p, nor, fn);
     });
 
-    /* Haare */
-    var hr = def.haare || { form: "kurz" };
-    var haarMat = { farbe: hr.farbe || "#3a2a22" };
-    if (hr.form === "kopftuch") {
-      var tuch = { farbe: hr.farbe, strukturSkala: 30, samt: 0.4, rauheit: 0.8 };
-      teil("haar", "stoff", tuch, haarKappe(function (ph) { var vorn = Math.cos(ph); return vorn > 0.55 ? 0.95 + (1 - vorn) * 1.6 : 1.7 + (1 - vorn) * 0.5; }, 0.011, 24, 56, 0), null, "kopf");
-      teil("haar", "stoff", tuch, Geo.drehkoerper([[ha * 1.75, -0.02], [ha * 1.5, 0.05], [ha * 1.35, 0.1]], 28, {}), trs([0, -0.035, -0.006], [1, 1, 1.05]), "hals");
-    } else if (hr.form !== "glatze") {
-      var grenze;
-      if (hr.form === "dutt" || hr.form === "lang" || hr.form === "zopf") grenze = function (ph) { var vorn = Math.cos(ph); return Math.min(2.15, 0.76 + 1.2 * (1 - vorn) * 0.5 + (vorn < 0 ? -vorn * 0.3 : 0)); };
-      else if (hr.form === "locken") grenze = function (ph) { var vorn = Math.cos(ph); return Math.min(2.2, 0.78 + 1.25 * (1 - vorn) * 0.5 + (vorn < 0 ? -vorn * 0.3 : 0)); };
-      else grenze = function (ph) { var vorn = Math.cos(ph); return Math.min(2.0, 0.82 + 1.0 * (1 - vorn) * 0.5 + (vorn < 0 ? -vorn * 0.25 : 0)); };
-      teil("haar", "haar", haarMat, haarKappe(grenze, hr.form === "kurz" ? 0.0055 : (hr.form === "locken" ? 0.012 : 0.0085), 20, 48, 0), null, "kopf");
-      if (hr.form === "dutt") {
-        teil("haar", "haar", haarMat, ellipsoid(0.047, 0.04, 0.043, 20), trs([0, 0.17, -0.095]), "kopf");
-        teil("haar", "haar", haarMat, Geo.zylinder(0.028, 0.03, 16, true), mul(trs([0, 0.16, -0.075]), rot([-60, 0, 0])), "kopf");
-      }
-      if (hr.form === "lang") {
-        var lang = Geo.box(0.17, 0.24, 0.055, 0.025, 3);
-        Geo.verformen(lang, function (p) { return [p[0] * (1 + Math.max(0, -p[1]) * 0.6), p[1], p[2] + p[1] * p[1] * 0.6]; });
-        teil("haar", "haar", haarMat, lang, trs([0, -0.015, -0.068]), "kopf");
-      }
-      if (hr.form === "zopf") {
-        var z = [];
-        for (var zi = 0; zi <= 8; zi++) z.push([Math.sin(zi * 1.3) * 0.006, 0.07 - zi * 0.03, -0.1 - zi * 0.006]);
-        teil("haar", "haar", haarMat, Geo.rohr(z, function (t) { return 0.022 - t * 0.01; }, 10), null, "kopf");
-      }
-      if (hr.form === "locken") {
-        var rz = M.zufall(31);
-        for (var li = 0; li < 70; li++) {
-          var th = rz() * 1.9, ph = rz() * Math.PI * 2;
-          if (Math.cos(ph) > 0.4 && th > 0.75) continue;
-          var d = kugelRichtung(th, ph), lp = kopfPunkt(d, 0.012);
-          teil("haar", "haar", haarMat, Geo.kugel(0.017 + rz() * 0.01, 10, 5), trs(lp), "kopf");
-        }
-      }
-    }
-    if (def.bart) {
-      var bartGrenze = function () { return Math.PI; };
-      var bart = Geo.leer();
-      var bg = haarKappe(function () { return Math.PI; }, 0.0024, 22, 48, 0);
-      // nur Kinn und Wangen behalten
-      var keep = Geo.leer();
-      for (var t = 0; t < bg.i.length; t += 3) {
-        var ok = true;
-        for (var k = 0; k < 3; k++) {
-          var vi = bg.i[t + k], y = bg.p[vi * 3 + 1] - 0.118, z = bg.p[vi * 3 + 2], ax = Math.abs(bg.p[vi * 3]);
-          if (!(y < -0.04 && z > -0.03 && !(y > -0.078 && z > 0.06 && ax < 0.032))) ok = false;
-        }
-        if (ok) keep.i.push(bg.i[t], bg.i[t + 1], bg.i[t + 2]);
-      }
-      keep.p = bg.p; keep.n = bg.n; keep.uv = bg.uv;
-      teil("bart", "haar", { farbe: def.bart.farbe || haarMat.farbe, rauheit: 0.8, strukturSkala: 60 }, keep, null, "kopf");
-    }
-
-    /* Brille */
+    /* Brille: dünner Rahmen um beide Augen, Bügel bis zu den Ohren */
     if (def.brille) {
-      var rahmen = { farbe: def.brille.rahmen || "#444" };
-      [-1, 1].forEach(function (s) {
-        var d = M.norm([0.36 * s, 0.08, 0.93]), p = kopfPunkt(d);
+      var s = 1 + (daten().R.kopf.s_w - 1) * wk, mg = Geo.leer();
+      [-1, 1].forEach(function (sx) {
+        var ax = 0.0315 * sx * s + T[0], ay = 0.013 * s + T[1], az = 0.071 * s + T[2] + 0.0265;
         var ring = [];
-        for (var i = 0; i <= 20; i++) { var w = i / 20 * Math.PI * 2; ring.push([p[0] + Math.cos(w) * 0.021, p[1] + Math.sin(w) * 0.015, p[2] + 0.017]); }
-        teil("brille", "aluminium", rahmen, Geo.rohr(ring, 0.0011, 5), null, "kopf");
-        teil("brille", "aluminium", rahmen, Geo.rohr([[p[0] + s * 0.021, p[1] + 0.004, p[2] + 0.015], [s * 0.078, 0.124, 0.0], [s * 0.079, 0.112, -0.04]], 0.0014, 4), null, "kopf");
+        for (var i = 0; i <= 24; i++) { var a = i / 24 * Math.PI * 2; ring.push([ax + Math.cos(a) * 0.0235 * s, ay + Math.sin(a) * 0.0165 * s - 0.002, az - Math.abs(Math.cos(a)) * 0.004 * sx * sx]); }
+        Geo.anhaengen(mg, Geo.rohr(ring, 0.0013, 5), null, 0);
+        Geo.anhaengen(mg, Geo.rohr([[ax + sx * 0.0235 * s, ay + 0.004, az - 0.004], [sx * 0.074 * s + T[0], ay + 0.006, T[2] + 0.02], [sx * 0.078 * s + T[0], ay - 0.004, T[2] - 0.035]], 0.0012, 4), null, 0);
       });
-      var nb = kopfPunkt(M.norm([0, 0.1, 1]));
-      teil("brille", "aluminium", rahmen, Geo.rohr([[-0.012, nb[1] - 0.002, nb[2] + 0.004], [0, nb[1] + 0.002, nb[2] + 0.006], [0.012, nb[1] - 0.002, nb[2] + 0.004]], 0.0016, 4), null, "kopf");
+      Geo.anhaengen(mg, Geo.rohr([[-0.008 * s + T[0], 0.017 * s + T[1], 0.1 * s + T[2]], [T[0], 0.02 * s + T[1], 0.102 * s + T[2]], [0.008 * s + T[0], 0.017 * s + T[1], 0.1 * s + T[2]]], 0.0013, 4), null, 0);
+      var bt = { n: mg.p.length / 3, idx: mg.i, ao: [], kn: [], gw: [] };
+      for (var bv = 0; bv < bt.n; bv++) { bt.ao.push(255); bt.kn.push(K.kopf, 0, 0, 0); bt.gw.push(255, 0, 0, 0); }
+      var rf = farbe((def.brille && def.brille.rahmen) || "#333");
+      anhaengen(gruppe("metall"), bt, mg.p, mg.n, function () { return rf; });
     }
 
-    /* Akzent in Fraktionsfarbe */
-    var ak = def.akzent && def.akzent.art;
-    if (ak === "schal") {
-      var schal = [];
-      for (var i = 0; i <= 24; i++) { var w = i / 24 * Math.PI * 2; schal.push([Math.sin(w) * (ha * 1.55), 0.335 + Math.cos(w * 2) * 0.004, Math.cos(w) * (ha * 1.35) + 0.004]); }
-      teil("akzent", "stoff", { farbe: akzentFarbe, strukturSkala: 26, samt: 0.5 }, Geo.rohr(schal, 0.016, 10), null, "brust");
-      [[0.03, -4], [-0.012, 6]].forEach(function (e) {
-        var ende = Geo.box(0.05, 0.2, 0.014, 0.006, 2);
-        teil("akzent", "stoff", { farbe: akzentFarbe, strukturSkala: 26, samt: 0.5 }, ende, mul(trs([e[0], 0.23, bt * 1.05 + 0.02]), rot([-10, 0, e[1]])), "brust");
-      });
-    } else if (ak === "krawatte") {
-      var kr = Geo.box(0.038, 0.2, 0.008, 0.003, 2);
-      Geo.verformen(kr, function (p) { var t = M.klemme((0.1 - p[1]) / 0.2, 0, 1); return [p[0] * (0.6 + t * 0.7), p[1], p[2]]; });
-      teil("akzent", "lack", { farbe: akzentFarbe, rauheit: 0.45, klarlack: 0.2 }, kr, mul(trs([0, 0.25, bt * 1.0 + 0.012]), rot([-13, 0, 0])), "brust");
-      teil("akzent", "lack", { farbe: akzentFarbe, rauheit: 0.45 }, Geo.box(0.026, 0.02, 0.014, 0.005, 2), trs([0, 0.345, bt * 0.6 + 0.012]), "brust");
-    } else if (ak === "anstecker") {
-      teil("akzent", "lack", { farbe: akzentFarbe }, Geo.zylinder(0.008, 0.004, 12, true), mul(trs([0.06, 0.29, bt * 1.05 + 0.008]), rot([90, 0, 0])), "brust");
+    /* Anstecker in Fraktionsfarbe auf dem linken Revers */
+    if (def.akzent && def.akzent.art === "anstecker" && gruppen.stoff) {
+      var gs2 = gruppen.stoff, best = -1, bz = -1;
+      for (var v = 0; v < gs2.p.length / 3; v++) {
+        var px = gs2.p[v * 3], py = gs2.p[v * 3 + 1], pz = gs2.p[v * 3 + 2];
+        if (Math.abs(px - 0.085) < 0.012 && Math.abs(py - 1.31) < 0.012 && pz > bz) { bz = pz; best = v; }
+      }
+      if (best >= 0) {
+        var ag = Geo.transform(Geo.zylinder(0.0075, 0.003, 12, true), mul(verschieb([gs2.p[best * 3], gs2.p[best * 3 + 1], bz + 0.001]), rot([90, 0, 0])));
+        var at = { n: ag.p.length / 3, idx: ag.i, ao: [], kn: [], gw: [] };
+        for (var av = 0; av < at.n; av++) { at.ao.push(255); at.kn.push(K.brust, 0, 0, 0); at.gw.push(255, 0, 0, 0); }
+        anhaengen(gruppe("lack"), at, ag.p, ag.n, function () { return akzentF; });
+      }
     }
 
-    /* Rollstuhl (Aluminium und Stoff, Räder drehen sich) */
+    /* Rollstuhl (Aluminium und Stoff) */
     if (def.rollstuhl) {
       var rb = M.trs(M.m4(), eintrag.pos, eintrag.dreh || 0, 1);
       var rg = Geo.leer(), rad = [];
@@ -315,17 +296,24 @@ WELT.figuren = (function () {
       B.objekt(sitz, WELT.material("stoff_sitz", { farbe: "#2a2e36" }), rb, { statisch: true });
     }
 
-    /* Puffer hochladen */
-    var knochenDaten = new Float32Array(60 * 4);
+    /* Hochladen: ein Objekt je Material */
+    var sk = skelett(w, wk);
+    var knochenDaten = new Float32Array(84 * 4);
     var figur = {
-      def: def, skala: skala, ruhe: ruhe, knochenDaten: knochenDaten, objekte: [],
+      def: def, skala: skala, sk: sk, knochenDaten: knochenDaten, objekte: [],
       pos: eintrag.pos.slice(), dreh: eintrag.dreh || 0, haltung: eintrag.haltung || "stehen",
-      geste: null, gesteNaechste: null, blickZiel: null, blick: [0, 0], blickGeschw: [0, 0], spricht: 0,
-      zeitVersatz: Math.random() * 10, welt: [], lokal: []
+      geste: null, blickZiel: null, blick: [0, 0], blickGeschw: [0, 0], spricht: 0,
+      zeitVersatz: namensZufall((def.name || "") + "t")() * 10, welt: [], augen: [0, 0], augenZiel: [0, 0], sakkadeZeit: 0
     };
-    for (var schl in teile) {
-      var tg = teile[schl];
-      var o = B.objekt(tg.geo, tg.mat, M.m4(), { knochen: true, schatten: true });
+    var mats = {
+      haut: WELT.material("haut", { farbe: "#ffffff" }), auge: WELT.material("auge", {}), haar: WELT.material("haar", { farbe: "#ffffff", rauheit: 0.78, strukturStaerke: 0.14, samt: 0.25 }),
+      stoff: WELT.material("stoff", { farbe: "#ffffff", strukturSkala: 26, strukturStaerke: 0.22 }), leder: WELT.material("leder", { farbe: "#ffffff" }),
+      metall: WELT.material("aluminium", { farbe: "#ffffff", metall: 0.6, rauheit: 0.35 }), lack: WELT.material("lack", { farbe: "#ffffff" })
+    };
+    for (var art in gruppen) {
+      var gr = gruppen[art];
+      if (!gr.p.length) continue;
+      var o = B.objekt(null, mats[art] || mats.stoff, M.m4(), { netz: MOTOR.netzFigur(gr), knochen: true, skin4: true, schatten: true });
       o.knochen = knochenDaten;
       o.festeKugel = true;
       o.kugelWelt = { m: [figur.pos[0], (figur.pos[1] || 0) + 0.9, figur.pos[2]], r: 1.3 };
@@ -335,7 +323,7 @@ WELT.figuren = (function () {
     return figur;
   };
 
-  /* ---------- Pose berechnen ---------- */
+  /* ---------- Pose ---------- */
   function poseAus(figur) {
     var hal = DATA.figuren.haltungen[figur.haltung] || DATA.figuren.haltungen.stehen;
     var p = {};
@@ -356,7 +344,9 @@ WELT.figuren = (function () {
       var va = a[n] || [0, 0, 0], vb = b[n] || [0, 0, 0];
       erg[n] = [M.lerp(va[0], vb[0], u), M.lerp(va[1], vb[1], u), M.lerp(va[2], vb[2], u)];
     }
-    erg._zeigen = (a.handformR === "zeigen" && b.handformR === "zeigen") || (u < 0.5 ? a.handformR === "zeigen" : b.handformR === "zeigen");
+    // Handform „zeigen“ weich ein- und ausblenden
+    var za = a.handformR === "zeigen" ? 1 : 0, zb = b.handformR === "zeigen" ? 1 : 0;
+    erg._zeigen = M.lerp(za, zb, u);
     return erg;
   }
 
@@ -366,12 +356,22 @@ WELT.figuren = (function () {
     figur.geste = { name: name, t: 0, langsam: 1 };
   };
 
+  /* Fingerhaltung: locker gekrümmt; „zeigen“ streckt den Zeigefinger der rechten Hand */
+  function finger(g, seite, zeigen) {
+    var s = seite === "L" ? -1 : 1, H = DATA.figuren.hand;
+    function setz(n, wert) { g[n + seite] = [0, 0, s * wert]; }
+    setz("zeige1", M.lerp(H.locker.zeige1, H.zeigen.zeige1, zeigen));
+    setz("zeige2", M.lerp(H.locker.zeige2, H.zeigen.zeige2, zeigen));
+    setz("finger1", M.lerp(H.locker.finger1, H.zeigen.finger1, zeigen));
+    setz("finger2", M.lerp(H.locker.finger2, H.zeigen.finger2, zeigen));
+    g["daumen" + seite] = [0, -s * M.lerp(0, H.zeigen.daumenDreh, zeigen), s * M.lerp(H.locker.daumen, H.zeigen.daumen, zeigen)];
+  }
+
   F.aktualisieren = function (figur, dt, zeit) {
     var A = DATA.figuren;
     var pose = poseAus(figur), g = pose.gelenke;
     var zz = zeit + figur.zeitVersatz;
-    // Geste
-    var zeigen = false;
+    var zeigen = 0;
     if (figur.geste) {
       figur.geste.t += dt * (figur.geste.langsam || 1);
       var gw = gestenWerte(figur.geste, figur.geste.t);
@@ -379,8 +379,9 @@ WELT.figuren = (function () {
         for (var n in gw) if (n[0] !== "_") { g[n] = g[n] || [0, 0, 0]; for (var k = 0; k < 3; k++) g[n][k] += gw[n][k] * (MOTOR.bewegungReduziert ? 0.6 : 1); }
         zeigen = gw._zeigen;
       }
-      if (figur.geste.t > A.gesten[figur.geste.name].dauer / (figur.geste.langsam || 1) * (figur.geste.langsam || 1)) figur.geste = null;
+      if (figur.geste.t > A.gesten[figur.geste.name].dauer) figur.geste = null;
     }
+    finger(g, "L", 0); finger(g, "R", zeigen);
     // Atmen
     var at = Math.sin(zz * A.atmen.tempo * 6.283) * A.atmen.staerke;
     g.brust = g.brust || [0, 0, 0]; g.brust[0] -= at * 0.9;
@@ -390,23 +391,23 @@ WELT.figuren = (function () {
     // Gewicht verlagern (nur im Stehen)
     var versatz = [0, 0, 0];
     if (figur.haltung === "stehen") {
-      var gv = A.gewichtVerlagern, w = Math.sin(zz * gv.tempo * 6.283);
-      versatz[0] = w * gv.staerke;
-      g.becken = g.becken || [0, 0, 0]; g.becken[2] += w * 1.6;
-      g.brust[2] -= w * 1.2;
-      g.oberschenkelL = g.oberschenkelL || [0, 0, 0]; g.oberschenkelL[2] -= w * 1.4;
-      g.oberschenkelR = g.oberschenkelR || [0, 0, 0]; g.oberschenkelR[2] -= w * 1.4;
+      var gv = A.gewichtVerlagern, ww = Math.sin(zz * gv.tempo * 6.283);
+      versatz[0] = ww * gv.staerke;
+      g.becken = g.becken || [0, 0, 0]; g.becken[2] += ww * 1.6;
+      g.brust[2] -= ww * 1.2;
+      g.oberschenkelL = g.oberschenkelL || [0, 0, 0]; g.oberschenkelL[2] -= ww * 1.4;
+      g.oberschenkelR = g.oberschenkelR || [0, 0, 0]; g.oberschenkelR[2] -= ww * 1.4;
     }
     // Gehen
     if (figur.gehen > 0.01) {
       var GH = A.gehen, gp = figur.schrittPhase = (figur.schrittPhase || 0) + dt * GH.schritte * Math.PI * figur.gehen;
-      var sn = Math.sin(gp), cs = Math.cos(gp), k = figur.gehen;
-      ["oberschenkelL", "oberschenkelR", "unterschenkelL", "unterschenkelR", "oberarmL", "oberarmR", "unterarmL", "unterarmR"].forEach(function (n) { g[n] = g[n] || [0, 0, 0]; });
-      g.oberschenkelL[0] -= sn * GH.bein * k; g.oberschenkelR[0] += sn * GH.bein * k;
-      g.unterschenkelL[0] += Math.max(0, -cs) * GH.knie * k; g.unterschenkelR[0] += Math.max(0, cs) * GH.knie * k;
-      g.oberarmL[0] += sn * GH.arm * k; g.oberarmR[0] -= sn * GH.arm * k;
-      g.unterarmL[0] -= 10 * k; g.unterarmR[0] -= 10 * k;
-      versatz[1] = Math.abs(cs) * 0.018 * k;
+      var sn = Math.sin(gp), cs = Math.cos(gp), kk = figur.gehen;
+      ["oberschenkelL", "oberschenkelR", "unterschenkelL", "unterschenkelR", "oberarmL", "oberarmR", "unterarmL", "unterarmR"].forEach(function (nn) { g[nn] = g[nn] || [0, 0, 0]; });
+      g.oberschenkelL[0] -= sn * GH.bein * kk; g.oberschenkelR[0] += sn * GH.bein * kk;
+      g.unterschenkelL[0] += Math.max(0, -cs) * GH.knie * kk; g.unterschenkelR[0] += Math.max(0, cs) * GH.knie * kk;
+      g.oberarmL[0] += sn * GH.arm * kk; g.oberarmR[0] -= sn * GH.arm * kk;
+      g.unterarmL[0] -= 10 * kk; g.unterarmR[0] -= 10 * kk;
+      versatz[1] = Math.abs(cs) * 0.018 * kk;
     }
     // Sprechen: kleine Kopfbewegungen
     if (figur.spricht > 0) {
@@ -418,7 +419,7 @@ WELT.figuren = (function () {
     // Blick zur sprechenden Person
     var kd = A.kopfDrehen, ziel = [0, 0];
     if (figur.blickZiel) {
-      var weltKopf = [figur.pos[0], figur.pos[1] + (figur.haltung === "sitzen" ? 1.15 : 1.55) * figur.skala, figur.pos[2]];
+      var weltKopf = [figur.pos[0], figur.pos[1] + (figur.haltung === "sitzen" ? 1.18 : 1.59) * figur.skala, figur.pos[2]];
       var d = M.minus(figur.blickZiel, weltKopf);
       var dr = -figur.dreh * GR, c = Math.cos(dr), s = Math.sin(dr);
       var lx = c * d[0] + s * d[2], lz = -s * d[0] + c * d[2];
@@ -430,65 +431,80 @@ WELT.figuren = (function () {
       figur.blick[k] = r.wert; figur.blickGeschw[k] = r.geschw;
     }
     g.kopf = g.kopf || [0, 0, 0]; g.hals = g.hals || [0, 0, 0];
-    g.kopf[0] += figur.blick[0] * 0.65; g.kopf[1] += figur.blick[1] * 0.6;
-    g.hals[0] += figur.blick[0] * 0.35; g.hals[1] += figur.blick[1] * 0.4;
+    g.kopf[0] += figur.blick[0] * 0.55; g.kopf[1] += figur.blick[1] * 0.5;
+    g.hals[0] += figur.blick[0] * 0.3; g.hals[1] += figur.blick[1] * 0.35;
+    // Augen: folgen dem Ziel schneller als der Kopf, dazu kleine Blicksprünge
+    figur.sakkadeZeit -= dt;
+    if (figur.sakkadeZeit <= 0) {
+      figur.sakkadeZeit = 0.6 + Math.abs(Math.sin(zz * 12.9898) * 43758.5453 % 1) * 2.2;
+      figur.augenZiel = [(Math.sin(zz * 3.7) * 2.2), (Math.sin(zz * 5.3) * 3.5)];
+    }
+    var ae = A.augen;
+    var aNick = M.klemme(ziel[0] - figur.blick[0] * 0.85 + figur.augenZiel[0], -ae.maxHoch, ae.maxHoch);
+    var aGier = M.klemme(ziel[1] - figur.blick[1] * 0.85 + figur.augenZiel[1], -ae.maxSeite, ae.maxSeite);
+    var ak = Math.min(1, dt * 18);
+    figur.augen[0] += (aNick - figur.augen[0]) * ak; figur.augen[1] += (aGier - figur.augen[1]) * ak;
+    g.augeL = [figur.augen[0], figur.augen[1], 0]; g.augeR = [figur.augen[0], figur.augen[1], 0];
 
-    // Knochen-Matrizen
+    // Knochen-Matrizen: Welt = Eltern · Verschiebung(Ruhe) · Drehung; Haut = Welt · Bindehaltung⁻¹
+    var SK = figur.sk;
     var wurzel = M.trs(M.m4(), [figur.pos[0] + versatz[0], figur.pos[1] + pose.beckenHoehe * figur.skala + (versatz[1] || 0), figur.pos[2]], figur.dreh, figur.skala);
-    var W = figur.welt;
+    var W = figur.welt, kd2 = figur.knochenDaten;
     for (var i = 0; i < KNOCHEN.length; i++) {
       var name = KNOCHEN[i], e = ELTERN[i];
-      var r0 = figur.ruhe[name];
-      var winkel = g[name.replace("_zeigen", "")] || [0, 0, 0];
-      var lokal = M.mul(M.m4(), trs(r0), rot(winkel));
-      var sichtbarFaktor = 1;
-      if (name === "handR") sichtbarFaktor = zeigen ? 0 : 1;
-      if (name === "handR_zeigen") sichtbarFaktor = zeigen ? 1 : 0;
-      if (name === "handL_zeigen") sichtbarFaktor = 0;
-      if (sichtbarFaktor === 0) { lokal[0] = lokal[1] = lokal[2] = lokal[4] = lokal[5] = lokal[6] = lokal[8] = lokal[9] = lokal[10] = 0; }
-      W[i] = e < 0 ? M.mul(M.m4(), wurzel, lokal) : M.mul(M.m4(), W[e], lokal);
-      var m = W[i], o = i * 12, kd2 = figur.knochenDaten;
+      var lokal = mul(verschieb(SK.ruhe[i]), rot(g[name] || [0, 0, 0]));
+      W[i] = e < 0 ? mul(wurzel, lokal) : mul(W[e], lokal);
+      var m = mul(W[i], SK.bindInv[i]), o = i * 12;
       kd2[o] = m[0]; kd2[o + 1] = m[4]; kd2[o + 2] = m[8]; kd2[o + 3] = m[12];
       kd2[o + 4] = m[1]; kd2[o + 5] = m[5]; kd2[o + 6] = m[9]; kd2[o + 7] = m[13];
       kd2[o + 8] = m[2]; kd2[o + 9] = m[6]; kd2[o + 10] = m[10]; kd2[o + 11] = m[14];
     }
-    figur.kopfWelt = M.punktMal(W[K.kopf], [0, 0.112, 0.02]);
-    figur.schulterL = M.punktMal(W[K.oberarmL], [0, 0.04, 0]);
-    figur.schulterR = M.punktMal(W[K.oberarmR], [0, 0.04, 0]);
+    var T = D.R.kopf.tragion, jk = SK.gelenke[K.kopf];
+    figur.kopfWelt = M.punktMal(W[K.kopf], [T[0] - jk[0], T[1] - jk[1] + 0.012, T[2] - jk[2] + 0.025]);
+    figur.schulterL = M.punktMal(W[K.oberarmL], [0, 0.03, 0]);
+    figur.schulterR = M.punktMal(W[K.oberarmR], [0, 0.03, 0]);
     figur.objekte.forEach(function (o) { o.kugelWelt.m = [figur.pos[0], (figur.pos[1] || 0) + 0.9, figur.pos[2]]; });
   };
 
-  /* Schlichte weiße Modellfiguren (wie im Architekturmodell) für Plenum, Ausschuss und Ränge.
-     Ein Netz, mit Instancing vielfach gezeichnet. */
-  /* Einfache Modellfigur für Menschenmengen (Instancing).
-     teil: "koerper" (Kleidung), "haut" (Kopf und Hände) oder leer (alles zusammen) */
-  F.modellFigur = function (sitzend, teil) {
-    var g = Geo.leer(), hb = sitzend ? 0.52 : 0.95;
-    var mitHaut = teil !== "koerper", mitKoerper = teil !== "haut";
-    if (mitHaut) {
-      Geo.anhaengen(g, kopfGeo(9, 12), trs([0, hb + 0.5, 0.0]));   // grob genug für die Entfernung
-      Geo.anhaengen(g, Geo.zylinder(0.042, 0.1, 10, false), trs([0, hb + 0.44, 0]));
-    }
-    if (mitKoerper) {
-      Geo.anhaengen(g, rumpf([[0, 0], [0.15, 0], [0.16, 0.2], [0.185, 0.4], [0.17, 0.46], [0.07, 0.5], [0, 0.5]], 0.62, 18, 0), trs([0, hb - 0.02, 0]));
-    }
-    [-1, 1].forEach(function (s) {
-      if (sitzend) {
-        if (mitKoerper) {
-          Geo.anhaengen(g, Geo.kapsel(0.062, 0.4, 10, 3), mul(trs([s * 0.095, hb + 0.0, 0.0]), rot([90, 0, 0])));
-          Geo.anhaengen(g, Geo.kapsel(0.052, 0.42, 10, 3), mul(trs([s * 0.095, 0.04, 0.42]), rot([0, 0, 0])));
-          Geo.anhaengen(g, Geo.kapsel(0.046, 0.26, 8, 3), mul(trs([s * 0.19, hb + 0.42, 0.0]), rot([180 - 25, 0, 0])));
-          Geo.anhaengen(g, Geo.kapsel(0.04, 0.22, 8, 3), mul(trs([s * 0.17, hb + 0.2, 0.12]), rot([95, 0, 0])));
+  /* ---------- Menschenmengen: grobe Figuren, einmal in die Haltung gerechnet ----------
+     variante: 0 = Anzug mit Kurzhaar, 1 = Blazer mit Dutt, 2 = Pullover mit langem Haar
+     teil: "koerper" (Kleidung), "haut" (Kopf und Hände), "haar" oder leer (alles) */
+  var mengenCache = {};
+  F.modellFigur = function (sitzend, teil, variante) {
+    variante = variante || 0;
+    var schl = (sitzend ? "s" : "t") + (teil || "alle") + variante;
+    if (mengenCache[schl]) return mengenCache[schl];
+    daten();
+    var w = variante === 0 ? 0 : 1;
+    var namen = { koerper: [], haut: [variante === 0 ? "kopf_lo" : "kopf_w_lo", "haende_lo"], haar: [] };
+    if (variante === 0) { namen.koerper = ["sakko_lo", "hemd_lo", "hose_lo", "schuhe_m_lo"]; namen.haar = ["haar_kurz_lo"]; }
+    else if (variante === 1) { namen.koerper = ["blazer_lo", "bluse_lo", "hose_lo", "schuhe_w_lo"]; namen.haar = ["haar_dutt_lo"]; }
+    else { namen.koerper = ["pullover_lo", "hose_lo", "schuhe_w_lo"]; namen.haar = ["haar_lang_lo"]; }
+    var liste = teil ? namen[teil] : namen.koerper.concat(namen.haut, namen.haar);
+    var fig = { pos: [0, 0, 0], dreh: 0, skala: 1, haltung: sitzend ? "sitzen" : "stehen", sk: skelett(w, w), knochenDaten: new Float32Array(84 * 4),
+      geste: null, blickZiel: null, blick: [0, 0], blickGeschw: [0, 0], spricht: 0, zeitVersatz: 0, welt: [], objekte: [], augen: [0, 0], augenZiel: [0, 0], sakkadeZeit: 1 };
+    F.aktualisieren(fig, 0, 0);
+    var kd = fig.knochenDaten, g = Geo.leer();
+    liste.forEach(function (name) {
+      var t = D.teile[name]; if (!t) return;
+      var p = teilPunkte(t, function (m, tt) { return m === "w" ? w - tt.w0 : 0; });
+      var basis = g.p.length / 3;
+      for (var v = 0; v < t.n; v++) {
+        var x = p[v * 3], y = p[v * 3 + 1], z = p[v * 3 + 2], ox = 0, oy = 0, oz = 0;
+        for (var j = 0; j < 4; j++) {
+          var gw = t.gw[v * 4 + j] / 255; if (!gw) continue;
+          var o = t.kn[v * 4 + j] * 12;
+          ox += gw * (kd[o] * x + kd[o + 1] * y + kd[o + 2] * z + kd[o + 3]);
+          oy += gw * (kd[o + 4] * x + kd[o + 5] * y + kd[o + 6] * z + kd[o + 7]);
+          oz += gw * (kd[o + 8] * x + kd[o + 9] * y + kd[o + 10] * z + kd[o + 11]);
         }
-        if (mitHaut) Geo.anhaengen(g, ellipsoid(0.03, 0.022, 0.05, 6), trs([s * 0.17, hb + 0.2, 0.36]));
-      } else {
-        if (mitKoerper) {
-          Geo.anhaengen(g, Geo.kapsel(0.062, 0.86, 10, 3), trs([s * 0.095, 0.06, 0]));
-          Geo.anhaengen(g, Geo.kapsel(0.046, 0.5, 8, 3), mul(trs([s * 0.2, hb + 0.44, 0]), rot([180, 0, s * -6])));
-        }
-        if (mitHaut) Geo.anhaengen(g, ellipsoid(0.03, 0.05, 0.022, 6), trs([s * 0.255, hb - 0.1, 0]));
+        g.p.push(ox, oy, oz); g.n.push(0, 1, 0); g.uv.push(x, y); g.ao.push(t.ao[v] / 255); g.k.push(0);
       }
+      for (var i = 0; i < t.idx.length; i++) g.i.push(t.idx[i] + basis);
     });
+    var nn = normalen(g.p, g.i);
+    for (var q = 0; q < nn.length; q++) g.n[q] = nn[q];
+    mengenCache[schl] = g;
     return g;
   };
 

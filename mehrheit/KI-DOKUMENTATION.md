@@ -17,6 +17,11 @@
   der Töne, des Admin-Menüs und der Prüfwerkzeuge mit Claude Code nach meinem Konzept.
   Die Spieltexte (Gespräche, Gesetzesoptionen, Karten, Epilog, Vergleich) hat die KI nach den Vorgaben
   im Konzept entworfen; sie müssen von mir gelesen und überarbeitet werden.
+- Überarbeitung am 2. November 2026 (meine Rückmeldung: Menschen wie Pappfiguren, 21:9, Sprüche, dunkler Trilog):
+  Die KI hat ein Python-Werkzeug geschrieben (`werkzeuge/`), das Köpfe, Hände, Kleidung und Frisuren aus
+  mathematischen Formen (Abstandsfeldern) erzeugt, und den Figurenbau im Spiel neu programmiert. Keine fremden
+  3D-Modelle, Bilder oder Bibliotheken im Spiel; das Werkzeug nutzt beim Erzeugen die freien Python-Pakete
+  numpy, scipy, scikit-image und fast-simplification. Außerdem: Bildformate, Texte ohne Witzsätze, neuer Trilog-Raum.
 - Die Spielwerte (Schwellen der Fraktionen, Haltungen zu den Optionen) hat die KI mit einer
   Balance-Prüfung abgestimmt, die alle Fassungen des Gesetzes durchrechnet.
 - Getestet wurde automatisch in einem Browser ohne Grafikkarte (drei komplette Durchläufe, Dokumentmodus,

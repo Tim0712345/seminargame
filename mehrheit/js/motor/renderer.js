@@ -53,11 +53,11 @@ MOTOR.renderer = (function () {
     var d = [];
     var st = R.stufe;
     if (art === "tiefe") {
-      if (f.skin) d.push("SKIN"); if (f.instanz) d.push("INSTANZ"); if (f.blatt) d.push("BLATT");
+      if (f.skin4) d.push("SKIN4"); else if (f.skin) d.push("SKIN"); if (f.instanz) d.push("INSTANZ"); if (f.blatt) d.push("BLATT");
     } else if (art === "teilchen") {
       if (f.schatten) d.push("SCHATTEN");
     } else {
-      if (f.skin) d.push("SKIN"); if (f.instanz) d.push("INSTANZ"); if (f.muster) d.push("MUSTER"); if (f.instFarbe) d.push("INSTFARBE");
+      if (f.skin4) d.push("SKIN4"); else if (f.skin) d.push("SKIN"); if (f.instanz) d.push("INSTANZ"); if (f.muster) d.push("MUSTER"); if (f.instFarbe) d.push("INSTFARBE");
       if (f.glas) d.push("GLAS"); if (f.brechung) d.push("BRECHUNG"); if (f.farbTex) d.push("FARBTEX");
       if (f.blatt) d.push("BLATT"); if (f.himmel) d.push("HIMMEL"); if (f.doppelseitig) d.push("DOPPELSEITIG");
       if (f.ebene) d.push("EBENE"); if (f.mrt) d.push("MRT"); if (f.direkt) d.push("DIREKT");
@@ -151,7 +151,7 @@ MOTOR.renderer = (function () {
   function flags(o, pass, sz) {
     var mat = o.mat, st = R.stufe;
     var f = {
-      skin: !!o.knochen, instanz: !!o.netz.maxInstanzen, muster: !!o.muster, instFarbe: !!o.instFarbe,
+      skin: !!o.knochen && !o.skin4, skin4: !!o.skin4, instanz: !!o.netz.maxInstanzen, muster: !!o.muster, instFarbe: !!o.instFarbe,
       glas: !!mat.glas, farbTex: !!o.farbTex, blatt: !!o.hoehe, himmel: !!mat.himmel,
       doppelseitig: !!mat.doppelseitig, direkt: !G.hdr
     };
@@ -346,7 +346,7 @@ MOTOR.renderer = (function () {
     for (var i = 0; i < sz.objekte.length; i++) {
       var o = sz.objekte[i];
       if (o.sichtbar === false || o.schatten === false || o.mat.glas || o.mat.himmel) continue;
-      var P = R.prog("tiefe", { skin: !!o.knochen, instanz: !!o.netz.maxInstanzen, blatt: !!o.hoehe });
+      var P = R.prog("tiefe", { skin: !!o.knochen && !o.skin4, skin4: !!o.skin4, instanz: !!o.netz.maxInstanzen, blatt: !!o.hoehe });
       if (!P) continue;
       if (P !== aktuell) { gl.useProgram(P.p); P.m4("uVP", sz.schattenMat); P.i1("uHoehe", EINHEIT.hoehe); aktuell = P; }
       if (o.mat.doppelseitig) gl.disable(gl.CULL_FACE); else gl.enable(gl.CULL_FACE);
@@ -494,7 +494,7 @@ MOTOR.renderer = (function () {
       var o = sz.objekte[i];
       if (!o.netz || !o.mat) continue;
       R.prog("szene", flags(o, "haupt", sz));
-      if (R.stufe.schatten && o.schatten !== false) R.prog("tiefe", { skin: !!o.knochen, instanz: !!o.netz.maxInstanzen, blatt: !!o.hoehe });
+      if (R.stufe.schatten && o.schatten !== false) R.prog("tiefe", { skin: !!o.knochen && !o.skin4, skin4: !!o.skin4, instanz: !!o.netz.maxInstanzen, blatt: !!o.hoehe });
     }
   };
 

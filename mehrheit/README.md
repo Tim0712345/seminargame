@@ -80,7 +80,7 @@ Alle Texte, Zahlen, Farben und Spielwerte liegen in `data/`:
 | `data/fakten.js` | **alle echten Zahlen und Fakten** (ungeprüft, `verifiziert: false`) |
 | `data/spielwerte.js` | Zahlen der Spielmechanik (Sitze, Termine, Schwellen – keine Fakten) |
 | `data/fraktionen.js` | die sechs erfundenen Fraktionen und die Brücke: Sitze, Schwellen, Anliegen |
-| `data/figuren.js` | Figuren-Baukasten (Hauttöne, Körperbau, Kleidung, Haare, Gesten) und alle Personen |
+| `data/figuren.js` | alle Personen: Geschlecht, Größe, Körperbau, Hautton, Augenfarbe, Gesichtszüge, Frisur, Kleidung und Farben; dazu Haltungen und Gesten |
 | `data/artikel.js` | sieben Artikel mit je einer Kernentscheidung und ihren Optionen (Haltung je Fraktion, Wirkung, Jurist*in), Wunschzettel, Umsetzungsfrist |
 | `data/gespraeche.js` | alle Gesprächszeilen je Kapitel (`DATA.zeilen`), Abendnotizen, Presse |
 | `data/karten.js` | Karten im Dossier (Stimme, Beleg, Einwand) und Bibliothek |
@@ -119,6 +119,17 @@ scheitern und ob eine Fraktion unverzichtbar ist.
   Gemurmel, Regen, ein kurzes Musik-Motiv.
 - Namensräume: `DATA` (Daten), `MOTOR` (3D-Maschine), `WELT` (Szenen, Figuren, Bausteine),
   `ANSICHT` (HTML-Oberfläche), `LOGIK` (Spielstand, Berechnungen, Ablauf).
+- **Menschen:** eigene Modelle, mit dem Werkzeug `werkzeuge/menschen.py` aus Abstandsfeldern erzeugt
+  (Kopf mit Gesicht für Frau und Mann, Augen, Brauen, Hände mit Fingern, Sakko, Blazer, Hemd, Bluse, Pullover,
+  Hose, Rock, Schuhe, Krawatte, Schal, Kopftuch und sieben Frisuren). Ablauf: Feld abtasten → Marching Cubes →
+  glätten → vereinfachen → Formvarianten (Körperbau, Nase, Kinn, Wangen, Lippen, Alter) → Knochen-Gewichte.
+  Die fertigen Netze liegen komprimiert in `js/welt/menschen_netze.js` (eigener Entpacker `js/motor/inflate.js`).
+  Im Spiel werden sie je Person zusammengesetzt, eingefärbt und weich verformt (bis zu vier Knochen pro Punkt,
+  28 Knochen mit Fingern und Augen). Ärmel und Rumpf der Kleidung sind getrennte Körper, damit sich beim Bewegen
+  nichts dehnt. Neu erzeugen (nur nötig, wenn man die Formen ändert): `cd werkzeuge && python3 menschen.py`
+  (braucht numpy, scipy, scikit-image, fast-simplification; dauert etwa 20 Minuten).
+- **Bildformate:** Auf sehr breiten Bildschirmen (z. B. 21:9) wird die Spielfläche mittig auf höchstens
+  2,05 : 1 begrenzt (`DATA.stil.bildformat`); 16:9, MacBook (16:10) und iPad (4:3) nutzen den ganzen Bildschirm.
 
 ## Überarbeitung nach Rückmeldung (1. November 2026)
 
@@ -140,6 +151,20 @@ mit Leitfaden. Die Personen sehen nicht gut aus, vieles passt vom Aussehen nicht
   Wandlicht im Ausschusssaal, Plenum nicht mehr überstrahlt, Trilog-Raum heller, Raumlicht in den Fraktionsbüros.
 - **Oberfläche:** ruhiges Papierweiß statt Milchglas, kräftigeres Petrol, einheitliche Karten und Knöpfe.
 
+## Zweite Überarbeitung nach Rückmeldung (2. November 2026)
+
+Rückmeldung: „Die Menschen sehen aus wie Pappfiguren und sollen wie echte Menschen aussehen. Auf 21:9 sieht es
+schlecht aus. Die blöden Sprüche wirken nach KI. Das private Gespräch nach der Abstimmung ist unterbelichtet.“
+
+- **Menschen komplett neu:** echte Gesichter (Augen mit Iris und Pupille, Lider, Brauen, Nase, Lippen, Ohren),
+  Hände mit Fingern, Kleidung mit Revers, Kragen, Manschetten und Knöpfen, sieben Frisuren und ein Kopftuch.
+  Jede Person hat eigene Gesichtszüge, Augenfarbe und Körperbau. Weiche Verformung an den Gelenken, die Augen
+  schauen mit. Auch die Menschenmengen im Plenum sind jetzt grobe Fassungen dieser Menschen.
+- **Bildformate:** 21:9 wird mittig begrenzt; die Trilog-Tabelle ist nur so groß wie nötig.
+- **Texte:** Witzsätze und Sprüche entfernt, Kapitelkarten und Begrüßungen schlicht und sachlich.
+- **Trilog neu:** heller Besprechungsraum mit Eichenpaneel, großem Deckenlicht, Fensterband zur Stadt bei Nacht
+  und einer Dolmetschkabine hinter Glas; Stühle unter allen Sitzenden.
+
 ## Stand
 
 - **Phase 1 – 3D-Stil-Prototyp:** Plenarsaal-Titel, Büro mit 3D-Papierstapel, Glasmodell, Figuren, Stempel, Grafikstufen.
@@ -153,8 +178,8 @@ mit Leitfaden. Die Personen sehen nicht gut aus, vieles passt vom Aussehen nicht
   Admin-Menü, Balance-Prüfung, Textlängen-Prüfung.
 
 Getestet (headless Chromium mit Software-Grafik): kompletter Durchlauf in drei Varianten (Mehrheit beim ersten Mal;
-Ausschuss scheitert zweimal → Kompromiss; Plenum scheitert → neuer Anlauf), Dokumentmodus komplett,
-Tastatur bis Kapitel 4, keine Konsolenfehler. **Nicht getestet:** echtes iPad/Safari, Firefox, Windows-Schul-Laptop,
+Ausschuss scheitert zweimal → Kompromiss; Plenum scheitert), Dokumentmodus komplett, Doppelklick-Start (`file://`)
+mit WebGL 1, Tastatur bis Kapitel 4, Bildformate 21:9, 16:9, MacBook und iPad 4:3, keine Konsolenfehler. **Nicht getestet:** echtes iPad/Safari, Firefox, Windows-Schul-Laptop,
 echte Grafikkarte (Bildzeiten aus der Software-Grafik sind nicht aussagekräftig).
 
 Credits: Konzept und Texte: [Dein Name] · Umsetzung mit KI-Unterstützung (siehe `KI-DOKUMENTATION.md`).
